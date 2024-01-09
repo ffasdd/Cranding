@@ -56,6 +56,8 @@ public:
 
 	void send_remove_packet(int c_id);
 public:
+	void setPrev_remain(int prev_remain) { _prev_remain = prev_remain; }
+	int getPrev_remain() { return _prev_remain; }
 	void setRemain(int prevremain) { _prev_remain = prevremain; }
 	void setSocket(SOCKET socket) { _socket = socket; }
 	SOCKET getSocket() { return _socket; }

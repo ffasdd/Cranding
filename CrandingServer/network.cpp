@@ -45,6 +45,7 @@ void network::Accept()
 {
 	int addr_size = sizeof(SOCKADDR_IN);
 	_c_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+	_over._comptype = OP_ACCEPT;
 	AcceptEx(_s_socket, _c_socket, acceptbuf, 0, addr_size + 16, addr_size + 16, 0, &_over._over);
 
 }
@@ -102,10 +103,28 @@ void network::WorkerThread()
 			break;
 		}
 		case OP_RECV: {
+			int remain_data = num_bytes + _clients[key].getPrev_remain();
+			char* p = ex_over->_sendbuf;
+			while (remain_data > 0)
+			{
+				int packet_size = p[0];
+				if (packet_size <= remain_data) {
+					//process_packet(static_cast<int>(key), p);
+					p = p + packet_size;
+					remain_data = remain_data - packet_size;
+				}
+				else break;
+			}
+			_clients[key].setPrev_remain(remain_data);
+			if (remain_data > 0) {
+				memcpy(ex_over->_sendbuf, p, remain_data);
+			}
+			_clients[key].do_recv();
 			break;
 
 		}
 		case OP_SEND: {
+			delete ex_over;
 			break;
 		}
 
