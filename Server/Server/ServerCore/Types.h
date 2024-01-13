@@ -1,4 +1,7 @@
 #pragma once
+#include <mutex>
+#include<atomic>
+
 // 매크로 형식으로 치환해서 사용
 
 // __가 귀찮아서 ... 편리하게 이렇게 
@@ -12,3 +15,10 @@ using uint8 = unsigned __int8;
 using uint16 = unsigned __int16;
 using uint32 = unsigned __int32;
 using uint64 = unsigned __int64;
+
+template<class T>
+using Atomic = std::atomic<T>;
+using Mutex = std::mutex;
+using CondVar = std::condition_variable;
+using UniqueLock = std::unique_lock<std::mutex>;
+using LockGuard = std::lock_guard<std::mutex>;
