@@ -22,6 +22,13 @@ bool Listener::StartAccept(NetAddress netAddress)
 
 	if (GIocpCore.Register(this) == false)
 		return false;
+
+	if (SocketUtils::SetReuseAddress(_socket, true) == false)
+		return false;
+
+	if (SocketUtils::SetLinger(_socket, 0, 0) == false)
+		return false;
+
 	if (SocketUtils::Bind(_socket, netAddress) == false)
 		return false;
 	if (SocketUtils::Listen(_socket) == false)

@@ -8,7 +8,7 @@ LPFN_DISCONNECTEX	SocketUtils::DisconnectEx = nullptr;
 void SocketUtils::Init()
 {
 	WSADATA wsaData;
-	::WSAStartup(MAKEWORD(2, 2), OUT & wsaData);
+	ASSERT_CRASH(::WSAStartup(MAKEWORD(2, 2), OUT & wsaData) == 0);
 
 	// 런타임에 주소를 얻어오는 API
 	SOCKET dummySocket = CreateSocket();
@@ -63,4 +63,16 @@ void SocketUtils::Close(SOCKET& socket)
 	if (socket != INVALID_SOCKET)
 		::closesocket(socket);
 	socket = INVALID_SOCKET;
+}
+bool SocketUtils::SetLinger(SOCKET socket, uint16 onoff, uint16 linger)
+{
+	LINGER option;
+	option.l_onoff = onoff;
+	option.l_linger = linger;
+	return SetSockOpt(socket, SOL_SOCKET, SO_LINGER, option);
+}
+
+bool SocketUtils::SetReuseAddress(SOCKET socket, bool flag)
+{
+	return SetSockOpt(socket, SOL_SOCKET, SO_REUSEADDR, flag);
 }

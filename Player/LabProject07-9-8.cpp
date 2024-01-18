@@ -53,14 +53,28 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	::inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr);
 	serverAddr.sin_port = ::htons(7777);
 
+	// Connect
 	while (true)
 	{
-		if (::connect(clientSocket, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) != SOCKET_ERROR)
+		if (::connect(clientSocket, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
 		{
-			cout << "Connected to Server!" << endl;
+			// 원래 블록했어야 했는데... 너가 논블로킹으로 하라며?
+			if (::WSAGetLastError() == WSAEWOULDBLOCK)
+				continue;
+			// 이미 연결된 상태라면 break
+			if (::WSAGetLastError() == WSAEISCONN)
+				break;
+			// Error
+			break;
 		}
 	}
 
+	cout << "Connected to Server!" << endl;
+
+	char sendBuffer[100] = "Hello World";
+	WSAEVENT wsaEvent = ::WSACreateEvent();
+	WSAOVERLAPPED overlapped = {};
+	overlapped.hEvent = wsaEvent;
 
 
 	while (1)
