@@ -13,6 +13,9 @@
     <Filter Include="Thread">
       <UniqueIdentifier>{285c3aff-7d9a-47a2-85c9-e4c9ad4ef2da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{5c5aad4d-f0e3-40ed-8720-da05676bf625}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CorePch.h">
@@ -36,7 +39,12 @@
     <ClInclude Include="ThreadManager.h">
       <Filter>Thread</Filter>
     </ClInclude>
-    <ClInclude Include="Lock.h" />
+    <ClInclude Include="Lock.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="RefCounting.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CorePch.cpp">
@@ -54,6 +62,11 @@
     <ClCompile Include="ThreadManager.cpp">
       <Filter>Thread</Filter>
     </ClCompile>
-    <ClCompile Include="Lock.cpp" />
+    <ClCompile Include="Lock.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="RefCounting.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

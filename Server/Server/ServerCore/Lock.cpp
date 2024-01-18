@@ -5,7 +5,7 @@ void Lock::WriteLock()
 {
 	// 동일한 쓰레드가 소유하고 있다면 무조건 성공,
 	const uint32 lockThreadId = (_lockFlag.load() & WRITE_THREAD_MASK) >> 16;
-	if (LThreadId == lockThreadId)
+	if (LThreadId == lockThreadId) // LThreadId
 	{
 		_writeCount++;
 		return;
@@ -22,7 +22,7 @@ void Lock::WriteLock()
 			if (_lockFlag.compare_exchange_strong(OUT expected, desired))
 			{
 				// 경합에서 이긴상태
-				_writeCount++;
+				_writeCount++; // 재귀적인 사용을 위해 writecount를 추적 ,
 				return;
 			}
 		}
@@ -34,11 +34,12 @@ void Lock::WriteLock()
 	}
 }
 
-void Lock::WriteUnlock()
+void Lock::WriteUnLock()
 {
 	// ReadLock 다 풀기 전에는 WriteUnlock 불가능.
 	if ((_lockFlag.load() & READ_COUNT_MASK) != 0)
 		CRASH("INVALID_UNLOCK_ORDER");
+
 	const int32 lockCount = --_writeCount;
 	if (lockCount == 0)
 		_lockFlag.store(EMPTY_FLAG);
@@ -73,6 +74,6 @@ void Lock::ReadLock()
 
 void Lock::ReadUnLock()
 {
-	if ((_lockFlag.fetch_add(1) & READ_COUNT_MASK) == 0)
+	if ((_lockFlag.fetch_sub(1) & READ_COUNT_MASK) == 0)
 		CRASH("MULTIPLE_LOCK");
 }
