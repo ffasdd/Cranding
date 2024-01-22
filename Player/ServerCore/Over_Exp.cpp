@@ -1,12 +1,12 @@
 #include "pch.h"
-#include "IocpEvent.h"
+#include "Over_Exp.h"
 
-IocpEvent::IocpEvent(EventType type) : _type(type)
+Over_Exp::Over_Exp(COMP_TYPE type) : _type(type)
 {
 	Init();
 }
 
-void IocpEvent::Init()
+void Over_Exp::Init()
 {
 	OVERLAPPED::hEvent = 0;
 	OVERLAPPED::Internal = 0;

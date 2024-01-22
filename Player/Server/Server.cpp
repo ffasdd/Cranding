@@ -5,26 +5,30 @@
 #include"CoreMacro.h"
 #include"ThreadManager.h"
 #include"SocketUtils.h"
-#include"Listener.h"
+#include"IocpCore.h"
+#include"Over_Exp.h"
 
 
 int main()
 {
-	
-	Listener listener;
-	listener.StartAccept(NetAddress(L"127.0.0.1", 7777));
 
-	for (int32 i = 0; i < 5; ++i)
-	{
-		GThreadManager->Launch([=]()
-			{
-				while (true)
-				{
-					GIocpCore.Dispatch();
-				}
-			});
-	}
-	GThreadManager->Join();
+	// 소켓 설정  글로벌 소켓 필요 g_s_socket 
+	SOCKET s_socket = SocketUtils::CreateSocket();
+	
+	SocketUtils::BindAnyAddress(s_socket, 7777);
+	
+	SocketUtils::Listen(s_socket);
+	// IOCP 등록 서버소켓 등록 
+	GIocpCore.Register(&s_socket);
+	// clinet socket 
+	SOCKET c_socket = SocketUtils::CreateSocket();
+
+	Over_Exp a_over(COMP_TYPE::Accept);
+
+	// AcceptEx  하면서 컨테이너에 저장
+
+
 }
 
 
+ 

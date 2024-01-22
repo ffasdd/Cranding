@@ -24,9 +24,6 @@
     <ClCompile Include="CoreGlobal.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="CoreTLS.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
     <ClCompile Include="CorePch.cpp">
       <Filter>Main</Filter>
     </ClCompile>
@@ -36,17 +33,14 @@
     <ClCompile Include="IocpCore.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="IocpEvent.cpp">
+    <ClCompile Include="Over_Exp.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="NetAddress.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="Listener.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="Session.cpp">
-      <Filter>Network</Filter>
+    <ClCompile Include="CoreTLS.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -65,9 +59,6 @@
     <ClInclude Include="CoreMacro.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="CoreTLS.h">
-      <Filter>Main</Filter>
-    </ClInclude>
     <ClInclude Include="CorePch.h">
       <Filter>Main</Filter>
     </ClInclude>
@@ -77,17 +68,14 @@
     <ClInclude Include="IocpCore.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="IocpEvent.h">
+    <ClInclude Include="Over_Exp.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="NetAddress.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="Listener.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="Session.h">
-      <Filter>Network</Filter>
+    <ClInclude Include="CoreTLS.h">
+      <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
