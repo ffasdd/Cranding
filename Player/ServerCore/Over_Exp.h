@@ -4,18 +4,21 @@ enum class COMP_TYPE : uint8
 {
 	Connect,
 	Accept,
-	//PreRecv,
 	Recv,
 	Send
 };
 
-class Over_Exp : public OVERLAPPED
+class Over_Exp 
 {
 public:
-	char _sendbuf[200];
+	WSAOVERLAPPED _over;
 	WSABUF _wsaBuf;
-	Over_Exp(COMP_TYPE type);
+	char _sendbuf[200];
 
+	Over_Exp() {};
+	~Over_Exp() {};
+	Over_Exp(COMP_TYPE type);
+	
 	void Init();
 	COMP_TYPE GetType() { return _type; }
 private:

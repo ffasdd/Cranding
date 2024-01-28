@@ -3,6 +3,7 @@
 #include "ThreadManager.h"
 #include "SocketUtils.h"
 
+
 ThreadManager* GThreadManager = nullptr;
 
 
@@ -21,4 +22,6 @@ public:
 		SocketUtils::Clear();
 		
 	}
+
+public:
 } GCoreGlobal;

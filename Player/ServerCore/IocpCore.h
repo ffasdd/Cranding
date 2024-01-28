@@ -1,10 +1,5 @@
 #pragma once
-class IocpObject // SessionÀÇ ¿ªÇÒ 
-{
-public:
-	virtual HANDLE GetHandle() abstract;
-	virtual void Dispatch(class Over_Exp* iocpEvent, int32 numOfbyte = 0) abstract; 
-};
+#include"Session.h"
 
 class IocpCore
 {
@@ -12,13 +7,23 @@ public:
 	IocpCore();
 	~IocpCore();
 
-
-	bool Register(SOCKET* _socket);
+public:
+	bool Register(SOCKET& _socket);
 	HANDLE GetHandle() { return _iocpHandle; }
-	bool Dispatch(uint32 timeoutMs = INFINITE); // WorkerThread 
+	void Dispatch(SOCKET s_socket); // WorkerThread 
+
+	int get_new_client_id()
+	{
+		for (int i = 0; i < MAX_USER; ++i)
+		{
+			lock_guard<Mutex>ll{ clients[i].s_lock };
+			if (clients[i]._state == STATE::Free)
+				return i;
+		}
+	}
 
 private:
 	HANDLE _iocpHandle;
 };
-
 extern IocpCore GIocpCore;
+extern array<Session, MAX_USER> clients;

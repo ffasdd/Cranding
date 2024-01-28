@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include "LabProject07-9-8.h"
 #include "GameFramework.h"
+#include"SocketUtils.h"
+#include "NetAddress.h"
 
 #define MAX_LOADSTRING 100
 
@@ -17,6 +19,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
+
+SOCKET clientSocket;
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
@@ -39,43 +43,29 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	if (::WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 		return 0;
 
-	SOCKET clientSocket = ::socket(AF_INET, SOCK_STREAM, 0);
-	if (clientSocket == INVALID_SOCKET)
-		return 0;
+	clientSocket = SocketUtils::CreateSocket();
 
-	u_long on = 1;
-	if (::ioctlsocket(clientSocket, FIONBIO, &on) == INVALID_SOCKET)
-		return 0;
-
-	SOCKADDR_IN serverAddr;
-	::memset(&serverAddr, 0, sizeof(serverAddr));
-	serverAddr.sin_family = AF_INET;
-	::inet_pton(AF_INET, "127.0.0.1", &serverAddr.sin_addr);
-	serverAddr.sin_port = ::htons(9000);
-
-	// Connect
+	sockaddr_in clientaddr;
+	clientaddr.sin_family = AF_INET;
+	clientaddr.sin_port = htons(7777);
+	inet_pton(AF_INET, "127.0.0.1", &clientaddr.sin_addr);
 	while (true)
 	{
-		if (::connect(clientSocket, (SOCKADDR*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
+		if (connect(clientSocket, (sockaddr*)&clientaddr, sizeof(clientaddr)) == SOCKET_ERROR)
 		{
-			// 원래 블록했어야 했는데... 너가 논블로킹으로 하라며?
 			if (::WSAGetLastError() == WSAEWOULDBLOCK)
 				continue;
 			// 이미 연결된 상태라면 break
 			if (::WSAGetLastError() == WSAEISCONN)
 				break;
-			// Error
+
+			int32 errcode = ::WSAGetLastError();
+			cout << " Error :: " << errcode << endl;
 			break;
 		}
 	}
-
-	cout << "Connected to Server!" << endl;
-
-	char sendBuffer[100] = "Hello World";
-	WSAEVENT wsaEvent = ::WSACreateEvent();
-	WSAOVERLAPPED overlapped = {};
-	overlapped.hEvent = wsaEvent;
-
+	cout << " Connect Server " << endl;
+	
 
 	while (1)
 	{

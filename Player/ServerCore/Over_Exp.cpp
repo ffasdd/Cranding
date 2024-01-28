@@ -6,11 +6,12 @@ Over_Exp::Over_Exp(COMP_TYPE type) : _type(type)
 	Init();
 }
 
+
 void Over_Exp::Init()
 {
-	OVERLAPPED::hEvent = 0;
-	OVERLAPPED::Internal = 0;
-	OVERLAPPED::InternalHigh = 0;
-	OVERLAPPED::Offset = 0;
-	OVERLAPPED::OffsetHigh = 0;
+	_over.hEvent = 0;
+	_over.Internal = 0;
+	_over.InternalHigh = 0;
+	_over.Offset = 0;
+	_over.OffsetHigh = 0;
 }

@@ -5,6 +5,7 @@
 #include "CoreTLS.h"
 #include "CoreGlobal.h"
 #include <fstream>
+#include<array>
 #include<vector>
 #include<list>
 #include<queue>
@@ -64,4 +65,5 @@ using namespace std;
 #include<ws2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
 
-void HelloWorld();
+constexpr int MAX_USER = 10000;
+
