@@ -3,6 +3,7 @@ class Network
 {
 public:
 	static Network& GetInstance();
+
 	Network();
 	Network(const Network& network) = delete;
 	Network& operator=(const Network& network) = delete;

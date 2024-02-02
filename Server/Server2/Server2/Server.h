@@ -5,6 +5,7 @@ class Server
 {
 public:
 	static Server& GetInstance();
+
 	Server();
 	Server(const Server& server) = delete;
 	Server& operator=(const Server& server) = delete;
