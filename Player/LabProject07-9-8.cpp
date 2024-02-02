@@ -4,8 +4,9 @@
 #include "stdafx.h"
 #include "LabProject07-9-8.h"
 #include "GameFramework.h"
-#include"SocketUtils.h"
-#include "NetAddress.h"
+#include"Network.h"
+
+
 
 #define MAX_LOADSTRING 100
 
@@ -19,8 +20,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
-
-SOCKET clientSocket;
+Network network;
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
@@ -30,42 +30,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	MSG msg;
 	HACCEL hAccelTable;
 
+	network.Run();
+
 	::LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	::LoadString(hInstance, IDC_LABPROJECT0798, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
-
+	
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0798));
 
-
-	WSAData wsaData;
-	if (::WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-		return 0;
-
-	clientSocket = SocketUtils::CreateSocket();
-
-	sockaddr_in clientaddr;
-	clientaddr.sin_family = AF_INET;
-	clientaddr.sin_port = htons(7777);
-	inet_pton(AF_INET, "127.0.0.1", &clientaddr.sin_addr);
-	while (true)
-	{
-		if (connect(clientSocket, (sockaddr*)&clientaddr, sizeof(clientaddr)) == SOCKET_ERROR)
-		{
-			if (::WSAGetLastError() == WSAEWOULDBLOCK)
-				continue;
-			// 이미 연결된 상태라면 break
-			if (::WSAGetLastError() == WSAEISCONN)
-				break;
-
-			int32 errcode = ::WSAGetLastError();
-			cout << " Error :: " << errcode << endl;
-			break;
-		}
-	}
-	cout << " Connect Server " << endl;
-	
 
 	while (1)
 	{

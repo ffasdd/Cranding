@@ -1,9 +1,4 @@
 #pragma once
-
-#include "Types.h"
-#include "CoreMacro.h"
-#include "CoreTLS.h"
-#include "CoreGlobal.h"
 #include <fstream>
 #include<array>
 #include<vector>
@@ -14,6 +9,7 @@
 #include<set>
 #include<unordered_map>
 #include<unordered_set>
+#include<mutex>
 
 #include <stdlib.h>
 #include <malloc.h>
@@ -65,6 +61,26 @@ using namespace std;
 #include<ws2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
 
-constexpr int MAX_USER = 10000;
+constexpr int PORT_NUM = 4000;
 constexpr int BUF_SIZE = 200;
+constexpr int NAME_SIZE = 20;
+constexpr int CHAT_SIZE = 100;
 
+constexpr int MAX_USER = 10000;
+constexpr int MAX_NPC = 200000;
+
+constexpr char CS_LOGIN = 0;
+constexpr char CS_MOVE = 1;
+constexpr char CS_CHAT = 2;
+constexpr char CS_ATTACK = 3;
+constexpr char CS_TELEPORT = 4;
+constexpr char CS_LOGOUT = 5;
+
+constexpr char SC_LOGIN_INFO = 2;
+constexpr char SC_ADD_OBJECT = 3;
+constexpr char SC_REMOVE_OBJECT = 4;
+constexpr char SC_MOVE_OBJECT = 5;
+constexpr char SC_CHAT = 6;
+constexpr char SC_LOGIN_OK = 7;
+constexpr char SC_LOGIN_FAIL = 8;
+constexpr char SC_STAT_CHANGE = 9;

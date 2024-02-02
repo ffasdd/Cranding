@@ -5,7 +5,6 @@
 #include"ThreadManager.h"
 #include"SocketUtils.h"
 #include"IocpCore.h"
-#include"Over_Exp.h"	 
 
 // 컨테이너 생성 
 
@@ -26,7 +25,7 @@ int main()
 	// client socket 
 	SOCKET c_socket = SocketUtils::CreateSocket();
 
-	Over_Exp* a_over = new Over_Exp(COMP_TYPE::Accept);
+	/*Over_Exp* a_over = new Over_Exp(COMP_TYPE::Accept);*/
 
 	SOCKADDR_IN cl_addr;
 	int addr_size = sizeof(cl_addr);
@@ -37,19 +36,20 @@ int main()
 		if (errorcode != WSA_IO_PENDING)
 			cout << "accept err" << errorcode << endl;
 	}
-
+	GIocpCore.SetListenSocket(s_socket);
+	GIocpCore.SetServerSocket(c_socket);
 	int num_threads = thread::hardware_concurrency();
-	//auto workerThread = [&GIocpCore]() {GIocpCore.Dispatch(); };
+
 	for (int i = 0; i < num_threads; ++i)
 	{
 		GThreadManager->Launch([=]()
 			{
 				while (true)
 				{
-					GIocpCore.Dispatch(c_socket);
+					GIocpCore.Dispatch();
 				}
 			});
-	}
+	} 
 	GThreadManager->Join();
 
 	WSACleanup();

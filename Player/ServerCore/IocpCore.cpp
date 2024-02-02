@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "IocpCore.h"
 #include "Over_Exp.h"
+#include "SocketUtils.h"
 
 IocpCore GIocpCore;
-
+array<Session, MAX_USER> clients;
 IocpCore::IocpCore() // cp 积己 
 {
 	_iocpHandle = ::CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
@@ -24,7 +25,7 @@ bool IocpCore::Register(SOCKET& _socket) // 家南 CP俊 殿废
 
 }
 
-void IocpCore::Dispatch(SOCKET s_socket)
+void IocpCore::Dispatch()
 {
 		DWORD num_bytes;
 		ULONG_PTR key;
@@ -54,7 +55,6 @@ void IocpCore::Dispatch(SOCKET s_socket)
 			int client_id = get_new_client_id();
 			if (client_id != -1) {
 
-
 				{
 					lock_guard<Mutex> ll(clients[client_id].s_lock);
 					clients[client_id]._state = STATE::Alloc;
@@ -64,18 +64,17 @@ void IocpCore::Dispatch(SOCKET s_socket)
 				clients[client_id]._name[0] = 0;
 				clients[client_id]._prevremain = 0;
 				clients[client_id]._socket = s_socket;
-				if (false == Register(s_socket))cout << " accept register error" << endl;
-				clients[client_id].do_recv();
+				Register(c_socket);
 				s_socket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 			}
 			else
 			{
 				cout << "MaxUser " << endl;
 			}
-			//ZeroMemory();
-			//int addr_size = sizeof(SOCKADDR_IN);
-			//AcceptEx(g_s_socket, g_c_socket, g_a_over._send_buf, 0, addr_size + 16, addr_size + 16, 0, &g_a_over._over);
-			//break;
+			ZeroMemory(&a_over, sizeof(a_over->_over));
+			int addr_size = sizeof(SOCKADDR_IN);
+			SocketUtils::acceptEx(s_socket, c_socket, a_over->_sendbuf, 0, addr_size + 16, addr_size + 16, 0, &a_over->_over);
+			//AcceptEx(s_socket, c_socket, a_over->_sendbuf, 0, addr_size + 16, addr_size + 16, 0, &a_over->_over);
 			break;
 		} 
 		case COMP_TYPE::Recv: {
@@ -85,9 +84,7 @@ void IocpCore::Dispatch(SOCKET s_socket)
 			break;
 		}
 
-		
 		}
-		
 	
 }
 

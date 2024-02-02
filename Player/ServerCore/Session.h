@@ -1,5 +1,6 @@
 #pragma once
 #include"Over_Exp.h"
+
 enum class STATE : uint8
 {
 	Free,
@@ -35,6 +36,7 @@ public:
 		hp = max_hp;
 	}
 	~Session() {}
+
 	void do_recv();
 	void do_send(void* packet);
 

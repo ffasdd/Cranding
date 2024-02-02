@@ -42,7 +42,9 @@
     <ClCompile Include="CoreTLS.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="Session.cpp" />
+    <ClCompile Include="Session.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -78,6 +80,8 @@
     <ClInclude Include="CoreTLS.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="Session.h" />
+    <ClInclude Include="Session.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
