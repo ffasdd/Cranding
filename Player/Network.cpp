@@ -38,7 +38,7 @@ void Network::Run()
 			if (::WSAGetLastError() == WSAEISCONN)
 
 				break;
-			int32 errcode = ::WSAGetLastError();
+			__int32 errcode = ::WSAGetLastError();
 			cout << " Error :: " << errcode << endl;
 			break;
 		}
