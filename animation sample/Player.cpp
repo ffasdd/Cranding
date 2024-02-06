@@ -359,7 +359,16 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 2, pAngrybotModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-	m_pSkinnedAnimationController->SetTrackEnable(1, false);
+	/*m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(5, 0);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(6, 0);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(7, 0);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(8, 0);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(9, 0);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(10, 0);*/
+	m_pSkinnedAnimationController->SetTrackEnable(0, false);
 
 	m_pSkinnedAnimationController->SetCallbackKeys(1, 1);
 #ifdef _WITH_SOUND_RESOURCE
@@ -380,7 +389,7 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLi
 	SetCameraUpdatedContext(pContext);
 
 	CHeightMapTerrain *pTerrain = (CHeightMapTerrain *)pContext;
-	//SetPosition(XMFLOAT3(310.0f, pTerrain->GetHeight(310.0f, 590.0f), 590.0f));
+	//SetPosition(XMFLOAT3(31.0f, pTerrain->GetHeight(31.0f, 59.0f), 59.0f));
 	SetPosition(XMFLOAT3(10.0f, 200, 20.0f));
 	SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
 
