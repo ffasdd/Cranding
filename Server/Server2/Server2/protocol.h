@@ -61,7 +61,9 @@ struct SC_LOGIN_INFO_PACKET {
 	int		max_hp;
 	int		exp;
 	int		level;
-	short	x, y;
+	float x;
+	float y;
+	float z;
 };
 
 struct SC_ADD_OBJECT_PACKET {
@@ -70,7 +72,9 @@ struct SC_ADD_OBJECT_PACKET {
 	int		id;
 	int		hp;
 	int		Max_hp;
-	short	x, y;
+	float x;
+	float y;
+	float z;
 	char	name[NAME_SIZE];
 };
 
@@ -107,16 +111,6 @@ struct SC_LOGIN_OK_PACKET {
 struct SC_LOGIN_FAIL_PACKET {
 	unsigned char size;
 	char	type;
-
-};
-
-struct SC_STAT_CHANGEL_PACKET {
-	unsigned char size;
-	char	type;
-	int		hp;
-	int		max_hp;
-	int		exp;
-	int		level;
 
 };
 

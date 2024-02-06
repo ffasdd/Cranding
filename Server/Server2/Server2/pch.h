@@ -17,5 +17,4 @@ using namespace std;
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib,"mswsock.lib")
 
-constexpr int BUF_SIZE = 200;
-constexpr int MAX_USER = 1000;
+

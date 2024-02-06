@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Server.h"
-#include "Session.h"
 Server& Server::GetInstance()
 {
 	static Server instance;
@@ -84,8 +83,8 @@ void Server::WorkerThread()
 			if (ex_over->_comptype == COMP_TYPE::Accept) cout << "Accept Error";
 			else {
 				cout << "GQCS Error on client[" << key << "]\n";/*
-				disconnect(static_cast<int>(key));
-				if (ex_over->_comp_type == OP_SEND) delete ex_over;*/
+				disconnect(static_cast<int>(key));*/
+				if (ex_over->_comptype == COMP_TYPE::Send) delete ex_over;
 				continue;
 			}
 		}
@@ -99,8 +98,8 @@ void Server::WorkerThread()
 		{
 		case COMP_TYPE::Accept: {
 			int c_id = get_new_client_id();
-			if (c_id != -1)
-			{
+			if (c_id != -1){
+			
 			{
 				lock_guard<mutex>ll(clients[c_id]._s_lock);
 				clients[c_id]._state = STATE::Alloc;
@@ -112,7 +111,7 @@ void Server::WorkerThread()
 			clients[c_id]._name[0] = 0;
 			clients[c_id]._prevremain = 0;
 			clients[c_id]._socket = clientsocket;
-			CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientsocket), this, c_id, 0);
+			CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientsocket), _IocpHandle, c_id, 0);
 			clients[c_id].do_recv();
 			clientsocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 			}
@@ -120,7 +119,7 @@ void Server::WorkerThread()
 			{
 				cout << " MAX user exceeded" << endl;
 			}
-
+			
 			cout << " Accept " << endl;
 			ZeroMemory(&_overlapped._over, sizeof(_overlapped._over));
 			int addr_size = sizeof(SOCKADDR_IN);
@@ -129,9 +128,27 @@ void Server::WorkerThread()
 			break;
 		}
 		case COMP_TYPE::Recv: {
+			cout << " client send to server " << endl;
+			int remain_data = num_bytes + clients[key]._prevremain;
+			char* p = ex_over->_sendbuf;
+			while (remain_data > 0)
+			{
+				int packetsize = p[0];
+				if (packetsize <= remain_data) {
+					//process_packet(static_cast<int>(key),p);
+					p = p + packetsize;
+					remain_data = remain_data - packetsize;
+				}
+				else break;
+			}
+			clients[key]._prevremain = remain_data;
+			if (remain_data > 0)
+				memcpy(ex_over->_sendbuf, p, remain_data);
+			clients[key].do_recv();
 			break;
 		}
 		case COMP_TYPE::Send: {
+			delete ex_over;
 			break;
 		}
 		default:
@@ -139,6 +156,32 @@ void Server::WorkerThread()
 		}
 	}
 
+}
+
+void Server::ProcessPacket(int id, char* packet)
+{
+	switch (packet[1])
+	{
+	case CS_LOGIN: {
+		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
+		strcpy_s(clients[id]._name, p->name);
+		{
+			lock_guard<mutex>ll{ clients[id]._s_lock };
+			clients[id]._state = STATE::Ingame;
+		}
+		for (auto& pl : clients)
+		{
+			{
+				lock_guard<mutex> ll(pl._s_lock);
+				if (STATE::Ingame != pl._state) continue;
+			}
+			if (pl._id == id)continue;
+			pl.send_add_info_packet(id);
+			clients[id].send_add_info_packet(pl._id);
+		}
+		break;
+	}
+	}
 }
 
 int Server::get_new_client_id()

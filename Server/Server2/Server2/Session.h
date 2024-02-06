@@ -1,6 +1,6 @@
 #pragma once
 #include "Over_Exp.h"
-
+#include"protocol.h"
 enum class STATE: unsigned int {Free, Alloc , Ingame};
 struct FLOAT3 { float x, y, z; };
 class Session
@@ -37,5 +37,13 @@ public:
 		Over_Exp* sdata = new Over_Exp{ reinterpret_cast<char*>(packet) };
 		WSASend(_socket, &sdata->_wsaBuf, 1, 0, 0, &sdata->_over, 0);
 	}
+
+	void send_login_info_packet();
+
+	void send_add_info_packet(int client_id);
+
+	void send_move_packet();
+
+	
 };
 extern array<Session, MAX_USER> clients;

@@ -69,8 +69,6 @@ using namespace std;
 #include<ws2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
 
-constexpr int MAX_USER = 10000;
-constexpr int BUF_SIZE = 200;
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 

@@ -7,7 +7,6 @@
 #include"Network.h"
 
 
-
 #define MAX_LOADSTRING 100
 
 HINSTANCE						ghAppInstance;
@@ -20,11 +19,13 @@ ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
-
+HANDLE g_event;
 Network& network = Network::GetInstance();
 
-
-
+void networkthreadfunc()
+{
+	network.Run();
+}
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
@@ -33,16 +34,18 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	MSG msg;
 	HACCEL hAccelTable;
 
-	network.Run();
 
 	::LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	::LoadString(hInstance, IDC_LABPROJECT0798, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
-	
+
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0798));
 
+	thread net_th(networkthreadfunc);
+
+	WaitForSingleObject(g_event, INFINITE);
 
 	while (1)
 	{

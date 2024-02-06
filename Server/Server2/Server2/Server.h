@@ -1,5 +1,6 @@
 #pragma once
 #include"Over_Exp.h"
+#include"Session.h"
 
 class Server
 {
@@ -20,6 +21,8 @@ public:
 	void NetworkSet();
 	void Iocp();
 	void WorkerThread();
+
+	void ProcessPacket(int id, char* packet);
 
 	int get_new_client_id();
 public:
