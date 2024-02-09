@@ -1,0 +1,8 @@
+struct PlayerInfo
+{
+
+};
+struct MonsterInfo
+{
+
+};

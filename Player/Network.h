@@ -1,13 +1,42 @@
 #pragma once
 #include"thread"
-#include"Player.h"
+#include"Session.h"
 #include<thread>
 #include"../Server/Server2/Server2/protocol.h"
+
+enum class COMP_TYPE : int { Accept, Recv, Send };
+extern HANDLE g_event;
+
+
+class OVER_EX {
+public:
+	WSAOVERLAPPED overlapped;
+	WSABUF wsabuf;
+	char send_buf[BUF_SIZE];
+	COMP_TYPE process_type;
+
+	OVER_EX()
+	{
+		wsabuf.len = BUF_SIZE;
+		wsabuf.buf = send_buf;
+		process_type = COMP_TYPE::Recv;
+		ZeroMemory(&overlapped, sizeof(overlapped));
+	}
+
+	OVER_EX(char* packet)
+	{
+		wsabuf.len = packet[0];
+		wsabuf.buf = send_buf;
+		ZeroMemory(&overlapped, sizeof(overlapped));
+		process_type = COMP_TYPE::Send;
+		memcpy(send_buf, packet, packet[0]);
+	}
+};
+
 class Network
 {
 public:
 	static Network& GetInstance();
-
 	Network();
 	Network(const Network& network) = delete;
 	Network& operator=(const Network& network) = delete;
@@ -16,11 +45,11 @@ public:
 
 	void Login();
 	void Run();
-	void Close();
-	void do_send();
+	
+	void Login_send();
 	void do_recv();
 
-	void processData(char* buf, size_t recv_num);
+	void processData(CHAR* buf, size_t recv_num);
 	void processPacket(char* buf);
 
 private:
@@ -28,8 +57,10 @@ private:
 	char sendbuf[100];
 	WSABUF wsaBuf;
 	int my_id;
+	OVER_EX recv_over;
+
 
 
 };
-extern HANDLE g_event;
-extern array<CPlayer, 3> clients;
+
+

@@ -13,8 +13,6 @@ public:
 
 	~Server();
 
-
-
 	void Run();
 	void Stop();
 	
@@ -28,11 +26,11 @@ public:
 public:
 	SOCKET listensocket;
 	SOCKET clientsocket;
+
 	Over_Exp _overlapped;
 	HANDLE _IocpHandle;
 
 	
 	vector<thread> worker_thread;
-	
 };
 

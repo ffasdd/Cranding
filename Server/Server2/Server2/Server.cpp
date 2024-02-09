@@ -135,7 +135,7 @@ void Server::WorkerThread()
 			{
 				int packetsize = p[0];
 				if (packetsize <= remain_data) {
-					//process_packet(static_cast<int>(key),p);
+					ProcessPacket(static_cast<int>(key),p);
 					p = p + packetsize;
 					remain_data = remain_data - packetsize;
 				}
@@ -169,6 +169,9 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Ingame;
 		}
+
+		clients[id].send_login_info_packet();
+
 		for (auto& pl : clients)
 		{
 			{
