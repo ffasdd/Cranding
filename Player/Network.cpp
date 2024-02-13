@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Network.h"
 
+
 array<Session, 3> clients;
 
 Network& Network::GetInstance()
@@ -67,9 +68,12 @@ void Network::Run()
 
 	//LOGIN 
 	Login_send();
-	do_recv();
 	// 여기서 게임로직이 들어가야함 key input 
 	// 키를 받는 큐가 필요? 
+	while (true)
+	{
+	do_recv();
+	}
 
 
 }
@@ -87,6 +91,7 @@ void Network::Login_send()
 	p.size = sizeof(CS_LOGIN_PACKET);
 	p.type = CS_LOGIN;
 
+	char* sdata = { reinterpret_cast<char*>(&p) };
 	OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
 
 	if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
@@ -95,45 +100,22 @@ void Network::Login_send()
 
 void Network::do_recv()
 {
-	DWORD recv_flag = 0;
-	memset(&recv_over.overlapped, 0, sizeof(recv_over.overlapped));
-	recv_over.wsabuf.len = BUF_SIZE;
-	recv_over.wsabuf.buf = recv_over.send_buf;
+	char buf[BUF_SIZE] = { 0 };
+	WSABUF wsabuf{ BUF_SIZE,buf };
+	DWORD recv_byte{ 0 }, recv_flag{ 0 };
 
-	if (WSARecv(clientSocket, &recv_over.wsabuf, 1, 0, &recv_flag, &recv_over.overlapped, 0) == SOCKET_ERROR)
+	if (WSARecv(clientSocket, &wsabuf, 1, &recv_byte, &recv_flag, 0, 0) == SOCKET_ERROR)
 	{
-		if (GetLastError() != WSA_IO_PENDING)
+		if (WSAGetLastError() != WSAEWOULDBLOCK)
 			return;
 	}
-
-
-	int recv_num = recv_over.wsabuf.len;
-	char* ptr = recv_over.wsabuf.buf;
-	static size_t packet_size = 0;
-	static size_t saved_packet_size = 0;
-	static char packet_buffer[BUF_SIZE];
-
-	while (0 != recv_num)
+	if (recv_byte > 0)
 	{
-		if (0 == packet_size) packet_size = ptr[0];
-		if (recv_num + saved_packet_size >= packet_size)
-		{
-			memcpy(packet_buffer + saved_packet_size, ptr, packet_size - saved_packet_size);
-			processPacket(packet_buffer);
-			ptr += packet_size - saved_packet_size;
-			recv_num -= packet_size - saved_packet_size;
-			packet_size = 0;
-			saved_packet_size = 0;
-		}
-		else
-		{
-			memcpy(packet_buffer + saved_packet_size, ptr, recv_num);
-			saved_packet_size += recv_num;
-			recv_num = 0;
-		}
+	processData(wsabuf.buf,recv_byte);
 	}
 	
 }
+
 
 
 
@@ -172,10 +154,10 @@ void Network::processPacket(char* buf)
 	case SC_LOGIN_INFO:
 	{
 		std::cout << "success Login" << std::endl;
-		SC_LOGIN_INFO_PACKET* packet = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(&buf);
+		SC_LOGIN_INFO_PACKET* packet = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
 		my_id = packet->id;
 	
-		//clients[my_id].m_id = packet->id;
+		clients[my_id].m_id = packet->id;
 		break;
 
 	}
@@ -183,7 +165,7 @@ void Network::processPacket(char* buf)
 	{
 		int ob_id;
 		std::cout << "Add Player" << std::endl;
-		SC_ADD_OBJECT_PACKET* packet = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(&buf);
+		SC_ADD_OBJECT_PACKET* packet = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		ob_id = packet->id;
 		clients[ob_id].m_id = packet->id;
 		break;

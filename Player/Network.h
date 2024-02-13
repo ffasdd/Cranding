@@ -55,12 +55,9 @@ public:
 private:
 	SOCKET clientSocket;
 	char sendbuf[100];
+	char recvbuf[BUF_SIZE];
 	WSABUF wsaBuf;
 	int my_id;
 	OVER_EX recv_over;
-
-
-
 };
-
 
