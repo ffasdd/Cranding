@@ -9,6 +9,7 @@
 
 #include "Object.h"
 #include "Camera.h"
+#include"../Server/Server2/Server2/protocol.h"
 
 class CPlayer : public CGameObject
 {
@@ -83,6 +84,10 @@ public:
 	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed) { return(NULL); }
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
+
+public:
+	//-----network -------
+	void sendMovePakcet();
 };
 
 class CAirplanePlayer : public CPlayer

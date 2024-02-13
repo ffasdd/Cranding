@@ -68,14 +68,20 @@ void Network::Run()
 
 	//LOGIN 
 	Login_send();
+	SetEvent(g_event);
 	// 여기서 게임로직이 들어가야함 key input 
 	// 키를 받는 큐가 필요? 
 	while (true)
 	{
-	do_recv();
+		recvPacket();
+		if (clients.size() == clients.max_size())
+			break;
 	}
-
-
+	while (true)
+	{
+		// send  
+		// 센드안에서 바로반응을 얻어야하니 recv 
+	}
 }
 
 
@@ -84,7 +90,9 @@ void Network::Login_send()
 	CS_LOGIN_PACKET p;
 	int _id = 1;
 
-	char name[NAME_SIZE] = { "SDY" };
+	char name[NAME_SIZE];
+	cout << "Input User Name : ";
+	cin >> name;
 
 	p.id = _id;
 	strcpy_s(p.name, name);
@@ -98,7 +106,7 @@ void Network::Login_send()
 		cout << " Send Error" << endl;
 }
 
-void Network::do_recv()
+void Network::recvPacket()
 {
 	char buf[BUF_SIZE] = { 0 };
 	WSABUF wsabuf{ BUF_SIZE,buf };
@@ -110,15 +118,10 @@ void Network::do_recv()
 			return;
 	}
 	if (recv_byte > 0)
-	{
-	processData(wsabuf.buf,recv_byte);
-	}
-	
+		processData(wsabuf.buf, recv_byte);
+
+
 }
-
-
-
-
 void Network::processData(CHAR* buf, size_t recv_num)
 {
 	char* ptr = buf;
@@ -156,10 +159,11 @@ void Network::processPacket(char* buf)
 		std::cout << "success Login" << std::endl;
 		SC_LOGIN_INFO_PACKET* packet = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
 		my_id = packet->id;
-	
 		clients[my_id].m_id = packet->id;
-		break;
+		clients[my_id].m_hp = packet->hp;
+		clients[my_id]._pos = packet->pos;
 
+		break;
 	}
 	case  SC_ADD_OBJECT:
 	{
@@ -168,6 +172,13 @@ void Network::processPacket(char* buf)
 		SC_ADD_OBJECT_PACKET* packet = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		ob_id = packet->id;
 		clients[ob_id].m_id = packet->id;
+		clients[ob_id].m_hp = packet->hp;
+		strcpy_s(clients[ob_id].m_name, packet->name);
+		clients[ob_id]._pos = packet->pos;
+
+		for (auto cl : clients)
+			cout << cl.m_name << endl;
+
 		break;
 	}
 	case SC_MOVE_OBJECT:

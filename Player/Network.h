@@ -47,7 +47,7 @@ public:
 	void Run();
 	
 	void Login_send();
-	void do_recv();
+	void recvPacket();
 
 	void processData(CHAR* buf, size_t recv_num);
 	void processPacket(char* buf);

@@ -184,6 +184,11 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
+	case CS_MOVE: {
+		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
+		break;
+
+	}
 	}
 }
 

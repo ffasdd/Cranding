@@ -22,6 +22,8 @@ constexpr char SC_LOGIN_OK = 7;
 constexpr char SC_LOGIN_FAIL = 8;
 constexpr char SC_STAT_CHANGE = 9;
 
+
+
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET {
 	unsigned char size;
@@ -61,9 +63,7 @@ struct SC_LOGIN_INFO_PACKET {
 	int		max_hp;
 	int		exp;
 	int		level;
-	float x;
-	float y;
-	float z;
+	XMFLOAT3 pos;
 };
 
 struct SC_ADD_OBJECT_PACKET {
@@ -72,9 +72,7 @@ struct SC_ADD_OBJECT_PACKET {
 	int		id;
 	int		hp;
 	int		Max_hp;
-	float x;
-	float y;
-	float z;
+	XMFLOAT3 pos;
 	char	name[NAME_SIZE];
 };
 
@@ -88,7 +86,7 @@ struct SC_MOVE_OBJECT_PACKET {
 	unsigned char size;
 	char	type;
 	int		id;
-	short	x, y;
+	XMFLOAT3 pos;
 	unsigned int move_time;
 };
 
@@ -99,14 +97,6 @@ struct SC_CHAT_PACKET {
 	char	mess[CHAT_SIZE];
 };
 
-struct SC_LOGIN_OK_PACKET {
-	unsigned char size;
-	char	type;
-	int id;
-	short x;
-	short y;
-
-};
 
 struct SC_LOGIN_FAIL_PACKET {
 	unsigned char size;

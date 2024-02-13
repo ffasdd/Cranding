@@ -58,10 +58,23 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 	if (dwDirection)
 	{
 		XMFLOAT3 xmf3Shift = XMFLOAT3(0, 0, 0);
-		if (dwDirection & DIR_FORWARD) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Look, fDistance);
-		if (dwDirection & DIR_BACKWARD) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Look, -fDistance);
-		if (dwDirection & DIR_RIGHT) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Right, fDistance);
-		if (dwDirection & DIR_LEFT) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Right, -fDistance);
+		if (dwDirection & DIR_FORWARD)
+		{
+
+			xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Look, fDistance);
+		}
+		if (dwDirection & DIR_BACKWARD) 
+		{
+			xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Look, -fDistance);
+		}
+		if (dwDirection & DIR_RIGHT) 
+		{
+			xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Right, fDistance);
+		}
+		if (dwDirection & DIR_LEFT) 
+		{
+			xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Right, -fDistance);
+		}
 		if (dwDirection & DIR_UP) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, fDistance);
 		if (dwDirection & DIR_DOWN) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, -fDistance);
 
@@ -230,6 +243,12 @@ void CPlayer::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamer
 {
 	DWORD nCameraMode = (pCamera) ? pCamera->GetMode() : 0x00;
 	if (nCameraMode == THIRD_PERSON_CAMERA) CGameObject::Render(pd3dCommandList, pCamera);
+}
+
+void CPlayer::sendMovePakcet()
+{
+	CS_MOVE_PACKET p;
+	p.direction = 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -2,7 +2,7 @@
 #include "Over_Exp.h"
 #include"protocol.h"
 enum class STATE: unsigned int {Free, Alloc , Ingame};
-struct FLOAT3 { float x, y, z; };
+
 class Session
 {
 	Over_Exp _recv_over;
@@ -14,7 +14,7 @@ public:
 	int _hp;
 	int _maxhp;
 	SOCKET _socket;
-	FLOAT3 _pos;
+	XMFLOAT3 _pos;
 	char _name[100];
 	int _prevremain;
 	
