@@ -1,8 +1,11 @@
 #include "stdafx.h"
 #include "Network.h"
+#include "Scene.h"
 
 
 array<Session, 3> clients;
+
+CScene					Scene;
 
 Network& Network::GetInstance()
 {
@@ -168,9 +171,11 @@ void Network::processPacket(char* buf)
 	case  SC_ADD_OBJECT:
 	{
 		int ob_id;
-		std::cout << "Add Player" << std::endl;
+		std::cout << "Add Player " << std::endl;
 		SC_ADD_OBJECT_PACKET* packet = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		ob_id = packet->id;
+		
+		Scene.AddPlayer();
 		clients[ob_id].m_id = packet->id;
 		clients[ob_id].m_hp = packet->hp;
 		strcpy_s(clients[ob_id].m_name, packet->name);
