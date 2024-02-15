@@ -15,6 +15,7 @@ public:
 	int _maxhp;
 	SOCKET _socket;
 	XMFLOAT3 _pos;
+	XMFLOAT3 _look;
 	char _name[100];
 	int _prevremain;
 	
@@ -42,7 +43,7 @@ public:
 
 	void send_add_info_packet(int client_id);
 
-	void send_move_packet();
+	void send_move_packet(int client_id);
 
 	
 };

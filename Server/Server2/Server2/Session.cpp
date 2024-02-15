@@ -39,8 +39,17 @@ void Session::send_add_info_packet(int client_id)
 	do_send(&p);
 }
 
-void Session::send_move_packet()
+void Session::send_move_packet(int client_id)
 {
+	SC_MOVE_OBJECT_PACKET p;
+	p.id = _id;
+	p.size = sizeof(SC_ADD_OBJECT_PACKET);
+	p.type = SC_MOVE_OBJECT;
+	p.pos = clients[client_id]._pos;
+	p.look = clients[client_id]._look;
+	do_send(&p);
 }
+
+
 
 

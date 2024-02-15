@@ -1,47 +1,23 @@
 #include "stdafx.h"
 #include "Network.h"
-#include "Scene.h"
-
-
-array<Session, 3> clients;
-
-CScene					Scene;
 
 Network& Network::GetInstance()
 {
 	static Network instance;
 	return instance;
 	// TODO: 여기에 return 문을 삽입합니다.
-
 }
 
 Network::Network()
 {
 	WSADATA wsaData;
 	::WSAStartup(MAKEWORD(2, 2), &wsaData);
-
 }
 
 Network::~Network()
 {
 	closesocket(clientSocket);
 	WSACleanup();
-}
-
-void Network::Login()
-{
-	CS_LOGIN_PACKET p;
-	int _id = 0;
-	cout << " ID : " << endl;
-	cin >> _id;
-	cout << " NAME : " << endl;
-	char name[NAME_SIZE];
-	cin >> name;
-	p.size = sizeof(CS_LOGIN_PACKET);
-	p.type = CS_LOGIN;
-	p.id = _id;
-	strcpy_s(p.name, name);
-
 }
 
 void Network::Run()
@@ -76,14 +52,11 @@ void Network::Run()
 	// 키를 받는 큐가 필요? 
 	while (true)
 	{
+		if (clientsendque.size() != 0) {
+			sendprocess(clientsendque.front());
+			clientsendque.pop();
+		}
 		recvPacket();
-		if (clients.size() == clients.max_size())
-			break;
-	}
-	while (true)
-	{
-		// send  
-		// 센드안에서 바로반응을 얻어야하니 recv 
 	}
 }
 
@@ -122,9 +95,8 @@ void Network::recvPacket()
 	}
 	if (recv_byte > 0)
 		processData(wsabuf.buf, recv_byte);
-
-
 }
+
 void Network::processData(CHAR* buf, size_t recv_num)
 {
 	char* ptr = buf;
@@ -175,22 +147,32 @@ void Network::processPacket(char* buf)
 		SC_ADD_OBJECT_PACKET* packet = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		ob_id = packet->id;
 		
-		Scene.AddPlayer();
 		clients[ob_id].m_id = packet->id;
 		clients[ob_id].m_hp = packet->hp;
 		strcpy_s(clients[ob_id].m_name, packet->name);
 		clients[ob_id]._pos = packet->pos;
 
-		for (auto cl : clients)
-			cout << cl.m_name << endl;
-
 		break;
 	}
 	case SC_MOVE_OBJECT:
 	{
+		SC_MOVE_OBJECT_PACKET* p = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(buf);
+		int cl_id = p->id;
+		clients[cl_id]._pos = p->pos;
+		clients[cl_id]._look_vec = p->look;
 		break;
 	}
 
+	}
+}
+
+void Network::sendprocess(int sendtype)
+{
+	switch (sendtype)
+	{
+	case 1:
+		cout << "move forward " << endl;
+		break;
 	}
 }
 

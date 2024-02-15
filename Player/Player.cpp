@@ -5,6 +5,8 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "Shader.h"
+//extern queue<int> clientsendque;
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CPlayer
@@ -60,8 +62,10 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 		XMFLOAT3 xmf3Shift = XMFLOAT3(0, 0, 0);
 		if (dwDirection & DIR_FORWARD)
 		{
-
+			clientsendque.push(1);
 			xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Look, fDistance);
+
+
 		}
 		if (dwDirection & DIR_BACKWARD) 
 		{
@@ -243,12 +247,6 @@ void CPlayer::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamer
 {
 	DWORD nCameraMode = (pCamera) ? pCamera->GetMode() : 0x00;
 	if (nCameraMode == THIRD_PERSON_CAMERA) CGameObject::Render(pd3dCommandList, pCamera);
-}
-
-void CPlayer::sendMovePakcet()
-{
-	CS_MOVE_PACKET p;
-	p.direction = 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -6,6 +6,8 @@
 
 enum class COMP_TYPE : int { Accept, Recv, Send };
 extern HANDLE g_event;
+extern array<Session, 3> clients;
+extern queue<int> clientsendque;
 
 
 class OVER_EX {
@@ -43,7 +45,6 @@ public:
 
 	~Network();
 
-	void Login();
 	void Run();
 	
 	void Login_send();
@@ -51,6 +52,7 @@ public:
 
 	void processData(CHAR* buf, size_t recv_num);
 	void processPacket(char* buf);
+	void sendprocess(int sendtype);
 
 private:
 	SOCKET clientSocket;
@@ -60,4 +62,3 @@ private:
 	int my_id;
 	OVER_EX recv_over;
 };
-

@@ -19,13 +19,17 @@ ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
+
 HANDLE g_event = CreateEvent(NULL, FALSE, FALSE, NULL);
 Network& network = Network::GetInstance();
 
+array<Session, 3> clients;
+queue<int> clientsendque;
 void networkthreadfunc()
 {
 	network.Run();
 }
+
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);

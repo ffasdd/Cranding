@@ -9,7 +9,8 @@
 
 #include "Object.h"
 #include "Camera.h"
-#include"../Server/Server2/Server2/protocol.h"
+
+extern queue<int> clientsendque;
 
 class CPlayer : public CGameObject
 {

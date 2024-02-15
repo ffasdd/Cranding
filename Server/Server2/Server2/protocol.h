@@ -36,6 +36,8 @@ struct CS_MOVE_PACKET {
 	unsigned char size;
 	char	type;
 	char	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT
+	XMFLOAT3 pos;
+	XMFLOAT3 look;
 	unsigned	move_time;
 };
 
@@ -87,6 +89,7 @@ struct SC_MOVE_OBJECT_PACKET {
 	char	type;
 	int		id;
 	XMFLOAT3 pos;
+	XMFLOAT3 look;
 	unsigned int move_time;
 };
 

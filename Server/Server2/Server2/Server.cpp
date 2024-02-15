@@ -185,12 +185,24 @@ void Server::ProcessPacket(int id, char* packet)
 		break;
 	}
 	case CS_MOVE: {
+
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
+		clients[id]._pos = p->pos;
+		clients[id]._look = p->look;
+
+		clients[id].send_move_packet(id);
+		for (auto& pl : clients)
+		{
+			if (pl._id == id)continue;
+			pl.send_move_packet(id);
+		}
 		break;
 
 	}
 	}
 }
+
+
 
 int Server::get_new_client_id()
 {
