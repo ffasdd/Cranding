@@ -179,48 +179,41 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppHierarchicalGameObjects[11]->Rotate(30.0f, 0.0f, 0.0f);
 
 	// fire_boss 7
-	CLoadedModelInfo* pFireBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shadow (3).bin", NULL);
+	CLoadedModelInfo* pFireBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shadow.bin", NULL);
 	m_ppHierarchicalGameObjects[12] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireBossModel, 1);
 	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_ppHierarchicalGameObjects[12]->SetPosition(XMFLOAT3(10.0f, 0, 90.0f));
 	m_ppHierarchicalGameObjects[12]->SetScale(7.0f, 7.0f, 7.0f);
-	m_ppHierarchicalGameObjects[12]->Rotate(30.0f, 0.0f, 0.0f);
 
 	m_ppHierarchicalGameObjects[13] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireBossModel, 1);
 	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
 	m_ppHierarchicalGameObjects[13]->SetPosition(30.0f, 0, 90.0f);
 	m_ppHierarchicalGameObjects[13]->SetScale(7.0f, 7.0f, 7.0f);
-	m_ppHierarchicalGameObjects[13]->Rotate(30.0f, 0.0f, 0.0f);
 
 	m_ppHierarchicalGameObjects[14] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireBossModel, 1);
 	m_ppHierarchicalGameObjects[14]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 2);
 	m_ppHierarchicalGameObjects[14]->SetPosition(50, 0, 90);
 	m_ppHierarchicalGameObjects[14]->SetScale(7.0f, 7.0f, 7.0f);
-	m_ppHierarchicalGameObjects[14]->Rotate(30.0f, 0.0f, 0.0f);
 
 	m_ppHierarchicalGameObjects[15] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireBossModel, 1);
 	m_ppHierarchicalGameObjects[15]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 3);
 	m_ppHierarchicalGameObjects[15]->SetPosition(70, 0, 90);
 	m_ppHierarchicalGameObjects[15]->SetScale(7.0f, 7.0f, 7.0f);
-	m_ppHierarchicalGameObjects[15]->Rotate(30.0f, 0.0f, 0.0f);
 
 	m_ppHierarchicalGameObjects[16] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireBossModel, 1);
 	m_ppHierarchicalGameObjects[16]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 4);
 	m_ppHierarchicalGameObjects[16]->SetPosition(90, 0, 90);
 	m_ppHierarchicalGameObjects[16]->SetScale(7.0f, 7.0f, 7.0f);
-	m_ppHierarchicalGameObjects[16]->Rotate(30.0f, 0.0f, 0.0f);
 
 	m_ppHierarchicalGameObjects[17] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireBossModel, 1);
 	m_ppHierarchicalGameObjects[17]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 5);
 	m_ppHierarchicalGameObjects[17]->SetPosition(110, 0, 90);
 	m_ppHierarchicalGameObjects[17]->SetScale(7.0f, 7.0f, 7.0f);
-	m_ppHierarchicalGameObjects[17]->Rotate(30.0f, 0.0f, 0.0f);
 
 	m_ppHierarchicalGameObjects[18] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireBossModel, 1);
 	m_ppHierarchicalGameObjects[18]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 6);
 	m_ppHierarchicalGameObjects[18]->SetPosition(130, 0, 90);
 	m_ppHierarchicalGameObjects[18]->SetScale(7.0f, 7.0f, 7.0f);
-	m_ppHierarchicalGameObjects[18]->Rotate(30.0f, 0.0f, 0.0f);
 
 	// fire_normal 7
 	CLoadedModelInfo* pFireNormalModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
