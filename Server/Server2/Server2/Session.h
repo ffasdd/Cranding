@@ -45,6 +45,8 @@ public:
 
 	void send_move_packet(int client_id);
 
+	void send_remove_packet(int client_id);
+
 	
 };
 extern array<Session, MAX_USER> clients;

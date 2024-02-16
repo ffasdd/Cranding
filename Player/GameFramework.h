@@ -6,7 +6,9 @@
 #include "Timer.h"
 #include "Player.h"
 #include "Scene.h"
+#include "Network.h"
 
+extern SOCKET clientSocket;
 class CGameFramework
 {
 public:

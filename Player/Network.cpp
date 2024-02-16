@@ -52,10 +52,6 @@ void Network::Run()
 	// 키를 받는 큐가 필요? 
 	while (true)
 	{
-		if (clientsendque.size() != 0) {
-			sendprocess(clientsendque.front());
-			clientsendque.pop();
-		}
 		recvPacket();
 	}
 }
@@ -64,23 +60,24 @@ void Network::Run()
 void Network::Login_send()
 {
 	CS_LOGIN_PACKET p;
-	int _id = 1;
-
 	char name[NAME_SIZE];
 	cout << "Input User Name : ";
 	cin >> name;
+	cout << "Input User Id (Only Number: ";
+	int id;
+	cin >> id;
 
-	p.id = _id;
 	strcpy_s(p.name, name);
 	p.size = sizeof(CS_LOGIN_PACKET);
 	p.type = CS_LOGIN;
-
-	char* sdata = { reinterpret_cast<char*>(&p) };
+	p.id = id;
 	OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
 
 	if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
 		cout << " Send Error" << endl;
 }
+
+
 
 void Network::recvPacket()
 {
@@ -134,7 +131,7 @@ void Network::processPacket(char* buf)
 		std::cout << "success Login" << std::endl;
 		SC_LOGIN_INFO_PACKET* packet = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
 		my_id = packet->id;
-		clients[my_id].m_id = packet->id;
+		clients[my_id].m_id = my_id;
 		clients[my_id].m_hp = packet->hp;
 		clients[my_id]._pos = packet->pos;
 
@@ -142,12 +139,12 @@ void Network::processPacket(char* buf)
 	}
 	case  SC_ADD_OBJECT:
 	{
-		int ob_id;
+	
 		std::cout << "Add Player " << std::endl;
 		SC_ADD_OBJECT_PACKET* packet = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
-		ob_id = packet->id;
+		int ob_id = packet->id;
 		
-		clients[ob_id].m_id = packet->id;
+		clients[ob_id].m_id = ob_id;
 		clients[ob_id].m_hp = packet->hp;
 		strcpy_s(clients[ob_id].m_name, packet->name);
 		clients[ob_id]._pos = packet->pos;
@@ -160,7 +157,17 @@ void Network::processPacket(char* buf)
 		int cl_id = p->id;
 		clients[cl_id]._pos = p->pos;
 		clients[cl_id]._look_vec = p->look;
+
 		break;
+	}
+	case SC_REMOVE_OBJECT: {
+		SC_REMOVE_OBJECT_PACKET* p = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(buf);
+		int ob_id = p->id;
+		clients[ob_id].m_name[0] = 0;
+		clients[ob_id].m_id = -1;
+		clients[ob_id]._state = 0;
+		break;
+		
 	}
 
 	}

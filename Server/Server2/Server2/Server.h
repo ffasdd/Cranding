@@ -22,6 +22,8 @@ public:
 
 	void ProcessPacket(int id, char* packet);
 
+	void disconnect(int id);
+
 	int get_new_client_id();
 public:
 	SOCKET listensocket;

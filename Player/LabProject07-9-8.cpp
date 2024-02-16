@@ -25,6 +25,7 @@ Network& network = Network::GetInstance();
 
 array<Session, 3> clients;
 queue<int> clientsendque;
+SOCKET clientSocket;
 void networkthreadfunc()
 {
 	network.Run();

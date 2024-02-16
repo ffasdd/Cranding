@@ -29,7 +29,7 @@ void Session::send_login_info_packet()
 void Session::send_add_info_packet(int client_id)
 {
 	SC_ADD_OBJECT_PACKET p;
-	p.id = _id;
+	p.id = client_id;
 	p.size = sizeof(SC_ADD_OBJECT_PACKET);
 	p.type = SC_ADD_OBJECT;
 	p.pos = clients[client_id]._pos;
@@ -47,6 +47,15 @@ void Session::send_move_packet(int client_id)
 	p.type = SC_MOVE_OBJECT;
 	p.pos = clients[client_id]._pos;
 	p.look = clients[client_id]._look;
+	do_send(&p);
+}
+
+void Session::send_remove_packet(int client_id)
+{
+	SC_REMOVE_OBJECT_PACKET p;
+	p.id = client_id;
+	p.size = sizeof(SC_REMOVE_OBJECT_PACKET);
+	p.type = SC_REMOVE_OBJECT;
 	do_send(&p);
 }
 

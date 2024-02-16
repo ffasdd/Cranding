@@ -82,14 +82,14 @@ void Server::WorkerThread()
 		if (FALSE == ret) {
 			if (ex_over->_comptype == COMP_TYPE::Accept) cout << "Accept Error";
 			else {
-				cout << "GQCS Error on client[" << key << "]\n";/*
-				disconnect(static_cast<int>(key));*/
+				cout << "GQCS Error on client[" << key << "]\n";
+				disconnect(static_cast<int>(key));
 				if (ex_over->_comptype == COMP_TYPE::Send) delete ex_over;
 				continue;
 			}
 		}
 		if ((0 == num_bytes) && ((ex_over->_comptype == COMP_TYPE::Recv) || (ex_over->_comptype == COMP_TYPE::Send))) {
-			//disconnect(static_cast<int>(key));
+			disconnect(static_cast<int>(key));
 			if (ex_over->_comptype == COMP_TYPE::Send) delete ex_over;
 			continue;
 		}
@@ -179,6 +179,7 @@ void Server::ProcessPacket(int id, char* packet)
 				if (STATE::Ingame != pl._state) continue;
 			}
 			if (pl._id == id)continue;
+
 			pl.send_add_info_packet(id);
 			clients[id].send_add_info_packet(pl._id);
 		}
@@ -200,6 +201,18 @@ void Server::ProcessPacket(int id, char* packet)
 
 	}
 	}
+}
+
+void Server::disconnect(int id)
+{
+	for (auto& pl : clients)
+	{
+		if (pl._id == id) continue;
+		pl.send_remove_packet(id);
+	}
+	closesocket(clients[id]._socket);
+
+	lock_guard<mutex>ll(clients[id]._s_lock);
 }
 
 

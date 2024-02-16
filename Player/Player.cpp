@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "Shader.h"
+
 //extern queue<int> clientsendque;
 
 
@@ -62,10 +63,7 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 		XMFLOAT3 xmf3Shift = XMFLOAT3(0, 0, 0);
 		if (dwDirection & DIR_FORWARD)
 		{
-			clientsendque.push(1);
 			xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Look, fDistance);
-
-
 		}
 		if (dwDirection & DIR_BACKWARD) 
 		{
