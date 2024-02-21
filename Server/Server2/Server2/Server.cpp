@@ -124,7 +124,6 @@ void Server::WorkerThread()
 			ZeroMemory(&_overlapped._over, sizeof(_overlapped._over));
 			int addr_size = sizeof(SOCKADDR_IN);
 			AcceptEx(listensocket, clientsocket, _overlapped._sendbuf, 0, addr_size + 16, addr_size + 16, 0, &_overlapped._over);
-
 			break;
 		}
 		case COMP_TYPE::Recv: {
@@ -186,8 +185,33 @@ void Server::ProcessPacket(int id, char* packet)
 		break;
 	}
 	case CS_MOVE: {
-
+		XMFLOAT3 xmf3Shift = XMFLOAT3(0, 0, 0);
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
+
+		//switch (p->direction)
+		//{
+		//case 0:
+		//{
+		//	//forward
+		//	xmf3Shift = Vector3::Add(xmf3Shift,)
+		//	break;
+		//}
+		//case 1:
+		//{
+		//	//back
+		//	break;
+		//}
+		//case 2:
+		//{
+		//	//left
+		//	break;
+		//}
+		//case 3:
+		//{
+		//	//right
+		//	break;
+		//}
+		//}
 		clients[id]._pos = p->pos;
 		clients[id]._look = p->look;
 

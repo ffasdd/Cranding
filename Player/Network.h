@@ -1,12 +1,13 @@
 #pragma once
 #include"thread"
 #include"Session.h"
+#include"GameFramework.h"
 #include<thread>
 #include"../Server/Server2/Server2/protocol.h"
 
 enum class COMP_TYPE : int { Accept, Recv, Send };
 extern HANDLE g_event;
-extern array<Session, 3> clients;
+extern unordered_map<int, Session> clients;
 extern queue<int> clientsendque;
 extern SOCKET clientSocket;
 

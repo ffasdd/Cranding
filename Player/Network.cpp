@@ -47,7 +47,7 @@ void Network::Run()
 
 	//LOGIN 
 	Login_send();
-	SetEvent(g_event);
+
 	// 여기서 게임로직이 들어가야함 key input 
 	// 키를 받는 큐가 필요? 
 	while (true)
@@ -135,6 +135,7 @@ void Network::processPacket(char* buf)
 		clients[my_id].m_hp = packet->hp;
 		clients[my_id]._pos = packet->pos;
 
+		SetEvent(g_event);
 		break;
 	}
 	case  SC_ADD_OBJECT:
@@ -155,6 +156,7 @@ void Network::processPacket(char* buf)
 	{
 		SC_MOVE_OBJECT_PACKET* p = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(buf);
 		int cl_id = p->id;
+		
 		clients[cl_id]._pos = p->pos;
 		clients[cl_id]._look_vec = p->look;
 

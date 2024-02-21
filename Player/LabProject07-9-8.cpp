@@ -23,9 +23,11 @@ INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 HANDLE g_event = CreateEvent(NULL, FALSE, FALSE, NULL);
 Network& network = Network::GetInstance();
 
-array<Session, 3> clients;
+unordered_map<int, Session> clients;
+//array<Session, 3> clients;
 queue<int> clientsendque;
 SOCKET clientSocket;
+
 void networkthreadfunc()
 {
 	network.Run();
@@ -54,19 +56,29 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	while (1)
 	{
-		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT) break;
-			if (!::TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+	
+
+			if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
+				if (msg.message == WM_QUIT) break;
+				if (!::TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+				{
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}
 			}
-		}
-		else
-		{
-			gGameFramework.FrameAdvance();
-		}
+			else
+			{
+				if (gGameFramework.m_pPlayer != NULL)
+				{
+					for (int i = 0; i < clients.size(); ++i)
+					{
+						gGameFramework.myFunc_SetPosition(i, clients[i].m_id, clients[i]._pos);
+					}
+				}
+				gGameFramework.FrameAdvance();
+			}
+		
 	}
 	gGameFramework.OnDestroy();
 

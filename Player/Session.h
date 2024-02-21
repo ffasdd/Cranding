@@ -12,7 +12,7 @@ public:
 		_look_vec = { 0.f,0.f,0.f };
 	}
 public:
-	short m_id;
+	int m_id;
 	char m_name[20];
 	int m_hp;
 	XMFLOAT3 _pos;
