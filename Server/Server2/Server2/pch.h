@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include<random>
 #include<array>
 #include<vector>
 #include<map>
@@ -56,3 +57,5 @@ extern HINSTANCE						ghAppInstance;
 #pragma comment(lib, "dxgi.lib")
 
 #pragma comment(lib, "dxguid.lib")
+
+#include<random>

@@ -43,7 +43,7 @@ void Server::NetworkSet()
 	bind(listensocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr));
 	listen(listensocket, SOMAXCONN);
 }
-
+	
 void Server::Iocp()
 {
 	SOCKADDR_IN cl_addr;
@@ -111,6 +111,9 @@ void Server::WorkerThread()
 			clients[c_id]._name[0] = 0;
 			clients[c_id]._prevremain = 0;
 			clients[c_id]._socket = clientsocket;
+			clients[c_id]._look = XMFLOAT3(0.0f, 0.0f, 1.0f);
+			clients[c_id]._right = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	
 			CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientsocket), _IocpHandle, c_id, 0);
 			clients[c_id].do_recv();
 			clientsocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -185,33 +188,8 @@ void Server::ProcessPacket(int id, char* packet)
 		break;
 	}
 	case CS_MOVE: {
-		XMFLOAT3 xmf3Shift = XMFLOAT3(0, 0, 0);
-		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 
-		//switch (p->direction)
-		//{
-		//case 0:
-		//{
-		//	//forward
-		//	xmf3Shift = Vector3::Add(xmf3Shift,)
-		//	break;
-		//}
-		//case 1:
-		//{
-		//	//back
-		//	break;
-		//}
-		//case 2:
-		//{
-		//	//left
-		//	break;
-		//}
-		//case 3:
-		//{
-		//	//right
-		//	break;
-		//}
-		//}
+		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 		clients[id]._pos = p->pos;
 		clients[id]._look = p->look;
 
@@ -224,6 +202,19 @@ void Server::ProcessPacket(int id, char* packet)
 		break;
 
 	}
+	//case CS_ROTATE: {
+	//	CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
+	//	clients[id]._look = p->look;
+	//	clients[id]._right = p->right;
+
+	//	clients[id].send_rotate_packet(id);
+	//	for (auto& pl : clients)
+	//	{
+	//		if (pl._id == id) continue;
+	//		pl.send_rotate_packet(id);
+	//	}
+	//	break;
+	//}
 	}
 }
 
@@ -238,8 +229,6 @@ void Server::disconnect(int id)
 
 	lock_guard<mutex>ll(clients[id]._s_lock);
 }
-
-
 
 int Server::get_new_client_id()
 {

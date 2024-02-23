@@ -8,6 +8,7 @@
 #include "Scene.h"
 #include "Network.h"
 
+enum class MouseState : int { MOUSE_DONW, MOUSE_UP };
 
 extern SOCKET clientSocket;
 class CGameFramework

@@ -54,10 +54,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	WaitForSingleObject(g_event, INFINITE);
 
+	gGameFramework.cl_id = network.my_id;
+
 	while (1)
 	{
-	
-
 			if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{
 				if (msg.message == WM_QUIT) break;
@@ -68,12 +68,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				}
 			}
 			else
-			{
+			{	
 				if (gGameFramework.m_pPlayer != NULL)
 				{
 					for (int i = 0; i < clients.size(); ++i)
 					{
 						gGameFramework.myFunc_SetPosition(i, clients[i].m_id, clients[i]._pos);
+						//gGameFramework.myFunc_SetLookRight(i, clients[i].m_id, clients[i]._look_vec, clients[i]._right_vec);
 					}
 				}
 				gGameFramework.FrameAdvance();

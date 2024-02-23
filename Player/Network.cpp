@@ -63,7 +63,7 @@ void Network::Login_send()
 	char name[NAME_SIZE];
 	cout << "Input User Name : ";
 	cin >> name;
-	cout << "Input User Id (Only Number: ";
+	cout << "Input User Id (Only Number): ";
 	int id;
 	cin >> id;
 
@@ -134,7 +134,9 @@ void Network::processPacket(char* buf)
 		clients[my_id].m_id = my_id;
 		clients[my_id].m_hp = packet->hp;
 		clients[my_id]._pos = packet->pos;
-
+		clients[my_id]._look_vec = packet->look;
+		clients[my_id]._right_vec = packet->right;
+		
 		SetEvent(g_event);
 		break;
 	}
@@ -169,7 +171,6 @@ void Network::processPacket(char* buf)
 		clients[ob_id].m_id = -1;
 		clients[ob_id]._state = 0;
 		break;
-		
 	}
 
 	}

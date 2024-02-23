@@ -1,6 +1,7 @@
 #pragma once
 #include "Over_Exp.h"
 #include"protocol.h"
+
 enum class STATE: unsigned int {Free, Alloc , Ingame};
 
 class Session
@@ -16,6 +17,7 @@ public:
 	SOCKET _socket;
 	XMFLOAT3 _pos;
 	XMFLOAT3 _look;
+	XMFLOAT3 _right;
 	char _name[100];
 	int _prevremain;
 	
@@ -47,6 +49,6 @@ public:
 
 	void send_remove_packet(int client_id);
 
-	
+	void send_rotate_packet(int client_id);
 };
 extern array<Session, MAX_USER> clients;

@@ -386,13 +386,37 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 			others_id = n;
 			break;
 		}
-		m_pScene->m_ppGameObjects[others_id]->SetPosition(position);
+		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetPosition(position);
 
 	}
 }
 
 void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right)
 {
+	if (cl_id == n)
+	{
+		m_pPlayer->SetLook(Look);
+		m_pPlayer->SetRight(Right);
+	
+	}
+	else
+	{
+		int others_id = -1;
+		switch (cl_id) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetLook(Look.x, Look.y, Look.z);
+		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetRight(Right.x, Right.y, Right.z);
+	}
 }
 
 void CGameFramework::OnDestroy()
@@ -509,23 +533,40 @@ void CGameFramework::ProcessInput()
 				m_pPlayer->Move(dwDirection, 25.25f, true);
 			}
 		}
-		
+
 	}
 	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
-	
-	{
-	CS_MOVE_PACKET p;
-	//p.direction = dwDirection;
-	p.pos = m_pPlayer->GetPosition();
-	p.size = sizeof(CS_MOVE_PACKET);
-	p.type = CS_MOVE;
-	OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
-	if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
-		cout << " Send Error " << endl;
 
-	cout << "Get Log" << endl;
-	delete send_data;
+	{
+		CS_MOVE_PACKET p;
+		//p.direction = dwDirection;
+		p.pos = m_pPlayer->GetPosition();
+		p.size = sizeof(CS_MOVE_PACKET);
+		p.type = CS_MOVE;
+		p.look = m_pPlayer->GetLookVector();
+		//p.right = m_pPlayer->GetRight();
+		OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
+		if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
+			cout << " Send Error " << endl;
+
+		delete send_data;
 	}
+
+	//if (MouseState::MOUSE_DONW)
+	//{
+
+	//	CS_ROTATE_PACKET p;
+	//	p.type = CS_ROTATE;
+	//	p.size = sizeof(CS_ROTATE_PACKET);
+	//	p.look = m_pPlayer->GetLook();
+	//	p.right = m_pPlayer->GetRight();
+	//	OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
+	//	if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
+	//		cout << " Send Error " << endl;
+
+	//	delete send_data;
+	//}
+
 
 }
 

@@ -12,6 +12,7 @@ constexpr char CS_CHAT = 2;
 constexpr char CS_ATTACK = 3;
 constexpr char CS_TELEPORT = 4;
 constexpr char CS_LOGOUT = 5;
+constexpr char CS_ROTATE = 6;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -21,6 +22,7 @@ constexpr char SC_CHAT = 6;
 constexpr char SC_LOGIN_OK = 7;
 constexpr char SC_LOGIN_FAIL = 8;
 constexpr char SC_STAT_CHANGE = 9;
+constexpr char SC_ROTATE_OBJECT = 10;
 
 
 
@@ -56,6 +58,13 @@ struct CS_LOGOUT_PACKET {
 	unsigned char size;
 	char	type;
 };
+struct CS_ROTATE_PACKET {
+	unsigned char size;
+	char type;
+	XMFLOAT3 look;
+	XMFLOAT3 right;
+	
+};
 
 struct SC_LOGIN_INFO_PACKET {
 	unsigned char size;
@@ -66,6 +75,8 @@ struct SC_LOGIN_INFO_PACKET {
 	int		exp;
 	int		level;
 	XMFLOAT3 pos;
+	XMFLOAT3 look;
+	XMFLOAT3 right;
 };
 
 struct SC_ADD_OBJECT_PACKET {
@@ -90,7 +101,15 @@ struct SC_MOVE_OBJECT_PACKET {
 	int		id;
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
+	XMFLOAT3 right;
 	unsigned int move_time;
+};
+struct SC_ROTATE_OBJECT_PACKET {
+	unsigned char size;
+	char type;
+	int id;
+
+
 };
 
 struct SC_CHAT_PACKET {

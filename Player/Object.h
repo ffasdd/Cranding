@@ -416,6 +416,9 @@ public:
 	virtual void SetPosition(float x, float y, float z);
 	virtual void SetPosition(XMFLOAT3 xmf3Position);
 	void SetScale(float x, float y, float z);
+	void SetRight(float x, float y, float z);
+	void SetLook(float x, float y, float z);
+	
 
 	void MoveStrafe(float fDistance = 1.0f);
 	void MoveUp(float fDistance = 1.0f);

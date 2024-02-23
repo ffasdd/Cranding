@@ -101,16 +101,20 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_(1).bin", NULL);
+
 	m_ppHierarchicalGameObjects[0] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pAngrybotModel, 1);
 	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppHierarchicalGameObjects[0]->SetPosition(410.0f, m_pTerrain->GetHeight(410.0f, 735.0f), 735.0f);
+	m_ppHierarchicalGameObjects[0]->SetPosition(410.0f, 10.0f/*m_pTerrain->GetHeight(410.0f, 735.0f)*/, 735.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(7.0f, 7.0f, 7.0f);
 
 	m_ppHierarchicalGameObjects[1] = new CAngrybotObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pAngrybotModel, 1);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppHierarchicalGameObjects[1]->SetPosition(510.0f, m_pTerrain->GetHeight(410.0f, 735.0f), 735.0f);
+	m_ppHierarchicalGameObjects[1]->SetPosition(510.0f, 10.0f/*m_pTerrain->GetHeight(410.0f, 735.0f)*/, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(7.0f, 7.0f, 7.0f);
+
+
 	if (pAngrybotModel) delete pAngrybotModel;
+	
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
@@ -456,6 +460,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	m_fElapsedTime = fTimeElapsed;
 
 	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Animate(fTimeElapsed);
+	for (int i = 0; i < m_nHierarchicalGameObjects; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
 	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->AnimateObjects(fTimeElapsed);
 
 	if (m_pLights)
@@ -485,7 +490,7 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera);
 
 
-	for (int i = 0; i < APlayerNum; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		if (m_ppHierarchicalGameObjects[i])
 		{

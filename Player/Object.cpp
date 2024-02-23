@@ -932,6 +932,29 @@ void CGameObject::SetScale(float x, float y, float z)
 	UpdateTransform(NULL);
 }
 
+void CGameObject::SetLook(float x, float y, float z)
+{
+	// 현재 위치와 상관 없이 주어진 look 벡터를 normalize하여 설정
+	XMFLOAT3 normalizedLook = Vector3::Normalize(XMFLOAT3(x, y, z));
+
+	// 행렬의 3번째 열을 설정
+	m_xmf4x4World._31 = normalizedLook.x;
+	m_xmf4x4World._32 = normalizedLook.y;
+	m_xmf4x4World._33 = normalizedLook.z;
+}
+
+void CGameObject::SetRight(float x, float y, float z)
+{
+	// 현재 위치와 상관 없이 주어진 look 벡터를 normalize하여 설정
+	XMFLOAT3 normalizedLook = Vector3::Normalize(XMFLOAT3(x, y, z));
+
+	// 행렬의 1번째 열을 설정
+	m_xmf4x4World._11 = normalizedLook.x;
+	m_xmf4x4World._12 = normalizedLook.y;
+	m_xmf4x4World._13 = normalizedLook.z;
+
+}
+
 XMFLOAT3 CGameObject::GetPosition()
 {
 	return(XMFLOAT3(m_xmf4x4World._41, m_xmf4x4World._42, m_xmf4x4World._43));
