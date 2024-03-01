@@ -391,13 +391,14 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	}
 }
 
-void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right)
+void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
 {
 	if (cl_id == n)
 	{
 		m_pPlayer->SetLook(Look);
+		m_pPlayer->SetUp(Up);
 		m_pPlayer->SetRight(Right);
-	
+
 	}
 	else
 	{
@@ -415,7 +416,9 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 			break;
 		}
 		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetLook(Look.x, Look.y, Look.z);
+		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetUp(Up.x, Up.y, Up.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetRight(Right.x, Right.y, Right.z);
+		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetScale(10.0f, 10.0f, 10.0f);
 	}
 }
 
@@ -510,23 +513,50 @@ void CGameFramework::ProcessInput()
 		DWORD dwDirection = 0;
 		if (pKeysBuffer[VK_UP] & 0xF0)
 		{
-
+			clientsendque.push(0);
 			dwDirection |= DIR_FORWARD;
 		}
-		if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
-		if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
-		if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
-		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
-		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
+		if (pKeysBuffer[VK_DOWN] & 0xF0)
+		{
+			clientsendque.push(0);
+			dwDirection |= DIR_BACKWARD;
+		}
+		if (pKeysBuffer[VK_LEFT] & 0xF0)
+		{
+			clientsendque.push(0);
+			dwDirection |= DIR_LEFT;
+		}
+		if (pKeysBuffer[VK_RIGHT] & 0xF0)
+		{
+			clientsendque.push(0);
+			dwDirection |= DIR_RIGHT;
+		}
+		if (pKeysBuffer[VK_PRIOR] & 0xF0)
+		{
+			clientsendque.push(0);
+			dwDirection |= DIR_UP;
+		}
+		if (pKeysBuffer[VK_NEXT] & 0xF0)
+		{
+			clientsendque.push(0);
+			dwDirection |= DIR_DOWN;
+		}
 
 		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
 		{
 			if (cxDelta || cyDelta)
 			{
 				if (pKeysBuffer[VK_RBUTTON] & 0xF0)
+				{
+					clientsendque.push(1);
 					m_pPlayer->Rotate(cyDelta, 0.0f, -cxDelta);
+				}
 				else
+				{
+					clientsendque.push(1);
 					m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
+
+				}
 			}
 			if (dwDirection)
 			{
@@ -537,36 +567,36 @@ void CGameFramework::ProcessInput()
 	}
 	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
 
-	{
-		CS_MOVE_PACKET p;
-		//p.direction = dwDirection;
-		p.pos = m_pPlayer->GetPosition();
-		p.size = sizeof(CS_MOVE_PACKET);
-		p.type = CS_MOVE;
-		p.look = m_pPlayer->GetLookVector();
-		//p.right = m_pPlayer->GetRight();
-		OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
-		if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
-			cout << " Send Error " << endl;
+	if (clientsendque.size() != 0) {
+		if (clientsendque.front() == 0)
+		{
+			CS_MOVE_PACKET p;
+			//p.direction = dwDirection;
+			p.pos = m_pPlayer->GetPosition();
+			p.size = sizeof(CS_MOVE_PACKET);
+			p.type = CS_MOVE;
+			OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
+			if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
+				cout << " Send Error " << endl;
 
-		delete send_data;
+			delete send_data;
+			clientsendque.pop();
+		}
+		else
+		{
+			CS_ROTATE_PACKET p;
+			p.type = CS_ROTATE;
+			p.size = sizeof(CS_ROTATE_PACKET);
+			p.look = m_pPlayer->GetLook();
+			p.up = m_pPlayer->GetUp();
+			p.right = m_pPlayer->GetRight();
+			OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
+			if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
+				cout << " Send Error " << endl;
+			delete send_data;
+			clientsendque.pop();
+		}
 	}
-
-	//if (MouseState::MOUSE_DONW)
-	//{
-
-	//	CS_ROTATE_PACKET p;
-	//	p.type = CS_ROTATE;
-	//	p.size = sizeof(CS_ROTATE_PACKET);
-	//	p.look = m_pPlayer->GetLook();
-	//	p.right = m_pPlayer->GetRight();
-	//	OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
-	//	if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
-	//		cout << " Send Error " << endl;
-
-	//	delete send_data;
-	//}
-
 
 }
 

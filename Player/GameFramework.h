@@ -8,7 +8,6 @@
 #include "Scene.h"
 #include "Network.h"
 
-enum class MouseState : int { MOUSE_DONW, MOUSE_UP };
 
 extern SOCKET clientSocket;
 class CGameFramework
@@ -50,7 +49,7 @@ public:
 	int cl_id;
 	CPlayer* m_pPlayer = NULL;
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
-	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right);
+	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right);
 
 private:
 	HINSTANCE					m_hInstance;

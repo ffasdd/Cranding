@@ -24,6 +24,7 @@ public:
 
 	void disconnect(int id);
 
+	bool can_see(int to, int from);
 	int get_new_client_id();
 public:
 	SOCKET listensocket;

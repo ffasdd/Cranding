@@ -74,7 +74,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 					for (int i = 0; i < clients.size(); ++i)
 					{
 						gGameFramework.myFunc_SetPosition(i, clients[i].m_id, clients[i]._pos);
-						//gGameFramework.myFunc_SetLookRight(i, clients[i].m_id, clients[i]._look_vec, clients[i]._right_vec);
+						gGameFramework.myFunc_SetLookRight(i, clients[i].m_id, clients[i]._look_vec, clients[i]._up_vec, clients[i]._right_vec);
+						// clients[i]._up_vec -> 값 제대로 넘겨주기 0,1,0 X
 					}
 				}
 				gGameFramework.FrameAdvance();

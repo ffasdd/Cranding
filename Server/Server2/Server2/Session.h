@@ -18,8 +18,14 @@ public:
 	XMFLOAT3 _pos;
 	XMFLOAT3 _look;
 	XMFLOAT3 _right;
+	XMFLOAT3 _up;
 	char _name[100];
 	int _prevremain;
+
+	mutex _v_lock;
+	unordered_set<int> _view_list;
+
+
 	
 public:
 	Session();

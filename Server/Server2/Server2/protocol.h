@@ -24,6 +24,7 @@ constexpr char SC_LOGIN_FAIL = 8;
 constexpr char SC_STAT_CHANGE = 9;
 constexpr char SC_ROTATE_OBJECT = 10;
 
+constexpr int VIEW_RANGE = 10;
 
 
 #pragma pack (push, 1)
@@ -39,7 +40,7 @@ struct CS_MOVE_PACKET {
 	char	type;
 	DWORD	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT
 	XMFLOAT3 pos;
-	XMFLOAT3 look;
+
 	unsigned	move_time;
 };
 
@@ -63,6 +64,7 @@ struct CS_ROTATE_PACKET {
 	char type;
 	XMFLOAT3 look;
 	XMFLOAT3 right;
+	XMFLOAT3 up;
 	
 };
 
@@ -77,6 +79,8 @@ struct SC_LOGIN_INFO_PACKET {
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 right;
+	XMFLOAT3 up;
+
 };
 
 struct SC_ADD_OBJECT_PACKET {
@@ -86,6 +90,9 @@ struct SC_ADD_OBJECT_PACKET {
 	int		hp;
 	int		Max_hp;
 	XMFLOAT3 pos;
+	XMFLOAT3 look;
+	XMFLOAT3 right;
+	XMFLOAT3 up;
 	char	name[NAME_SIZE];
 };
 
@@ -100,13 +107,14 @@ struct SC_MOVE_OBJECT_PACKET {
 	char	type;
 	int		id;
 	XMFLOAT3 pos;
-	XMFLOAT3 look;
-	XMFLOAT3 right;
 	unsigned int move_time;
 };
 struct SC_ROTATE_OBJECT_PACKET {
 	unsigned char size;
 	char type;
+	XMFLOAT3 look;
+	XMFLOAT3 right;
+	XMFLOAT3 up;
 	int id;
 
 

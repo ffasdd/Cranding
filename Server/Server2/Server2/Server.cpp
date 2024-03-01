@@ -43,7 +43,7 @@ void Server::NetworkSet()
 	bind(listensocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr));
 	listen(listensocket, SOMAXCONN);
 }
-	
+
 void Server::Iocp()
 {
 	SOCKADDR_IN cl_addr;
@@ -98,31 +98,31 @@ void Server::WorkerThread()
 		{
 		case COMP_TYPE::Accept: {
 			int c_id = get_new_client_id();
-			if (c_id != -1){
-			
-			{
-				lock_guard<mutex>ll(clients[c_id]._s_lock);
-				clients[c_id]._state = STATE::Alloc;
-			}
-			clients[c_id]._pos.x = 0.0f;
-			clients[c_id]._pos.y = 0.0f;
-			clients[c_id]._pos.z = 0.0f;
-			clients[c_id]._id = c_id;
-			clients[c_id]._name[0] = 0;
-			clients[c_id]._prevremain = 0;
-			clients[c_id]._socket = clientsocket;
-			clients[c_id]._look = XMFLOAT3(0.0f, 0.0f, 1.0f);
-			clients[c_id]._right = XMFLOAT3(1.0f, 0.0f, 0.0f);
-	
-			CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientsocket), _IocpHandle, c_id, 0);
-			clients[c_id].do_recv();
-			clientsocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+			if (c_id != -1) {
+
+				{
+					lock_guard<mutex>ll(clients[c_id]._s_lock);
+					clients[c_id]._state = STATE::Alloc;
+				}
+				clients[c_id]._pos.x = 0.0f;
+				clients[c_id]._pos.y = 0.0f;
+				clients[c_id]._pos.z = 0.0f;
+				clients[c_id]._id = c_id;
+				clients[c_id]._name[0] = 0;
+				clients[c_id]._prevremain = 0;
+				clients[c_id]._socket = clientsocket;
+				clients[c_id]._look = XMFLOAT3(0.0f, 0.0f, 1.0f);
+				clients[c_id]._right = XMFLOAT3(1.0f, 0.0f, 0.0f);
+
+				CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientsocket), _IocpHandle, c_id, 0);
+				clients[c_id].do_recv();
+				clientsocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 			}
 			else
 			{
 				cout << " MAX user exceeded" << endl;
 			}
-			
+
 			cout << " Accept " << endl;
 			ZeroMemory(&_overlapped._over, sizeof(_overlapped._over));
 			int addr_size = sizeof(SOCKADDR_IN);
@@ -137,7 +137,7 @@ void Server::WorkerThread()
 			{
 				int packetsize = p[0];
 				if (packetsize <= remain_data) {
-					ProcessPacket(static_cast<int>(key),p);
+					ProcessPacket(static_cast<int>(key), p);
 					p = p + packetsize;
 					remain_data = remain_data - packetsize;
 				}
@@ -181,7 +181,8 @@ void Server::ProcessPacket(int id, char* packet)
 				if (STATE::Ingame != pl._state) continue;
 			}
 			if (pl._id == id)continue;
-
+			if (can_see(id, pl._id) == false)
+				continue;
 			pl.send_add_info_packet(id);
 			clients[id].send_add_info_packet(pl._id);
 		}
@@ -191,30 +192,61 @@ void Server::ProcessPacket(int id, char* packet)
 
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 		clients[id]._pos = p->pos;
-		clients[id]._look = p->look;
 
-		clients[id].send_move_packet(id);
+		unordered_set<int> near_list;
+		clients[id]._v_lock.lock();
+		unordered_set<int> old_vlist = clients[id]._view_list;
+		clients[id]._v_lock.unlock();
+
 		for (auto& pl : clients)
 		{
+			if (pl._state != STATE::Ingame) continue;
 			if (pl._id == id)continue;
-			pl.send_move_packet(id);
+			if (can_see(id, pl._id))
+				near_list.insert(pl._id);
 		}
-		break;
+		clients[id].send_move_packet(id);
+
+		for (auto& pl : near_list)
+		{
+			auto& cpl = clients[pl];
+			cpl._v_lock.lock();
+			if (clients[pl]._view_list.count(id))
+			{
+				cpl._v_lock.unlock();
+				clients[pl].send_move_packet(id);
+			}
+			else
+			{
+				cpl._v_lock.unlock();
+				clients[pl].send_add_info_packet(id);
+			}
+			if (old_vlist.count(pl) == 0)
+				clients[id].send_add_info_packet(pl);
+		}
+
+		for (auto& pl : old_vlist)
+			if (0 == near_list.count(pl)) {
+				clients[id].send_remove_packet(pl);
+				clients[pl].send_remove_packet(id);
+			}
 
 	}
-	//case CS_ROTATE: {
-	//	CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
-	//	clients[id]._look = p->look;
-	//	clients[id]._right = p->right;
+				break;
+	case CS_ROTATE: {
 
-	//	clients[id].send_rotate_packet(id);
-	//	for (auto& pl : clients)
-	//	{
-	//		if (pl._id == id) continue;
-	//		pl.send_rotate_packet(id);
-	//	}
-	//	break;
-	//}
+		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
+		clients[id]._look = p->look;
+		clients[id]._right = p->right;
+		clients[id]._up = p->up;
+		clients[id].send_rotate_packet(id);
+		for (auto& pl : clients)
+		{
+			if (pl._id == id) continue;
+			pl.send_rotate_packet(id);
+		}
+		break;
+	}
 	}
 }
 
@@ -228,6 +260,14 @@ void Server::disconnect(int id)
 	closesocket(clients[id]._socket);
 
 	lock_guard<mutex>ll(clients[id]._s_lock);
+}
+
+bool Server::can_see(int to, int from)
+{
+
+	if (abs(clients[from]._pos.x - clients[to]._pos.x) > VIEW_RANGE) return false;
+	return abs(clients[from]._pos.z - clients[to]._pos.z) <= VIEW_RANGE;
+
 }
 
 int Server::get_new_client_id()

@@ -136,6 +136,7 @@ void Network::processPacket(char* buf)
 		clients[my_id]._pos = packet->pos;
 		clients[my_id]._look_vec = packet->look;
 		clients[my_id]._right_vec = packet->right;
+		clients[my_id]._up_vec = packet->up;
 		
 		SetEvent(g_event);
 		break;
@@ -151,6 +152,9 @@ void Network::processPacket(char* buf)
 		clients[ob_id].m_hp = packet->hp;
 		strcpy_s(clients[ob_id].m_name, packet->name);
 		clients[ob_id]._pos = packet->pos;
+		clients[ob_id]._look_vec = packet->look;
+		clients[ob_id]._right_vec = packet->right;
+		clients[ob_id]._up_vec = packet->up;
 
 		break;
 	}
@@ -160,8 +164,17 @@ void Network::processPacket(char* buf)
 		int cl_id = p->id;
 		
 		clients[cl_id]._pos = p->pos;
-		clients[cl_id]._look_vec = p->look;
 
+		break;
+	}
+	case SC_ROTATE_OBJECT:
+	{
+		SC_ROTATE_OBJECT_PACKET* p = reinterpret_cast<SC_ROTATE_OBJECT_PACKET*>(buf);
+		int cl_id = p->id;
+
+		clients[cl_id]._look_vec = p->look;
+		clients[cl_id]._right_vec = p->right;
+		clients[cl_id]._up_vec = p->up;
 		break;
 	}
 	case SC_REMOVE_OBJECT: {
