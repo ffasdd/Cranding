@@ -48,12 +48,9 @@ void Network::Run()
 	//LOGIN 
 	Login_send();
 
-	// 여기서 게임로직이 들어가야함 key input 
-	// 키를 받는 큐가 필요? 
 	while (true)
-	{
 		recvPacket();
-	}
+
 }
 
 
@@ -137,17 +134,17 @@ void Network::processPacket(char* buf)
 		clients[my_id]._look_vec = packet->look;
 		clients[my_id]._right_vec = packet->right;
 		clients[my_id]._up_vec = packet->up;
-		
+		clients[my_id].A_STATE = packet->a_state;
 		SetEvent(g_event);
 		break;
 	}
 	case  SC_ADD_OBJECT:
 	{
-	
+
 		std::cout << "Add Player " << std::endl;
 		SC_ADD_OBJECT_PACKET* packet = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		int ob_id = packet->id;
-		
+
 		clients[ob_id].m_id = ob_id;
 		clients[ob_id].m_hp = packet->hp;
 		strcpy_s(clients[ob_id].m_name, packet->name);
@@ -155,6 +152,7 @@ void Network::processPacket(char* buf)
 		clients[ob_id]._look_vec = packet->look;
 		clients[ob_id]._right_vec = packet->right;
 		clients[ob_id]._up_vec = packet->up;
+		clients[ob_id].A_STATE = packet->a_state;
 
 		break;
 	}
@@ -162,9 +160,9 @@ void Network::processPacket(char* buf)
 	{
 		SC_MOVE_OBJECT_PACKET* p = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(buf);
 		int cl_id = p->id;
-		
-		clients[cl_id]._pos = p->pos;
 
+		clients[cl_id]._pos = p->pos;
+		clients[cl_id].A_STATE = p->a_state;
 		break;
 	}
 	case SC_ROTATE_OBJECT:
@@ -180,9 +178,8 @@ void Network::processPacket(char* buf)
 	case SC_REMOVE_OBJECT: {
 		SC_REMOVE_OBJECT_PACKET* p = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(buf);
 		int ob_id = p->id;
-		clients[ob_id].m_name[0] = 0;
-		clients[ob_id].m_id = -1;
-		clients[ob_id]._state = 0;
+		clients.erase(ob_id);
+
 		break;
 	}
 
