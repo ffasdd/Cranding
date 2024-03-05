@@ -97,7 +97,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	XMFLOAT4 xmf4Color(0.0f, 0.3f, 0.0f, 0.0f);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("Terrain/P_terrain.raw"), 257, 257, xmf3Scale, xmf4Color);
 
-	m_nHierarchicalGameObjects = 38;
+	m_nHierarchicalGameObjects = 39;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	// ice_boss 6
@@ -305,7 +305,12 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppHierarchicalGameObjects[37]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 5);
 	m_ppHierarchicalGameObjects[37]->SetPosition(110, 0, 210);
 	m_ppHierarchicalGameObjects[37]->SetScale(7.0f, 7.0f, 7.0f);
-	
+
+	// ¸ÊÀÔ´Ï´Ù
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/map.bin", NULL);
+	m_ppHierarchicalGameObjects[38] = new CMonsterObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
+	m_ppHierarchicalGameObjects[38]->SetPosition(810, 0, 810);
+	m_ppHierarchicalGameObjects[38]->SetScale(3.0f, 3.0f, 3.0f);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
