@@ -22,6 +22,8 @@ public:
 	char _name[100];
 	int _prevremain;
 
+	animateState animationstate;
+
 	mutex _v_lock;
 	unordered_set<int> _view_list;
 
