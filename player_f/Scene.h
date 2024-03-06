@@ -28,10 +28,10 @@ struct LIGHT
 	int									m_nType;
 	float								m_fRange;
 	float								padding;
-};										
-										
-struct LIGHTS							
-{										
+};
+
+struct LIGHTS
+{
 	LIGHT								m_pLights[MAX_LIGHTS];
 	XMFLOAT4							m_xmf4GlobalAmbient;
 	int									m_nLights;
@@ -40,35 +40,38 @@ struct LIGHTS
 class CScene
 {
 public:
-    CScene();
-    ~CScene();
+	CScene();
+	~CScene();
 
 	bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
-	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
-	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseShaderVariables();
 
 	void BuildDefaultLightsAndMaterials();
-	void BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
+	void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	void ReleaseObjects();
 
-	ID3D12RootSignature *CreateGraphicsRootSignature(ID3D12Device *pd3dDevice);
-	ID3D12RootSignature *GetGraphicsRootSignature() { return(m_pd3dGraphicsRootSignature); }
+	ID3D12RootSignature* CreateGraphicsRootSignature(ID3D12Device* pd3dDevice);
+	ID3D12RootSignature* GetGraphicsRootSignature() { return(m_pd3dGraphicsRootSignature); }
 
-	bool ProcessInput(UCHAR *pKeysBuffer);
-    void AnimateObjects(float fTimeElapsed);
-    void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
+	bool ProcessInput(UCHAR* pKeysBuffer);
+	void AnimateObjects(float fTimeElapsed);
+	void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
+
+	void AddPlayer();
 
 	void ReleaseUploadBuffers();
 
-	CPlayer								*m_pPlayer = NULL;
+	CPlayer* m_pPlayer = NULL;
 
+	int APlayerNum;
 protected:
-	ID3D12RootSignature					*m_pd3dGraphicsRootSignature = NULL;
+	ID3D12RootSignature* m_pd3dGraphicsRootSignature = NULL;
 
-	static ID3D12DescriptorHeap			*m_pd3dCbvSrvDescriptorHeap;
+	static ID3D12DescriptorHeap* m_pd3dCbvSrvDescriptorHeap;
 
 	static D3D12_CPU_DESCRIPTOR_HANDLE	m_d3dCbvCPUDescriptorStartHandle;
 	static D3D12_GPU_DESCRIPTOR_HANDLE	m_d3dCbvGPUDescriptorStartHandle;
@@ -81,9 +84,9 @@ protected:
 	static D3D12_GPU_DESCRIPTOR_HANDLE	m_d3dSrvGPUDescriptorNextHandle;
 
 public:
-	static void CreateCbvSrvDescriptorHeaps(ID3D12Device *pd3dDevice, int nConstantBufferViews, int nShaderResourceViews);
+	static void CreateCbvSrvDescriptorHeaps(ID3D12Device* pd3dDevice, int nConstantBufferViews, int nShaderResourceViews);
 
-	static D3D12_GPU_DESCRIPTOR_HANDLE CreateConstantBufferViews(ID3D12Device *pd3dDevice, int nConstantBufferViews, ID3D12Resource *pd3dConstantBuffers, UINT nStride);
+	static D3D12_GPU_DESCRIPTOR_HANDLE CreateConstantBufferViews(ID3D12Device* pd3dDevice, int nConstantBufferViews, ID3D12Resource* pd3dConstantBuffers, UINT nStride);
 	static void CreateShaderResourceViews(ID3D12Device* pd3dDevice, CTexture* pTexture, UINT nDescriptorHeapIndex, UINT nRootParameterStartIndex);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUCbvDescriptorStartHandle() { return(m_d3dCbvCPUDescriptorStartHandle); }
@@ -99,24 +102,24 @@ public:
 	float								m_fElapsedTime = 0.0f;
 
 	int									m_nGameObjects = 0;
-	CGameObject							**m_ppGameObjects = NULL;
+	CGameObject** m_ppGameObjects = NULL;
 
 	int									m_nHierarchicalGameObjects = 0;
-	CGameObject							**m_ppHierarchicalGameObjects = NULL;
+	CGameObject** m_ppHierarchicalGameObjects = NULL;
 
 	XMFLOAT3							m_xmf3RotatePosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
 	int									m_nShaders = 0;
-	CShader								**m_ppShaders = NULL;
+	CShader** m_ppShaders = NULL;
 
-	CSkyBox								*m_pSkyBox = NULL;
-	CHeightMapTerrain					*m_pTerrain = NULL;
+	CSkyBox* m_pSkyBox = NULL;
+	CHeightMapTerrain* m_pTerrain = NULL;
 
-	LIGHT								*m_pLights = NULL;
+	LIGHT* m_pLights = NULL;
 	int									m_nLights = 0;
 
 	XMFLOAT4							m_xmf4GlobalAmbient;
 
-	ID3D12Resource						*m_pd3dcbLights = NULL;
-	LIGHTS								*m_pcbMappedLights = NULL;
+	ID3D12Resource* m_pd3dcbLights = NULL;
+	LIGHTS* m_pcbMappedLights = NULL;
 };

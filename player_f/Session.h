@@ -1,4 +1,5 @@
 #pragma once
+
 class Session
 {
 public:
@@ -21,6 +22,6 @@ public:
 	XMFLOAT3 _look_vec;
 
 	int _state;
-
+	char A_STATE;
 };
 
