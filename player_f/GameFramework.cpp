@@ -363,6 +363,67 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 	return(0);
 }
 
+void CGameFramework::OtherPlayerIdleMotion(int n, int id)
+{
+	if (cl_id == n)
+	{
+		m_pPlayer->SetId(cl_id);
+		((CTerrainPlayer*)m_pPlayer)->m_pSkinnedAnimationController->SetTrackEnable(0, true);
+		((CTerrainPlayer*)m_pPlayer)->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+		((CTerrainPlayer*)m_pPlayer)->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	}
+	else
+	{
+		// 이 부분들 수정 필요함
+		int others_id = -1;
+		switch (cl_id) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+		((CAngrybotObject*)m_pScene->m_ppHierarchicalGameObjects[others_id])->IdleState(m_GameTimer.GetTimeElapsed());
+	}
+}
+
+void CGameFramework::OtherPlayerWalkMotion(int n, int id)
+{
+	if (cl_id == n)
+	{
+		m_pPlayer->SetId(cl_id);
+		((CTerrainPlayer*)m_pPlayer)->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+		((CTerrainPlayer*)m_pPlayer)->m_pSkinnedAnimationController->SetTrackEnable(0, true);
+
+		((CTerrainPlayer*)m_pPlayer)->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
+	}
+	else
+	{
+		// 이 부분들 수정 필요함
+		int others_id = -1;
+		switch (cl_id) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+		((CAngrybotObject*)m_pScene->m_ppHierarchicalGameObjects[others_id])->walkState(m_GameTimer.GetTimeElapsed());
+	}
+
+
+}
+
 void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 {
 	if (cl_id == n)

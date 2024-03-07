@@ -1608,10 +1608,40 @@ CAngrybotObject::CAngrybotObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
 	m_pSkinnedAnimationController = new CAngrybotAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pAngrybotModel);
+
+	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	
+	m_pSkinnedAnimationController->SetTrackEnable(0, true);
+	m_pSkinnedAnimationController->SetTrackEnable(1, false);
+
+
 }
 
 CAngrybotObject::~CAngrybotObject()
 {
+}
+
+void CAngrybotObject::IdleState(float EleapsedTime)
+{
+
+	m_pSkinnedAnimationController->SetTrackEnable(0, true);
+	m_pSkinnedAnimationController->SetTrackEnable(1, false);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	CGameObject::Animate(EleapsedTime);
+}
+
+void CAngrybotObject::walkState(float EleapsedTime)
+{
+	m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_pSkinnedAnimationController->SetTrackEnable(1, true);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
+	CGameObject::Animate(EleapsedTime);
+}
+
+void CAngrybotObject::Animate(float fTimeElapsed)
+{
+	CGameObject::Animate(fTimeElapsed);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -76,6 +76,21 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 					gGameFramework.myFunc_SetPosition(i, clients[i].m_id, clients[i]._pos);
 					gGameFramework.myFunc_SetLookRight(i, clients[i].m_id, clients[i]._look_vec, clients[i]._up_vec, clients[i]._right_vec);
 					// clients[i]._up_vec -> 값 제대로 넘겨주기 0,1,0 X
+					if (i == gGameFramework.cl_id)
+						continue;
+					else
+					{
+
+						if (clients[i].A_STATE == 0)
+						{
+							gGameFramework.OtherPlayerIdleMotion(i, clients[i].m_id);
+						}
+						else if (clients[i].A_STATE == 1)
+						{
+							gGameFramework.OtherPlayerWalkMotion(i, clients[i].m_id);
+
+						}
+					}
 				}
 			}
 			gGameFramework.FrameAdvance();

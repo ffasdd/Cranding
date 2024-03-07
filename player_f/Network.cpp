@@ -153,6 +153,8 @@ void Network::processPacket(char* buf)
 		clients[ob_id]._right_vec = packet->right;
 		clients[ob_id]._up_vec = packet->up;
 		clients[ob_id].A_STATE = packet->a_state;
+		
+
 
 		break;
 	}

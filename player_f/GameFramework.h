@@ -44,6 +44,11 @@ public:
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
+
+	// AnimateConnect_Server by Clinet
+	void OtherPlayerIdleMotion(int n,int id);
+	void OtherPlayerWalkMotion(int n, int id);
+
 	// 서버로부터 받은 좌표 렌더링
 public:
 	int cl_id;
