@@ -74,9 +74,12 @@ struct CS_ROTATE_PACKET {
 	XMFLOAT3 look;
 	XMFLOAT3 right;
 	XMFLOAT3 up;
-	
 };
-
+struct CS_IDLE_PACKET {
+	unsigned char size;
+	char type;
+	char idle_state;
+};
 struct SC_LOGIN_INFO_PACKET {
 	unsigned char size;
 	char	type;
@@ -91,8 +94,6 @@ struct SC_LOGIN_INFO_PACKET {
 	XMFLOAT3 up;
 
 	animateState a_state;
-
-
 };
 
 struct SC_ADD_OBJECT_PACKET {

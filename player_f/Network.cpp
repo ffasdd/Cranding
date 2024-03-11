@@ -165,6 +165,7 @@ void Network::processPacket(char* buf)
 
 		clients[cl_id]._pos = p->pos;
 		clients[cl_id].A_STATE = p->a_state;
+
 		break;
 	}
 	case SC_ROTATE_OBJECT:

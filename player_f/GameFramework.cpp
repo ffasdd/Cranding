@@ -399,7 +399,6 @@ void CGameFramework::OtherPlayerWalkMotion(int n, int id)
 		m_pPlayer->SetId(cl_id);
 		((CTerrainPlayer*)m_pPlayer)->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 		((CTerrainPlayer*)m_pPlayer)->m_pSkinnedAnimationController->SetTrackEnable(0, true);
-
 		((CTerrainPlayer*)m_pPlayer)->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
 	}
 	else
@@ -657,6 +656,11 @@ void CGameFramework::ProcessInput()
 			delete send_data;
 			clientsendque.pop();
 		}
+	}
+	else
+	{
+		// 키입력이 없다면 IDLE 애니메이션 상태를 보내야함. 
+
 	}
 
 }
