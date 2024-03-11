@@ -682,7 +682,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 
 		// 애니메이션 블렌딩x일때
 		// 총쏘는 애니메이션 -> 7번
-		// 검 쓰는 애니메이션 -> 8, 9, 10번
+		// 검 쓰는 애니메이션 -> 8, 9번
 		else {
 			for (int k = 0; k < m_nAnimationTracks; k++)
 			{
@@ -692,16 +692,15 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 					if (this->m_bIsAttack == true)
 					{
 						CAnimationSet* pAnimationSet = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[k].m_nAnimationSet];
+						CAnimationSet* pAnimationSet2 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[9].m_nAnimationSet];
 
 						// animationtrack의 m_fPosition을 업데이트
 						float fPosition = m_pAnimationTracks[k].UpdatePosition(m_pAnimationTracks[k].m_fPosition, fTimeElapsed, pAnimationSet->m_fLength);
 
-						float fPosition2 = m_pAnimationTracks[7].UpdatePosition(m_pAnimationTracks[7].m_fPosition, fTimeElapsed, pAnimationSet->m_fLength);
+						float fPosition2 = m_pAnimationTracks[9].UpdatePosition(m_pAnimationTracks[9].m_fPosition, fTimeElapsed, pAnimationSet2->m_fLength);
 						for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
 						{
 							XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
-
-							//XMFLOAT4X4 temp = pAnimationSet->GetSRT(j, fPosition);
 
 							if (m_pAnimationSets->m_ppBoneFrameCaches[j]->m_bUpperBody == true)
 							{
@@ -709,11 +708,10 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 								// Astronaut_0 - Gravity_Idle Astronaut_Run_01
 								if (m_pAnimationSets->m_nAnimationSets)
 									m_pAnimationSets->m_nAnimationSets;
-								CAnimationSet* pAnimationSet2 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[7].m_nAnimationSet];
 
 								XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet2->GetSRT(j, fPosition2);
 
-								xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[7].m_fWeight));
+								xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[9].m_fWeight));
 							}
 							// 현재 플레이어의 뼈 변환 정보들
 							else
@@ -723,7 +721,10 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							}
 							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
 						}
+						if (fPosition2 == 0)
+							this->m_bIsAttack = false;
 					}
+
 					// 상하체 분리 x일때
 					else
 					{
@@ -752,8 +753,9 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						}
 					}
 					//if(this->m_bIsAttack == true)
-					this->m_bIsAttack = false;
+
 					m_pAnimationTracks[k].HandleCallback();
+					//m_pAnimationTracks[9].HandleCallback();
 				}
 			}
 		}
