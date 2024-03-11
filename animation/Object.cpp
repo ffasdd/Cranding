@@ -632,27 +632,131 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject *pRootGam
 void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGameObject)
 {
 	m_fTime += fTimeElapsed;
+	// 애니메이션트랙은 애니메이션 컨트롤러에서 만들어줌
 	if (m_pAnimationTracks)
 	{
-		for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++) m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = Matrix4x4::Zero();
-
-		for (int k = 0; k < m_nAnimationTracks; k++)
+		// m_pAnimationSets = 애니메이션 set의 집합, animationset을 가리키는 이중 포인터
+		for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
 		{
-			if (m_pAnimationTracks[k].m_bEnable)
+			// 본프레임캐시 -> 애니메이션 행렬을 지피유로 보내기 위해 담는 곳
+			// 일단 0으로 초기화
+			m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = Matrix4x4::Zero();
+		}
+
+		// 블렌딩o인 경우
+		if ((m_bIsBlending == true || m_bIsLastBlending == true) && m_nBlendingCnt < 2)
+		{
+			CAnimationSet* pAnimationSet1 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[m_nAnimationBefore].m_nAnimationSet];
+			CAnimationSet* pAnimationSet2 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[m_nAnimationAfter].m_nAnimationSet];
+
+			for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
 			{
-				CAnimationSet* pAnimationSet = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[k].m_nAnimationSet];
-				float fPosition = m_pAnimationTracks[k].UpdatePosition(m_pAnimationTracks[k].m_fPosition, fTimeElapsed, pAnimationSet->m_fLength);
-				for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
-				{
-					XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
-					XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet->GetSRT(j, fPosition);
-					xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[k].m_fWeight));
-					m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
-				}
-				m_pAnimationTracks[k].HandleCallback();
+				XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
+				XMFLOAT4X4 xmf4x4TrackTransform2 = pAnimationSet2->GetSRT(j, 0);
+
+				m_fBlendingTime += (fTimeElapsed / 8);
+
+				XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet1->GetSRT(j, m_pAnimationTracks[m_nAnimationBefore].m_fPosition);
+				XMFLOAT4X4 xmf4x4Transform2 = Matrix4x4::Interpolate(xmf4x4TrackTransform, xmf4x4TrackTransform2, m_fBlendingTime);
+
+				xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4Transform2, 1.0f));
+				m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
+			}
+
+			// animationSets = 유니티에서 같이 뽑힌 애니메이션들의 번호(진짜 애니메이션의 번호)
+			// animationTrack = player가 가지고 있는 애니메이션들의 번호
+			if (m_fBlendingTime >= 0.1f && m_bIsBlending == true)
+			{
+				m_bIsBlending = false;
+				m_fBlendingTime = 0.0f;
+				m_pAnimationTracks[m_nAnimationBefore].SetPosition(0.0f);
+			}
+
+			if (m_fBlendingTime >= 1.0f && m_bIsLastBlending == true)
+			{
+				m_bIsLastBlending = false;
+				m_fBlendingTime = 0.0f;
+				m_pAnimationTracks[m_nAnimationBefore].SetPosition(0.0f);
 			}
 		}
 
+		// 애니메이션 블렌딩x일때
+		// 총쏘는 애니메이션 -> 7번
+		// 검 쓰는 애니메이션 -> 8, 9, 10번
+		else {
+			for (int k = 0; k < m_nAnimationTracks; k++)
+			{
+				if (m_pAnimationTracks[k].m_bEnable)
+				{
+					// 상하체 분리 o일때
+					if (this->m_bIsAttack == true)
+					{
+						CAnimationSet* pAnimationSet = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[k].m_nAnimationSet];
+
+						// animationtrack의 m_fPosition을 업데이트
+						float fPosition = m_pAnimationTracks[k].UpdatePosition(m_pAnimationTracks[k].m_fPosition, fTimeElapsed, pAnimationSet->m_fLength);
+
+						float fPosition2 = m_pAnimationTracks[7].UpdatePosition(m_pAnimationTracks[7].m_fPosition, fTimeElapsed, pAnimationSet->m_fLength);
+						for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
+						{
+							XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
+
+							//XMFLOAT4X4 temp = pAnimationSet->GetSRT(j, fPosition);
+
+							if (m_pAnimationSets->m_ppBoneFrameCaches[j]->m_bUpperBody == true)
+							{
+								// 현재 플레이어의 뼈 변환 정보들
+								// Astronaut_0 - Gravity_Idle Astronaut_Run_01
+								if (m_pAnimationSets->m_nAnimationSets)
+									m_pAnimationSets->m_nAnimationSets;
+								CAnimationSet* pAnimationSet2 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[7].m_nAnimationSet];
+
+								XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet2->GetSRT(j, fPosition2);
+
+								xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[7].m_fWeight));
+							}
+							// 현재 플레이어의 뼈 변환 정보들
+							else
+							{
+								XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet->GetSRT(j, fPosition);
+								xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[k].m_fWeight));
+							}
+							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
+						}
+					}
+					// 상하체 분리 x일때
+					else
+					{
+						//true인 애 계산하는 부분
+						//enable인 animationsets의 animationset을 pAnimationSet에 넣어줌
+						//현재 코드 상에서는 m_pAnimationTracks[k].m_nAnimationSet가 전부 0
+						CAnimationSet* pAnimationSet = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[k].m_nAnimationSet];
+
+						//animationtrack의 m_fPosition을 업데이트
+						float fPosition = m_pAnimationTracks[k].UpdatePosition(m_pAnimationTracks[k].m_fPosition, fTimeElapsed, pAnimationSet->m_fLength);
+
+						//애니메이션 본 프레임 : 애니메이션 계산할 때 프레임으로 계산하는 것(키프레임애니메이션)
+						for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
+						{
+							//현재 플레이어의 뼈 변환 정보들
+							XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
+
+							//getsrt  해당 프레임의 행렬 가져옴
+							//일반적으로 애니메이션에서 이전 프레임과 현재 프레임 사이의 움직임을 부드럽게 처리하기 위해 사용
+							//xmf4x4TrackTransform : 이전 프레임의 변환 행렬과 현재 프레임의 위치와 방향을 보간하여 새로운 변환 행렬을 반환
+							//fPosition은 다음 애니메이션의 position, j는 현재 boneframe번호
+							XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet->GetSRT(j, fPosition);
+
+							xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[k].m_fWeight));
+							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
+						}
+					}
+					//if(this->m_bIsAttack == true)
+					this->m_bIsAttack = false;
+					m_pAnimationTracks[k].HandleCallback();
+				}
+			}
+		}
 		pRootGameObject->UpdateTransform(NULL);
 
 		OnRootMotion(pRootGameObject);
@@ -1276,6 +1380,14 @@ void CGameObject::LoadAnimationFromFile(FILE *pInFile, CLoadedModelInfo *pLoaded
 			{
 				::ReadStringFromFile(pInFile, pstrToken);
 				pLoadedModel->m_pAnimationSets->m_ppBoneFrameCaches[j] = pLoadedModel->m_pModelRootObject->FindFrame(pstrToken);
+
+				// 상하체 분리
+				// 상체 프레임은 상체라는 의미 표기하는 과정 (m_bUpperBody == true면 상체)
+				if (strcmp(pstrToken, "Spine_Joint1") == 0)
+					pLoadedModel->m_pAnimationSets->m_ppBoneFrameCaches[j]->m_bUpperBody = true;
+				else if (pLoadedModel->m_pAnimationSets->m_ppBoneFrameCaches[j]->GetParent() != NULL
+					&& pLoadedModel->m_pAnimationSets->m_ppBoneFrameCaches[j]->GetParent()->m_bUpperBody == true)
+					pLoadedModel->m_pAnimationSets->m_ppBoneFrameCaches[j]->m_bUpperBody = true;
 
 #ifdef _WITH_DEBUG_SKINNING_BONE
 				TCHAR pstrDebug[256] = { 0 };

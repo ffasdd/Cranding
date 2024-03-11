@@ -205,8 +205,8 @@ public:
 #endif
 
 public:
-	// 가장 중요한 함수. 현재 시간에 대한 애니메이션을 읽을 위치에 대한 뼈,,
-	// 인터폴레이션 하기
+	// 키 프레임들 사이 구간에서의 본 프레임 변환 정보를 보간해주는 함수
+	// 젤 중요한 함수
 	XMFLOAT4X4 GetSRT(int nBone, float fPosition);
 };
 
@@ -239,7 +239,7 @@ public:
 
 public:
 
-    BOOL 							m_bEnable = true;
+    BOOL 						m_bEnable = true;
     float 							m_fSpeed = 1.0f;
     float 							m_fPosition = -ANIMATION_CALLBACK_EPSILON;
 	float 							m_fWeight = 1.0f;
@@ -289,19 +289,30 @@ public:
 
 class CAnimationController 
 {
-	// 어떤 일을 하는지 잘 이해해야해요
-	// 
 public:
 	CAnimationController(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, int nAnimationTracks, CLoadedModelInfo *pModel);
 	~CAnimationController();
 
 public:
+	// 상하체 분리 변수
+	bool							m_bIsAttack = false;
+
+	// 애니메이션 블렌딩 변수
+	int								m_nAnimationBefore = 0;
+	int								m_nAnimationAfter = 0;
+
+	int								m_nBlendingCnt = 0;
+	bool							m_bIsBlending = false;
+
+	bool							m_bIsLastBlending = false;
+
+	float							m_fBlendingTime = 0;
+
     float 							m_fTime = 0.0f;
 
+	// 몇 개의 동작을 섞어서 만들래? 
     int 							m_nAnimationTracks = 0;
-	// 사운드 믹서같은 느김이에요
-	// 
-	//
+
     CAnimationTrack 				*m_pAnimationTracks = NULL;
 
 	CAnimationSets					*m_pAnimationSets = NULL;
@@ -309,6 +320,7 @@ public:
 	int 							m_nSkinnedMeshes = 0;
 	CSkinnedMesh					**m_ppSkinnedMeshes = NULL; //[SkinnedMeshes], Skinned Mesh Cache
 
+	// shader hlsl에 상수버퍼로 넘기기 위해 필요함
 	ID3D12Resource					**m_ppd3dcbSkinningBoneTransforms = NULL; //[SkinnedMeshes]
 	XMFLOAT4X4						**m_ppcbxmf4x4MappedSkinningBoneTransforms = NULL; //[SkinnedMeshes]
 
@@ -358,6 +370,9 @@ public:
     virtual ~CGameObject();
 
 public:
+	// 상하체 분리 변수
+	bool							m_bUpperBody = false;
+
 	char							m_pstrFrameName[64];
 
 	CMesh							*m_pMesh = NULL;

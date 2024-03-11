@@ -349,19 +349,37 @@ void CSoundCallbackHandler::HandleCallback(void *pCallbackData, float fTrackPosi
 #endif
 }
 
-CTerrainPlayer::CTerrainPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext)
+// 플레이어 애니메이션 생성
+CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext)
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	CLoadedModelInfo *pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_(1).bin", NULL);
+	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut.bin", NULL);
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 2, pAngrybotModel);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 10, pAngrybotModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-	m_pSkinnedAnimationController->SetTrackEnable(1, false);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(7, 7);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
 
-	m_pSkinnedAnimationController->SetCallbackKeys(1, 1);
+	m_pSkinnedAnimationController->SetTrackEnable(1, false);
+	m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_pSkinnedAnimationController->SetTrackEnable(6, false);
+	m_pSkinnedAnimationController->SetTrackEnable(7, false);
+	m_pSkinnedAnimationController->SetTrackEnable(8, false);
+	m_pSkinnedAnimationController->SetTrackEnable(9, false);
+
+	m_pSkinnedAnimationController->SetCallbackKeys(1, 2);
 #ifdef _WITH_SOUND_RESOURCE
 	m_pSkinnedAnimationController->SetCallbackKey(0, 0.1f, _T("Footstep01"));
 	m_pSkinnedAnimationController->SetCallbackKey(1, 0.5f, _T("Footstep02"));
@@ -369,19 +387,19 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLi
 #else
 	m_pSkinnedAnimationController->SetCallbackKey(1, 0, 0.2f, _T("Sound/Footstep01.wav"));
 	m_pSkinnedAnimationController->SetCallbackKey(1, 1, 0.5f, _T("Sound/Footstep02.wav"));
-//	m_pSkinnedAnimationController->SetCallbackKey(1, 2, 0.39f, _T("Sound/Footstep03.wav"));
+	//	m_pSkinnedAnimationController->SetCallbackKey(1, 2, 0.39f, _T("Sound/Footstep03.wav"));
 #endif
-	CAnimationCallbackHandler *pAnimationCallbackHandler = new CSoundCallbackHandler();
+	CAnimationCallbackHandler* pAnimationCallbackHandler = new CSoundCallbackHandler();
 	m_pSkinnedAnimationController->SetAnimationCallbackHandler(1, pAnimationCallbackHandler);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	
+
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
 
-	CHeightMapTerrain *pTerrain = (CHeightMapTerrain *)pContext;
+	CHeightMapTerrain* pTerrain = (CHeightMapTerrain*)pContext;
 	SetPosition(XMFLOAT3(310.0f, pTerrain->GetHeight(310.0f, 590.0f), 590.0f));
-	SetScale(XMFLOAT3(10.0f, 10.0f, 10.0f));
+	SetScale(XMFLOAT3(5.0f, 5.0f, 5.0f));
 
 	if (pAngrybotModel) delete pAngrybotModel;
 }
@@ -479,17 +497,32 @@ void CTerrainPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 	}
 }
 
+// 플레이어가 움직이면 애니메이션 바꿔주는 부분
 void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 {
 	if (dwDirection)
 	{
+		// 총 사용하는 플레이어일 경우
+		// m_nAnimationBefore = 0, m_nAnimationAfter = 2
+		// 검 사용하는 플레이어일 경우
+		// m_nAnimationBefore = 1, m_nAnimationAfter = 3
+		m_pSkinnedAnimationController->m_nBlendingCnt++;
+
+		if (m_pSkinnedAnimationController->m_bIsBlending == false
+			&& m_pSkinnedAnimationController->m_nBlendingCnt < 2)
+		{
+			m_pSkinnedAnimationController->m_bIsBlending = true;
+			m_pSkinnedAnimationController->m_nAnimationBefore = 0;
+			m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+		}
 		m_pSkinnedAnimationController->SetTrackEnable(0, false);
-		m_pSkinnedAnimationController->SetTrackEnable(1, true);
+		m_pSkinnedAnimationController->SetTrackEnable(2, true);
 	}
 
 	CPlayer::Move(dwDirection, fDistance, bUpdateVelocity);
 }
 
+// move 다음으로 불리는 함수  
 void CTerrainPlayer::Update(float fTimeElapsed)
 {
 	CPlayer::Update(fTimeElapsed);
@@ -497,11 +530,21 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 	if (m_pSkinnedAnimationController)
 	{
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
-		if (::IsZero(fLength))
+		if (::IsZero(fLength)) // 이동을 멈춘 경우 or 가만있는 경우
 		{
-			m_pSkinnedAnimationController->SetTrackEnable(0, true);
-			m_pSkinnedAnimationController->SetTrackEnable(1, false);
-			m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
+			if (m_pSkinnedAnimationController->m_bIsLastBlending == false
+				&& m_pSkinnedAnimationController->m_nBlendingCnt > 0)
+			{
+				m_pSkinnedAnimationController->m_nAnimationBefore = 2;
+				m_pSkinnedAnimationController->m_nAnimationAfter = 0;
+				//m_pSkinnedAnimationController->m_bIsLastBlending = false;
+				m_pSkinnedAnimationController->m_bIsLastBlending = true;
+			}// 
+			m_pSkinnedAnimationController->m_nBlendingCnt = 0;
+			m_pSkinnedAnimationController->SetTrackEnable(0, true); //다시 idle 애니메이션 활성화
+			m_pSkinnedAnimationController->SetTrackEnable(2, false);
+			m_pSkinnedAnimationController->SetTrackPosition(2, 0.0f); // 애니메이션트렉위치 변경 함수, 달리는 애니메이션 트렉의 가장 첫 부분으로 다시 옮김 ->달리다가 멈춘 후 다시 달릴 때, 달리는 애니메이션이 멈췄던 지점이 아닌 애니메이션의 첫 부분부터 다시 실행되도록 설정한 것
 		}
 	}
 }
+
