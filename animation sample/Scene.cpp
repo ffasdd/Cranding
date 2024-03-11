@@ -307,7 +307,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppHierarchicalGameObjects[37]->SetScale(7.0f, 7.0f, 7.0f);
 
 	// ¸ÊÀÔ´Ï´Ù
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/map.bin", NULL);
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/mapforzz.bin", NULL);
 	m_ppHierarchicalGameObjects[38] = new CMonsterObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[38]->SetPosition(810, 0, 810);
 	m_ppHierarchicalGameObjects[38]->SetScale(3.0f, 3.0f, 3.0f);
