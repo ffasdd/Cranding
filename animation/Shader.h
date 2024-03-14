@@ -169,11 +169,11 @@ protected:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-class CAngrybotObjectsShader : public CSkinnedAnimationObjectsShader
+class CPlayerObjectsShader : public CSkinnedAnimationObjectsShader
 {
 public:
-	CAngrybotObjectsShader();
-	virtual ~CAngrybotObjectsShader();
+	CPlayerObjectsShader();
+	virtual ~CPlayerObjectsShader();
 
 	virtual void BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, void *pContext = NULL);
 };
