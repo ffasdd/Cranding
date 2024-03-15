@@ -294,6 +294,9 @@ public:
 	~CAnimationController();
 
 public:
+	// hp == 0 (기절상태 변수) -> 현재 임시로 f1 누르면 기절, f2 누르면 다시 살아남
+	bool							m_bIsDead = false;
+
 	// 상하체 분리 변수
 	bool							m_bIsAttack = false;
 

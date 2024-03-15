@@ -752,10 +752,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
 						}
 					}
-					//if(this->m_bIsAttack == true)
-
 					m_pAnimationTracks[k].HandleCallback();
-					//m_pAnimationTracks[9].HandleCallback();
 				}
 			}
 		}
