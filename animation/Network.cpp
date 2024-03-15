@@ -1,2 +1,118 @@
 #include"stdafx.h"
+#include<iostream>
 #include "Network.h"
+
+extern unordered_set<Session, int> g_clients;
+
+Network::Network()
+{
+	WSADATA wsaData;
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+		std::cout << "WSAStart Up Error " << endl;
+
+}
+
+Network::~Network()
+{
+	End();
+}
+
+bool Network::ReadytoConnect()
+{
+	clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (clientsocket == INVALID_SOCKET)
+	{
+		std::cout << " client socket Error " << std::endl;
+		return false;
+	}
+	sockaddr_in sockaddrIn;
+	sockaddrIn.sin_family = AF_INET;
+	sockaddrIn.sin_port = htons(PORT_NUM);
+	inet_pton(AF_INET, SERVER_IP, &sockaddrIn.sin_addr.s_addr);
+
+	int ret = connect(clientsocket, reinterpret_cast<sockaddr*>(&sockaddrIn), sizeof(sockaddrIn));
+	if (ret)
+	{
+		std::cout << "Connect Error" << std::endl;
+		return false;
+	}
+
+	std::cout << " Success Connect " << std::endl;
+	return true;
+}
+// 연결 완료 
+
+// 여기까진 메인 쓰레드 
+// 리시브 하는 쓰레들 새로, 
+
+
+void Network::End()
+{
+}
+
+void Network::StartServer()
+{
+	netThread = std::thread([this]() {NetThreadFunc(); });
+	ServerStart = true;
+}
+
+void Network::NetThreadFunc()
+{
+	while (ServerStart)
+	{
+		int ioByte = recv(clientsocket, _buf, BUF_SIZE, 0);
+		while (ioByte > 0)
+		{
+			ProcessData(ioByte);
+			cout << " recvByte : " << ioByte << endl;
+		}
+	}
+}
+
+void Network::ProcessData(int _size)
+{
+	char* ptr = _buf;
+	static size_t in_packet_size = 0;
+	static size_t saved_packet_size = 0;
+	static char packet_buffer[BUF_SIZE];
+
+	while (0 != _size) {
+		if (0 == in_packet_size) in_packet_size = ptr[0];
+		if (_size + saved_packet_size >= in_packet_size) {
+			memcpy(packet_buffer + saved_packet_size, ptr, in_packet_size - saved_packet_size);
+			ProcessPacket(packet_buffer);
+			ptr += in_packet_size - saved_packet_size;
+			_size -= in_packet_size - saved_packet_size;
+			in_packet_size = 0;
+			saved_packet_size = 0;
+		}
+		else {
+			memcpy(packet_buffer + saved_packet_size, ptr, _size);
+			saved_packet_size += _size;
+			_size = 0;
+		}
+	}
+}
+
+void Network::ProcessPacket(char* buf)
+{
+	switch (buf[1])
+	{
+	case SC_LOGIN_INFO: {
+
+	}
+					  break;
+	case SC_ADD_OBJECT: {
+
+	}
+					  break;
+	case SC_MOVE_OBJECT: {
+
+	}
+					   break;
+	case SC_ROTATE_OBJECT: {
+
+	}
+						 break;
+	}
+}

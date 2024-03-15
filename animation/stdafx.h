@@ -25,6 +25,8 @@
 
 using namespace std;
 
+#include<unordered_set>
+
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <D3Dcompiler.h>

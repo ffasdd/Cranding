@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "main.h"
 #include "GameFramework.h"
+#include "Network.h"
+#include "Session.h"
 
 #define MAX_LOADSTRING 100
 
@@ -9,6 +11,9 @@ TCHAR							szTitle[MAX_LOADSTRING];
 TCHAR							szWindowClass[MAX_LOADSTRING];
 
 CGameFramework					gGameFramework;
+Network							gNetwork;
+
+unordered_set<Session, int> g_clients;
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -29,7 +34,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
+	while (!gNetwork.ReadytoConnect());
+	// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
+	gNetwork.StartServer();
+
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CRANDING));
+
+;
 
 	while (1)
 	{
