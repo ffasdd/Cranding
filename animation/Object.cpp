@@ -713,7 +713,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 
 			// animationSets = 유니티에서 같이 뽑힌 애니메이션들의 번호(진짜 애니메이션의 번호)
 			// animationTrack = player가 가지고 있는 애니메이션들의 번호
-			if (m_fBlendingTime >= 0.1f && m_bIsBlending == true)
+			if (m_fBlendingTime >= 0.0f && m_bIsBlending == true)
 			{
 				m_bIsBlending = false;
 				m_fBlendingTime = 0.0f;
@@ -772,7 +772,6 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						if (fPosition2 == 0)
 						{
 							this->m_bIsAttack = false;
-							//this->m_bIsLastBlending = true;
 						}
 					}
 

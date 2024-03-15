@@ -294,6 +294,10 @@ public:
 	~CAnimationController();
 
 public:
+	// 치료 키 -> spacebar 누르면 치료
+	bool							m_bIsHeal = false;
+	int								m_nHealCnt = 1;
+
 	// hp == 0 (기절상태 변수) -> 현재 임시로 f1 누르면 기절, f2 누르면 다시 살아남
 	bool							m_bIsDead = false;
 
@@ -301,13 +305,15 @@ public:
 	bool							m_bIsAttack = false;
 
 	// 애니메이션 블렌딩 변수
-	// m_nAnimationBefore -> 칼 쓰는애 : 1, 총 쓰는 애 : 0
+	// m_nAnimationBefore, after -> 칼 쓰는애 : 1, 총 쓰는 애 : 0
 	int								m_nAnimationBefore = 1;
-	int								m_nAnimationAfter = 0;
+	int								m_nAnimationAfter = 1;
 
 	int								m_nMoveCnt = 0;
-	bool							m_bIsBlending = false;
+	
+	bool							m_bIsMove = false;
 
+	bool							m_bIsBlending = false;
 	bool							m_bIsLastBlending = false;
 
 	float							m_fBlendingTime = 0;

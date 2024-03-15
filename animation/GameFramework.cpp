@@ -334,6 +334,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				case VK_F9:
 					ChangeSwapChainState();
 					break;
+				case VK_SPACE:
+					m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
+					break;
 				default:
 					break;
 			}
@@ -479,12 +482,15 @@ void CGameFramework::ProcessInput()
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsLastBlending = true;
 		}
 
+		// spacebar 누르면 치료
+		if (pKeysBuffer[VK_SPACE] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsMove == false)
+		{
+			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = true;
+		}
+
 		// 공격 키
 		if (pKeysBuffer[VK_LBUTTON] & 0xF0)
-		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
-			//m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
-		}
 
 		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
 		{
