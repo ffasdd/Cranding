@@ -2,13 +2,18 @@
 #include<iostream>
 #include "Network.h"
 
-extern unordered_set<Session, int> g_clients;
-
 Network::Network()
 {
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 		std::cout << "WSAStart Up Error " << endl;
+
+	clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+	if (clientsocket == INVALID_SOCKET)
+	{
+		std::cout << " client socket Error " << std::endl;
+	}
 
 }
 
@@ -19,21 +24,17 @@ Network::~Network()
 
 bool Network::ReadytoConnect()
 {
-	clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (clientsocket == INVALID_SOCKET)
-	{
-		std::cout << " client socket Error " << std::endl;
-		return false;
-	}
 	sockaddr_in sockaddrIn;
 	sockaddrIn.sin_family = AF_INET;
-	sockaddrIn.sin_port = htons(PORT_NUM);
-	inet_pton(AF_INET, SERVER_IP, &sockaddrIn.sin_addr.s_addr);
+	sockaddrIn.sin_port = htons(9000);
+	inet_pton(AF_INET, "127.0.0.1", &sockaddrIn.sin_addr);
 
 	int ret = connect(clientsocket, reinterpret_cast<sockaddr*>(&sockaddrIn), sizeof(sockaddrIn));
 	if (ret)
 	{
+		DWORD err = GetLastError();
 		std::cout << "Connect Error" << std::endl;
+		std::cout << err << endl;
 		return false;
 	}
 
@@ -64,6 +65,7 @@ void Network::NetThreadFunc()
 		while (ioByte > 0)
 		{
 			ProcessData(ioByte);
+			if (ioByte <= 0) break;
 			cout << " recvByte : " << ioByte << endl;
 		}
 	}
@@ -99,11 +101,30 @@ void Network::ProcessPacket(char* buf)
 	switch (buf[1])
 	{
 	case SC_LOGIN_INFO: {
-
+		SC_LOGIN_INFO_PACKET* p = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
+		int p_id = p->id;
+		g_clients[p_id].setId(p_id);
+		g_clients[p_id].setHp(p->hp);
+		g_clients[p_id].setPos(p->pos);
+		g_clients[p_id].setLook(p->look);
+		g_clients[p_id].setUp(p->up);
+		g_clients[p_id].setRight(p->right);
+		
+		SetEvent(g_event);
 	}
-					  break;
+		break;
 	case SC_ADD_OBJECT: {
 
+		std::cout << "Add Player " << std::endl;
+		SC_ADD_OBJECT_PACKET* p = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
+		int ob_id = p->id;
+		g_clients[ob_id].setId(ob_id);
+		g_clients[ob_id].setHp(p->hp);
+		g_clients[ob_id].setPos(p->pos);
+		g_clients[ob_id].setLook(p->look);
+		g_clients[ob_id].setUp(p->up);
+		g_clients[ob_id].setRight(p->right);
+		break;
 	}
 					  break;
 	case SC_MOVE_OBJECT: {
@@ -115,4 +136,13 @@ void Network::ProcessPacket(char* buf)
 	}
 						 break;
 	}
+}
+
+void Network::SendLoginfo(char* name)
+{
+	CS_LOGIN_PACKET p;
+	strcpy_s(p.name, name);
+	p.size = sizeof(CS_LOGIN_PACKET);
+	p.type = CS_LOGIN;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }

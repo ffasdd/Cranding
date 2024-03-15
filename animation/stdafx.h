@@ -10,6 +10,7 @@
 #include <windows.h>
 
 // C의 런타임 헤더 파일입니다.
+#include<iostream>
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
@@ -25,7 +26,7 @@
 
 using namespace std;
 
-#include<unordered_set>
+#include<unordered_map>
 
 #include <d3d12.h>
 #include <dxgi1_4.h>
@@ -58,6 +59,8 @@ extern HINSTANCE						ghAppInstance;
 #pragma comment(lib, "dxgi.lib")
 
 #pragma comment(lib, "dxguid.lib")
+
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 

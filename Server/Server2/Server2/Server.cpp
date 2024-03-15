@@ -36,8 +36,8 @@ void Server::NetworkSet()
 	listensocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	SOCKADDR_IN serverAddr;
 	memset(&serverAddr, 0, sizeof(serverAddr));
-	serverAddr.sin_addr.S_un.S_addr = INADDR_ANY;
 	serverAddr.sin_family = AF_INET;
+	serverAddr.sin_addr.S_un.S_addr = INADDR_ANY;
 	serverAddr.sin_port = htons(9000);
 
 	bind(listensocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr));

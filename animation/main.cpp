@@ -13,7 +13,10 @@ TCHAR							szWindowClass[MAX_LOADSTRING];
 CGameFramework					gGameFramework;
 Network							gNetwork;
 
-unordered_set<Session, int> g_clients;
+unordered_map<int, Session> g_clients;
+
+HANDLE g_event = CreateEvent(NULL, FALSE, FALSE, NULL);
+
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -32,11 +35,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	::LoadString(hInstance, IDC_CRANDING, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
-	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
-
 	while (!gNetwork.ReadytoConnect());
 	// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
 	gNetwork.StartServer();
+
+	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
+
+	WaitForSingleObject(g_event, INFINITE);
+
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CRANDING));
 
@@ -100,6 +106,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	::ShowWindow(hMainWnd, nCmdShow);
 	::UpdateWindow(hMainWnd);
 
+	// 여기서 초기 센드 
+	cout << " Input your use name " << endl;
+	char name[20];
+	cin >> name;
+	gNetwork.SendLoginfo(name);
+	cout << "send to login info " << endl;
 	return(TRUE);
 }
 

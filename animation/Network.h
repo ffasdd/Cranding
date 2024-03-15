@@ -7,7 +7,8 @@
 
 #define SERVER_IP "172.0.0.1"
 
-
+extern unordered_map<int, Session> g_clients;
+extern HANDLE g_event;
 class Network
 {
 public:
@@ -21,11 +22,12 @@ public:
 public:
 	// thread 
 	void StartServer();
-
 	void NetThreadFunc();
-
 	void ProcessData(int _size);
 	void ProcessPacket(char* buf);
+
+public: // send
+	void SendLoginfo(char* name);
 
 public:
 	int prev_remain = 0;
