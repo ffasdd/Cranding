@@ -740,12 +740,12 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 					if (this->m_bIsAttack == true)
 					{
 						CAnimationSet* pAnimationSet = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[k].m_nAnimationSet];
-						CAnimationSet* pAnimationSet2 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[9].m_nAnimationSet];
+						CAnimationSet* pAnimationSet2 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[m_nAttackAniNum].m_nAnimationSet];
 
 						// animationtrack의 m_fPosition을 업데이트
 						float fPosition = m_pAnimationTracks[k].UpdatePosition(m_pAnimationTracks[k].m_fPosition, fTimeElapsed, pAnimationSet->m_fLength);
 
-						float fPosition2 = m_pAnimationTracks[9].UpdatePosition(m_pAnimationTracks[9].m_fPosition, fTimeElapsed, pAnimationSet2->m_fLength);
+						float fPosition2 = m_pAnimationTracks[m_nAttackAniNum].UpdatePosition(m_pAnimationTracks[m_nAttackAniNum].m_fPosition, fTimeElapsed, pAnimationSet2->m_fLength);
 						for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
 						{
 							XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
@@ -759,7 +759,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 
 								XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet2->GetSRT(j, fPosition2);
 
-								xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[9].m_fWeight));
+								xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[m_nAttackAniNum].m_fWeight));
 							}
 							// 현재 플레이어의 뼈 변환 정보들
 							else
@@ -771,6 +771,8 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						}
 						if (fPosition2 == 0)
 						{
+							if (m_nAttackAniNum == 8) m_nAttackAniNum = 9;
+							else m_nAttackAniNum = 8;
 							this->m_bIsAttack = false;
 						}
 					}

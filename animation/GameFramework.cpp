@@ -484,9 +484,7 @@ void CGameFramework::ProcessInput()
 
 		// spacebar 누르면 치료
 		if (pKeysBuffer[VK_SPACE] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsMove == false)
-		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = true;
-		}
 
 		// 공격 키
 		if (pKeysBuffer[VK_LBUTTON] & 0xF0)
