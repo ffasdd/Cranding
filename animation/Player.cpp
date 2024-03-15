@@ -405,21 +405,21 @@ void CTerrainPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 // 플레이어가 움직이면 애니메이션 바꿔주는 부분
 void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 {
+	// 방향키 눌린 경우
 	if (dwDirection)
 	{
 		// 총 사용하는 플레이어일 경우
 		// m_nAnimationBefore = 0, m_nAnimationAfter = 2
 		// 검 사용하는 플레이어일 경우
 		// m_nAnimationBefore = 1, m_nAnimationAfter = 3
-		m_pSkinnedAnimationController->m_nBlendingCnt++;
 
 		if (m_pSkinnedAnimationController->m_bIsBlending == false
-			&& m_pSkinnedAnimationController->m_nBlendingCnt < 2)
+			&& m_pSkinnedAnimationController->m_nMoveCnt == 0)
 		{
 			m_pSkinnedAnimationController->m_bIsBlending = true;
-			m_pSkinnedAnimationController->m_nAnimationBefore = 1;
 			m_pSkinnedAnimationController->m_nAnimationAfter = 3;
 		}
+		m_pSkinnedAnimationController->m_nMoveCnt++;
 		m_pSkinnedAnimationController->SetTrackEnable(1, false);
 		m_pSkinnedAnimationController->SetTrackEnable(3, true);
 	}
@@ -438,14 +438,13 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 		if (::IsZero(fLength)) // 이동을 멈춘 경우 or 가만있는 경우
 		{
 			if (m_pSkinnedAnimationController->m_bIsLastBlending == false
-				&& m_pSkinnedAnimationController->m_nBlendingCnt > 0)
+				&& m_pSkinnedAnimationController->m_nMoveCnt >0)
 			{
 				m_pSkinnedAnimationController->m_nAnimationBefore = 3;
 				m_pSkinnedAnimationController->m_nAnimationAfter = 1;
-				//m_pSkinnedAnimationController->m_bIsLastBlending = false;
 				m_pSkinnedAnimationController->m_bIsLastBlending = true;
 			}
-			m_pSkinnedAnimationController->m_nBlendingCnt = 0;
+			m_pSkinnedAnimationController->m_nMoveCnt = 0;
 			m_pSkinnedAnimationController->SetTrackEnable(1, true); //다시 idle 애니메이션 활성화
 			m_pSkinnedAnimationController->SetTrackEnable(3, false);
 			m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f); // 애니메이션트렉위치 변경 함수, 달리는 애니메이션 트렉의 가장 첫 부분으로 다시 옮김 ->달리다가 멈춘 후 다시 달릴 때, 달리는 애니메이션이 멈췄던 지점이 아닌 애니메이션의 첫 부분부터 다시 실행되도록 설정한 것
@@ -454,12 +453,15 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 		// 기절 부분
 		if (m_pSkinnedAnimationController->m_bIsDead == true)
 		{
-			m_pSkinnedAnimationController->m_bIsBlending = true;
-			if (m_pSkinnedAnimationController->m_nAnimationBefore == 0)
-				m_pSkinnedAnimationController->m_nAnimationBefore = 1;
-			else
+			//if (m_pSkinnedAnimationController->m_nAnimationBefore == 0)
+			//	m_pSkinnedAnimationController->m_nAnimationBefore = 1;
+			//else
 				m_pSkinnedAnimationController->m_nAnimationBefore = m_pSkinnedAnimationController->m_nAnimationAfter;
 			m_pSkinnedAnimationController->m_nAnimationAfter = 5;
+
+			// 기절 상태에서는 공격x
+			m_pSkinnedAnimationController->m_bIsAttack = false;
+
 			m_pSkinnedAnimationController->SetTrackEnable(5, true);
 			m_pSkinnedAnimationController->SetTrackEnable(1, false);
 			m_pSkinnedAnimationController->SetTrackEnable(3, false);
@@ -471,7 +473,6 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 		else if (m_pSkinnedAnimationController->m_nAnimationAfter == 5
 			&& m_pSkinnedAnimationController->m_bIsDead == false)
 		{
-			m_pSkinnedAnimationController->m_bIsLastBlending = true;
 			m_pSkinnedAnimationController->m_nAnimationBefore = 5;
 			m_pSkinnedAnimationController->m_nAnimationAfter = 1;
 			m_pSkinnedAnimationController->SetTrackEnable(5, false);

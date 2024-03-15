@@ -301,10 +301,11 @@ public:
 	bool							m_bIsAttack = false;
 
 	// 애니메이션 블렌딩 변수
-	int								m_nAnimationBefore = 0;
+	// m_nAnimationBefore -> 칼 쓰는애 : 1, 총 쓰는 애 : 0
+	int								m_nAnimationBefore = 1;
 	int								m_nAnimationAfter = 0;
 
-	int								m_nBlendingCnt = 0;
+	int								m_nMoveCnt = 0;
 	bool							m_bIsBlending = false;
 
 	bool							m_bIsLastBlending = false;

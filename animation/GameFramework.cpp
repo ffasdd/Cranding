@@ -469,13 +469,22 @@ void CGameFramework::ProcessInput()
 
 		// f1 누르면 기절, f2 누르면 부활
 		if (pKeysBuffer[VK_F1] & 0xF0)
+		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
+			m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
+		}
 		if (pKeysBuffer[VK_F2] & 0xF0)
+		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = false;
+			m_pPlayer->m_pSkinnedAnimationController->m_bIsLastBlending = true;
+		}
 
 		// 공격 키
 		if (pKeysBuffer[VK_LBUTTON] & 0xF0)
+		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
+			//m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
+		}
 
 		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
 		{
