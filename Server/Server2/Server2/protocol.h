@@ -26,6 +26,7 @@ constexpr char SC_ROTATE_OBJECT = 10;
 
 constexpr float VIEW_RANGE = 50.0f;
 
+
 enum animateState : char {
 	IDLE,
 	FORWARD_MOVE,

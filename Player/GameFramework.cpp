@@ -5,6 +5,10 @@
 #include "stdafx.h"
 #include "GameFramework.h"
 
+const int TARGET_FPS = 60;
+const float SEND_FREQUENCY = TARGET_FPS / 5.0f; // 1초에 5번 보낼 것임
+
+
 CGameFramework::CGameFramework()
 {
 	m_pdxgiFactory = NULL;
@@ -567,34 +571,42 @@ void CGameFramework::ProcessInput()
 	}
 	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
 
-	if (clientsendque.size() != 0) {
-		if (clientsendque.front() == 0)
-		{
-			CS_MOVE_PACKET p;
-			//p.direction = dwDirection;
-			p.pos = m_pPlayer->GetPosition();
-			p.size = sizeof(CS_MOVE_PACKET);
-			p.type = CS_MOVE;
-			OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
-			if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
-				cout << " Send Error " << endl;
+	static float timeSinceLastSend = 0.0f;
+	timeSinceLastSend += m_GameTimer.GetTimeElapsed();
 
-			delete send_data;
-			clientsendque.pop();
-		}
-		else
-		{
-			CS_ROTATE_PACKET p;
-			p.type = CS_ROTATE;
-			p.size = sizeof(CS_ROTATE_PACKET);
-			p.look = m_pPlayer->GetLook();
-			p.up = m_pPlayer->GetUp();
-			p.right = m_pPlayer->GetRight();
-			OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
-			if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
-				cout << " Send Error " << endl;
-			delete send_data;
-			clientsendque.pop();
+	if (timeSinceLastSend >= (1.0f / SEND_FREQUENCY)) {
+		// 시간이 송신 주기를 초과했을 때만 데이터 송신
+		timeSinceLastSend = 0.0f; // 타이머 초기화
+
+		if (clientsendque.size() != 0) {
+			if (clientsendque.front() == 0)
+			{
+				CS_MOVE_PACKET p;
+				//p.direction = dwDirection;
+				p.pos = m_pPlayer->GetPosition();
+				p.size = sizeof(CS_MOVE_PACKET);
+				p.type = CS_MOVE;
+				OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
+				if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
+					cout << " Send Error " << endl;
+
+				delete send_data;
+				clientsendque.pop();
+			}
+			else
+			{
+				CS_ROTATE_PACKET p;
+				p.type = CS_ROTATE;
+				p.size = sizeof(CS_ROTATE_PACKET);
+				p.look = m_pPlayer->GetLook();
+				p.up = m_pPlayer->GetUp();
+				p.right = m_pPlayer->GetRight();
+				OVER_EX* send_data = new OVER_EX{ reinterpret_cast<char*>(&p) };
+				if (WSASend(clientSocket, &send_data->wsabuf, 1, 0, 0, &send_data->overlapped, 0) == SOCKET_ERROR)
+					cout << " Send Error " << endl;
+				delete send_data;
+				clientsendque.pop();
+			}
 		}
 	}
 

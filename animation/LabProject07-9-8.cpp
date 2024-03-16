@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "LabProject07-9-8.h"
 #include "GameFramework.h"
+#include "Session.h"
 
 #define MAX_LOADSTRING 100
 
@@ -13,10 +14,17 @@ TCHAR							szWindowClass[MAX_LOADSTRING];
 
 CGameFramework					gGameFramework;
 
+HANDLE g_handle;
+queue<int> clientsendque;
+SOCKET clientSocket;
+unordered_map<int, Session> clients;
+
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
+
+
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
