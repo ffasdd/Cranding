@@ -6,6 +6,11 @@
 #include "Timer.h"
 #include "Player.h"
 #include "Scene.h"
+#include"Network.h"
+
+extern Network							gNetwork;
+
+
 
 class CGameFramework
 {
@@ -43,6 +48,7 @@ public:
 
 	// 서버로부터 받은 좌표 렌더링
 public:
+	CPlayer* m_pPlayer = NULL;
 
 	int cl_id;
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
@@ -86,7 +92,7 @@ private:
 	CGameTimer					m_GameTimer;
 
 	CScene						*m_pScene = NULL;
-	CPlayer						*m_pPlayer = NULL;
+
 	CCamera						*m_pCamera = NULL;
 
 	POINT						m_ptOldCursorPos;

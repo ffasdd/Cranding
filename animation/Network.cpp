@@ -138,6 +138,12 @@ void Network::ProcessPacket(char* buf)
 
 	}
 						 break;
+
+	case SC_TEST: {
+		SC_TEST_PACKET* p = reinterpret_cast<SC_TEST_PACKET*>(buf);
+		cout << " Test Success " << endl;
+		break;
+	}
 	}
 }
 
@@ -148,4 +154,20 @@ void Network::SendLoginfo(char* name)
 	p.size = sizeof(CS_LOGIN_PACKET);
 	p.type = CS_LOGIN;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendTest()
+{
+	CS_TEST_PACKET p;
+	p.size = sizeof(CS_TEST_PACKET);
+	p.type = CS_TEST;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendMovePlayer(XMFLOAT3 _pos)
+{
+	CS_MOVE_PACKET p;
+	p.size = sizeof(CS_MOVE_PACKET);
+	p.type = CS_MOVE;
+	//
 }

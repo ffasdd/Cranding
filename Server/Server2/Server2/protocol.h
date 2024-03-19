@@ -24,6 +24,24 @@ constexpr char SC_LOGIN_FAIL = 8;
 constexpr char SC_STAT_CHANGE = 9;
 constexpr char SC_ROTATE_OBJECT = 10;
 
+
+constexpr char CS_TEST = 11;
+constexpr char SC_TEST = 12;
+
+struct CS_TEST_PACKET {
+	unsigned char size;
+	char	type;
+	int id;
+};
+
+struct SC_TEST_PACKET {
+	unsigned char size;
+	char	type;
+
+};
+
+
+
 constexpr float VIEW_RANGE = 50.0f;
 
 enum animateState : char {

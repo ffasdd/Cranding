@@ -87,7 +87,6 @@ public:
 
 public:
 	void SetId(int id) { c_id = id; }
-	void SetScale(XMFLOAT3& xmf3Scale) { m_xmf3Scale = xmf3Scale; }
 	void SetLook(const XMFLOAT3& xmf3Look) { m_xmf3Look = xmf3Look; }
 	void SetRight(const XMFLOAT3& xmf3Right) { m_xmf3Right = xmf3Right; }
 	void SetUp(const XMFLOAT3& xmf3Up) { m_xmf3Up = xmf3Up; }

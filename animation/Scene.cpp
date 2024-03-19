@@ -440,9 +440,18 @@ bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam,
 
 bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
+	// Object 매니저를 통해서 여기서 관리해줘도 될거같음 
+	// 그게더 좋을수도? 
+
 	switch (nMessageID)
 	{
 	case WM_KEYDOWN:
+		switch(wParam)
+		{
+		case 'W':
+			
+			break;
+		}
 		break;
 	default:
 		break;

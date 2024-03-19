@@ -292,10 +292,13 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		// 좌클릭으로 공격
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
+		//gNetwork.SendTest();
 		::GetCursorPos(&m_ptOldCursorPos);
 		break;
 
 		// 우클릭으로 회전
+		// 여기서 패킷전송
+
 	case WM_RBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);

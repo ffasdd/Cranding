@@ -247,6 +247,14 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
+	case CS_TEST: {
+
+		CS_TEST_PACKET* p = reinterpret_cast<CS_TEST_PACKET*>(packet);
+		cout << " CS _TEST _ PACKET " << id << " - id " << endl;
+		clients[id].send_test_packet(id);
+		break;
+	}
+	
 	}
 }
 

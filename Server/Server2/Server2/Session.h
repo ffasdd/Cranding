@@ -28,7 +28,7 @@ public:
 	unordered_set<int> _view_list;
 
 
-	
+
 public:
 	Session();
 	~Session() {}
@@ -58,5 +58,8 @@ public:
 	void send_remove_packet(int client_id);
 
 	void send_rotate_packet(int client_id);
+
+	void send_test_packet(int client_id);
+		
 };
 extern array<Session, MAX_USER> clients;

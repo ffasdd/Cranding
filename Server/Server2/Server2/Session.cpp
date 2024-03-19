@@ -86,6 +86,14 @@ void Session::send_rotate_packet(int client_id)
 	do_send(&p);
 }
 
+void Session::send_test_packet(int client_id)
+{
+	SC_TEST_PACKET p;
+	p.size = sizeof(SC_TEST_PACKET);
+	p.type = SC_TEST;
+	do_send(&p);
+}
+
 
 
 
