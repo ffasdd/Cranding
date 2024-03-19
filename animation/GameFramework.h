@@ -3,6 +3,14 @@
 #define FRAME_BUFFER_WIDTH		640
 #define FRAME_BUFFER_HEIGHT		480
 
+#define DRAW_SCENE_COLOR				'S'
+
+#define DRAW_SCENE_TEXTURE				'T'
+#define DRAW_SCENE_LIGHTING				'L'
+#define DRAW_SCENE_NORMAL				'N'
+#define DRAW_SCENE_Z_DEPTH				'Z'
+#define DRAW_SCENE_DEPTH				'D'
+
 #include "Timer.h"
 #include "Player.h"
 #include "Scene.h"
@@ -22,7 +30,7 @@ public:
 
 	void CreateRtvAndDsvDescriptorHeaps();
 
-	void CreateRenderTargetViews();
+	void CreateSwapChainRenderTargetViews();
 	void CreateDepthStencilView();
 
 	void ChangeSwapChainState();
@@ -60,9 +68,11 @@ private:
 
 	ID3D12Resource				*m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
 	ID3D12DescriptorHeap		*m_pd3dRtvDescriptorHeap = NULL;
+	D3D12_CPU_DESCRIPTOR_HANDLE		m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBuffers];
 
 	ID3D12Resource				*m_pd3dDepthStencilBuffer = NULL;
 	ID3D12DescriptorHeap		*m_pd3dDsvDescriptorHeap = NULL;
+	D3D12_CPU_DESCRIPTOR_HANDLE		m_d3dDsvDescriptorCPUHandle;
 
 	ID3D12CommandAllocator		*m_pd3dCommandAllocator = NULL;
 	ID3D12CommandQueue			*m_pd3dCommandQueue = NULL;
@@ -81,6 +91,10 @@ private:
 	CScene						*m_pScene = NULL;
 	CPlayer						*m_pPlayer = NULL;
 	CCamera						*m_pCamera = NULL;
+
+	CPostProcessingShader* m_pPostProcessingShader = NULL;
+
+	int								m_nDrawOption = DRAW_SCENE_COLOR;
 
 	POINT						m_ptOldCursorPos;
 
