@@ -34,7 +34,8 @@ protected:
 	LPVOID						m_pCameraUpdatedContext = NULL;
 
 	CCamera						*m_pCamera = NULL;
-
+public:
+	int c_id = 0;
 public:
 	CPlayer();
 	virtual ~CPlayer();
@@ -83,6 +84,14 @@ public:
 	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed) { return(NULL); }
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
+
+public:
+	void SetId(int id) { c_id = id; }
+	void SetScale(XMFLOAT3& xmf3Scale) { m_xmf3Scale = xmf3Scale; }
+	void SetLook(const XMFLOAT3& xmf3Look) { m_xmf3Look = xmf3Look; }
+	void SetRight(const XMFLOAT3& xmf3Right) { m_xmf3Right = xmf3Right; }
+	void SetUp(const XMFLOAT3& xmf3Up) { m_xmf3Up = xmf3Up; }
+
 };
 
 class CSoundCallbackHandler : public CAnimationCallbackHandler

@@ -23,7 +23,7 @@ public:
 	// thread 
 	void StartServer();
 	void NetThreadFunc();
-	void ProcessData(int _size);
+	void ProcessData(size_t _size);
 	void ProcessPacket(char* buf);
 
 public: // send

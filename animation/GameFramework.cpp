@@ -375,6 +375,38 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 	return(0);
 }
 
+void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
+{
+	if (cl_id == n)
+	{
+		m_pPlayer->SetId(cl_id);
+		m_pPlayer->SetPosition(position);
+	}
+	else
+	{
+		// 이 부분들 수정 필요함
+		int others_id = -1;
+		switch (cl_id) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetPosition(position);
+
+	}
+}
+
+void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
+{
+}
+
 void CGameFramework::OnDestroy()
 {
     ReleaseObjects();

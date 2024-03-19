@@ -62,16 +62,15 @@ void Network::NetThreadFunc()
 	while (ServerStart)
 	{
 		int ioByte = recv(clientsocket, _buf, BUF_SIZE, 0);
-		while (ioByte > 0)
-		{
-			ProcessData(ioByte);
-			if (ioByte <= 0) break;
-			cout << " recvByte : " << ioByte << endl;
-		}
+
+		ProcessData(ioByte);
+	
+		cout << " recvByte : " << ioByte << endl;
+
 	}
 }
 
-void Network::ProcessData(int _size)
+void Network::ProcessData(size_t _size)
 {
 	char* ptr = _buf;
 	static size_t in_packet_size = 0;
@@ -109,10 +108,11 @@ void Network::ProcessPacket(char* buf)
 		g_clients[p_id].setLook(p->look);
 		g_clients[p_id].setUp(p->up);
 		g_clients[p_id].setRight(p->right);
-		
+
 		SetEvent(g_event);
-	}
 		break;
+	}
+
 	case SC_ADD_OBJECT: {
 
 		std::cout << "Add Player " << std::endl;
@@ -128,7 +128,10 @@ void Network::ProcessPacket(char* buf)
 	}
 					  break;
 	case SC_MOVE_OBJECT: {
-
+		SC_MOVE_OBJECT_PACKET* p = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(buf);
+		int ob_id = p->id;
+		std::cout << ob_id << " Player Move " << endl;
+		g_clients[ob_id].setPos(p->pos);
 	}
 					   break;
 	case SC_ROTATE_OBJECT: {

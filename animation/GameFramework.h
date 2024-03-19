@@ -41,6 +41,13 @@ public:
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
+	// 서버로부터 받은 좌표 렌더링
+public:
+
+	int cl_id;
+	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
+	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right);
+
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 
