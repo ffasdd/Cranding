@@ -14,7 +14,7 @@ CGameFramework					gGameFramework;
 Network							gNetwork;
 
 unordered_map<int, Session> g_clients;
-
+queue<SENDTYPE> g_sendqueue;
 HANDLE g_event = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 

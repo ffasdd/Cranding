@@ -28,6 +28,8 @@ constexpr char SC_ROTATE_OBJECT = 10;
 constexpr char CS_TEST = 11;
 constexpr char SC_TEST = 12;
 
+
+
 struct CS_TEST_PACKET {
 	unsigned char size;
 	char	type;

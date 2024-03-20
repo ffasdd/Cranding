@@ -54,6 +54,8 @@ void Network::End()
 void Network::StartServer()
 {
 	netThread = std::thread([this]() {NetThreadFunc(); });
+	sendThread = std::thread([this]() {SendThreadFunc(); });
+
 	ServerStart = true;
 }
 
@@ -64,9 +66,35 @@ void Network::NetThreadFunc()
 		int ioByte = recv(clientsocket, _buf, BUF_SIZE, 0);
 
 		ProcessData(ioByte);
-	
+
 		cout << " recvByte : " << ioByte << endl;
 
+	}
+}
+void Network::SendThreadFunc()
+{
+	while (ServerStart)
+	{
+		if (!g_sendqueue.empty())
+		{
+			SendProcess(g_sendqueue.front());
+			g_sendqueue.pop();
+
+		}
+	}
+}
+
+void Network::SendProcess(SENDTYPE sendtype)
+{
+	switch (sendtype)
+	{
+	case SENDTYPE::MOVE: {
+		SendMovePlayer(g_clients[my_id].getPos());
+		break;
+	}
+	case SENDTYPE::ROTATE: {
+		SendRotatePlayer(g_clients[my_id].getLook(),g_clients[my_id].getRight(),g_clients[my_id].getUp());
+	}
 	}
 }
 
@@ -101,14 +129,14 @@ void Network::ProcessPacket(char* buf)
 	{
 	case SC_LOGIN_INFO: {
 		SC_LOGIN_INFO_PACKET* p = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
-		int p_id = p->id;
-		g_clients[p_id].setId(p_id);
-		g_clients[p_id].setHp(p->hp);
-		g_clients[p_id].setPos(p->pos);
-		g_clients[p_id].setLook(p->look);
-		g_clients[p_id].setUp(p->up);
-		g_clients[p_id].setRight(p->right);
-
+		my_id = p->id;
+		g_clients[my_id].setId(p->id);
+		g_clients[my_id].setHp(p->hp);
+		g_clients[my_id].setPos(p->pos);
+		g_clients[my_id].setLook(p->look);
+		g_clients[my_id].setUp(p->up);
+		g_clients[my_id].setRight(p->right);
+		
 		SetEvent(g_event);
 		break;
 	}
@@ -135,7 +163,11 @@ void Network::ProcessPacket(char* buf)
 	}
 					   break;
 	case SC_ROTATE_OBJECT: {
-
+		SC_ROTATE_OBJECT_PACKET* p = reinterpret_cast<SC_ROTATE_OBJECT_PACKET*>(buf);
+		int ob_id = p->id;
+		g_clients[ob_id].setLook(p->look);
+		g_clients[ob_id].setRight(p->right);
+		g_clients[ob_id].setUp(p->up);
 	}
 						 break;
 
@@ -169,5 +201,17 @@ void Network::SendMovePlayer(XMFLOAT3 _pos)
 	CS_MOVE_PACKET p;
 	p.size = sizeof(CS_MOVE_PACKET);
 	p.type = CS_MOVE;
-	//
+	p.pos = _pos;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendRotatePlayer(XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up)
+{
+	CS_ROTATE_PACKET p;
+	p.size = sizeof(CS_ROTATE_PACKET);
+	p.look = _look;
+	p.right = _right;
+	p.up = _up;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+
 }

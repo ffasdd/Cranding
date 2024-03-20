@@ -9,6 +9,7 @@
 // Windows 헤더 파일:
 #include <windows.h>
 
+
 // C의 런타임 헤더 파일입니다.
 #include<iostream>
 #include <stdlib.h>
@@ -23,6 +24,7 @@
 
 #include <fstream>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -97,6 +99,9 @@ inline void Swap(float *pfS, float *pfT) { float fTemp = *pfS; *pfS = *pfT; *pfT
 #define ANIMATION_TYPE_PINGPONG			2
 
 #define ANIMATION_CALLBACK_EPSILON		0.00165f
+
+
+enum class SENDTYPE : INT { MOVE, ROTATE, ATTACK };
 
 namespace Vector3
 {

@@ -408,6 +408,34 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 
 void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
 {
+
+	if (cl_id == n)
+	{
+		m_pPlayer->SetLook(Look);
+		m_pPlayer->SetUp(Up);
+		m_pPlayer->SetRight(Right);
+
+	}
+	else
+	{
+		int others_id = -1;
+		switch (cl_id) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetLook(Look.x, Look.y, Look.z);
+		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetUp(Up.x, Up.y, Up.z);
+		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetRight(Right.x, Right.y, Right.z);
+		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetScale(10.0f, 10.0f, 10.0f);
+	}
 }
 
 void CGameFramework::OnDestroy()
@@ -497,12 +525,35 @@ void CGameFramework::ProcessInput()
 		DWORD dwDirection = 0;
 		// 위쪽 키가 눌려있는지 확인하는 비트 연산
 		// 위쪽 키가 눌려있으면 dwDirection에 dwDirection과 DIR_FORWARD의 비트 |(or) 연산 후 할당 연산(=)을 시행
-		if (pKeysBuffer[VK_UP] & 0xF0) dwDirection |= DIR_FORWARD;
-		if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
-		if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
-		if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
-		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
-		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
+		if (pKeysBuffer[VK_UP] & 0xF0)
+		{
+			dwDirection |= DIR_FORWARD;
+		}
+		if (pKeysBuffer[VK_DOWN] & 0xF0) 
+		{
+			dwDirection |= DIR_BACKWARD;
+			
+		}
+		if (pKeysBuffer[VK_LEFT] & 0xF0) 
+		{
+			dwDirection |= DIR_LEFT;
+			
+		}
+		if (pKeysBuffer[VK_RIGHT] & 0xF0) 
+		{
+			dwDirection |= DIR_RIGHT;
+			
+		}
+		if (pKeysBuffer[VK_PRIOR] & 0xF0) 
+		{
+			dwDirection |= DIR_UP;
+			
+		}
+		if (pKeysBuffer[VK_NEXT] & 0xF0) 
+		{
+			dwDirection |= DIR_DOWN;
+		
+		}
 
 		if (pKeysBuffer[VK_LBUTTON] & 0xF0)
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
@@ -511,14 +562,42 @@ void CGameFramework::ProcessInput()
 		{
 			if (cxDelta || cyDelta)
 			{
-				if (pKeysBuffer[VK_RBUTTON] & 0xF0)
+				if (pKeysBuffer[VK_RBUTTON] & 0xF0) {
 					m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
+					g_clients[cl_id].setLook(m_pPlayer->GetLook());
+					g_clients[cl_id].setRight(m_pPlayer->GetRight());
+					g_clients[cl_id].setUp(m_pPlayer->GetUp());
+					g_sendqueue.push(SENDTYPE::ROTATE);
+				}
 			}
 			if (dwDirection)
+			{
 				m_pPlayer->Move(dwDirection, 12.25f, true);
+				XMFLOAT3 exveloctiy = m_pPlayer->GetVelocity();
+				XMFLOAT3 exGravity = m_pPlayer->GetGravity();
+				XMFLOAT3 temp = Vector3::Add(exveloctiy, exGravity);
+				float fLength = sqrtf(temp.x * temp.x + temp.z * temp.z);
+				float fMaxVelocityXZ = m_pPlayer->GetMaxVelocityXZ();// m_fMaxVelocityXZ;
+				if (fLength > m_pPlayer->GetMaxVelocityXZ())
+				{
+					temp.x *= (fMaxVelocityXZ / fLength);
+					temp.z *= (fMaxVelocityXZ / fLength);
+				}
+				float fMaxVelocityY = m_pPlayer->GetMaxVelocityY(); 
+				fLength = sqrtf(temp.y * temp.y);
+				if (fLength > m_pPlayer->GetMaxVelocityY()) temp.y *= (fMaxVelocityY / fLength);
+
+				XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(temp, m_GameTimer.GetTimeElapsed(), false);
+				m_pPlayer->Move(xmf3Velocity, false);
+					g_clients[cl_id].setPos(m_pPlayer->GetPosition());
+				g_sendqueue.push(SENDTYPE::MOVE);
+				
+			}
 		}
 	}
 	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
+
+
 }
 
 void CGameFramework::AnimateObjects()

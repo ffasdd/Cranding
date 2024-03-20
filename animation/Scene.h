@@ -6,6 +6,7 @@
 
 #include "Shader.h"
 #include "Player.h"
+#include"Network.h"
 
 #define MAX_LIGHTS						16 
 

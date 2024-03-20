@@ -448,9 +448,11 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 	case WM_KEYDOWN:
 		switch(wParam)
 		{
-		case 'W':
-			
-			break;
+		//case 'W':
+		//	m_pPlayer->Move(DIR_FORWARD, 25.25f, true);
+		//	// send 
+		//	g_sendqueue.push(SENDTYPE::MOVE);
+		//	break;
 		}
 		break;
 	default:

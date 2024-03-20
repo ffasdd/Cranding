@@ -55,6 +55,9 @@ public:
 	void SetScale(XMFLOAT3& xmf3Scale) { m_xmf3Scale = xmf3Scale; }
 
 	const XMFLOAT3& GetVelocity() const { return(m_xmf3Velocity); }
+	const XMFLOAT3& GetGravity()const { return(m_xmf3Gravity); }
+	float GetMaxVelocityXZ() { return m_fMaxVelocityXZ; }
+	float GetMaxVelocityY() { return m_fMaxVelocityY; }
 	float GetYaw() const { return(m_fYaw); }
 	float GetPitch() const { return(m_fPitch); }
 	float GetRoll() const { return(m_fRoll); }
