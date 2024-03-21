@@ -46,7 +46,11 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	CreateDirect3DDevice();
 	CreateCommandQueueAndList();
 	CreateRtvAndDsvDescriptorHeaps();
+
 	CreateSwapChain();
+	
+	CreateSwapChainRenderTargetViews();
+
 	CreateDepthStencilView();
 
 	CoInitialize(NULL);
@@ -105,14 +109,11 @@ void CGameFramework::CreateSwapChain()
 	dxgiSwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	HRESULT hResult = m_pdxgiFactory->CreateSwapChain(m_pd3dCommandQueue, &dxgiSwapChainDesc, (IDXGISwapChain **)&m_pdxgiSwapChain);
+
 #endif
-	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
 
 	hResult = m_pdxgiFactory->MakeWindowAssociation(m_hWnd, DXGI_MWA_NO_ALT_ENTER);
-
-#ifndef _WITH_SWAPCHAIN_FULLSCREEN_STATE
-	CreateSwapChainRenderTargetViews();
-#endif
+	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
 }
 
 void CGameFramework::CreateDirect3DDevice()
@@ -230,7 +231,7 @@ void CGameFramework::CreateDepthStencilView()
 	d3dResourceDesc.Height = m_nWndClientHeight;
 	d3dResourceDesc.DepthOrArraySize = 1;
 	d3dResourceDesc.MipLevels = 1;
-	d3dResourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	d3dResourceDesc.Format = DXGI_FORMAT_D32_FLOAT;
 	d3dResourceDesc.SampleDesc.Count = (m_bMsaa4xEnable) ? 4 : 1;
 	d3dResourceDesc.SampleDesc.Quality = (m_bMsaa4xEnable) ? (m_nMsaa4xQualityLevels - 1) : 0;
 	d3dResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
@@ -245,17 +246,11 @@ void CGameFramework::CreateDepthStencilView()
 	d3dHeapProperties.VisibleNodeMask = 1;
 
 	D3D12_CLEAR_VALUE d3dClearValue;
-	d3dClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	d3dClearValue.Format = DXGI_FORMAT_D32_FLOAT;
 	d3dClearValue.DepthStencil.Depth = 1.0f;
 	d3dClearValue.DepthStencil.Stencil = 0;
 
-	m_pd3dDevice->CreateCommittedResource(&d3dHeapProperties, D3D12_HEAP_FLAG_NONE, &d3dResourceDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &d3dClearValue, __uuidof(ID3D12Resource), (void **)&m_pd3dDepthStencilBuffer);
-
-	D3D12_DEPTH_STENCIL_VIEW_DESC d3dDepthStencilViewDesc;
-	::ZeroMemory(&d3dDepthStencilViewDesc, sizeof(D3D12_DEPTH_STENCIL_VIEW_DESC));
-	d3dDepthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	d3dDepthStencilViewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-	d3dDepthStencilViewDesc.Flags = D3D12_DSV_FLAG_NONE;
+	m_pd3dDevice->CreateCommittedResource(&d3dHeapProperties, D3D12_HEAP_FLAG_NONE, &d3dResourceDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &d3dClearValue, __uuidof(ID3D12Resource), (void**)&m_pd3dDepthStencilBuffer);
 
 	m_d3dDsvDescriptorCPUHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencilBuffer, NULL, m_d3dDsvDescriptorCPUHandle);
@@ -343,6 +338,16 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				case VK_F9:
 					ChangeSwapChainState();
 					break;
+				case 'S': //83
+				case 'T': //84
+				case 'D': //68
+				case 'Z': //90
+				case 'N': //78
+				case 'L': //76
+				{
+					m_nDrawOption = (int)wParam;
+					break;
+				}
 				default:
 					break;
 			}
@@ -578,11 +583,6 @@ void CGameFramework::FrameAdvance()
 	}
 
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-
-
-
-
-
 
 	hResult = m_pd3dCommandList->Close();
 	

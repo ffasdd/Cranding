@@ -370,6 +370,9 @@ public:
 	CGameObject(int nMaterials);
     virtual ~CGameObject();
 
+
+	D3D12_GPU_DESCRIPTOR_HANDLE		m_d3dCbvGPUDescriptorHandle;
+
 public:
 	// 상하체 분리 변수
 	bool							m_bUpperBody = false;
@@ -405,6 +408,8 @@ public:
 
 	virtual void OnPrepareAnimate() { }
 	virtual void Animate(float fTimeElapsed);
+
+	void SetRootParameter(ID3D12GraphicsCommandList* pd3dCommandList);
 
 	virtual void OnPrepareRender() { }
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
