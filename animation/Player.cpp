@@ -62,8 +62,8 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 		if (dwDirection & DIR_BACKWARD) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Look, -fDistance);
 		if (dwDirection & DIR_RIGHT) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Right, fDistance);
 		if (dwDirection & DIR_LEFT) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Right, -fDistance);
-		if (dwDirection & DIR_UP) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, fDistance);
-		if (dwDirection & DIR_DOWN) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, -fDistance);
+		//if (dwDirection & DIR_UP) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, fDistance);
+		//if (dwDirection & DIR_DOWN) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, -fDistance);
 
 		Move(xmf3Shift, bUpdateVelocity);
 	}
@@ -415,17 +415,22 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 
 		// 돌아다니면서 치료 불가
 		//m_pSkinnedAnimationController->m_bIsHeal = false;
-		m_pSkinnedAnimationController->m_bIsMove = true;
-
-		if (m_pSkinnedAnimationController->m_bIsBlending == false
-			&& m_pSkinnedAnimationController->m_nMoveCnt == 0)
+		//if(m_pSkinnedAnimationController->m_bIsHeal == false)
+		if (m_pSkinnedAnimationController->m_bIsHeal == false 
+			&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
 		{
-			m_pSkinnedAnimationController->m_bIsBlending = true;
-			m_pSkinnedAnimationController->m_nAnimationAfter = 3;
+			m_pSkinnedAnimationController->m_bIsMove = true;
+
+			if (m_pSkinnedAnimationController->m_bIsBlending == false
+				&& m_pSkinnedAnimationController->m_nMoveCnt == 0)
+			{
+				m_pSkinnedAnimationController->m_bIsBlending = true;
+				m_pSkinnedAnimationController->m_nAnimationAfter = 3;
+			}
+			m_pSkinnedAnimationController->m_nMoveCnt++;
+			m_pSkinnedAnimationController->SetTrackEnable(1, false);
+			m_pSkinnedAnimationController->SetTrackEnable(3, true);
 		}
-		m_pSkinnedAnimationController->m_nMoveCnt++;
-		m_pSkinnedAnimationController->SetTrackEnable(1, false);
-		m_pSkinnedAnimationController->SetTrackEnable(3, true);
 	}
 
 	CPlayer::Move(dwDirection, fDistance, bUpdateVelocity);
@@ -507,7 +512,8 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 		else if (m_pSkinnedAnimationController->m_bIsHeal == false
 			&& m_pSkinnedAnimationController->m_nAnimationAfter == 10)
 		{
-			m_pSkinnedAnimationController->m_bIsLastBlending = true;
+			if(m_pSkinnedAnimationController->m_bIsBlending == false)
+				m_pSkinnedAnimationController->m_bIsLastBlending = true;
 			m_pSkinnedAnimationController->m_nAnimationBefore = 10;
 			m_pSkinnedAnimationController->m_nAnimationAfter = 1;
 			m_pSkinnedAnimationController->SetTrackEnable(10, false);

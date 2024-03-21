@@ -317,33 +317,70 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 
 void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	if (m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+	DWORD dwDirection = 0;
+
+	//if (m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
+		//case WM_KEYDOWN:
+		//	switch (wParam)
+		//	{
+		//	case VK_SPACE:
+		//		if (m_pPlayer->m_pSkinnedAnimationController->m_bIsMove == false)
+		//			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = true;
+		//		break;
+		//	case KEY_W:
+		//		if(m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
+		//			dwDirection |= DIR_FORWARD;
+		//		break;
+		//	case KEY_S:
+		//		if (m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
+		//			dwDirection |= DIR_BACKWARD;
+		//		break;
+		//	case KEY_A:
+		//		if (m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
+		//			dwDirection |= DIR_LEFT;
+		//		break;
+		//	case KEY_D:
+		//		if (m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
+		//			dwDirection |= DIR_RIGHT;
+		//		break;
+		//	}
+		//	if (dwDirection)
+		//		m_pPlayer->Move(dwDirection, 12.25f, true);
+		//	break;
+
 		case WM_KEYUP:
 			switch (wParam)
 			{
-				case VK_ESCAPE:
-					::PostQuitMessage(0);
-					break;
-				case VK_RETURN:
-					break;
-				case VK_F3:
-					m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
-					break;
-				case VK_F9:
-					ChangeSwapChainState();
-					break;
-				case VK_SPACE:
-					m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
-					break;
-				default:
-					break;
+			case VK_ESCAPE:
+				::PostQuitMessage(0);
+				break;
+			//case KEY_W:
+			//	if (m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
+			//		dwDirection |= DIR_FORWARD;
+			//	break;
+			//case KEY_S:
+			//	if (m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
+			//		dwDirection |= DIR_BACKWARD;
+			//	break;
+			//case KEY_A:
+			//	if (m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
+			//		dwDirection |= DIR_LEFT;
+			//	break;
+			//case KEY_D:
+			//	if (m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
+			//		dwDirection |= DIR_RIGHT;
+			//	break;
+			case VK_SPACE:
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
+				break;
+			default:
+				break;
 			}
 			break;
-		default:
-			break;
 	}
+
 }
 
 LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -463,12 +500,14 @@ void CGameFramework::ProcessInput()
 		DWORD dwDirection = 0;
 		// 위쪽 키가 눌려있는지 확인하는 비트 연산
 		// 위쪽 키가 눌려있으면 dwDirection에 dwDirection과 DIR_FORWARD의 비트 |(or) 연산 후 할당 연산(=)을 시행
-		if (pKeysBuffer[VK_UP] & 0xF0) dwDirection |= DIR_FORWARD;
-		if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
-		if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
-		if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
-		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
-		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
+		if (pKeysBuffer[KEY_W] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false) 
+			dwDirection |= DIR_FORWARD;
+		if (pKeysBuffer[KEY_S] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
+			dwDirection |= DIR_BACKWARD;
+		if (pKeysBuffer[KEY_A] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
+			dwDirection |= DIR_LEFT;
+		if (pKeysBuffer[KEY_D] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false) 
+			dwDirection |= DIR_RIGHT;
 
 		// f1 누르면 기절, f2 누르면 부활
 		if (pKeysBuffer[VK_F1] & 0xF0)
@@ -483,7 +522,7 @@ void CGameFramework::ProcessInput()
 		}
 
 		// spacebar 누르면 치료
-		if (pKeysBuffer[VK_SPACE] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsMove == false)
+		if ((pKeysBuffer[VK_SPACE] & 0xF0) && m_pPlayer->m_pSkinnedAnimationController->m_bIsMove == false)
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = true;
 
 		// 공격 키
