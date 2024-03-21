@@ -14,7 +14,7 @@ Network::Network()
 	{
 		std::cout << " client socket Error " << std::endl;
 	}
-
+	
 }
 
 Network::~Network()

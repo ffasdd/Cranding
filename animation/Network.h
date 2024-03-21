@@ -30,6 +30,7 @@ public:
 	void ProcessPacket(char* buf);
 
 	SOCKET GetSocket() { return clientsocket; }
+	int Getmyid() { return my_id; }
 public: // thread send 
 	
 	void SendThreadFunc();
@@ -42,6 +43,7 @@ public: // thread send
 public:
 	int prev_remain = 0;
 	int my_id = 0;
+
 private:
 	SOCKET clientsocket;
 	char _buf[BUF_SIZE];
@@ -49,7 +51,7 @@ private:
 	thread netThread;
 	thread sendThread;
 
-	CPlayer* PlayerInfo;
+	//CPlayer* PlayerInfo;
 
 private:
 
