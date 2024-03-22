@@ -402,13 +402,11 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 			break;
 		}
 		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetPosition(position);
-
 	}
 }
 
 void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
 {
-
 	if (cl_id == n)
 	{
 		m_pPlayer->SetLook(Look);
