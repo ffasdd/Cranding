@@ -112,6 +112,7 @@ void Network::ProcessData(size_t _size)
 			ProcessPacket(packet_buffer);
 			ptr += in_packet_size - saved_packet_size;
 			_size -= in_packet_size - saved_packet_size;
+
 			in_packet_size = 0;
 			saved_packet_size = 0;
 		}
@@ -136,7 +137,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setLook(p->look);
 		g_clients[my_id].setUp(p->up);
 		g_clients[my_id].setRight(p->right);
-		
+	
 		SetEvent(g_event);
 		break;
 	}

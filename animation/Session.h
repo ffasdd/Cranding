@@ -27,11 +27,11 @@ private:
 	int m_id  = -1;
 	char m_name[20];
 	int m_hp;
-	XMFLOAT3 m_pos;
 	XMFLOAT3 m_right;
 	XMFLOAT3 m_up;
 	XMFLOAT3 m_look;
-	
+
+	XMFLOAT3 m_pos;
 	// state 
 	// animation state;
 

@@ -104,9 +104,13 @@ void Server::WorkerThread()
 					lock_guard<mutex>ll(clients[c_id]._s_lock);
 					clients[c_id]._state = STATE::Alloc;
 				}
-				clients[c_id]._pos.x = 0.0f;
+				if (c_id == 0)
+					clients[c_id]._pos = { 0.0f,0.0f,0.0f };
+				else if (c_id == 1)
+					clients[c_id]._pos = { 10.0f,0.0f,10.0f };
+		/*		clients[c_id]._pos.x = 0.0f;
 				clients[c_id]._pos.y = 0.0f;
-				clients[c_id]._pos.z = 0.0f;
+				clients[c_id]._pos.z = 0.0f;*/
 				clients[c_id]._id = c_id;
 				clients[c_id]._name[0] = 0;
 				clients[c_id]._prevremain = 0;

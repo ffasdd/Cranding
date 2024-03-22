@@ -575,7 +575,7 @@ void CGameFramework::ProcessInput()
 				m_pPlayer->Move(dwDirection, 12.25f, true);
 				XMFLOAT3 exveloctiy = m_pPlayer->GetVelocity();
 				XMFLOAT3 exGravity = m_pPlayer->GetGravity();
-				XMFLOAT3 temp = Vector3::Add(exveloctiy, exGravity);
+				XMFLOAT3 temp = Vector3::Add(exveloctiy, { 0.0f,0.0f,0.f });
 				float fLength = sqrtf(temp.x * temp.x + temp.z * temp.z);
 				float fMaxVelocityXZ = m_pPlayer->GetMaxVelocityXZ();// m_fMaxVelocityXZ;
 				if (fLength > m_pPlayer->GetMaxVelocityXZ())

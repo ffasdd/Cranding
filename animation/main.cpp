@@ -42,6 +42,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
 	WaitForSingleObject(g_event, INFINITE);
+
 	gGameFramework.cl_id = gNetwork.Getmyid();
 
 

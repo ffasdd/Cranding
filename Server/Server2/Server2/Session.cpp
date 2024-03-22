@@ -21,8 +21,7 @@ void Session::send_login_info_packet()
 	p.id = _id;
 	p.size = sizeof(SC_LOGIN_INFO_PACKET);
 	p.type = SC_LOGIN_INFO;
-	if (p.id == 0) p.pos = { 0.0f,0.0f,30.0f };
-	else p.pos = { 0.0f,0.f,0.f };
+	p.pos = clients[_id]._pos;
 	p.max_hp = _maxhp;
 	p.hp = _hp;
 	p.look = { 0.0f,0.0f,1.0f };
