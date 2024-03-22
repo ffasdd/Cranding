@@ -51,6 +51,7 @@ public:
 	CPlayer* m_pPlayer = NULL;
 	int cl_id;
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
+	// **함수명 LookRightUp으로 바꿔야 될 듯
 	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right);
 
 private:
