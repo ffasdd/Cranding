@@ -10,6 +10,11 @@
 #include "Object.h"
 #include "Camera.h"
 
+struct CB_PLAYER_INFO
+{
+	XMFLOAT4X4					m_xmf4x4World;
+};
+
 class CPlayer : public CGameObject
 {
 protected:
@@ -83,6 +88,11 @@ public:
 	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed) { return(NULL); }
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
+
+
+protected:
+	ID3D12Resource* m_pd3dcbPlayer = NULL;
+	CB_PLAYER_INFO* m_pcbMappedPlayer = NULL;
 };
 
 class CSoundCallbackHandler : public CAnimationCallbackHandler

@@ -568,10 +568,10 @@ void CGameFramework::FrameAdvance()
 
 		m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], &m_d3dDsvDescriptorCPUHandle);
 
-		m_pScene->Render(m_pd3dCommandList, m_pCamera);
+		
 
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
-
+m_pScene->Render(m_pd3dCommandList, m_pCamera);
 		m_pPostProcessingShader->OnPostRenderTarget(m_pd3dCommandList);
 	}
 	else

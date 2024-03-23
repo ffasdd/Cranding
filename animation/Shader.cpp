@@ -551,6 +551,9 @@ void CPlayerObjectsShader::BuildObjects(ID3D12Device *pd3dDevice, ID3D12Graphics
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
+	//D3D12_GPU_DESCRIPTOR_HANDLE d3dCbvGPUDescriptorNextHandle = CScene::GetGPUCbvDescriptorNextHandle();
+	//CScene::CreateConstantBufferViews(pd3dDevice, m_nObjects, m_pd3dcbGameObjects, /ncbElementBytes);
+
 	if (!pModel && pAngrybotModel) delete pAngrybotModel;
 }
 
