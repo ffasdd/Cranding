@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "main.h"
 #include "GameFramework.h"
+#include "Network.h"
+#include "Session.h"
 
 #define MAX_LOADSTRING 100
 
@@ -9,6 +11,12 @@ TCHAR							szTitle[MAX_LOADSTRING];
 TCHAR							szWindowClass[MAX_LOADSTRING];
 
 CGameFramework					gGameFramework;
+Network							gNetwork;
+
+unordered_map<int, Session> g_clients;
+queue<SENDTYPE> g_sendqueue;
+HANDLE g_event = CreateEvent(NULL, FALSE, FALSE, NULL);
+
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -27,9 +35,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	::LoadString(hInstance, IDC_CRANDING, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
+	while (!gNetwork.ReadytoConnect());
+	// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
+	gNetwork.StartServer();
+	
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
+	WaitForSingleObject(g_event, INFINITE);
+
+	gGameFramework.cl_id = gNetwork.Getmyid();
+
+
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CRANDING));
+
 
 	while (1)
 	{
@@ -43,7 +61,15 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			}
 		}
 		else
-		{
+		{	
+			if (gGameFramework.m_pPlayer != NULL)
+			{
+				for (int i = 0; i < g_clients.size(); ++i)
+				{
+					gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
+					//gGameFramework.myFunc_SetLookRight(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
+				}
+			}
 			gGameFramework.FrameAdvance();
 		}
 	}
@@ -89,6 +115,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	::ShowWindow(hMainWnd, nCmdShow);
 	::UpdateWindow(hMainWnd);
 
+	// 여기서 초기 센드 
+	cout << " Input your use name " << endl;
+	char name[20];
+	cin >> name;
+	gNetwork.SendLoginfo(name);
+	cout << "send to login info " << endl;
 	return(TRUE);
 }
 

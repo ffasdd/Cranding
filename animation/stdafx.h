@@ -9,7 +9,9 @@
 // Windows 헤더 파일:
 #include <windows.h>
 
+
 // C의 런타임 헤더 파일입니다.
+#include<iostream>
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
@@ -22,8 +24,11 @@
 
 #include <fstream>
 #include <vector>
+#include <queue>
 
 using namespace std;
+
+#include<unordered_map>
 
 #include <d3d12.h>
 #include <dxgi1_4.h>
@@ -56,6 +61,8 @@ extern HINSTANCE						ghAppInstance;
 #pragma comment(lib, "dxgi.lib")
 
 #pragma comment(lib, "dxguid.lib")
+
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 
@@ -92,6 +99,9 @@ inline void Swap(float *pfS, float *pfT) { float fTemp = *pfS; *pfS = *pfT; *pfT
 #define ANIMATION_TYPE_PINGPONG			2
 
 #define ANIMATION_CALLBACK_EPSILON		0.00165f
+
+
+enum class SENDTYPE : INT { MOVE, ROTATE, ATTACK };
 
 namespace Vector3
 {
