@@ -793,7 +793,7 @@ void CTextureToFullScreenShader::UpdateShaderVariables(ID3D12GraphicsCommandList
 {
 	m_pcbMappedDrawOptions->m_xmn4DrawOptions.x = *((int*)pContext);
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbDrawOptions->GetGPUVirtualAddress();
-	pd3dCommandList->SetGraphicsRootConstantBufferView(7, d3dGpuVirtualAddress);
+	pd3dCommandList->SetGraphicsRootConstantBufferView(7, d3dGpuVirtualAddress);/*dd*/
 
 	CPostProcessingShader::UpdateShaderVariables(pd3dCommandList, pContext);
 }

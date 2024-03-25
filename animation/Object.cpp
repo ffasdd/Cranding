@@ -959,7 +959,7 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 	{
 		UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 
-		SetRootParameter(pd3dCommandList);
+		//SetRootParameter(pd3dCommandList);
 		if (m_nMaterials > 0)
 		{
 			for (int i = 0; i < m_nMaterials; i++)

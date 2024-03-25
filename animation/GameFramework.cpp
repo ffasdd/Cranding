@@ -561,6 +561,7 @@ void CGameFramework::FrameAdvance()
 
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
+	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera);
 
 	if (m_nDrawOption == DRAW_SCENE_COLOR)//'S'
 	{
@@ -571,7 +572,7 @@ void CGameFramework::FrameAdvance()
 		
 
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
-m_pScene->Render(m_pd3dCommandList, m_pCamera);
+		m_pScene->Render(m_pd3dCommandList, m_pCamera);
 		m_pPostProcessingShader->OnPostRenderTarget(m_pd3dCommandList);
 	}
 	else
