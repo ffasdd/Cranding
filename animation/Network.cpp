@@ -210,6 +210,7 @@ void Network::SendRotatePlayer(XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up)
 {
 	CS_ROTATE_PACKET p;
 	p.size = sizeof(CS_ROTATE_PACKET);
+	p.type = CS_ROTATE;
 	p.look = _look;
 	p.right = _right;
 	p.up = _up;
