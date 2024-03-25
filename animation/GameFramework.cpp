@@ -430,7 +430,7 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 			break;
 		}
 		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetLook(Look.x, Look.y, Look.z);
-		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetUp(Up.x, Up.y, Up.z);
+		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetUp(0,1,0);
 		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetRight(Right.x, Right.y, Right.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetScale(10.0f, 10.0f, 10.0f);
 	}

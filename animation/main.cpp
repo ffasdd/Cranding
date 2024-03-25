@@ -67,7 +67,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				for (int i = 0; i < g_clients.size(); ++i)
 				{
 					gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
-					//gGameFramework.myFunc_SetLookRight(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
+					gGameFramework.myFunc_SetLookRight(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
 				}
 			}
 			gGameFramework.FrameAdvance();
