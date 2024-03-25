@@ -20,6 +20,12 @@ cbuffer cbGameObjectInfo : register(b2)
 	uint					gnTexturesMask : packoffset(c8);
 };
 
+cbuffer cbDrawOptions : register(b5)
+{
+    int4 gvDrawOptions : packoffset(c0);
+};
+
+
 #include "Light.hlsl"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,8 +45,6 @@ Texture2D gtxtSpecularTexture : register(t7);
 Texture2D gtxtNormalTexture : register(t8);
 Texture2D gtxtMetallicTexture : register(t9);
 Texture2D gtxtEmissionTexture : register(t10);
-Texture2D gtxtDetailAlbedoTexture : register(t11);
-Texture2D gtxtDetailNormalTexture : register(t12);
 
 SamplerState gssWrap : register(s0);
 
@@ -241,7 +245,7 @@ VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)
 	return(output);
 }
 
-TextureCube gtxtSkyCubeTexture : register(t13);
+TextureCube gtxtSkyCubeTexture : register(t11);
 SamplerState gssClamp : register(s1);
 
 float4 PSSkyBox(VS_SKYBOX_CUBEMAP_OUTPUT input) : SV_TARGET
@@ -273,4 +277,56 @@ float4 VSPostProcessing(uint nVertexID : SV_VertexID) : SV_POSITION
 float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 {
     return (float4(0.0f, 0.0f, 0.0f, 1.0f));
+}
+
+struct VS_TEXTURED_OUTPUT
+{
+    float4 position : SV_POSITION;
+    float2 uv : TEXCOORD;
+};
+
+Texture2D<float4> gtxtTextureTexture : register(t12);
+Texture2D<float4> gtxtIlluminationTexture : register(t13);
+Texture2D<float4> gtxtNormalTexturefordr : register(t14);
+
+Texture2D<float> gtxtzDepthTexture : register(t15);
+Texture2D<float> gtxtDepthTexture : register(t16);
+
+float4 PSScreenRectSamplingTextured(VS_TEXTURED_OUTPUT input) : SV_Target
+{
+    float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+
+    switch (gvDrawOptions.x)
+    {
+        case 84: //'T'
+		{
+                cColor = gtxtTextureTexture.Sample(gssWrap, input.uv);
+                break;
+            }
+        case 76: //'L'
+		{
+                cColor = gtxtIlluminationTexture.Sample(gssWrap, input.uv);
+                break;
+            }
+        case 78: //'N'
+		{
+                cColor = gtxtNormalTexturefordr.Sample(gssWrap, input.uv);
+                break;
+            }
+        case 68: //'D'
+		{
+                float fDepth = gtxtDepthTexture.Load(uint3((uint) input.position.x, (uint) input.position.y, 0));
+                cColor = fDepth;
+//			cColor = GetColorFromDepth(fDepth);
+                break;
+            }
+        case 90: //'Z'
+		{
+                float fzDepth = gtxtzDepthTexture.Load(uint3((uint) input.position.x, (uint) input.position.y, 0));
+                cColor = fzDepth;
+//			cColor = GetColorFromDepth(fDepth);
+                break;
+            }
+    }
+    return (cColor);
 }
