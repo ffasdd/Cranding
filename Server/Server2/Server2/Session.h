@@ -31,7 +31,7 @@ public:
 
 public:
 	Session();
-	~Session() {}
+	~Session() { closesocket(_socket); }
 
 	void do_recv()
 	{
