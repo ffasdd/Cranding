@@ -7,7 +7,9 @@ enum class STATE: unsigned int {Free, Alloc , Ingame};
 class Session
 {
 	Over_Exp _recv_over;
+
 public:
+
 	mutex _s_lock;
 	STATE _state;
 	atomic_bool _is_active;

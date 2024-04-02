@@ -72,7 +72,7 @@ void Session::send_remove_packet(int client_id)
 	p.type = SC_REMOVE_OBJECT;
 	do_send(&p);
 }
-
+ 
 void Session::send_rotate_packet(int client_id)
 {
 	SC_ROTATE_OBJECT_PACKET p;
