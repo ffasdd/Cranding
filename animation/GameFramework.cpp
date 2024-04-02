@@ -320,31 +320,25 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 
 void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	if (m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+	DWORD dwDirection = 0;
+
+	//if (m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
-	case WM_KEYUP:
-		switch (wParam)
-		{
-		case VK_ESCAPE:
-			::PostQuitMessage(0);
+		case WM_KEYUP:
+			switch (wParam)
+			{
+			case VK_ESCAPE:
+				::PostQuitMessage(0);
+				break;
+			case VK_SPACE:
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
+				break;
+			default:
+				break;
+			}
 			break;
-		case VK_RETURN:
-			break;
-		case VK_F1:
-		case VK_F2:
-		case VK_F3:
-			m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
-			break;
-		case VK_F9:
-			ChangeSwapChainState();
-			break;
-		default:
-			break;
-		}
-		break;
-	default:
-		break;
+		
 	}
 }
 
@@ -523,36 +517,32 @@ void CGameFramework::ProcessInput()
 		DWORD dwDirection = 0;
 		// 위쪽 키가 눌려있는지 확인하는 비트 연산
 		// 위쪽 키가 눌려있으면 dwDirection에 dwDirection과 DIR_FORWARD의 비트 |(or) 연산 후 할당 연산(=)을 시행
-		if (pKeysBuffer[VK_UP] & 0xF0)
-		{
+		if (pKeysBuffer[KEY_W] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false) 
 			dwDirection |= DIR_FORWARD;
-		}
-		if (pKeysBuffer[VK_DOWN] & 0xF0)
-		{
+		if (pKeysBuffer[KEY_S] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			dwDirection |= DIR_BACKWARD;
-
-		}
-		if (pKeysBuffer[VK_LEFT] & 0xF0)
-		{
+		if (pKeysBuffer[KEY_A] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			dwDirection |= DIR_LEFT;
-
-		}
-		if (pKeysBuffer[VK_RIGHT] & 0xF0)
-		{
+		if (pKeysBuffer[KEY_D] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false) 
 			dwDirection |= DIR_RIGHT;
 
-		}
-		if (pKeysBuffer[VK_PRIOR] & 0xF0)
+		// f1 누르면 기절, f2 누르면 부활
+		if (pKeysBuffer[VK_F1] & 0xF0)
 		{
-			dwDirection |= DIR_UP;
-
+			m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
+			m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
 		}
-		if (pKeysBuffer[VK_NEXT] & 0xF0)
+		if (pKeysBuffer[VK_F2] & 0xF0)
 		{
-			dwDirection |= DIR_DOWN;
-
+			m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = false;
+			m_pPlayer->m_pSkinnedAnimationController->m_bIsLastBlending = true;
 		}
 
+		// spacebar 누르면 치료
+		if ((pKeysBuffer[VK_SPACE] & 0xF0) && m_pPlayer->m_pSkinnedAnimationController->m_bIsMove == false)
+			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = true;
+
+		// 공격 키
 		if (pKeysBuffer[VK_LBUTTON] & 0xF0)
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
 
