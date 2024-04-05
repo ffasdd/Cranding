@@ -248,6 +248,18 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
+	case CS_CHANGE_ANIMATION: {
+
+		CS_CHANGE_ANIMATION_PACKET* p = reinterpret_cast<CS_CHANGE_ANIMATION_PACKET*>(packet);
+		clients[id].animationstate = p->a_state;
+		clients[id].prevanimationstate = p->prev_a_state;
+		clients[id].send_change_animate_packet(id);
+		for (auto& pl : clients)
+		{
+			if (pl._id == id)continue;
+			pl.send_change_animate_packet(id);
+		}
+	}
 	case CS_TEST: {
 
 		CS_TEST_PACKET* p = reinterpret_cast<CS_TEST_PACKET*>(packet);
@@ -255,6 +267,7 @@ void Server::ProcessPacket(int id, char* packet)
 		clients[id].send_test_packet(id);
 		break;
 	}
+			
 	
 	}
 }

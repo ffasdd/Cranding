@@ -1,6 +1,7 @@
 #pragma once
 #include"Over_Exp.h"
 #include"Session.h"
+#include"Room.h"
 
 class Server
 {
@@ -26,6 +27,8 @@ public:
 
 	bool can_see(int to, int from);
 	int get_new_client_id();
+	void ReadyToStart();
+
 public:
 	SOCKET listensocket;
 	SOCKET clientsocket;
@@ -33,7 +36,7 @@ public:
 	Over_Exp _overlapped;
 	HANDLE _IocpHandle;
 
-	
+	vector<int> lobbyClients;
 	vector<thread> worker_thread;
 };
 

@@ -93,6 +93,17 @@ void Session::send_test_packet(int client_id)
 	do_send(&p);
 }
 
+void Session::send_change_animate_packet(int client_id)
+{
+	SC_CHANGE_ANIMATION_PACKET p;
+	p.size = sizeof(SC_CHANGE_ANIMATION_PACKET);
+	p.id = client_id;
+	p.type = SC_CHANGE_ANIMATION;
+	p.a_state = clients[client_id].animationstate;
+	p.prev_a_state = clients[client_id].prevanimationstate;
+	do_send(&p);
+}
+
 
 
 

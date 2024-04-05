@@ -13,6 +13,7 @@ constexpr char CS_ATTACK = 3;
 constexpr char CS_TELEPORT = 4;
 constexpr char CS_LOGOUT = 5;
 constexpr char CS_ROTATE = 6;
+constexpr char CS_CHANGE_ANIMATION = 7;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -23,6 +24,7 @@ constexpr char SC_LOGIN_OK = 7;
 constexpr char SC_LOGIN_FAIL = 8;
 constexpr char SC_STAT_CHANGE = 9;
 constexpr char SC_ROTATE_OBJECT = 10;
+constexpr char SC_CHANGE_ANIMATION = 13;
 
 
 constexpr char CS_TEST = 11;
@@ -42,11 +44,9 @@ struct SC_TEST_PACKET {
 
 };
 
-
-
 constexpr float VIEW_RANGE = 200.0f;
 
-enum animateState : char {
+enum animateState : int {
 	IDLE,
 	FORWARD_MOVE,
 	BACK_MOVE,
@@ -99,6 +99,12 @@ struct CS_IDLE_PACKET {
 	unsigned char size;
 	char type;
 	char idle_state;
+};
+struct CS_CHANGE_ANIMATION_PACKET {
+	unsigned char size;
+	char type;
+	animateState a_state;
+	animateState prev_a_state;
 };
 struct SC_LOGIN_INFO_PACKET {
 	unsigned char size;
@@ -161,7 +167,13 @@ struct SC_CHAT_PACKET {
 	int		id;
 	char	mess[CHAT_SIZE];
 };
-
+struct SC_CHANGE_ANIMATION_PACKET {
+	unsigned char size;
+	char type;
+	int id;
+	animateState a_state;
+	animateState prev_a_state;
+};
 
 struct SC_LOGIN_FAIL_PACKET {
 	unsigned char size;

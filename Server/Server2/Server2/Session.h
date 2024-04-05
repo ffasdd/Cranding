@@ -25,6 +25,7 @@ public:
 	int _prevremain;
 
 	animateState animationstate;
+	animateState prevanimationstate;
 
 	mutex _v_lock;
 	unordered_set<int> _view_list;
@@ -62,6 +63,7 @@ public:
 	void send_rotate_packet(int client_id);
 
 	void send_test_packet(int client_id);
-		
+
+	void send_change_animate_packet(int client_id);
 };
 extern array<Session, MAX_USER> clients;

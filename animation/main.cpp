@@ -44,7 +44,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	WaitForSingleObject(g_event, INFINITE);
 
 	gGameFramework.cl_id = gNetwork.Getmyid();
-
+	gGameFramework.m_pPlayer->c_id = gNetwork.Getmyid();
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CRANDING));
 

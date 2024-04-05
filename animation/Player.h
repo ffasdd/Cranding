@@ -9,7 +9,10 @@
 
 #include "Object.h"
 #include "Camera.h"
+#include"Session.h"
 
+extern unordered_map<int, Session> g_clients;
+extern queue<SENDTYPE> g_sendqueue;
 class CPlayer : public CGameObject
 {
 protected:
@@ -34,6 +37,7 @@ protected:
 	LPVOID						m_pCameraUpdatedContext = NULL;
 
 	CCamera						*m_pCamera = NULL;
+
 public:
 	int c_id = 0;
 public:

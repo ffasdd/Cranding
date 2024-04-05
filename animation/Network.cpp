@@ -97,6 +97,9 @@ void Network::SendProcess(SENDTYPE sendtype)
 	case SENDTYPE::ROTATE: {
 		SendRotatePlayer(g_clients[my_id].getLook(),g_clients[my_id].getRight(),g_clients[my_id].getUp());
 	}
+	case SENDTYPE::CHANGE_ANIMATION: {
+		SendChangeAnimation((animateState)g_clients[my_id].getAnimation(),(animateState)g_clients[my_id].getprevAnimation());
+	}
 	}
 }
 
@@ -133,6 +136,7 @@ void Network::ProcessPacket(char* buf)
 	case SC_LOGIN_INFO: {
 		SC_LOGIN_INFO_PACKET* p = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
 		my_id = p->id;
+
 		g_clients[my_id].setId(p->id);
 		g_clients[my_id].setHp(p->hp);
 		g_clients[my_id].setPos(p->pos);
@@ -218,4 +222,14 @@ void Network::SendRotatePlayer(XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up)
 	p.up = _up;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 
+}
+
+void Network::SendChangeAnimation( animateState curanimate,animateState prevanimate )
+{
+	CS_CHANGE_ANIMATION_PACKET p;
+	p.size = sizeof(CS_CHANGE_ANIMATION_PACKET);
+	p.type = CS_CHANGE_ANIMATION;
+	p.a_state = curanimate;
+	p.prev_a_state = prevanimate;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }

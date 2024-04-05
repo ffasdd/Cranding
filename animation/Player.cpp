@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "Shader.h"
+#include"../Server/Server2/Server2/protocol.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CPlayer
@@ -426,6 +427,8 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 			{
 				m_pSkinnedAnimationController->m_bIsBlending = true;
 				m_pSkinnedAnimationController->m_nAnimationAfter = 3;
+				
+				// Move 애니메이션 시작부분 
 			}
 			m_pSkinnedAnimationController->m_nMoveCnt++;
 			m_pSkinnedAnimationController->SetTrackEnable(1, false);
@@ -444,16 +447,22 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 	if (m_pSkinnedAnimationController)
 	{
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
-		if (::IsZero(fLength)) // 이동을 멈춘 경우 or 가만있는 경우
+		if (::IsZero(fLength)) // 이동을 멈춘 경우 or 가만있는 경우 
 		{
 			m_pSkinnedAnimationController->m_bIsMove = false;
 
 			if (m_pSkinnedAnimationController->m_bIsLastBlending == false
-				&& m_pSkinnedAnimationController->m_nMoveCnt > 0)
+				&& m_pSkinnedAnimationController->m_nMoveCnt > 0
+				&&m_pSkinnedAnimationController->m_bisRotate == false)
 			{
 				m_pSkinnedAnimationController->m_nAnimationBefore = 3;
 				m_pSkinnedAnimationController->m_nAnimationAfter = 1;
 				m_pSkinnedAnimationController->m_bIsLastBlending = true;
+
+				g_clients[c_id].setAnimation(animateState::IDLE);
+				g_clients[c_id].setprevAnimation(animateState::FORWARD_MOVE);
+
+				g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
 			}
 			if (m_pSkinnedAnimationController->m_bIsHeal == false
 				&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)

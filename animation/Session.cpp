@@ -50,6 +50,16 @@ XMFLOAT3 Session::getUp()
 	return m_up;
 }
 
+int Session::getAnimation()
+{
+	return m_animationstate;
+}
+
+int Session::getprevAnimation()
+{
+	return m_prevanimationstate;
+}
+
 void Session::setId(int id)
 {
 	m_id = id;
@@ -83,4 +93,15 @@ void Session::setRight(XMFLOAT3 right)
 void Session::setUp(XMFLOAT3 up)
 {
 	m_up = up;
+}
+
+void Session::setAnimation(int ani)
+{
+	m_animationstate = ani;
+}
+
+void Session::setprevAnimation(int ani)
+{
+	m_prevanimationstate = ani;
+
 }

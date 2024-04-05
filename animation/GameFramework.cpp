@@ -302,6 +302,7 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	case WM_RBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
+		m_pPlayer->m_pSkinnedAnimationController->m_bisRotate = true;
 		break;
 
 	case WM_LBUTTONUP:
@@ -310,6 +311,7 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 
 	case WM_RBUTTONUP:
 		::ReleaseCapture();
+		m_pPlayer->m_pSkinnedAnimationController->m_bisRotate = false;
 		break;
 	case WM_MOUSEMOVE:
 		break;
@@ -579,6 +581,13 @@ void CGameFramework::ProcessInput()
 				m_pPlayer->Move(xmf3Velocity, false);
 				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
 				g_sendqueue.push(SENDTYPE::MOVE);
+
+				if (g_clients[cl_id].getAnimation() == animateState::IDLE) {
+					g_clients[cl_id].setAnimation(animateState::FORWARD_MOVE);
+					g_clients[cl_id].setprevAnimation(animateState::IDLE);
+					g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
+				}
+				
 
 			}
 		}

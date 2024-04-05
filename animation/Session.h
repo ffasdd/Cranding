@@ -14,6 +14,8 @@ public:
 	XMFLOAT3 getLook();
 	XMFLOAT3 getRight();
 	XMFLOAT3 getUp();
+	int getAnimation();
+	int getprevAnimation();
 	void setId(int id);
 	void setName(char* name);
 	void setHp(int hp);
@@ -21,7 +23,8 @@ public:
 	void setLook(XMFLOAT3 look);
 	void setRight(XMFLOAT3 right);
 	void setUp(XMFLOAT3 up);
-
+	void setAnimation(int ani);
+	void setprevAnimation(int ani);
 	
 private:
 	int m_id  = -1;
@@ -33,7 +36,8 @@ private:
 
 	XMFLOAT3 m_pos;
 	// state 
-	// animation state;
+	int m_animationstate;
+	int m_prevanimationstate;
 
 };
 

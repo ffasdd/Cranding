@@ -294,6 +294,8 @@ public:
 	~CAnimationController();
 
 public:
+	bool m_bisRotate = false;
+
 	// 치료 키 -> spacebar 누르면 치료
 	bool							m_bIsHeal = false;
 
@@ -334,6 +336,8 @@ public:
 	ID3D12Resource					**m_ppd3dcbSkinningBoneTransforms = NULL; //[SkinnedMeshes]
 	XMFLOAT4X4						**m_ppcbxmf4x4MappedSkinningBoneTransforms = NULL; //[SkinnedMeshes]
 
+	//
+	
 public:
 	void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
 
