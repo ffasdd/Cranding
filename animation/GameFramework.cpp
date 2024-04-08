@@ -433,6 +433,44 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 	}
 }
 
+void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
+{
+	if (cl_id != n)
+	{
+		int others_id = -1;
+		switch (cl_id) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+
+		// 서버에서 받은 이전 애니메이션 번호와 현재 애니메이션 번호가 다른 경우(블렌딩 해야하는 경우)
+		if (prevAni != curAni)
+		{
+			// 이전 애니메이션 번호, 이후 애니메이션 번호 저장
+			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_aaapSkinnedAnimationController->m_nAnimationBefore = g_clients[n].getprevAnimation();
+			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_nAnimationAfter = g_clients[n].getAnimation();
+			g_clients[others_id].setprevAnimation(curAni);
+
+			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackEnable(prevAni, false);
+			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackEnable(curAni, true);
+
+			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_bIsBlending = true; 
+
+		}
+
+		float fTimeElapsed = m_GameTimer.GetTimeElapsed();
+		m_pScene->m_ppHierarchicalGameObjects[others_id]->Animate(fTimeElapsed);
+	}
+}
+
 void CGameFramework::OnDestroy()
 {
 	ReleaseObjects();

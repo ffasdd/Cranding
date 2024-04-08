@@ -36,8 +36,8 @@ private:
 
 	XMFLOAT3 m_pos;
 	// state 
-	int m_animationstate;
-	int m_prevanimationstate;
+	int m_animationstate = 0;
+	int m_prevanimationstate = 0;
 
 };
 

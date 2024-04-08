@@ -60,6 +60,9 @@ public:
 	// **함수명 LookRightUp으로 바꿔야 될 듯
 	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right);
 
+	// 다른 클라들 애니메이션 변경해주는 함수
+	void myFunc_SetAnimation(int n, int id, int prevAni, int curAni);
+
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 
