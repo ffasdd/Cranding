@@ -457,17 +457,17 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 			// 이전 애니메이션 번호, 이후 애니메이션 번호 저장
 			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_aaapSkinnedAnimationController->m_nAnimationBefore = g_clients[n].getprevAnimation();
 			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_nAnimationAfter = g_clients[n].getAnimation();
-			g_clients[others_id].setprevAnimation(curAni);
 
-			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackEnable(prevAni, false);
-			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackEnable(curAni, true);
+			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackEnable(prevAni, false);
+			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackEnable(curAni, true);
 
+			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
 			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_bIsBlending = true; 
-
+			g_clients[others_id].setprevAnimation(curAni);
 		}
 
-		float fTimeElapsed = m_GameTimer.GetTimeElapsed();
-		m_pScene->m_ppHierarchicalGameObjects[others_id]->Animate(fTimeElapsed);
+		//float fTimeElapsed = m_GameTimer.GetTimeElapsed();
+		//m_pScene->m_ppHierarchicalGameObjects[others_id]->Animate(fTimeElapsed);
 	}
 }
 
