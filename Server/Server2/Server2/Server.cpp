@@ -103,6 +103,7 @@ void Server::WorkerThread()
 				{
 					lock_guard<mutex>ll(clients[c_id]._s_lock);
 					clients[c_id]._state = STATE::Alloc;
+		
 				}
 				if (c_id == 0)
 					clients[c_id]._pos = { 0.0f,0.0f,0.0f };
@@ -114,6 +115,8 @@ void Server::WorkerThread()
 				clients[c_id]._socket = clientsocket;
 				clients[c_id]._look = XMFLOAT3(0.0f, 0.0f, 1.0f);
 				clients[c_id]._right = XMFLOAT3(1.0f, 0.0f, 0.0f);
+				//------------------------------------
+				//lobbyClients.push_back(clients[c_id]);
 
 				CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientsocket), _IocpHandle, c_id, 0);
 				clients[c_id].do_recv();

@@ -42,7 +42,7 @@ struct SC_TEST_PACKET {
 	unsigned char size;
 	char	type;
 
-};
+};	
 
 constexpr float VIEW_RANGE = 200.0f;
 
@@ -148,7 +148,6 @@ struct SC_MOVE_OBJECT_PACKET {
 	char	type;
 	int		id;
 	XMFLOAT3 pos;
-	unsigned int move_time;
 
 	animateState a_state;
 };

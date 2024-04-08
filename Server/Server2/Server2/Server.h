@@ -36,7 +36,7 @@ public:
 	Over_Exp _overlapped;
 	HANDLE _IocpHandle;
 
-	vector<int> lobbyClients;
+	vector<Session> lobbyClients;
 	vector<thread> worker_thread;
 };
 

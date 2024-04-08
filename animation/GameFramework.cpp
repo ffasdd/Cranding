@@ -397,6 +397,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 			others_id = n;
 			break;
 		}
+
 		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetPosition(position);
 	}
 }

@@ -177,6 +177,14 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setUp(p->up);
 	}
 						 break;
+	case SC_CHANGE_ANIMATION: {
+		SC_CHANGE_ANIMATION_PACKET* p = reinterpret_cast<SC_CHANGE_ANIMATION_PACKET*>(buf);
+		int ob_id = p->id;
+		g_clients[ob_id].setAnimation(p->a_state);
+		g_clients[ob_id].setprevAnimation(p->prev_a_state);
+	}
+							break;
+
 
 	case SC_TEST: {
 		SC_TEST_PACKET* p = reinterpret_cast<SC_TEST_PACKET*>(buf);
