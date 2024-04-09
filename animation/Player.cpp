@@ -458,6 +458,7 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				m_pSkinnedAnimationController->m_nAnimationBefore = 3;
 				m_pSkinnedAnimationController->m_nAnimationAfter = 1;
 				m_pSkinnedAnimationController->m_bIsLastBlending = true;
+
 				if (g_clients[c_id].getCharacterType() == 0)
 				{
 				g_clients[c_id].setAnimation(animateState::SWORD_IDLE);

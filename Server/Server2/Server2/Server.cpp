@@ -177,6 +177,7 @@ void Server::ProcessPacket(int id, char* packet)
 			clients[id]._state = STATE::Ingame;
 		}
 		clients[id].characterType = p->charactertype;
+
 		clients[id].send_login_info_packet();
 
 		for (auto& pl : clients)

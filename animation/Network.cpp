@@ -143,7 +143,8 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setLook(p->look);
 		g_clients[my_id].setUp(p->up);
 		g_clients[my_id].setRight(p->right);
-	
+		g_clients[my_id].setCharacterType(p->charactertype);
+
 		SetEvent(g_event);
 		break;
 	}
@@ -159,6 +160,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setLook(p->look);
 		g_clients[ob_id].setUp(p->up);
 		g_clients[ob_id].setRight(p->right);
+		g_clients[ob_id].setCharacterType(p->charactertype);
 		break;
 	}
 					  break;
@@ -200,7 +202,8 @@ void Network::SendLoginfo(char* name)
 	strcpy_s(p.name, name);
 	p.size = sizeof(CS_LOGIN_PACKET);
 	p.type = CS_LOGIN;
-	p.type = 0;
+	p.charactertype = 0;
+	
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
