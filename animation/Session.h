@@ -16,6 +16,8 @@ public:
 	XMFLOAT3 getUp();
 	int getAnimation();
 	int getprevAnimation();
+	int getCharacterType();
+	void setCharacterType(int type);
 	void setId(int id);
 	void setName(char* name);
 	void setHp(int hp);
@@ -28,6 +30,7 @@ public:
 	
 private:
 	int m_id  = -1;
+	int characterType = -1;
 	char m_name[20];
 	int m_hp;
 	XMFLOAT3 m_right;

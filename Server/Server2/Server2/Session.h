@@ -9,6 +9,7 @@ class Session
 	Over_Exp _recv_over;
 
 public:
+	int characterType; // 0. sword , 1. gun
 
 	mutex _s_lock;
 	STATE _state;

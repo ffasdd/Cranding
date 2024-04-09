@@ -200,6 +200,7 @@ void Network::SendLoginfo(char* name)
 	strcpy_s(p.name, name);
 	p.size = sizeof(CS_LOGIN_PACKET);
 	p.type = CS_LOGIN;
+	p.type = 0;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 

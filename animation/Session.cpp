@@ -60,6 +60,16 @@ int Session::getprevAnimation()
 	return m_prevanimationstate;
 }
 
+int Session::getCharacterType()
+{
+	return characterType;
+}
+
+void Session::setCharacterType(int type)
+{
+	characterType = type;
+}
+
 void Session::setId(int id)
 {
 	m_id = id;

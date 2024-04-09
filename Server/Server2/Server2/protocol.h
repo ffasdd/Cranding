@@ -47,12 +47,20 @@ struct SC_TEST_PACKET {
 constexpr float VIEW_RANGE = 200.0f;
 
 enum animateState : int {
-	IDLE,
-	FORWARD_MOVE,
-	BACK_MOVE,
-	ATTACK,
-	HIT
+	GUN_IDLE,
+	SWORD_IDLE,
+	GUN_MOVE,
+	SWORD_MOVE
 };
+
+//enum swordanimateState :int {
+//	IDLE = 1,
+//	RUN= 3
+//};
+//enum gunanimateState : int {
+//	IDLE = 0,
+//	RUN = 2
+//};
 
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET {
@@ -60,8 +68,7 @@ struct CS_LOGIN_PACKET {
 	char	type;
 	char	name[NAME_SIZE];
 	int		id;
-
-	animateState a_state;
+	int		charactertype;
 };
 
 struct CS_MOVE_PACKET {
@@ -114,6 +121,7 @@ struct SC_LOGIN_INFO_PACKET {
 	int		max_hp;
 	int		exp;
 	int		level;
+	int		charactertype;
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 right;
@@ -128,6 +136,7 @@ struct SC_ADD_OBJECT_PACKET {
 	int		id;
 	int		hp;
 	int		Max_hp;
+	int		charactertype;
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 right;
@@ -149,7 +158,6 @@ struct SC_MOVE_OBJECT_PACKET {
 	int		id;
 	XMFLOAT3 pos;
 
-	animateState a_state;
 };
 struct SC_ROTATE_OBJECT_PACKET {
 	unsigned char size;

@@ -27,7 +27,12 @@ void Session::send_login_info_packet()
 	p.look = { 0.0f,0.0f,1.0f };
 	p.right = { 1.0f,0.0f,0.0f };
 	p.up = { 0.0f,1.0f,0.0f };
-	p.a_state = IDLE;
+
+	if (clients[_id].characterType == 0)
+		p.a_state = SWORD_IDLE;
+	else if (clients[_id].characterType == 1)
+		p.a_state = GUN_IDLE;
+
 	do_send(&p);
 }
 
@@ -58,7 +63,6 @@ void Session::send_move_packet(int client_id)
 	p.size = sizeof(SC_MOVE_OBJECT_PACKET);
 	p.type = SC_MOVE_OBJECT;
 	p.pos = clients[client_id]._pos;
-	p.a_state = FORWARD_MOVE;
 	do_send(&p);
 }
 

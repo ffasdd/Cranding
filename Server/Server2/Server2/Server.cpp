@@ -115,6 +115,7 @@ void Server::WorkerThread()
 				clients[c_id]._socket = clientsocket;
 				clients[c_id]._look = XMFLOAT3(0.0f, 0.0f, 1.0f);
 				clients[c_id]._right = XMFLOAT3(1.0f, 0.0f, 0.0f);
+				clients[c_id].characterType = 0;
 				//------------------------------------
 				//lobbyClients.push_back(clients[c_id]);
 
@@ -175,7 +176,7 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Ingame;
 		}
-
+		clients[id].characterType = p->charactertype;
 		clients[id].send_login_info_packet();
 
 		for (auto& pl : clients)

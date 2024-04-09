@@ -621,9 +621,18 @@ void CGameFramework::ProcessInput()
 				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
 				g_sendqueue.push(SENDTYPE::MOVE);
 
-				if (g_clients[cl_id].getAnimation() == animateState::IDLE) {
-					g_clients[cl_id].setAnimation(animateState::FORWARD_MOVE);
-					g_clients[cl_id].setprevAnimation(animateState::IDLE);
+				if (g_clients[cl_id].getAnimation() == animateState::GUN_IDLE || g_clients[cl_id].getAnimation() == animateState::SWORD_IDLE) {
+					if (g_clients[cl_id].getCharacterType() == 0)
+					{
+					g_clients[cl_id].setAnimation(animateState::SWORD_MOVE);
+					g_clients[cl_id].setprevAnimation(animateState::SWORD_IDLE);
+
+					}
+					else if (g_clients[cl_id].getCharacterType() == 1)
+					{
+						g_clients[cl_id].setAnimation(animateState::GUN_MOVE);
+						g_clients[cl_id].setprevAnimation(animateState::GUN_IDLE);
+					}
 					g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
 				}
 				

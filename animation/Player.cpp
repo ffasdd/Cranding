@@ -458,9 +458,17 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				m_pSkinnedAnimationController->m_nAnimationBefore = 3;
 				m_pSkinnedAnimationController->m_nAnimationAfter = 1;
 				m_pSkinnedAnimationController->m_bIsLastBlending = true;
+				if (g_clients[c_id].getCharacterType() == 0)
+				{
+				g_clients[c_id].setAnimation(animateState::SWORD_IDLE);
+				g_clients[c_id].setprevAnimation(animateState::SWORD_MOVE);
 
-				g_clients[c_id].setAnimation(animateState::IDLE);
-				g_clients[c_id].setprevAnimation(animateState::FORWARD_MOVE);
+				}
+				else if (g_clients[c_id].getCharacterType() == 1)
+				{
+					g_clients[c_id].setAnimation(animateState::GUN_IDLE);
+					g_clients[c_id].setprevAnimation(animateState::GUN_MOVE);
+				}
 
 				g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
 			}
