@@ -14,6 +14,7 @@ constexpr char CS_TELEPORT = 4;
 constexpr char CS_LOGOUT = 5;
 constexpr char CS_ROTATE = 6;
 constexpr char CS_CHANGE_ANIMATION = 7;
+constexpr char CS_READY_GAME = 8;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -25,6 +26,7 @@ constexpr char SC_LOGIN_FAIL = 8;
 constexpr char SC_STAT_CHANGE = 9;
 constexpr char SC_ROTATE_OBJECT = 10;
 constexpr char SC_CHANGE_ANIMATION = 13;
+constexpr char SC_START_GAME = 14;
 
 
 constexpr char CS_TEST = 11;
@@ -112,6 +114,15 @@ struct CS_CHANGE_ANIMATION_PACKET {
 	char type;
 	animateState a_state;
 	animateState prev_a_state;
+};
+struct CS_READY_PACKET {
+	unsigned char size;
+	char type;
+
+};
+struct SC_GAMESTART_PACKET {
+	unsigned size;
+	char type;
 };
 struct SC_LOGIN_INFO_PACKET {
 	unsigned char size;

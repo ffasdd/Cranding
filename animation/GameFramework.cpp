@@ -292,7 +292,6 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		// 좌클릭으로 공격
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
-		//gNetwork.SendTest();
 		::GetCursorPos(&m_ptOldCursorPos);
 		break;
 
@@ -324,7 +323,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 {
 	DWORD dwDirection = 0;
 
-	//if (m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
 		case WM_KEYUP:

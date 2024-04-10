@@ -41,6 +41,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
+	char readybutton = 0;
+	cout << " Please Input Ready " << endl;
+	cin >> readybutton;
+	
+	gNetwork
 	WaitForSingleObject(g_event, INFINITE);
 
 	gGameFramework.cl_id = gNetwork.Getmyid();
@@ -121,7 +126,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	char name[20];
 	cin >> name;
 	gNetwork.SendLoginfo(name);
-	cout << "send to login info " << endl;
+	cout << " send to login info " << endl;
 	return(TRUE);
 }
 

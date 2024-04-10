@@ -169,17 +169,24 @@ void Server::ProcessPacket(int id, char* packet)
 {
 	switch (packet[1])
 	{
+	case CS_READY_GAME: {
+		CS_READY_PACKET* p = reinterpret_cast<CS_READY_PACKET*>(packet);
+		
+	}
 	case CS_LOGIN: {
 		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
 		strcpy_s(clients[id]._name, p->name);
+		clients[id].characterType = p->charactertype;
 		{
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Ingame;
 		}
-		clients[id].characterType = p->charactertype;
-
+		lobbyClients.push_back(clients[id]);
 		clients[id].send_login_info_packet();
 
+		cout << id << " id 클라이언트 대기방 입장 " << endl;
+		cout << " 대기방 " << clients.size() << " 명 " << endl;
+		
 		for (auto& pl : clients)
 		{
 			{

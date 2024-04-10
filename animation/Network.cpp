@@ -134,6 +134,7 @@ void Network::ProcessPacket(char* buf)
 	switch (buf[1])
 	{
 	case SC_LOGIN_INFO: {
+
 		SC_LOGIN_INFO_PACKET* p = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
 		my_id = p->id;
 
@@ -144,8 +145,9 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setUp(p->up);
 		g_clients[my_id].setRight(p->right);
 		g_clients[my_id].setCharacterType(p->charactertype);
+		cout << " Recv Login Info " << endl;
 
-		SetEvent(g_event);
+
 		break;
 	}
 
@@ -161,6 +163,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setUp(p->up);
 		g_clients[ob_id].setRight(p->right);
 		g_clients[ob_id].setCharacterType(p->charactertype);
+		cout << " Match ID - " << ob_id << endl;
 		break;
 	}
 					  break;
@@ -243,5 +246,13 @@ void Network::SendChangeAnimation( animateState curanimate,animateState prevanim
 	p.type = CS_CHANGE_ANIMATION;
 	p.a_state = curanimate;
 	p.prev_a_state = prevanimate;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendReady()
+{
+	CS_READY_PACKET p;
+	p.size = sizeof(CS_READY_PACKET);
+	p.type = CS_READY_GAME;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }

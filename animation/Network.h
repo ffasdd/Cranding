@@ -41,6 +41,8 @@ public: // thread send
 	void SendRotatePlayer(XMFLOAT3 _look,XMFLOAT3 _right, XMFLOAT3 _up);
 	void SendChangeAnimation(animateState curanimate, animateState prevanimate);
 
+	void SendReady();
+
 public:
 	int prev_remain = 0;
 	int my_id = 0;
