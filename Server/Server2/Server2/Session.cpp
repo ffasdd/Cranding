@@ -111,6 +111,14 @@ void Session::send_change_animate_packet(int client_id)
 	do_send(&p);
 }
 
+void Session::send_game_start(int client_id)
+{
+	SC_GAMESTART_PACKET p;
+	p.size = sizeof(SC_GAMESTART_PACKET);
+	p.type = SC_START_GAME;
+	do_send(&p);
+}
+
 
 
 

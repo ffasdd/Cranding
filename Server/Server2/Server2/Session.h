@@ -10,7 +10,7 @@ class Session
 
 public:
 	int characterType; // 0. sword , 1. gun
-
+	bool isReady = false;
 	mutex _s_lock;
 	STATE _state;
 	atomic_bool _is_active;
@@ -66,5 +66,7 @@ public:
 	void send_test_packet(int client_id);
 
 	void send_change_animate_packet(int client_id);
+
+	void send_game_start(int client_id);
 };
 extern array<Session, MAX_USER> clients;

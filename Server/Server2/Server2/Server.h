@@ -38,5 +38,7 @@ public:
 
 	vector<Session> lobbyClients;
 	vector<thread> worker_thread;
+
+	int readycnt = 0;
 };
 

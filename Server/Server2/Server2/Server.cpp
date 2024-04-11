@@ -171,6 +171,24 @@ void Server::ProcessPacket(int id, char* packet)
 	{
 	case CS_READY_GAME: {
 		CS_READY_PACKET* p = reinterpret_cast<CS_READY_PACKET*>(packet);
+		clients[id].isReady = true;
+
+		for (auto& cl : lobbyClients)
+		{
+			if (cl.isReady == true)
+				readycnt++;
+		}
+		
+		if (readycnt == 3)
+		{
+			// 게임 시작 ,, 
+			for (auto& cl : lobbyClients)
+			{
+				cl.send_game_start(id);
+				clients[id].send_game_start(cl._id);
+
+			}
+		}
 		
 	}
 	case CS_LOGIN: {
