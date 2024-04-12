@@ -92,7 +92,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	BuildDefaultLightsAndMaterials();
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
-
+	 
 	XMFLOAT3 xmf3Scale(20.0f, 5.0f, 20.0f);
 	XMFLOAT4 xmf4Color(0.0f, 0.0f, 0.2f, 0.0f);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("Terrain/spaceshipmap.raw"), 257, 257, xmf3Scale, xmf4Color);
@@ -100,10 +100,21 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_nHierarchicalGameObjects = 2;
 	m_ppHierarchicalGameObjects = new CGameObject*[m_nHierarchicalGameObjects];
 
-	CLoadedModelInfo *pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut.bin", NULL);
+	CLoadedModelInfo *pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 
 	m_ppHierarchicalGameObjects[0] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 11, pPlayerModel);
+
+	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5f);
+	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5f);
+	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5f);
+	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5f);
+	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5f);
+	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5f);
+	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5f);
+	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5f);
+	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5f);
+	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5f);
+	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(11, 0.5f);
 
 	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);

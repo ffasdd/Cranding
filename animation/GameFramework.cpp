@@ -455,14 +455,16 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 		if (prevAni != curAni)
 		{
 			// 이전 애니메이션 번호, 이후 애니메이션 번호 저장
-			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_aaapSkinnedAnimationController->m_nAnimationBefore = g_clients[n].getprevAnimation();
-			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_nAnimationAfter = g_clients[n].getAnimation();
+			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_bIsBlending = true;
+
+			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
+			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_nAnimationAfter = curAni;
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackEnable(prevAni, false);
 			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackEnable(curAni, true);
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
-			//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_bIsBlending = true; 
+
 			g_clients[others_id].setprevAnimation(curAni);
 		}
 
@@ -633,6 +635,9 @@ void CGameFramework::ProcessInput()
 						g_clients[cl_id].setAnimation(animateState::GUN_MOVE);
 						g_clients[cl_id].setprevAnimation(animateState::GUN_IDLE);
 					}
+					//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_bIsBlending = true;
+					//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
+					//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_nAnimationAfter = curAni;
 					g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
 				}
 				

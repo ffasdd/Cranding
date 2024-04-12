@@ -27,6 +27,7 @@ void Session::send_login_info_packet()
 	p.look = { 0.0f,0.0f,1.0f };
 	p.right = { 1.0f,0.0f,0.0f };
 	p.up = { 0.0f,1.0f,0.0f };
+	p.charactertype = clients[_id].characterType;
 
 	if (clients[_id].characterType == 0)
 		p.a_state = SWORD_IDLE;
@@ -48,6 +49,8 @@ void Session::send_add_info_packet(int client_id)
 	p.look = clients[client_id]._look;
 	p.right = clients[client_id]._right;
 	p.up = clients[client_id]._up;
+	p.charactertype = clients[client_id].characterType;
+
 	strcpy_s(p.name, clients[client_id]._name);
 
 	_v_lock.lock();

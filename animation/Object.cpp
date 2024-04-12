@@ -654,7 +654,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 					XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
 					XMFLOAT4X4 xmf4x4TrackTransform2 = pAnimationSet2->GetSRT(j, 0);
 
-					m_fBlendingTime += (fTimeElapsed / 8);
+				m_fBlendingTime += (fTimeElapsed / 5);
 
 					XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet1->GetSRT(j, m_pAnimationTracks[m_nAnimationBefore].m_fPosition);
 					XMFLOAT4X4 xmf4x4Transform2 = Matrix4x4::Interpolate(xmf4x4TrackTransform, xmf4x4TrackTransform2, m_fBlendingTime);
@@ -1623,7 +1623,7 @@ void CPlayerAnimationController::OnRootMotion(CGameObject* pRootGameObject)
 CPlayerObject::CPlayerObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks)
 {
 	CLoadedModelInfo *pPlayerModel = pModel;
-	if (!pPlayerModel) pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut.bin", NULL);
+	if (!pPlayerModel) pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 	m_pSkinnedAnimationController = new CPlayerAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pPlayerModel);
