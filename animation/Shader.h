@@ -148,12 +148,15 @@ public:
 	CSkinnedAnimationStandardShader();
 	virtual ~CSkinnedAnimationStandardShader();
 
+	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets, DXGI_FORMAT* pdxgiRtvFormats, DXGI_FORMAT dxgiDsvFormat);
+
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader();
+	D3D12_SHADER_BYTECODE CreatePixelShader();
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+/*
 class CSkinnedAnimationObjectsShader : public CSkinnedAnimationStandardShader
 {
 public:
@@ -171,10 +174,11 @@ public:
 protected:
 	CGameObject						**m_ppObjects = 0;
 	int								m_nObjects = 0;
-};
+};*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+/*
 class CPlayerObjectsShader : public CSkinnedAnimationObjectsShader
 {
 public:
@@ -182,7 +186,7 @@ public:
 	virtual ~CPlayerObjectsShader();
 
 	virtual void BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, void *pContext = NULL);
-};
+};*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

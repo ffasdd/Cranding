@@ -16,9 +16,6 @@
     <Filter Include="소스 파일\Framework">
       <UniqueIdentifier>{2d85068f-9b47-4df6-a167-47674e6acd9d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Scene">
-      <UniqueIdentifier>{c9f26df9-119c-4708-9c6f-e260ec8bb708}</UniqueIdentifier>
-    </Filter>
     <Filter Include="헤더 파일\Framework">
       <UniqueIdentifier>{d485b405-14ac-4465-9263-546291ea81ab}</UniqueIdentifier>
     </Filter>
@@ -30,6 +27,9 @@
     </Filter>
     <Filter Include="소스 파일\Object">
       <UniqueIdentifier>{434f7937-60b0-4f25-917d-b9004fa1acff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene">
+      <UniqueIdentifier>{c9f26df9-119c-4708-9c6f-e260ec8bb708}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

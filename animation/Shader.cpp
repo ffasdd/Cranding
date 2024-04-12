@@ -360,6 +360,36 @@ CSkinnedAnimationStandardShader::~CSkinnedAnimationStandardShader()
 {
 }
 
+void CSkinnedAnimationStandardShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets, DXGI_FORMAT* pdxgiRtvFormats, DXGI_FORMAT dxgiDsvFormat)
+{
+	ID3DBlob* pd3dVertexShaderBlob = NULL, * pd3dPixelShaderBlob = NULL;
+
+	DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC d3dPipelineStateDesc;
+	::ZeroMemory(&d3dPipelineStateDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	d3dPipelineStateDesc.pRootSignature = pd3dGraphicsRootSignature;
+	d3dPipelineStateDesc.VS = CreateVertexShader();
+	d3dPipelineStateDesc.PS = CreatePixelShader();
+	d3dPipelineStateDesc.RasterizerState = CreateRasterizerState();
+	d3dPipelineStateDesc.BlendState = CreateBlendState();
+	d3dPipelineStateDesc.DepthStencilState = CreateDepthStencilState();
+	d3dPipelineStateDesc.InputLayout = CreateInputLayout();
+	d3dPipelineStateDesc.SampleMask = UINT_MAX;
+	d3dPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	d3dPipelineStateDesc.NumRenderTargets = 5;
+	for (UINT i = 0; i < 5; i++) d3dPipelineStateDesc.RTVFormats[i] = pdxgiResourceFormats[i];
+	d3dPipelineStateDesc.DSVFormat = dxgiDsvFormat;
+	d3dPipelineStateDesc.SampleDesc.Count = 1;
+	d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_pd3dPipelineState);
+
+	if (pd3dVertexShaderBlob) pd3dVertexShaderBlob->Release();
+	if (pd3dPixelShaderBlob) pd3dPixelShaderBlob->Release();
+
+	if (d3dPipelineStateDesc.InputLayout.pInputElementDescs) delete[] d3dPipelineStateDesc.InputLayout.pInputElementDescs;
+}
+
 D3D12_INPUT_LAYOUT_DESC CSkinnedAnimationStandardShader::CreateInputLayout()
 {
 	UINT nInputElementDescs = 7;
@@ -385,6 +415,10 @@ D3D12_SHADER_BYTECODE CSkinnedAnimationStandardShader::CreateVertexShader()
 	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSSkinnedAnimationStandard", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
+D3D12_SHADER_BYTECODE CSkinnedAnimationStandardShader::CreatePixelShader()
+{
+	return(CompileShaderFromFile(L"Shaders.hlsl", "PSTexturedLightingToMultipleRTs", "ps_5_1", &m_pd3dPixelShaderBlob));
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 CStandardObjectsShader::CStandardObjectsShader()
@@ -461,7 +495,7 @@ XMFLOAT3 RandomPositionInSphere(XMFLOAT3 xmf3Center, float fRadius, int nColumn,
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+/*
 CSkinnedAnimationObjectsShader::CSkinnedAnimationObjectsShader()
 {
 }
@@ -507,8 +541,10 @@ void CSkinnedAnimationObjectsShader::Render(ID3D12GraphicsCommandList *pd3dComma
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+*/
+ ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+/*
 CPlayerObjectsShader::CPlayerObjectsShader()
 {
 }
@@ -556,7 +592,7 @@ void CPlayerObjectsShader::BuildObjects(ID3D12Device *pd3dDevice, ID3D12Graphics
 
 	if (!pModel && pAngrybotModel) delete pAngrybotModel;
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 CPostProcessingShader::CPostProcessingShader()
@@ -656,12 +692,12 @@ ID3D12RootSignature* CPostProcessingShader::CreateGraphicsRootSignature(ID3D12De
 
 D3D12_SHADER_BYTECODE CPostProcessingShader::CreateVertexShader()
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSPostProcessing", "vs_5_1", &m_pd3dVertexShaderBlob));
+	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSScreenRectSamplingTextured", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE CPostProcessingShader::CreatePixelShader()
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSPostProcessing", "ps_5_1", &m_pd3dPixelShaderBlob));
+	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSScreenRectSamplingTextured", "ps_5_1", &m_pd3dPixelShaderBlob));
 }
 
 void CPostProcessingShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets, DXGI_FORMAT* pdxgiRtvFormats, DXGI_FORMAT dxgiDsvFormat)
@@ -689,7 +725,7 @@ void CPostProcessingShader::CreateResourcesAndRtvsSrvs(ID3D12Device* pd3dDevice,
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 #ifdef _WITH_SCENE_ROOT_SIGNATURE
-	CScene::CreateShaderResourceViews(pd3dDevice, m_pTexture, 0, 6);
+	CScene::CreateShaderResourceViews(pd3dDevice, m_pTexture, 0, 13);
 #else
 	CScene::CreateShaderResourceViews(pd3dDevice, m_pTexture, 0, 0);
 #endif
@@ -793,7 +829,7 @@ void CTextureToFullScreenShader::UpdateShaderVariables(ID3D12GraphicsCommandList
 {
 	m_pcbMappedDrawOptions->m_xmn4DrawOptions.x = *((int*)pContext);
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbDrawOptions->GetGPUVirtualAddress();
-	pd3dCommandList->SetGraphicsRootConstantBufferView(7, d3dGpuVirtualAddress);/*dd*/
+	pd3dCommandList->SetGraphicsRootConstantBufferView(14, d3dGpuVirtualAddress);/*dd*/
 
 	CPostProcessingShader::UpdateShaderVariables(pd3dCommandList, pContext);
 }
