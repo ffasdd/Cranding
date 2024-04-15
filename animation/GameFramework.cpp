@@ -635,9 +635,6 @@ void CGameFramework::ProcessInput()
 						g_clients[cl_id].setAnimation(animateState::GUN_MOVE);
 						g_clients[cl_id].setprevAnimation(animateState::GUN_IDLE);
 					}
-					//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_bIsBlending = true;
-					//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
-					//m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_nAnimationAfter = curAni;
 					g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
 				}
 				
