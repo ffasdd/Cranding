@@ -195,6 +195,7 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
     float4 zDepth : SV_TARGET4;
 };
 
+// 경서야 여기 값을 잘 넣고 맨 밑으로 이동하렴
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OUTPUT input)
 {
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
@@ -205,13 +206,13 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
         cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
     output.cTexture = cAlbedoColor;
 	
-	// output.normal = float4(input.normalW.xyz * 0.5f + 0.5f, 1.0f);
-    output.normal = float4(input.normalW, 1.0f);
+	output.normal = float4(input.normalW.xyz * 0.5f + 0.5f, 1.0f);
+    //output.normal = float4(0.0,0.0,0.0, 1.0f);
 
     input.normalW = normalize(input.normalW);
 
    // output.zDepth = input.position.z;
-    output.zDepth = float4(0.0f, 0.0f, input.position.z, 1.0);
+    output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
 	
     output.diffuse = gMaterial.m_cDiffuse;
     //output.diffuse = float4(1.0, 1.0, 1.0, 1.0);
@@ -219,7 +220,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
     float4 cIllumination = Lighting(input.positionW, input.normalW);
 	
     output.cTexture = lerp(output.cTexture, cIllumination, 0.5f);
-
+    cIllumination = gMaterial.m_cDiffuse;
     return (output);
 }
 
@@ -335,7 +336,7 @@ struct VS_SCREEN_RECT_TEXTURED_OUTPUT
 
 Texture2D<float4> gtxtTextureTexture : register(t14);
 Texture2D<float4> gtxtIlluminationTexture : register(t15);
-//Texture2D<float4> gtxtNormalTexture : register(t16);
+Texture2D<float4> gtxtdrNormalTexture : register(t16);
 
 Texture2D<float> gtxtzDepthTexture : register(t17);
 Texture2D<float> gtxtDepthTexture : register(t18);
@@ -416,14 +417,77 @@ cbuffer cbDrawOptions : register(b9)
 {
     int4 gvDrawOptions : packoffset(c0);
 };
+
+float4 DeferredDirectionalLight(int nIndex, float3 vNormal, float3 vToCamera, float4 vSpecular, float4 vDiffuse, float4 vAmbient)
+{
+    float3 vToLight = -gLights[nIndex].m_vDirection;
+    float fDiffuseFactor = dot(vToLight, vNormal);
+    float fSpecularFactor = 0.0f;
+    if (fDiffuseFactor > 0.0f)
+    {
+        if (vSpecular.a != 0.0f)
+        {
+#ifdef _WITH_REFLECT
+            float3 vReflect = reflect(-vToLight, vNormal);
+            fSpecularFactor = pow(max(dot(vReflect, vToCamera), 0.0f), vSpecular.a);
+#else
+#ifdef _WITH_LOCAL_VIEWER_HIGHLIGHTING
+            float3 vHalf = normalize(vToCamera + vToLight);
+#else
+			float3 vHalf = float3(0.0f, 1.0f, 0.0f);
+#endif
+            fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), vSpecular.a);
+#endif
+        }
+    }
+
+    return ((gLights[nIndex].m_cAmbient * vAmbient) + (gLights[nIndex].m_cDiffuse * fDiffuseFactor * vDiffuse) + (gLights[nIndex].m_cSpecular * fSpecularFactor * vSpecular));
+}
+
+float4 DeferredLighting(float3 vPosition, float3 vNormal, float4 vSpecular, float4 vDiffuse, float4 vAmbient)
+{
+    float3 vCameraPosition = float3(gvCameraPosition.x, gvCameraPosition.y, gvCameraPosition.z);
+	//float3 vCameraPosition = float3(0.0f, 0.0f, 0.0f);
+    float3 vToCamera = normalize(vCameraPosition - vPosition);
+
+    float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	
+    [unroll(MAX_LIGHTS)]
+    for (int i = 0; i < gnLights; i++)
+    {
+        if (gLights[i].m_bEnable)
+        {
+            if (gLights[i].m_nType == DIRECTIONAL_LIGHT)
+            {
+                cColor += DeferredDirectionalLight(i, vNormal, vToCamera, vSpecular, vDiffuse, vAmbient);
+            }
+          
+        }
+    }
+	
+    cColor += (gcGlobalAmbientLight * vAmbient);
+    cColor.a = vDiffuse.a;
+	//cColor.a = 1.0f;
+
+    return (cColor);
+}
+
 float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_Target
 {
-    float4 cColor = gtxtTextureTexture.Sample(gssWrap, input.uv);
-
+    float3 pos = input.position;
+    float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
+    float4 specular = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 ambient = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 diffuse = gMaterial.m_cDiffuse;
+	
+	
+    float4 cColor = DeferredLighting(pos, normal, specular, diffuse, ambient);
+    
     switch (gvDrawOptions.x)
     {
         case 84: //'T'
 		{
+			// 끝
                 cColor = gtxtTextureTexture.Sample(gssWrap, input.uv);
                 //cColor = (1.0f, 0.0f, 0.0f, 1.0f);
                 break;
@@ -435,23 +499,21 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
             }
         case 78: //'N'
 		{
-                cColor = gtxtNormalTexture.Sample(gssWrap, input.uv);
+			// 끝
+                cColor = gtxtdrNormalTexture.Sample(gssWrap, input.uv);
                 //cColor = gtxtIlluminationTexture.Sample(gssWrap, input.uv);
                 break;
             }
         case 68: //'D'
 		{
                 float fDepth = gtxtDepthTexture.Load(uint3((uint) input.position.x, (uint) input.position.y, 0));
-                //cColor = fDepth;
-			cColor = GetColorFromDepth(fDepth);
-               // cColor = gtxtTextureTexture.Sample(gssWrap, input.uv);
+              cColor = fDepth;
                 break;
             }
         case 90: //'Z'
 		{
                 float fzDepth = gtxtzDepthTexture.Load(uint3((uint) input.position.x, (uint) input.position.y, 0));
                 cColor = fzDepth;
-//			cColor = GetColorFromDepth(fDepth);
                 break;
             }
     }
