@@ -63,6 +63,16 @@ struct VS_STANDARD_OUTPUT
 	float2 uv : TEXCOORD;
 };
 
+struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
+{
+    float4 scene : SV_Target0;
+	
+    float4 cTexture : SV_TARGET1;
+    float4 diffuse : SV_TARGET2;
+    float4 normal : SV_TARGET3;
+    float4 zDepth : SV_TARGET4;
+};
+
 Texture2DArray gtxtTextureArray : register(t19);
 
 VS_STANDARD_OUTPUT VSStandard(VS_STANDARD_INPUT input)
@@ -79,8 +89,10 @@ VS_STANDARD_OUTPUT VSStandard(VS_STANDARD_INPUT input)
 	return(output);
 }
 
-float4 PSStandard(VS_STANDARD_OUTPUT input) : SV_TARGET
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTPUT input) : SV_TARGET
 {
+    PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+    
 	// 객체 렌더링
 	float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if (gnTexturesMask & MATERIAL_ALBEDO_MAP) cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
@@ -97,23 +109,15 @@ float4 PSStandard(VS_STANDARD_OUTPUT input) : SV_TARGET
 	float4 cEmissionColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if (gnTexturesMask & MATERIAL_EMISSION_MAP) cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
 	
-	float4 cColor = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
+    output.cTexture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
 	
-	float3 normalW;
-	if (gnTexturesMask & MATERIAL_NORMAL_MAP)
-	{
-		float3x3 TBN = float3x3(normalize(input.tangentW), normalize(input.bitangentW), normalize(input.normalW));
-		float3 vNormal = normalize(cNormalColor.rgb * 2.0f - 1.0f); //[0, 1] → [-1, 1]
-		normalW = normalize(mul(vNormal, TBN));
-	}
-	else
-	{
-		normalW = normalize(input.normalW);
-	}
+    output.diffuse = gMaterial.m_cDiffuse;
+    
+    output.normal = float4(input.normalW, 0.0);
+    
+    output.zDepth = float4(input.position.z, 0.0f, input.position.z, 1.0);
 	
-	float4 cIllumination = Lighting(input.positionW, normalW);
-	
-	return(lerp(cColor, cIllumination, 0.5f));
+	return(output);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -185,26 +189,38 @@ VS_STANDARD_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT input)
 	return(output);
 }
 
-struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
-{
-    float4 scene : SV_Target0;
-	
-    float4 cTexture : SV_TARGET1;
-    float4 diffuse : SV_TARGET2;
-    float4 normal : SV_TARGET3;
-    float4 zDepth : SV_TARGET4;
-};
 
-// 경서야 여기 값을 잘 넣고 맨 밑으로 이동하렴
+
+
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OUTPUT input)
 {
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 	
     //output.cTexture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
+    
+    
     float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
         cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
-    output.cTexture = cAlbedoColor;
+	
+    float4 cSpecularColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_SPECULAR_MAP)
+        cSpecularColor = gtxtSpecularTexture.Sample(gssWrap, input.uv);
+	
+    float4 cNormalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_NORMAL_MAP)
+        cNormalColor = gtxtNormalTexture.Sample(gssWrap, input.uv);
+	
+    float4 cMetallicColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_METALLIC_MAP)
+        cMetallicColor = gtxtMetallicTexture.Sample(gssWrap, input.uv);
+	
+    float4 cEmissionColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_EMISSION_MAP)
+        cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
+    
+    
+    output.cTexture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
 	
 	output.normal = float4(input.normalW.xyz * 0.5f + 0.5f, 1.0f);
     //output.normal = float4(0.0,0.0,0.0, 1.0f);
@@ -221,6 +237,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
 	
     output.cTexture = lerp(output.cTexture, cIllumination, 0.5f);
     cIllumination = gMaterial.m_cDiffuse;
+    
     return (output);
 }
 
@@ -296,8 +313,8 @@ SamplerState gssClamp : register(s1);
 float4 PSSkyBox(VS_SKYBOX_CUBEMAP_OUTPUT input) : SV_TARGET
 {
 	float4 cColor = gtxtSkyCubeTexture.Sample(gssClamp, input.positionL);
-
-	return(cColor);
+    
+    return (cColor);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,14 +335,14 @@ float4 VSPostProcessing(uint nVertexID : SV_VertexID) : SV_POSITION
     if (nVertexID == 5)
         return (float4(-1.0f, -1.0f, 0.0f, 1.0f));
 
-    return (float4(0, 0, 0, 0));
+    return (float4(1.0, 1.0, 1.0, 1.0));
 }
 
 float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 {
 	
 	
-    return (float4(0.0f, 0.0f, 0.0f, 1.0f));
+    return (float4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 struct VS_SCREEN_RECT_TEXTURED_OUTPUT
@@ -418,7 +435,7 @@ cbuffer cbDrawOptions : register(b9)
     int4 gvDrawOptions : packoffset(c0);
 };
 
-float4 DeferredDirectionalLight(int nIndex, float3 vNormal, float3 vToCamera, float4 vSpecular, float4 vDiffuse, float4 vAmbient)
+float4 DeferredDirectionalLight(int nIndex, float3 vNormal, float3 vToCamera, float4 vSpecular, float4 vDiffuse, float4 vAmbient, float4 textureColor)
 {
     float3 vToLight = -gLights[nIndex].m_vDirection;
     float fDiffuseFactor = dot(vToLight, vNormal);
@@ -434,17 +451,29 @@ float4 DeferredDirectionalLight(int nIndex, float3 vNormal, float3 vToCamera, fl
 #ifdef _WITH_LOCAL_VIEWER_HIGHLIGHTING
             float3 vHalf = normalize(vToCamera + vToLight);
 #else
-			float3 vHalf = float3(0.0f, 1.0f, 0.0f);
+            float3 vHalf = float3(0.0f, 1.0f, 0.0f);
 #endif
             fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), vSpecular.a);
 #endif
         }
     }
 
-    return ((gLights[nIndex].m_cAmbient * vAmbient) + (gLights[nIndex].m_cDiffuse * fDiffuseFactor * vDiffuse) + (gLights[nIndex].m_cSpecular * fSpecularFactor * vSpecular));
+    float4 lightingColor = ((gLights[nIndex].m_cAmbient * vAmbient) + (gLights[nIndex].m_cDiffuse * fDiffuseFactor * vDiffuse) + (gLights[nIndex].m_cSpecular * fSpecularFactor * vSpecular));
+
+    // Sample the texture
+    float4 textureSample = textureColor;
+    
+    // Set the output texture color
+  //  textureColor = textureSample;
+
+    // Combine the lighting color with the texture color
+    float4 finalColor = lightingColor * textureSample;
+
+    return finalColor;
 }
 
-float4 DeferredLighting(float3 vPosition, float3 vNormal, float4 vSpecular, float4 vDiffuse, float4 vAmbient)
+
+float4 DeferredLighting(float3 vPosition, float3 vNormal, float4 vSpecular, float4 vDiffuse, float4 vAmbient, float4 tex)
 {
     float3 vCameraPosition = float3(gvCameraPosition.x, gvCameraPosition.y, gvCameraPosition.z);
 	//float3 vCameraPosition = float3(0.0f, 0.0f, 0.0f);
@@ -459,7 +488,7 @@ float4 DeferredLighting(float3 vPosition, float3 vNormal, float4 vSpecular, floa
         {
             if (gLights[i].m_nType == DIRECTIONAL_LIGHT)
             {
-                cColor += DeferredDirectionalLight(i, vNormal, vToCamera, vSpecular, vDiffuse, vAmbient);
+                cColor += DeferredDirectionalLight(i, vNormal, vToCamera, vSpecular, vDiffuse, vAmbient, tex);
             }
           
         }
@@ -479,9 +508,9 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     float4 specular = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 ambient = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 diffuse = gMaterial.m_cDiffuse;
+    float4 tex = gtxtTextureTexture.Sample(gssWrap, input.uv);
 	
-	
-    float4 cColor = DeferredLighting(pos, normal, specular, diffuse, ambient);
+    float4 cColor = DeferredLighting(pos, normal, specular, diffuse, ambient, tex);
     
     switch (gvDrawOptions.x)
     {
