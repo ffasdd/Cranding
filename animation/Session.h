@@ -8,6 +8,7 @@ public:
 	~Session();
 public:
 	int getId();
+	int getrId();
 	char* getName();
 	int getHp();
 	XMFLOAT3 getPos();
@@ -17,8 +18,10 @@ public:
 	int getAnimation();
 	int getprevAnimation();
 	int getCharacterType();
+	
 	void setCharacterType(int type);
 	void setId(int id);
+	void setrId(int roomid);
 	void setName(char* name);
 	void setHp(int hp);
 	void setPos(XMFLOAT3 pos);
@@ -27,9 +30,11 @@ public:
 	void setUp(XMFLOAT3 up);
 	void setAnimation(int ani);
 	void setprevAnimation(int ani);
+
 	
 private:
 	int m_id  = -1;
+	int r_id = -1;
 	int characterType = -1;
 	char m_name[20];
 	int m_hp;

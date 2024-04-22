@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "Session.h"
 
-array<Session, MAX_USER> clients;
+
+array<Session, MAX_USER> clients; //전체 클라이언트 
+array<Session, 3> ingameclients;
 
 Session::Session()
 {
@@ -13,6 +15,7 @@ Session::Session()
 	_prevremain = 0;
 	_maxhp = 100;
 	_hp = _maxhp;
+	room_id = 0;
 }
 
 void Session::send_login_info_packet()
@@ -59,13 +62,13 @@ void Session::send_add_info_packet(int client_id)
 	do_send(&p);
 }
 
-void Session::send_move_packet(int client_id)
+void Session::send_move_packet(int client_id,XMFLOAT3 _pos)
 {
 	SC_MOVE_OBJECT_PACKET p;
 	p.id = client_id;
 	p.size = sizeof(SC_MOVE_OBJECT_PACKET);
 	p.type = SC_MOVE_OBJECT;
-	p.pos = clients[client_id]._pos;
+	p.pos =_pos; // 여기서 클라이언트 포스를 보내고 있기 때문에 이동 확인 X  
 	do_send(&p);
 }
 
@@ -80,15 +83,15 @@ void Session::send_remove_packet(int client_id)
 	do_send(&p);
 }
  
-void Session::send_rotate_packet(int client_id)
+void Session::send_rotate_packet(int client_id,XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up)
 {
 	SC_ROTATE_OBJECT_PACKET p;
 	p.id = client_id;
 	p.size = sizeof(SC_ROTATE_OBJECT_PACKET);
 	p.type = SC_ROTATE_OBJECT;
-	p.look = clients[client_id]._look;
-	p.right = clients[client_id]._right;
-	p.up = clients[client_id]._up;
+	p.look = _look;
+	p.right = _right;
+	p.up = _up;
 	do_send(&p);
 }
 
@@ -100,22 +103,24 @@ void Session::send_test_packet(int client_id)
 	do_send(&p);
 }
 
-void Session::send_change_animate_packet(int client_id)
+void Session::send_change_animate_packet(int client_id, animateState animate, animateState prevanimate)
 {
 	SC_CHANGE_ANIMATION_PACKET p;
 	p.size = sizeof(SC_CHANGE_ANIMATION_PACKET);
 	p.id = client_id;
 	p.type = SC_CHANGE_ANIMATION;
-	p.a_state = clients[client_id].animationstate;
-	p.prev_a_state = clients[client_id].prevanimationstate;
+	p.a_state = animate;
+	p.prev_a_state = prevanimate;
 	do_send(&p);
 }
 
-void Session::send_game_start(int client_id)
+void Session::send_game_start(int r_id)
 {
 	SC_GAMESTART_PACKET p;
-	p.size = sizeof(SC_GAMESTART_PACKET);
 	p.type = SC_START_GAME;
+	p.id = _id;
+	p.size = sizeof(SC_GAMESTART_PACKET);
+	p.roomid = r_id;
 	do_send(&p);
 }
 

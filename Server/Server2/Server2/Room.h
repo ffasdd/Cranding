@@ -1,17 +1,20 @@
 #pragma once
 #include"Session.h"
 
+class Session;
+enum class roomState : int { Free, Ingame };
+
 class Room
 {
 public:
-	map<Session, int> _lobbyPlayer;
-	map<Session, int> _ingamePlayer;
 
 	//mutex _room_lock; // ? 필요할까?
-	
-	Session* _clientinfo;
+	// 방에 들어오면 ingamePlayer;
 
-	void Init();
-	void Run();
+
+	vector<Session*> ingamePlayer; 
+
+	roomState _state = roomState::Free;
+
 };
 

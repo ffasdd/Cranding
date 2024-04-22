@@ -2,6 +2,7 @@
 #include"Over_Exp.h"
 #include"Session.h"
 #include"Room.h"
+#include <queue>
 
 class Server
 {
@@ -27,18 +28,36 @@ public:
 
 	bool can_see(int to, int from);
 	int get_new_client_id();
-	void ReadyToStart();
+	int get_new_room_id(std::unordered_map<int,Room> rooms);
+
+	void ReadyToStart(); // 로비 관찰 스레드 함수 
+	
 
 public:
-	SOCKET listensocket;
+	SOCKET listensocket; 
 	SOCKET clientsocket;
 
 	Over_Exp _overlapped;
 	HANDLE _IocpHandle;
 
-	vector<Session> lobbyClients;
+	thread lobbythread;
+
 	vector<thread> worker_thread;
 
+	queue<Session*> matchingqueue;
+	
+	unordered_map<int, Room> ingameroom;
+	// array 전역 clients 가 필요한가? 
+	// 필요하지 않을거같은데
+	// 0 -  [ 0, 1 , 2 ] 
+	// 1 - [ 3 , 4, 5 ]
+	// room 안에 array 두어서 Room 으로 전체를 관리한다? 
+
+
+
+
 	int readycnt = 0;
+	//bool lobbyrun = false;
 };
 
+ 

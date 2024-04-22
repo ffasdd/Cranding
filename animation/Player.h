@@ -11,6 +11,11 @@
 #include "Camera.h"
 #include"Session.h"
 
+struct CB_PLAYER_INFO
+{
+	XMFLOAT4X4					m_xmf4x4World;
+};
+
 extern unordered_map<int, Session> g_clients;
 extern queue<SENDTYPE> g_sendqueue;
 class CPlayer : public CGameObject
@@ -98,6 +103,11 @@ public:
 	void SetRight(const XMFLOAT3& xmf3Right) { m_xmf3Right = xmf3Right; }
 	void SetUp(const XMFLOAT3& xmf3Up) { m_xmf3Up = xmf3Up; }
 
+
+
+protected:
+	ID3D12Resource* m_pd3dcbPlayer = NULL;
+	CB_PLAYER_INFO* m_pcbMappedPlayer = NULL;
 };
 
 class CSoundCallbackHandler : public CAnimationCallbackHandler

@@ -62,11 +62,16 @@ void Server::Iocp()
 		if (ERROR_IO_PENDING != error_num)
 			cout << " Error " << endl;
 	}
+
+	lobbythread = thread([this]() {ReadyToStart(); });
+
 	int num_thread = std::thread::hardware_concurrency();
 	for (int i = 0; i < num_thread; ++i)
 		worker_thread.emplace_back(&Server::WorkerThread, this);
 	for (auto& th : worker_thread)
 		th.join();
+
+
 }
 
 void Server::WorkerThread()
@@ -97,17 +102,20 @@ void Server::WorkerThread()
 		switch (ex_over->_comptype)
 		{
 		case COMP_TYPE::Accept: {
+			// 여기서 로비접속? 매칭? 
+			// 애초에 clients 에 담지말고 lobby 에 담는다
+			// 근데? 애초에 클라에서 ready를 눌렀을 때 connect를 걸면되는거아닌가? 
 			int c_id = get_new_client_id();
 			if (c_id != -1) {
 
 				{
 					lock_guard<mutex>ll(clients[c_id]._s_lock);
 					clients[c_id]._state = STATE::Alloc;
-		
+
 				}
 				if (c_id == 0)
 					clients[c_id]._pos = { 0.0f,0.0f,0.0f };
-				else if (c_id == 1)
+				else 
 					clients[c_id]._pos = { 10.0f,0.0f,10.0f };
 				clients[c_id]._id = c_id;
 				clients[c_id]._name[0] = 0;
@@ -135,7 +143,7 @@ void Server::WorkerThread()
 			break;
 		}
 		case COMP_TYPE::Recv: {
-			cout << " client send to server " << endl;
+			//cout << " client send to server " << endl;
 			int remain_data = num_bytes + clients[key]._prevremain;
 			char* p = ex_over->_sendbuf;
 			while (remain_data > 0)
@@ -172,26 +180,11 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_READY_GAME: {
 		CS_READY_PACKET* p = reinterpret_cast<CS_READY_PACKET*>(packet);
 		clients[id].isReady = true;
-
-		for (auto& cl : lobbyClients)
-		{
-			if (cl.isReady == true)
-				readycnt++;
-		}
-		
-		if (readycnt == 3)
-		{
-			// 게임 시작 ,, 
-			for (auto& cl : lobbyClients)
-			{
-				cl.send_game_start(id);
-				clients[id].send_game_start(cl._id);
-
-			}
-		}
-		
+		matchingqueue.push(&clients[id]);
 	}
+					  break;
 	case CS_LOGIN: {
+
 		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
 		strcpy_s(clients[id]._name, p->name);
 		clients[id].characterType = p->charactertype;
@@ -199,106 +192,93 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Ingame;
 		}
-		lobbyClients.push_back(clients[id]);
+
 		clients[id].send_login_info_packet();
-
-		cout << id << " id 클라이언트 대기방 입장 " << endl;
-		cout << " 대기방 " << clients.size() << " 명 " << endl;
-		
-		for (auto& pl : clients)
-		{
-			{
-				lock_guard<mutex> ll(pl._s_lock);
-				if (STATE::Ingame != pl._state) continue;
-			}
-			if (pl._id == id)continue;
-			if (can_see(id, pl._id) == false)
-				continue;
-			pl.send_add_info_packet(id);
-			clients[id].send_add_info_packet(pl._id);
-		}
-		break;
+	
+		// ADD X 
 	}
+				 break;
 	case CS_MOVE: {
-
+		// 속한 룸넘버도 같이 넘겨줘야 할듯 
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
-		clients[id]._pos = p->pos;
+		int r_id = p->roomid;
+		ingameroom[r_id].ingamePlayer[id]->_pos = p->pos;
+	
 
+		// view List 
 		unordered_set<int> near_list;
-		clients[id]._v_lock.lock();
-		unordered_set<int> old_vlist = clients[id]._view_list;
-		clients[id]._v_lock.unlock();
+		ingameroom[r_id].ingamePlayer[id]->_v_lock.lock();
+		unordered_set<int> old_vlist = ingameroom[r_id].ingamePlayer[id]->_view_list;
+		ingameroom[r_id].ingamePlayer[id]->_v_lock.unlock();
 
-		for (auto& pl : clients)
+		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-			if (pl._state != STATE::Ingame) continue;
-			if (pl._id == id)continue;
-			if (can_see(id, pl._id))
-				near_list.insert(pl._id);
+			if (pl->_state != STATE::Ingame) continue;
+			if (pl->_id == id)continue;
+			if (can_see(id, pl->_id))
+				near_list.insert(pl->_id);
 		}
-		clients[id].send_move_packet(id);
+		// -------------------------------
 
+		ingameroom[r_id].ingamePlayer[id]->send_move_packet(id, ingameroom[r_id].ingamePlayer[id]->_pos);
+		// -------------------view list 
 		for (auto& pl : near_list)
 		{
-			auto& cpl = clients[pl];
-			cpl._v_lock.lock();
-			if (clients[pl]._view_list.count(id))
+			auto& cpl = ingameroom[r_id].ingamePlayer[pl];
+			cpl->_v_lock.lock();
+			if (ingameroom[r_id].ingamePlayer[pl]->_view_list.count(id))
 			{
-				cpl._v_lock.unlock();
-				clients[pl].send_move_packet(id);
+				cpl->_v_lock.unlock();
+				ingameroom[r_id].ingamePlayer[pl]->send_move_packet(id, ingameroom[r_id].ingamePlayer[id]->_pos);
 			}
 			else
 			{
-				cpl._v_lock.unlock();
-				clients[pl].send_add_info_packet(id);
+				cpl->_v_lock.unlock();
+				ingameroom[r_id].ingamePlayer[pl]->send_add_info_packet(id);
 			}
 			if (old_vlist.count(pl) == 0)
-				clients[id].send_add_info_packet(pl);
+				ingameroom[r_id].ingamePlayer[id]->send_add_info_packet(pl);
 		}
 
 		for (auto& pl : old_vlist)
 			if (0 == near_list.count(pl)) {
-				clients[id].send_remove_packet(pl);
-				clients[pl].send_remove_packet(id);
+				ingameroom[r_id].ingamePlayer[id]->send_remove_packet(pl);
+				ingameroom[r_id].ingamePlayer[pl]->send_remove_packet(id);
 			}
-
+		// ------------------------------------------
 	}
 				break;
 	case CS_ROTATE: {
 
 		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
-		clients[id]._look = p->look;
-		clients[id]._right = p->right;
-		clients[id]._up = p->up;
-		clients[id].send_rotate_packet(id);
-		for (auto& pl : clients)
+		int r_id = p->roomid;
+		ingameroom[r_id].ingamePlayer[id]->_look = p->look;
+		ingameroom[r_id].ingamePlayer[id]->_right = p->right;
+		ingameroom[r_id].ingamePlayer[id]->_up = p->up;
+		ingameroom[r_id].ingamePlayer[id]->send_rotate_packet(id,p->look,p->right,p->up);
+		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-			if (pl._id == id) continue;
-			pl.send_rotate_packet(id);
+			if (pl->_id == id) continue;
+			pl->send_rotate_packet(id,ingameroom[r_id].ingamePlayer[id]->_look, ingameroom[r_id].ingamePlayer[id]->_right,
+				ingameroom[r_id].ingamePlayer[id]->_up);
 		}
 		break;
 	}
 	case CS_CHANGE_ANIMATION: {
 
 		CS_CHANGE_ANIMATION_PACKET* p = reinterpret_cast<CS_CHANGE_ANIMATION_PACKET*>(packet);
-		clients[id].animationstate = p->a_state;
-		clients[id].prevanimationstate = p->prev_a_state;
-		clients[id].send_change_animate_packet(id);
-		for (auto& pl : clients)
+		int r_id = p->roomid;
+		ingameroom[r_id].ingamePlayer[id]->animationstate = p->a_state;
+		ingameroom[r_id].ingamePlayer[id]->prevanimationstate = p->prev_a_state;
+		ingameroom[r_id].ingamePlayer[id]->send_change_animate_packet(id, ingameroom[r_id].ingamePlayer[id]->animationstate, ingameroom[r_id].ingamePlayer[id]->prevanimationstate);
+		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-			if (pl._id == id)continue;
-			pl.send_change_animate_packet(id);
+			if (pl->_id == id)continue;
+			pl->send_change_animate_packet(id, ingameroom[r_id].ingamePlayer[id]->animationstate, ingameroom[r_id].ingamePlayer[id]->prevanimationstate);
 		}
 	}
-	case CS_TEST: {
+							break;
 
-		CS_TEST_PACKET* p = reinterpret_cast<CS_TEST_PACKET*>(packet);
-		cout << " CS _TEST _ PACKET " << id << " - id " << endl;
-		clients[id].send_test_packet(id);
-		break;
-	}
-			
-	
 	}
 }
 
@@ -332,4 +312,68 @@ int Server::get_new_client_id()
 	}
 	return -1;
 
+}
+
+int Server::get_new_room_id(std::unordered_map<int, Room> rooms)
+{
+	for (int i = 0; i < MAX_ROOM; ++i)
+	{
+		if (rooms[i]._state == roomState::Free)
+		{
+
+			return i;
+		}
+	}
+	return -1;
+}
+
+void Server::ReadyToStart()
+{
+	std::deque<Session*> readySession;
+
+	while (true)
+	{
+		if (!matchingqueue.empty())
+		{
+			readySession.emplace_back(matchingqueue.front()); // room vector 두번 나누지말고 한번에 ㄱㄱ
+			int _id = matchingqueue.front()->_id;
+			matchingqueue.pop();// 매칭 큐에서 빼줌 
+
+			// 준비완료 를 한 플레이어 3명일 때? 
+			if (readySession.size() == 2)
+			{
+				// 그 3명을 한방으로 묶어줘야한다. 
+				// 아래처럼 하기 전에 우선 방 번호부터 지정해줘야 한다. 
+				// 어떻게? 클라이언트 아이디를 지정하는 것과 같은 방식으로 넣어주자 
+				int room_id = get_new_room_id(ingameroom); // room ID를 부여받음 
+				ingameroom[room_id]._state = roomState::Ingame; // 상태를 Ingame상태로 바꿔준다 
+
+				size_t readySessionSize = readySession.size();
+
+				for (int i = 0; i < readySessionSize; i++)
+				{
+					ingameroom[room_id].ingamePlayer.emplace_back(readySession.front());
+					readySession.pop_front();			
+				}
+				for (int i = 0; i < 2; ++i)
+				{
+					// 한 방안에서 플레이어들에게 add패킷 게임 시작 . 
+					for (auto& cl : ingameroom[room_id].ingamePlayer)
+					{
+						if (i == cl->_id)continue;
+						cl->send_add_info_packet(i);
+					}
+				}
+				for (auto& pc : ingameroom[room_id].ingamePlayer)
+				{
+					pc->send_game_start(room_id);
+				}
+				
+			}
+			else continue;
+		}
+		else
+			this_thread::sleep_for(1ms);
+
+	}
 }

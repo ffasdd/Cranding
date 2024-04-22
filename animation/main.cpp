@@ -41,11 +41,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
-	char readybutton = 0;
-	cout << " Please Input Ready " << endl;
-	cin >> readybutton;
-	
-	gNetwork
 	WaitForSingleObject(g_event, INFINITE);
 
 	gGameFramework.cl_id = gNetwork.Getmyid();
@@ -58,7 +53,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	{
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
-			if (msg.message == WM_QUIT) break;
+			if (msg.message == WM_QUIT)
+				break;
 			if (!::TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 			{
 				::TranslateMessage(&msg);
@@ -126,8 +122,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	char name[20];
 	cin >> name;
 	gNetwork.SendLoginfo(name);
-	cout << " send to login info " << endl;
-	return(TRUE);
+	cout << "send to login info " << endl;
+	system("cls");
+
+	cout << "start" << endl;
+	gNetwork.SendReady();
+
+	return(TRUE); 
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

@@ -3,7 +3,10 @@ constexpr int BUF_SIZE = 200;
 constexpr int NAME_SIZE = 20;
 constexpr int CHAT_SIZE = 100;
 
-constexpr int MAX_USER = 3;
+constexpr int MAX_USER = 2;
+constexpr int MAX_ROOM = 1;
+
+constexpr int MAX_ROOM_USER = 2;
 constexpr int MAX_NPC = 200000;
 
 constexpr char CS_LOGIN = 0;
@@ -15,6 +18,7 @@ constexpr char CS_LOGOUT = 5;
 constexpr char CS_ROTATE = 6;
 constexpr char CS_CHANGE_ANIMATION = 7;
 constexpr char CS_READY_GAME = 8;
+constexpr char CS_START_GAME = 9;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -49,11 +53,13 @@ struct SC_TEST_PACKET {
 constexpr float VIEW_RANGE = 200.0f;
 
 enum animateState : int {
+	FREE,
 	GUN_IDLE,
 	SWORD_IDLE,
 	GUN_MOVE,
 	SWORD_MOVE
 };
+
 
 //enum swordanimateState :int {
 //	IDLE = 1,
@@ -80,6 +86,7 @@ struct CS_MOVE_PACKET {
 	XMFLOAT3 pos;
 	animateState a_state;
 	unsigned	move_time;
+	int		roomid;
 };
 
 struct CS_CHAT_PACKET {
@@ -103,28 +110,34 @@ struct CS_ROTATE_PACKET {
 	XMFLOAT3 look;
 	XMFLOAT3 right;
 	XMFLOAT3 up;
+	int		roomid;
 };
-struct CS_IDLE_PACKET {
-	unsigned char size;
-	char type;
-	char idle_state;
-};
+
 struct CS_CHANGE_ANIMATION_PACKET {
 	unsigned char size;
 	char type;
 	animateState a_state;
 	animateState prev_a_state;
+	int		roomid;
 };
 struct CS_READY_PACKET {
 	unsigned char size;
 	char type;
 
 };
-struct SC_GAMESTART_PACKET {
-	unsigned size;
+struct CS_START_PACKET {
+	unsigned char size;
 	char type;
 };
+struct SC_GAMESTART_PACKET {
+	unsigned char size;
+	char type;
+	int		id;
+	int		roomid;
+	
+};
 struct SC_LOGIN_INFO_PACKET {
+
 	unsigned char size;
 	char	type;
 	int		id;
@@ -133,6 +146,7 @@ struct SC_LOGIN_INFO_PACKET {
 	int		exp;
 	int		level;
 	int		charactertype;
+
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 right;
@@ -153,7 +167,7 @@ struct SC_ADD_OBJECT_PACKET {
 	XMFLOAT3 right;
 	XMFLOAT3 up;
 	char	name[NAME_SIZE];
-
+	int		roomid;
 	animateState a_state;
 };
 
@@ -168,7 +182,6 @@ struct SC_MOVE_OBJECT_PACKET {
 	char	type;
 	int		id;
 	XMFLOAT3 pos;
-
 };
 struct SC_ROTATE_OBJECT_PACKET {
 	unsigned char size;

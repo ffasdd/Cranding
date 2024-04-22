@@ -134,7 +134,6 @@ void Network::ProcessPacket(char* buf)
 	switch (buf[1])
 	{
 	case SC_LOGIN_INFO: {
-
 		SC_LOGIN_INFO_PACKET* p = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
 		my_id = p->id;
 
@@ -145,7 +144,6 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setUp(p->up);
 		g_clients[my_id].setRight(p->right);
 		g_clients[my_id].setCharacterType(p->charactertype);
-		cout << " Recv Login Info " << endl;
 
 
 		break;
@@ -163,7 +161,6 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setUp(p->up);
 		g_clients[ob_id].setRight(p->right);
 		g_clients[ob_id].setCharacterType(p->charactertype);
-		cout << " Match ID - " << ob_id << endl;
 		break;
 	}
 					  break;
@@ -189,7 +186,12 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setprevAnimation(p->prev_a_state);
 	}
 							break;
-
+	case SC_START_GAME: {
+		SC_GAMESTART_PACKET* p = reinterpret_cast<SC_GAMESTART_PACKET*>(buf);
+		my_roomid = p->roomid;
+		SetEvent(g_event);
+		break;
+	}
 
 	case SC_TEST: {
 		SC_TEST_PACKET* p = reinterpret_cast<SC_TEST_PACKET*>(buf);
@@ -206,7 +208,7 @@ void Network::SendLoginfo(char* name)
 	p.size = sizeof(CS_LOGIN_PACKET);
 	p.type = CS_LOGIN;
 	p.charactertype = 0;
-	
+
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
@@ -224,6 +226,7 @@ void Network::SendMovePlayer(XMFLOAT3 _pos)
 	p.size = sizeof(CS_MOVE_PACKET);
 	p.type = CS_MOVE;
 	p.pos = _pos;
+	p.roomid = my_roomid;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
@@ -235,6 +238,7 @@ void Network::SendRotatePlayer(XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up)
 	p.look = _look;
 	p.right = _right;
 	p.up = _up;
+	p.roomid = my_roomid;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 
 }
@@ -246,6 +250,7 @@ void Network::SendChangeAnimation( animateState curanimate,animateState prevanim
 	p.type = CS_CHANGE_ANIMATION;
 	p.a_state = curanimate;
 	p.prev_a_state = prevanimate;
+	p.roomid = my_roomid;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 

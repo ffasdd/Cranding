@@ -20,6 +20,11 @@ int Session::getId()
 	return m_id;
 }
 
+int Session::getrId()
+{
+	return r_id;
+}
+
 char* Session::getName()
 {
 	return m_name;
@@ -73,6 +78,11 @@ void Session::setCharacterType(int type)
 void Session::setId(int id)
 {
 	m_id = id;
+}
+
+void Session::setrId(int roomid)
+{
+	r_id = roomid;
 }
 
 void Session::setName(char* name)

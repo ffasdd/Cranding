@@ -3,7 +3,7 @@
 #include<WS2tcpip.h>
 #include"Session.h"
 #include"Player.h"
-#include"../Server/Server2/Server2/protocol.h"
+#include"protocol.h"
 #pragma comment(lib,"WS2_32.lib")
 
 #define SERVER_IP "172.0.0.1"
@@ -46,7 +46,7 @@ public: // thread send
 public:
 	int prev_remain = 0;
 	int my_id = 0;
-
+	int my_roomid = -1;
 private:
 	SOCKET clientsocket;
 	char _buf[BUF_SIZE];
