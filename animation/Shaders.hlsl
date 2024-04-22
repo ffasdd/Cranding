@@ -514,16 +514,11 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     
     switch (gvDrawOptions.x)
     {
-        case 84: //'T'
+        case 79: //'O'
 		{
 			// ³¡
                 cColor = gtxtTextureTexture.Sample(gssWrap, input.uv);
                 //cColor = (1.0f, 0.0f, 0.0f, 1.0f);
-                break;
-            }
-        case 76: //'L'
-		{
-                cColor = gtxtIlluminationTexture.Sample(gssWrap, input.uv);
                 break;
             }
         case 78: //'N'
@@ -531,12 +526,6 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
 			// ³¡
                 cColor = gtxtdrNormalTexture.Sample(gssWrap, input.uv);
                 //cColor = gtxtIlluminationTexture.Sample(gssWrap, input.uv);
-                break;
-            }
-        case 68: //'D'
-		{
-                float fDepth = gtxtDepthTexture.Load(uint3((uint) input.position.x, (uint) input.position.y, 0));
-              cColor = fDepth;
                 break;
             }
         case 90: //'Z'

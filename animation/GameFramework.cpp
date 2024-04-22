@@ -347,12 +347,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				case VK_F9:
 					ChangeSwapChainState();
 					break;
-				case 'S': //83
-				case 'T': //84
-				case 'D': //68
-				case 'Z': //90
-				case 'N': //78
-				case 'L': //76
+				case 'P': // scene
+				case 'O': // texture
+				case 'Z': // depth
+				case 'N': // normal
 				{
 					m_nDrawOption = (int)wParam;
 					break;
