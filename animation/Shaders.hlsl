@@ -63,6 +63,18 @@ struct VS_STANDARD_OUTPUT
 	float2 uv : TEXCOORD;
 };
 
+struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
+{
+    float4 scene : SV_Target0;
+	
+    float4 cTexture : SV_TARGET1;
+    float4 diffuse : SV_TARGET2;
+    float4 normal : SV_TARGET3;
+    float4 zDepth : SV_TARGET4;
+};
+
+Texture2DArray gtxtTextureArray : register(t19);
+
 VS_STANDARD_OUTPUT VSStandard(VS_STANDARD_INPUT input)
 {
 	VS_STANDARD_OUTPUT output;
@@ -77,33 +89,35 @@ VS_STANDARD_OUTPUT VSStandard(VS_STANDARD_INPUT input)
 	return(output);
 }
 
-float4 PSStandard(VS_STANDARD_OUTPUT input) : SV_TARGET
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTPUT input) : SV_TARGET
 {
+    PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+    
+	// °´Ã¼ ·»´õ¸µ
 	float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if (gnTexturesMask & MATERIAL_ALBEDO_MAP) cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
+	
 	float4 cSpecularColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if (gnTexturesMask & MATERIAL_SPECULAR_MAP) cSpecularColor = gtxtSpecularTexture.Sample(gssWrap, input.uv);
+	
 	float4 cNormalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if (gnTexturesMask & MATERIAL_NORMAL_MAP) cNormalColor = gtxtNormalTexture.Sample(gssWrap, input.uv);
+	
 	float4 cMetallicColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if (gnTexturesMask & MATERIAL_METALLIC_MAP) cMetallicColor = gtxtMetallicTexture.Sample(gssWrap, input.uv);
+	
 	float4 cEmissionColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if (gnTexturesMask & MATERIAL_EMISSION_MAP) cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
-
-	float3 normalW;
-	float4 cColor = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
-	if (gnTexturesMask & MATERIAL_NORMAL_MAP)
-	{
-		float3x3 TBN = float3x3(normalize(input.tangentW), normalize(input.bitangentW), normalize(input.normalW));
-		float3 vNormal = normalize(cNormalColor.rgb * 2.0f - 1.0f); //[0, 1] ¡æ [-1, 1]
-		normalW = normalize(mul(vNormal, TBN));
-	}
-	else
-	{
-		normalW = normalize(input.normalW);
-	}
-	float4 cIllumination = Lighting(input.positionW, normalW);
-	return(lerp(cColor, cIllumination, 0.5f));
+	
+    output.cTexture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
+	
+    output.diffuse = gMaterial.m_cDiffuse;
+    
+    output.normal = float4(input.normalW, 0.0);
+    
+    output.zDepth = float4(input.position.z, 0.0f, input.position.z, 1.0);
+	
+	return(output);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,6 +187,58 @@ VS_STANDARD_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT input)
 	output.uv = input.uv;
 
 	return(output);
+}
+
+
+
+
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OUTPUT input)
+{
+    PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+	
+    //output.cTexture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
+    
+    
+    float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
+        cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
+	
+    float4 cSpecularColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_SPECULAR_MAP)
+        cSpecularColor = gtxtSpecularTexture.Sample(gssWrap, input.uv);
+	
+    float4 cNormalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_NORMAL_MAP)
+        cNormalColor = gtxtNormalTexture.Sample(gssWrap, input.uv);
+	
+    float4 cMetallicColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_METALLIC_MAP)
+        cMetallicColor = gtxtMetallicTexture.Sample(gssWrap, input.uv);
+	
+    float4 cEmissionColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_EMISSION_MAP)
+        cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
+    
+    
+    output.cTexture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
+	
+	output.normal = float4(input.normalW.xyz * 0.5f + 0.5f, 1.0f);
+    //output.normal = float4(0.0,0.0,0.0, 1.0f);
+
+    input.normalW = normalize(input.normalW);
+
+   // output.zDepth = input.position.z;
+    output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
+	
+    output.diffuse = gMaterial.m_cDiffuse;
+    //output.diffuse = float4(1.0, 1.0, 1.0, 1.0);
+	
+    float4 cIllumination = Lighting(input.positionW, input.normalW);
+	
+    output.cTexture = lerp(output.cTexture, cIllumination, 0.5f);
+    cIllumination = gMaterial.m_cDiffuse;
+    
+    return (output);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -247,6 +313,239 @@ SamplerState gssClamp : register(s1);
 float4 PSSkyBox(VS_SKYBOX_CUBEMAP_OUTPUT input) : SV_TARGET
 {
 	float4 cColor = gtxtSkyCubeTexture.Sample(gssClamp, input.positionL);
+    
+    return (cColor);
+}
 
-	return(cColor);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float4 VSPostProcessing(uint nVertexID : SV_VertexID) : SV_POSITION
+{
+    if (nVertexID == 0)
+        return (float4(-1.0f, +1.0f, 0.0f, 1.0f));
+    if (nVertexID == 1)
+        return (float4(+1.0f, +1.0f, 0.0f, 1.0f));
+    if (nVertexID == 2)
+        return (float4(+1.0f, -1.0f, 0.0f, 1.0f));
+
+    if (nVertexID == 3)
+        return (float4(-1.0f, +1.0f, 0.0f, 1.0f));
+    if (nVertexID == 4)
+        return (float4(+1.0f, -1.0f, 0.0f, 1.0f));
+    if (nVertexID == 5)
+        return (float4(-1.0f, -1.0f, 0.0f, 1.0f));
+
+    return (float4(1.0, 1.0, 1.0, 1.0));
+}
+
+float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
+{
+	
+	
+    return (float4(1.0f, 1.0f, 1.0f, 1.0f));
+}
+
+struct VS_SCREEN_RECT_TEXTURED_OUTPUT
+{
+    float4 position : SV_POSITION;
+    float2 uv : TEXCOORD;
+};
+
+Texture2D<float4> gtxtTextureTexture : register(t14);
+Texture2D<float4> gtxtIlluminationTexture : register(t15);
+Texture2D<float4> gtxtdrNormalTexture : register(t16);
+
+Texture2D<float> gtxtzDepthTexture : register(t17);
+Texture2D<float> gtxtDepthTexture : register(t18);
+
+
+VS_SCREEN_RECT_TEXTURED_OUTPUT VSScreenRectSamplingTextured(uint nVertexID : SV_VertexID)
+{
+    VS_SCREEN_RECT_TEXTURED_OUTPUT output;
+
+    if (nVertexID == 0)
+    {
+        output.position = float4(-1.0f, +1.0f, 0.0f, 1.0f);
+        output.uv = float2(0.0f, 0.0f);
+    }
+    else if (nVertexID == 1)
+    {
+        output.position = float4(+1.0f, +1.0f, 0.0f, 1.0f);
+        output.uv = float2(1.0f, 0.0f);
+    }
+    else if (nVertexID == 2)
+    {
+        output.position = float4(+1.0f, -1.0f, 0.0f, 1.0f);
+        output.uv = float2(1.0f, 1.0f);
+    }
+    else if (nVertexID == 3)
+    {
+        output.position = float4(-1.0f, +1.0f, 0.0f, 1.0f);
+        output.uv = float2(0.0f, 0.0f);
+    }
+    else if (nVertexID == 4)
+    {
+        output.position = float4(+1.0f, -1.0f, 0.0f, 1.0f);
+        output.uv = float2(1.0f, 1.0f);
+    }
+    else if (nVertexID == 5)
+    {
+        output.position = float4(-1.0f, -1.0f, 0.0f, 1.0f);
+        output.uv = float2(0.0f, 1.0f);
+    }
+	
+	
+    return (output);
+}
+
+float4 GetColorFromDepth(float fDepth)
+{
+    float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+
+    if (fDepth >= 1.0f)
+        cColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    else if (fDepth < 0.00625f)
+        cColor = float4(1.0f, 0.0f, 0.0f, 1.0f);
+    else if (fDepth < 0.0125f)
+        cColor = float4(0.0f, 1.0f, 0.0f, 1.0f);
+    else if (fDepth < 0.025f)
+        cColor = float4(0.0f, 0.0f, 1.0f, 1.0f);
+    else if (fDepth < 0.05f)
+        cColor = float4(1.0f, 1.0f, 0.0f, 1.0f);
+    else if (fDepth < 0.075f)
+        cColor = float4(0.0f, 1.0f, 1.0f, 1.0f);
+    else if (fDepth < 0.1f)
+        cColor = float4(1.0f, 0.5f, 0.5f, 1.0f);
+    else if (fDepth < 0.4f)
+        cColor = float4(0.5f, 1.0f, 1.0f, 1.0f);
+    else if (fDepth < 0.6f)
+        cColor = float4(1.0f, 0.0f, 1.0f, 1.0f);
+    else if (fDepth < 0.8f)
+        cColor = float4(0.5f, 0.5f, 1.0f, 1.0f);
+    else if (fDepth < 0.9f)
+        cColor = float4(0.5f, 1.0f, 0.5f, 1.0f);
+    else
+        cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+
+    return (cColor);
+}
+
+cbuffer cbDrawOptions : register(b9)
+{
+    int4 gvDrawOptions : packoffset(c0);
+};
+
+float4 DeferredDirectionalLight(int nIndex, float3 vNormal, float3 vToCamera, float4 vSpecular, float4 vDiffuse, float4 vAmbient, float4 textureColor)
+{
+    float3 vToLight = -gLights[nIndex].m_vDirection;
+    float fDiffuseFactor = dot(vToLight, vNormal);
+    float fSpecularFactor = 0.0f;
+    if (fDiffuseFactor > 0.0f)
+    {
+        if (vSpecular.a != 0.0f)
+        {
+#ifdef _WITH_REFLECT
+            float3 vReflect = reflect(-vToLight, vNormal);
+            fSpecularFactor = pow(max(dot(vReflect, vToCamera), 0.0f), vSpecular.a);
+#else
+#ifdef _WITH_LOCAL_VIEWER_HIGHLIGHTING
+            float3 vHalf = normalize(vToCamera + vToLight);
+#else
+            float3 vHalf = float3(0.0f, 1.0f, 0.0f);
+#endif
+            fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), vSpecular.a);
+#endif
+        }
+    }
+
+    float4 lightingColor = ((gLights[nIndex].m_cAmbient * vAmbient) + (gLights[nIndex].m_cDiffuse * fDiffuseFactor * vDiffuse) + (gLights[nIndex].m_cSpecular * fSpecularFactor * vSpecular));
+
+    // Sample the texture
+    float4 textureSample = textureColor;
+    
+    // Set the output texture color
+  //  textureColor = textureSample;
+
+    // Combine the lighting color with the texture color
+    float4 finalColor = lightingColor * textureSample;
+
+    return finalColor;
+}
+
+
+float4 DeferredLighting(float3 vPosition, float3 vNormal, float4 vSpecular, float4 vDiffuse, float4 vAmbient, float4 tex)
+{
+    float3 vCameraPosition = float3(gvCameraPosition.x, gvCameraPosition.y, gvCameraPosition.z);
+	//float3 vCameraPosition = float3(0.0f, 0.0f, 0.0f);
+    float3 vToCamera = normalize(vCameraPosition - vPosition);
+
+    float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	
+    [unroll(MAX_LIGHTS)]
+    for (int i = 0; i < gnLights; i++)
+    {
+        if (gLights[i].m_bEnable)
+        {
+            if (gLights[i].m_nType == DIRECTIONAL_LIGHT)
+            {
+                cColor += DeferredDirectionalLight(i, vNormal, vToCamera, vSpecular, vDiffuse, vAmbient, tex);
+            }
+          
+        }
+    }
+	
+    cColor += (gcGlobalAmbientLight * vAmbient);
+    cColor.a = vDiffuse.a;
+	//cColor.a = 1.0f;
+
+    return (cColor);
+}
+
+float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_Target
+{
+    float3 pos = input.position;
+    float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
+    float4 specular = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 ambient = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    float4 diffuse = gMaterial.m_cDiffuse;
+    float4 tex = gtxtTextureTexture.Sample(gssWrap, input.uv);
+	
+    float4 cColor = DeferredLighting(pos, normal, specular, diffuse, ambient, tex);
+    
+    switch (gvDrawOptions.x)
+    {
+        case 84: //'T'
+		{
+			// ³¡
+                cColor = gtxtTextureTexture.Sample(gssWrap, input.uv);
+                //cColor = (1.0f, 0.0f, 0.0f, 1.0f);
+                break;
+            }
+        case 76: //'L'
+		{
+                cColor = gtxtIlluminationTexture.Sample(gssWrap, input.uv);
+                break;
+            }
+        case 78: //'N'
+		{
+			// ³¡
+                cColor = gtxtdrNormalTexture.Sample(gssWrap, input.uv);
+                //cColor = gtxtIlluminationTexture.Sample(gssWrap, input.uv);
+                break;
+            }
+        case 68: //'D'
+		{
+                float fDepth = gtxtDepthTexture.Load(uint3((uint) input.position.x, (uint) input.position.y, 0));
+              cColor = fDepth;
+                break;
+            }
+        case 90: //'Z'
+		{
+                float fzDepth = gtxtzDepthTexture.Load(uint3((uint) input.position.x, (uint) input.position.y, 0));
+                cColor = fzDepth;
+                break;
+            }
+    }
+	
+    return (cColor);
 }
