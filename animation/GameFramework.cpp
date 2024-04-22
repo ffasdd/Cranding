@@ -357,11 +357,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 					m_nDrawOption = (int)wParam;
 					break;
 				}
-				default:
-					break;
-			case VK_ESCAPE:
-				::PostQuitMessage(0);
-				break;
 			case VK_SPACE:
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
 				break;
