@@ -476,6 +476,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 		// 서버에서 받은 이전 애니메이션 번호와 현재 애니메이션 번호가 다른 경우(블렌딩 해야하는 경우)
 		if (prevAni != curAni)
 		{
+			cout << "Change animate" << endl;
 			// 이전 애니메이션 번호, 이후 애니메이션 번호 저장
 			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_bIsBlending = true;
 

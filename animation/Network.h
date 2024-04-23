@@ -3,7 +3,7 @@
 #include<WS2tcpip.h>
 #include"Session.h"
 #include"Player.h"
-#include"protocol.h"
+#include"../Server/Server2/Server2/protocol.h"
 #pragma comment(lib,"WS2_32.lib")
 
 #define SERVER_IP "172.0.0.1"

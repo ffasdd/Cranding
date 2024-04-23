@@ -124,8 +124,7 @@ void Server::WorkerThread()
 				clients[c_id]._look = XMFLOAT3(0.0f, 0.0f, 1.0f);
 				clients[c_id]._right = XMFLOAT3(1.0f, 0.0f, 0.0f);
 				clients[c_id].characterType = 0;
-				//------------------------------------
-				//lobbyClients.push_back(clients[c_id]);
+
 
 				CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientsocket), _IocpHandle, c_id, 0);
 				clients[c_id].do_recv();
@@ -180,7 +179,7 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_READY_GAME: {
 		CS_READY_PACKET* p = reinterpret_cast<CS_READY_PACKET*>(packet);
 		clients[id].isReady = true;
-		matchingqueue.push(&clients[id]);
+		matchingqueue.push( &clients[id]);
 	}
 					  break;
 	case CS_LOGIN: {
@@ -334,17 +333,20 @@ void Server::ReadyToStart()
 	while (true)
 	{
 		if (!matchingqueue.empty())
-		{
-			readySession.emplace_back(matchingqueue.front()); // room vector 두번 나누지말고 한번에 ㄱㄱ
-			int _id = matchingqueue.front()->_id;
-			matchingqueue.pop();// 매칭 큐에서 빼줌 
+		{	
+			Session* _session = nullptr;
+			bool sessionok = matchingqueue.try_pop(_session);
+			if (sessionok)
+			{
+				readySession.emplace_back(_session);
+			}
+			int _id = _session->_id;
+			
 
 			// 준비완료 를 한 플레이어 3명일 때? 
 			if (readySession.size() == 2)
 			{
-				// 그 3명을 한방으로 묶어줘야한다. 
-				// 아래처럼 하기 전에 우선 방 번호부터 지정해줘야 한다. 
-				// 어떻게? 클라이언트 아이디를 지정하는 것과 같은 방식으로 넣어주자 
+				
 				int room_id = get_new_room_id(ingameroom); // room ID를 부여받음 
 				ingameroom[room_id]._state = roomState::Ingame; // 상태를 Ingame상태로 바꿔준다 
 

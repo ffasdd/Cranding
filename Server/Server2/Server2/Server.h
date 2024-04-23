@@ -2,8 +2,9 @@
 #include"Over_Exp.h"
 #include"Session.h"
 #include"Room.h"
-#include <queue>
 
+
+#include <queue>
 class Server
 {
 public:
@@ -44,7 +45,7 @@ public:
 
 	vector<thread> worker_thread;
 
-	queue<Session*> matchingqueue;
+	concurrency::concurrent_queue<Session*> matchingqueue;
 	
 	unordered_map<int, Room> ingameroom;
 	// array 전역 clients 가 필요한가? 
