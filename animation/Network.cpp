@@ -77,9 +77,10 @@ void Network::SendThreadFunc()
 	{
 		if (!g_sendqueue.empty())
 		{
-			SendProcess(g_sendqueue.front());
-			g_sendqueue.pop();
-
+			SENDTYPE _sendtype;
+			bool getcheck = g_sendqueue.try_pop(_sendtype);
+			if(getcheck)
+				SendProcess(_sendtype);
 		}
 		else
 			std::this_thread::sleep_for(std::chrono::milliseconds(1ms));

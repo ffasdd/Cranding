@@ -17,7 +17,7 @@ struct CB_PLAYER_INFO
 };
 
 extern unordered_map<int, Session> g_clients;
-extern queue<SENDTYPE> g_sendqueue;
+extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 class CPlayer : public CGameObject
 {
 protected:

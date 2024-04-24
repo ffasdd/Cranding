@@ -9,7 +9,7 @@
 #define SERVER_IP "172.0.0.1"
 
 extern unordered_map<int, Session> g_clients;
-extern queue<SENDTYPE> g_sendqueue;
+extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 extern HANDLE g_event;
 
 class Network
