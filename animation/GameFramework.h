@@ -35,8 +35,9 @@ public:
 
 	void ChangeSwapChainState();
 
-    void BuildObjects();
-    void ReleaseObjects();
+   // void BuildObjects();
+	void BuildObjects(int nScene);
+	void ReleaseObjects();
 
     void ProcessInput();
     void AnimateObjects();
