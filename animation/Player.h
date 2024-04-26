@@ -10,6 +10,8 @@
 #include "Object.h"
 #include "Camera.h"
 #include"Session.h"
+class Network;
+extern Network gNetwork;
 
 struct CB_PLAYER_INFO
 {

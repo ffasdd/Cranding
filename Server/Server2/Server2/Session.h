@@ -1,8 +1,8 @@
 #pragma once
+#include<iostream>
 #include "Over_Exp.h"
 #include "Room.h"
 #include"protocol.h"
-
 enum class STATE: unsigned int {Free, Alloc , Ingame};
 
 class Session
@@ -27,7 +27,7 @@ public:
 	int _prevremain;
 
 	int room_id;
-
+	
 	animateState animationstate;
 	animateState prevanimationstate;
 
@@ -61,11 +61,13 @@ public:
 		_v_lock(), // mutex는 복사할 필요 없음
 		_view_list(other._view_list) { // unordered_set 복사
 		memcpy(_name, other._name, sizeof(_name)); // 문자열 복사
+		std::cout << "session 복사생성자 " << std::endl;
 	}
 
 	// 할당 연산자 정의
 	Session& operator=(const Session& other) {
 		if (this != &other) { // 자기 자신에게 대입되는 경우를 방지하기 위한 조건문
+			std::cout << "session 할당 연산자 " << std::endl;
 			_recv_over = other._recv_over;
 			characterType = other.characterType;
 			isReady = other.isReady;
@@ -84,7 +86,7 @@ public:
 			animationstate = other.animationstate;
 			prevanimationstate = other.prevanimationstate;
 			// _s_lock, _v_lock은 mutex이므로 복사 불가능하며, 복사가 필요한 경우 직접 처리해야 함
-			// _view_list은 unordered_set이므로 복사 불가능하며, 복사가 필요한 경우 직접 처리해야 함
+			_view_list = other._view_list;
 		}
 		return *this;
 	}
@@ -92,12 +94,13 @@ public:
 	Session(Session&& other) noexcept : _recv_over(std::move(other._recv_over)), characterType(other.characterType),
 		isReady(other.isReady), _state(other._state),
 		_is_active(other._is_active.load()), _id(other._id), _hp(other._hp),
-		_maxhp(other._maxhp), _socket(other._socket), _pos(std::move(other._pos)),
-		_look(std::move(other._look)), _right(std::move(other._right)),
-		_up(std::move(other._up)), _prevremain(other._prevremain),
+		_maxhp(other._maxhp), _socket(other._socket), _pos(other._pos),
+		_look(other._look), _right(other._right),
+		_up(other._up), _prevremain(other._prevremain),
 		animationstate(other.animationstate),
 		prevanimationstate(other.prevanimationstate),
-		_view_list(std::move(other._view_list)) {
+		_view_list(other._view_list) {
+		std::cout << " 이동 " << std::endl;
 		memcpy(_name, other._name, sizeof(_name));
 		// 이동 후 다른 객체의 상태를 초기화
 		other.characterType = 0;
@@ -121,8 +124,10 @@ public:
 
 	// 이동 할당 연산자
 	Session& operator=(Session&& other) noexcept {
+		std::cout << " 이동 할당 연산자 " << std::endl;
 		if (this != &other) {
-			_recv_over = std::move(other._recv_over);
+
+			_recv_over = other._recv_over;
 			characterType = other.characterType;
 			isReady = other.isReady;
 			_state = other._state;
@@ -131,15 +136,15 @@ public:
 			_hp = other._hp;
 			_maxhp = other._maxhp;
 			_socket = other._socket;
-			_pos = std::move(other._pos);
-			_look = std::move(other._look);
-			_right = std::move(other._right);
-			_up = std::move(other._up);
+			_pos = other._pos;
+			_look = other._look;
+			_right = other._right;
+			_up = other._up;
 			memcpy(_name, other._name, sizeof(_name));
 			_prevremain = other._prevremain;
 			animationstate = other.animationstate;
 			prevanimationstate = other.prevanimationstate;
-			_view_list = std::move(other._view_list);
+			_view_list = other._view_list;
 
 			// 이동 후 다른 객체의 상태를 초기화
 			other.characterType = 0;

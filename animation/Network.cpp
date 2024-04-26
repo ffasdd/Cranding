@@ -2,6 +2,8 @@
 #include<iostream>
 #include "Network.h"
 
+
+
 Network::Network()
 {
 	WSADATA wsaData;
@@ -64,7 +66,7 @@ void Network::NetThreadFunc()
 	while (ServerStart)
 	{
 		int ioByte = recv(clientsocket, _buf, BUF_SIZE, 0);
-
+		
 		ProcessData(ioByte);
 
 		cout << " recvByte : " << ioByte << endl;
@@ -97,9 +99,11 @@ void Network::SendProcess(SENDTYPE sendtype)
 	}
 	case SENDTYPE::ROTATE: {
 		SendRotatePlayer(g_clients[my_id].getLook(),g_clients[my_id].getRight(),g_clients[my_id].getUp());
+		break;
 	}
 	case SENDTYPE::CHANGE_ANIMATION: {
-		SendChangeAnimation((animateState)g_clients[my_id].getAnimation(),(animateState)g_clients[my_id].getprevAnimation());
+		SendChangeAnimation(g_clients[my_id].getAnimation(),g_clients[my_id].getprevAnimation());
+		break;
 	}
 	}
 }
@@ -136,9 +140,9 @@ void Network::ProcessPacket(char* buf)
 	{
 	case SC_LOGIN_INFO: {
 		SC_LOGIN_INFO_PACKET* p = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
-		my_id = p->id;
+		my_id = getmyid(p->id);
 
-		g_clients[my_id].setId(p->id);
+		g_clients[my_id].setId(my_id);
 		g_clients[my_id].setHp(p->hp);
 		g_clients[my_id].setPos(p->pos);
 		g_clients[my_id].setLook(p->look);
@@ -154,7 +158,7 @@ void Network::ProcessPacket(char* buf)
 
 		std::cout << "Add Player " << std::endl;
 		SC_ADD_OBJECT_PACKET* p = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
-		int ob_id = p->id;
+		int ob_id = getmyid(p->id);
 		g_clients[ob_id].setId(ob_id);
 		g_clients[ob_id].setHp(p->hp);
 		g_clients[ob_id].setPos(p->pos);
@@ -162,19 +166,20 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setUp(p->up);
 		g_clients[ob_id].setRight(p->right);
 		g_clients[ob_id].setCharacterType(p->charactertype);
+		g_clients[ob_id].setAnimation(int(p->a_state));
 		break;
 	}
-					  break;
+			
 	case SC_MOVE_OBJECT: {
 		SC_MOVE_OBJECT_PACKET* p = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(buf);
-		int ob_id = p->id;
+		int ob_id = getmyid(p->id);
 		std::cout << ob_id << " Player Move " << endl;
 		g_clients[ob_id].setPos(p->pos);
 	}
 					   break;
 	case SC_ROTATE_OBJECT: {
 		SC_ROTATE_OBJECT_PACKET* p = reinterpret_cast<SC_ROTATE_OBJECT_PACKET*>(buf);
-		int ob_id = p->id;
+		int ob_id = getmyid(p->id);
 		g_clients[ob_id].setLook(p->look);
 		g_clients[ob_id].setRight(p->right);
 		g_clients[ob_id].setUp(p->up);
@@ -182,9 +187,9 @@ void Network::ProcessPacket(char* buf)
 						 break;
 	case SC_CHANGE_ANIMATION: {
 		SC_CHANGE_ANIMATION_PACKET* p = reinterpret_cast<SC_CHANGE_ANIMATION_PACKET*>(buf);
-		int ob_id = p->id;
-		g_clients[ob_id].setAnimation(p->a_state);
-		g_clients[ob_id].setprevAnimation(p->prev_a_state);
+		int ob_id = getmyid(p->id);
+		g_clients[ob_id].setAnimation((int)p->a_state);
+		g_clients[ob_id].setprevAnimation((int)p->prev_a_state);
 	}
 							break;
 	case SC_START_GAME: {
@@ -244,7 +249,7 @@ void Network::SendRotatePlayer(XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up)
 
 }
 
-void Network::SendChangeAnimation( animateState curanimate,animateState prevanimate )
+void Network::SendChangeAnimation(int curanimate, int prevanimate )
 {
 	CS_CHANGE_ANIMATION_PACKET p;
 	p.size = sizeof(CS_CHANGE_ANIMATION_PACKET);
@@ -261,4 +266,27 @@ void Network::SendReady()
 	p.size = sizeof(CS_READY_PACKET);
 	p.type = CS_READY_GAME;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+int Network::getmyid(int _id)
+{
+	if (_id > 1)
+	{
+		if (_id % 2 == 0)
+		{
+			return 0;
+		}
+		else
+			return 1;
+		//else if (_id % 3 == 0)
+		//{
+		//	return 0;
+		//}
+		//else
+		//{
+		//	return 2;
+		//}
+	}
+	else
+		return _id;
 }

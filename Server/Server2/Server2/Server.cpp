@@ -122,9 +122,10 @@ void Server::WorkerThread()
 				clients[c_id]._prevremain = 0;
 				clients[c_id]._socket = clientsocket;
 				clients[c_id]._look = XMFLOAT3(0.0f, 0.0f, 1.0f);
+				clients[c_id]._up = XMFLOAT3(0.0f, 1.0f, 0.0f);
 				clients[c_id]._right = XMFLOAT3(1.0f, 0.0f, 0.0f);
 				clients[c_id].characterType = 0;
-
+				clients[c_id].animationstate = animateState::FREE;
 
 				CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientsocket), _IocpHandle, c_id, 0);
 				clients[c_id].do_recv();
@@ -225,7 +226,7 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			auto& cpl = ingameroom[r_id].ingamePlayer[pl];
 			cpl->_v_lock.lock();
-			if (ingameroom[r_id].ingamePlayer[pl]->_view_list.count(id))
+			if (ingameroom[r_id].ingamePlayer[pl]->_view_list.count(id)) 
 			{
 				cpl->_v_lock.unlock();
 				ingameroom[r_id].ingamePlayer[pl]->send_move_packet(id, ingameroom[r_id].ingamePlayer[id]->_pos);
@@ -267,8 +268,8 @@ void Server::ProcessPacket(int id, char* packet)
 
 		CS_CHANGE_ANIMATION_PACKET* p = reinterpret_cast<CS_CHANGE_ANIMATION_PACKET*>(packet);
 		int r_id = p->roomid;
-		ingameroom[r_id].ingamePlayer[id]->animationstate = p->a_state;
-		ingameroom[r_id].ingamePlayer[id]->prevanimationstate = p->prev_a_state;
+		ingameroom[r_id].ingamePlayer[id]->animationstate = (animateState)p->a_state;
+		ingameroom[r_id].ingamePlayer[id]->prevanimationstate = (animateState)p->prev_a_state;
 		ingameroom[r_id].ingamePlayer[id]->send_change_animate_packet(id, ingameroom[r_id].ingamePlayer[id]->animationstate, ingameroom[r_id].ingamePlayer[id]->prevanimationstate);
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
@@ -319,7 +320,6 @@ int Server::get_new_room_id(std::unordered_map<int, Room> rooms)
 	{
 		if (rooms[i]._state == roomState::Free)
 		{
-
 			return i;
 		}
 	}
@@ -328,8 +328,9 @@ int Server::get_new_room_id(std::unordered_map<int, Room> rooms)
 
 void Server::ReadyToStart()
 {
-	std::deque<Session*> readySession;
 
+	std::deque<Session*> readySession;
+	int usercnt = 0;
 	while (true)
 	{
 		if (!matchingqueue.empty())
@@ -340,11 +341,11 @@ void Server::ReadyToStart()
 			{
 				readySession.emplace_back(_session);
 			}
-			int _id = _session->_id;
+
 			
 
-			// 준비완료 를 한 플레이어 3명일 때? 
-			if (readySession.size() == 2)
+
+			if (readySession.size() == MAX_ROOM_USER)
 			{
 				
 				int room_id = get_new_room_id(ingameroom); // room ID를 부여받음 
@@ -355,27 +356,29 @@ void Server::ReadyToStart()
 				for (int i = 0; i < readySessionSize; i++)
 				{
 					ingameroom[room_id].ingamePlayer.emplace_back(readySession.front());
+			
 					readySession.pop_front();			
 				}
-				for (int i = 0; i < 2; ++i)
+				// 방안에 있는 애들한테 다 add를 보내줘야함 
+				for (auto& ingameplayer : ingameroom[room_id].ingamePlayer)
 				{
-					// 한 방안에서 플레이어들에게 add패킷 게임 시작 . 
-					for (auto& cl : ingameroom[room_id].ingamePlayer)
+					for (auto& player : ingameroom[room_id].ingamePlayer)
 					{
-						if (i == cl->_id)continue;
-						cl->send_add_info_packet(i);
+						if (ingameplayer->_id == player->_id)continue;
+						player->send_add_info_packet(ingameplayer->_id);
 					}
 				}
+				
 				for (auto& pc : ingameroom[room_id].ingamePlayer)
 				{
 					pc->send_game_start(room_id);
 				}
-				
+				// (1 2 )  (  3 4 ) 3, 4 
 			}
 			else continue;
 		}
 		else
-			this_thread::sleep_for(1ms);
+			this_thread::sleep_for(1s);
 
 	}
 }

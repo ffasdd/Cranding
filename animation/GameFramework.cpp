@@ -298,10 +298,27 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		::SetCapture(hWnd);
 		//gNetwork.SendTest();
 		::GetCursorPos(&m_ptOldCursorPos);
+		if (g_clients[cl_id].getCharacterType() == 0)
+		{
+			if (g_clients[cl_id].getAnimation() != (int)animateState::SWORD_ATTACK_2)
+			{
+				g_clients[cl_id].setprevAnimation(g_clients[cl_id].getAnimation()); // 이전 애니메이션이 담김 
+				g_clients[cl_id].setAnimation((int)animateState::SWORD_ATTACK_2);
+			}
+
+		}
+		else if (g_clients[cl_id].getCharacterType() == 1)
+		{
+			if (g_clients[cl_id].getAnimation() != (int)animateState::SHOOTING)
+			{
+				g_clients[cl_id].setprevAnimation(g_clients[cl_id].getAnimation()); // 이전 애니메이션이 담김 
+				g_clients[cl_id].setAnimation((int)animateState::SHOOTING);
+			}
+		}
+		gNetwork.SendChangeAnimation(g_clients[cl_id].getAnimation(), g_clients[cl_id].getprevAnimation());
+
 		break;
 
-		// 우클릭으로 회전
-		// 여기서 패킷전송
 
 	case WM_RBUTTONDOWN:
 		::SetCapture(hWnd);
@@ -476,8 +493,8 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 		// 서버에서 받은 이전 애니메이션 번호와 현재 애니메이션 번호가 다른 경우(블렌딩 해야하는 경우)
 		if (prevAni != curAni)
 		{
-			cout << "Change animate" << endl;
-			// 이전 애니메이션 번호, 이후 애니메이션 번호 저장
+			
+		// 이전 애니메이션 번호, 이후 애니메이션 번호 저장
 			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_bIsBlending = true;
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
@@ -623,7 +640,10 @@ void CGameFramework::ProcessInput()
 
 		// 공격 키
 		if (pKeysBuffer[VK_LBUTTON] & 0xF0)
+		{
+	
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
+		}
 
 		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
 		{
@@ -659,20 +679,7 @@ void CGameFramework::ProcessInput()
 				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
 				g_sendqueue.push(SENDTYPE::MOVE);
 
-				if (g_clients[cl_id].getAnimation() == animateState::GUN_IDLE || g_clients[cl_id].getAnimation() == animateState::SWORD_IDLE) {
-					if (g_clients[cl_id].getCharacterType() == 0)
-					{
-					g_clients[cl_id].setAnimation(animateState::SWORD_MOVE);
-					g_clients[cl_id].setprevAnimation(animateState::SWORD_IDLE);
-
-					}
-					else if (g_clients[cl_id].getCharacterType() == 1)
-					{
-						g_clients[cl_id].setAnimation(animateState::GUN_MOVE);
-						g_clients[cl_id].setprevAnimation(animateState::GUN_IDLE);
-					}
-					g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
-				}
+	
 				
 
 			}

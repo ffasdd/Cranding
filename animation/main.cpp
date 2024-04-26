@@ -40,10 +40,21 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	while (!gNetwork.ReadytoConnect());
 	// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
 	gNetwork.StartServer();
-	
-	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
+
+	// 여기서 초기 센드 
+	cout << " Input your use name " << endl;
+	char name[20];
+	cin >> name;
+	gNetwork.SendLoginfo(name);
+	cout << "send to login info " << endl;
+	system("cls");
+
+	cout << " Ready " << endl;
+	gNetwork.SendReady();
 
 	WaitForSingleObject(g_event, INFINITE);
+
+	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
 	gGameFramework.cl_id = gNetwork.Getmyid();
 	gGameFramework.m_pPlayer->c_id = gNetwork.Getmyid();
@@ -55,6 +66,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	{
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
+			//cout << msg.message << endl;
 			if (msg.message == WM_QUIT)
 				break;
 			if (!::TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -119,16 +131,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	::ShowWindow(hMainWnd, nCmdShow);
 	::UpdateWindow(hMainWnd);
 
-	// 여기서 초기 센드 
-	cout << " Input your use name " << endl;
-	char name[20];
-	cin >> name;
-	gNetwork.SendLoginfo(name);
-	cout << "send to login info " << endl;
-	system("cls");
-
-	cout << "start" << endl;
-	gNetwork.SendReady();
 
 	return(TRUE); 
 }

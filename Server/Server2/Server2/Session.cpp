@@ -3,19 +3,24 @@
 
 
 array<Session, MAX_USER> clients; //전체 클라이언트 
-array<Session, 3> ingameclients;
 
 Session::Session()
 {
+	characterType = -1;
+	animationstate = animateState::FREE;
+	prevanimationstate = animateState::FREE;
 	_id = -1;
 	_socket = 0;
 	_pos = { 0.0f,0.0f,0.0f };
+	_look = { 0.0f,0.0f,1.0f };
+	_up = { 0.0f,1.0f,0.0f };
+	_right = { 1.0f,0.0f,0.0f };
 	_name[0] = 0;
 	_state = STATE::Free;
 	_prevremain = 0;
 	_maxhp = 100;
 	_hp = _maxhp;
-	room_id = 0;
+	room_id = -1;
 }
 
 void Session::send_login_info_packet()
@@ -28,14 +33,14 @@ void Session::send_login_info_packet()
 	p.max_hp = _maxhp;
 	p.hp = _hp;
 	p.look = { 0.0f,0.0f,1.0f };
-	p.right = { 1.0f,0.0f,0.0f };
 	p.up = { 0.0f,1.0f,0.0f };
+	p.right = { 1.0f,0.0f,0.0f };
 	p.charactertype = clients[_id].characterType;
 
 	if (clients[_id].characterType == 0)
-		p.a_state = SWORD_IDLE;
+		p.a_state = animateState::SWORD_IDLE;
 	else if (clients[_id].characterType == 1)
-		p.a_state = GUN_IDLE;
+		p.a_state = animateState::GUN_IDLE;
 
 	do_send(&p);
 }
@@ -53,6 +58,11 @@ void Session::send_add_info_packet(int client_id)
 	p.right = clients[client_id]._right;
 	p.up = clients[client_id]._up;
 	p.charactertype = clients[client_id].characterType;
+
+	if (clients[_id].characterType == 0)
+		p.a_state = animateState::SWORD_IDLE;
+	else if (clients[_id].characterType == 1)
+		p.a_state = animateState::GUN_IDLE;
 
 	strcpy_s(p.name, clients[client_id]._name);
 

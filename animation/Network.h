@@ -12,6 +12,8 @@ extern unordered_map<int, Session> g_clients;
 extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 extern HANDLE g_event;
 
+enum class animateState;
+
 class Network
 {
 public:
@@ -39,9 +41,11 @@ public: // thread send
 	void SendTest();
 	void SendMovePlayer(XMFLOAT3 _pos);
 	void SendRotatePlayer(XMFLOAT3 _look,XMFLOAT3 _right, XMFLOAT3 _up);
-	void SendChangeAnimation(animateState curanimate, animateState prevanimate);
+	void SendChangeAnimation(int curanimate, int prevanimate);
 
 	void SendReady();
+public: // utils
+	int getmyid(int _id);
 
 public:
 	int prev_remain = 0;

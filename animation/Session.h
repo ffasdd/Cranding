@@ -1,6 +1,6 @@
 #pragma once
 // 클라이언트 들의 정보 , 여기서 dosend do recv? 필요한가? '
-
+enum class animateState;
 class Session
 {
 public:
@@ -31,7 +31,7 @@ public:
 	void setAnimation(int ani);
 	void setprevAnimation(int ani);
 
-	
+
 private:
 	int m_id  = -1;
 	int r_id = -1;
@@ -44,6 +44,7 @@ private:
 
 	XMFLOAT3 m_pos;
 	// state 
+
 	int m_animationstate = 0;
 	int m_prevanimationstate = 0;
 

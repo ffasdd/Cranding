@@ -4,7 +4,7 @@ constexpr int NAME_SIZE = 20;
 constexpr int CHAT_SIZE = 100;
 
 constexpr int MAX_USER = 4;
-constexpr int MAX_ROOM = 5;
+constexpr int MAX_ROOM = 2;
 
 constexpr int MAX_ROOM_USER = 2;
 constexpr int MAX_NPC = 200000;
@@ -51,13 +51,26 @@ struct SC_TEST_PACKET {
 };	
 
 constexpr float VIEW_RANGE = 200.0f;
-
-enum animateState : int {
-	FREE,
+enum class sceneState :char {
+	LOBBY,
+	STARTSHIP,
+	ICE,
+	FIRE,
+	NATURE
+};
+enum class animateState : int {
 	GUN_IDLE,
 	SWORD_IDLE,
 	GUN_MOVE,
-	SWORD_MOVE
+	SWORD_MOVE,
+	TAKE_DAMAGE,
+	BLACKOUT,
+	STAND_UP,
+	SHOOTING,
+	SWORD_ATTACK_1,
+	SWORD_ATTACK_2,
+	HEAL,
+	FREE
 };
 
 
@@ -116,8 +129,8 @@ struct CS_ROTATE_PACKET {
 struct CS_CHANGE_ANIMATION_PACKET {
 	unsigned char size;
 	char type;
-	animateState a_state;
-	animateState prev_a_state;
+	int a_state;
+	int prev_a_state;
 	int		roomid;
 };
 struct CS_READY_PACKET {
@@ -202,6 +215,7 @@ struct SC_CHANGE_ANIMATION_PACKET {
 	unsigned char size;
 	char type;
 	int id;
+
 	animateState a_state;
 	animateState prev_a_state;
 };
