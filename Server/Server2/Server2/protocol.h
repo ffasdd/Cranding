@@ -19,6 +19,7 @@ constexpr char CS_ROTATE = 6;
 constexpr char CS_CHANGE_ANIMATION = 7;
 constexpr char CS_READY_GAME = 8;
 constexpr char CS_START_GAME = 9;
+constexpr char CS_CHANGE_SCENE = 10;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -31,6 +32,7 @@ constexpr char SC_STAT_CHANGE = 9;
 constexpr char SC_ROTATE_OBJECT = 10;
 constexpr char SC_CHANGE_ANIMATION = 13;
 constexpr char SC_START_GAME = 14;
+constexpr char SC_CHANGE_SCENE = 15;
 
 
 constexpr char CS_TEST = 11;
@@ -108,10 +110,6 @@ struct CS_CHAT_PACKET {
 	char	mess[CHAT_SIZE];
 };
 
-struct CS_TELEPORT_PACKET {
-	unsigned char size;
-	char	type;
-};
 
 struct CS_LOGOUT_PACKET {
 	unsigned char size;
@@ -142,6 +140,11 @@ struct CS_START_PACKET {
 	unsigned char size;
 	char type;
 };
+struct CS_CHANGE_SCENE_PACKET {
+	unsigned char size;
+	char type;
+};
+
 struct SC_GAMESTART_PACKET {
 	unsigned char size;
 	char type;
@@ -166,6 +169,7 @@ struct SC_LOGIN_INFO_PACKET {
 	XMFLOAT3 up;
 
 	animateState a_state;
+	animateState prev_state;
 };
 
 struct SC_ADD_OBJECT_PACKET {
@@ -182,6 +186,7 @@ struct SC_ADD_OBJECT_PACKET {
 	char	name[NAME_SIZE];
 	int		roomid;
 	animateState a_state;
+	animateState prev_state;
 };
 
 struct SC_REMOVE_OBJECT_PACKET {
@@ -224,6 +229,10 @@ struct SC_LOGIN_FAIL_PACKET {
 	unsigned char size;
 	char	type;
 
+};
+struct SC_CHANGE_SCENE_PACKET {
+	unsigned char size;
+	char type;
 };
 
 #pragma pack (pop)

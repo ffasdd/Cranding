@@ -149,8 +149,8 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setUp(p->up);
 		g_clients[my_id].setRight(p->right);
 		g_clients[my_id].setCharacterType(p->charactertype);
-
-
+		g_clients[my_id].setAnimation(int(p->a_state));
+		g_clients[my_id].setprevAnimation(int(p->prev_state));
 		break;
 	}
 
@@ -167,7 +167,8 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setRight(p->right);
 		g_clients[ob_id].setCharacterType(p->charactertype);
 		g_clients[ob_id].setAnimation(int(p->a_state));
-		break;
+		g_clients[ob_id].setprevAnimation(int(p->prev_state));
+			break;
 	}
 			
 	case SC_MOVE_OBJECT: {
