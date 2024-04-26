@@ -1,0 +1,3819 @@
+<Hierarchy>:
+	<Frame>: 0 1 firemap
+		<Transform>: 0 0 0 0 0 0 1 1 1 0 0 0 1  
+		<TransformMatrix>: 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1  
+		<Children>: 127
+			<Frame>: 1 0 SM_cactus_08
+				<Transform>: -135.2698 5.587837 -197.3955 9.334668E-06 0 0 4.930938 4.930938 4.930938 8.146034E-08 0 0 1  
+				<TransformMatrix>: 4.930938 0 0 0 0 4.930938 8.033518E-07 0 0 -8.033518E-07 4.930938 0 -135.2698 5.587837 -197.3955 1  
+				<Mesh>: 818 SM_cactus_08
+					<Bounds>: 0 0.293032 -4.470348E-08 0.3293577 0.295805 0.283894
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 2 0 SM_pebble_01
+				<Transform>: -135.2698 5.587936 -197.3955 2.504478E-06 0 0 4.930938 4.930938 4.930938 2.185569E-08 0 0 1  
+				<TransformMatrix>: 4.930938 0 0 0 0 4.930938 2.155382E-07 0 0 -2.155382E-07 4.930938 0 -135.2698 5.587936 -197.3955 1  
+				<Mesh>: 68 SM_pebble_01
+					<Bounds>: 0 0.08037789 -6.772578E-06 0.2669632 0.02600247 0.165802
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 3 0 SM_dune_01_(8)
+				<Transform>: -85 1 250 2.276401E-06 24.64178 1.044226E-06 4.930938 2.967613 3.488787 2.135231E-08 0.2133866 4.663713E-09 0.9769679  
+				<TransformMatrix>: 4.481889 8.986728E-08 -2.055924 0 0 2.967613 1.297185E-07 0 1.454628 -1.386119E-07 3.171071 0 -85 1 250 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 4 0 SM_rock_07
+				<Transform>: 107.42 1.3635 197.209 2.504478E-06 0 0 10.36861 10.36861 10.36861 2.185569E-08 0 0 1  
+				<TransformMatrix>: 10.36861 0 0 0 0 10.36861 4.532262E-07 0 0 -4.532262E-07 10.36861 0 107.42 1.3635 197.209 1  
+				<Mesh>: 759 SM_rock_07
+					<Bounds>: 0 0.4913799 0.213857 0.8540381 0.7686514 1.351033
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 5 0 SM_rock_01_(2)
+				<Transform>: -104.0623 1.4467 -75.721 2.504479E-06 260.5658 -1.323111E-12 6.45657 6.45657 6.45657 1.413108E-08 -0.7628612 1.667286E-08 0.6465623  
+				<TransformMatrix>: -1.058325 -1.490992E-13 6.369242 0 -2.784086E-07 6.45657 -4.626072E-08 0 -6.369242 -2.822258E-07 -1.058325 0 -104.0623 1.4467 -75.721 1  
+				<Mesh>: 1005 SM_rock_01
+					<Bounds>: 0 0.3070781 2.205372E-06 1.042643 0.3735972 1.50364
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 6 0 SM_desert_tree_01
+				<Transform>: 70.7 1.4467 -76 2.504478E-06 30.99202 5.088888E-14 6.45657 6.45657 6.45657 2.106122E-08 0.2671713 -5.839213E-09 0.9636491  
+				<TransformMatrix>: 5.534824 5.734586E-15 -3.324609 0 1.453232E-07 6.45657 2.419349E-07 0 3.324609 -2.822257E-07 5.534824 0 70.7 1.4467 -76 1  
+				<Mesh>: 1417 SM_desert_tree_01
+					<Bounds>: -2.980232E-08 0.7653546 3.874302E-06 0.8309436 0.8230015 1.506043
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 7 0 SM_grass_01_(1)
+				<Transform>: -89.358 1.0587 -152.299 2.504478E-06 28.76756 -1.526666E-13 6.45657 6.45657 6.45657 2.117059E-08 0.2484157 -5.429298E-09 0.9686536  
+				<TransformMatrix>: 5.659696 -1.720376E-14 -3.107273 0 1.358232E-07 6.45657 2.473931E-07 0 3.107273 -2.822256E-07 5.659696 0 -89.358 1.0587 -152.299 1  
+				<Mesh>: 867 grass_01
+					<Bounds>: 0.0006170254 0.5461949 0.01825073 0.0565947 0.5279292 0.4016955
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 8 0 SM_rock_10
+				<Transform>: -76.592 1.4467 -157.909 2.50448E-06 65.85527 5.088888E-13 4.310213 4.310213 4.310213 1.834476E-08 0.5435793 -1.188031E-08 0.8393578  
+				<TransformMatrix>: 1.763062 3.828238E-14 -3.933134 0 1.719228E-07 4.310213 7.706598E-08 0 3.933134 -1.884055E-07 1.763062 0 -76.592 1.4467 -157.909 1  
+				<Mesh>: 937 SM_rock_10
+					<Bounds>: -0.2220843 0.8963388 -0.6471217 1.591488 1.526827 2.576855
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 9 0 SM_rock_02
+				<Transform>: -74.27399 1.4467 -82.804 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 -74.27399 1.4467 -82.804 1  
+				<Mesh>: 812 SM_rock_02
+					<Bounds>: 0 0.6658137 -4.23193E-06 1.340707 0.6669508 1.31386
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 10 0 SM_cactus_04_(2)
+				<Transform>: -134.4 1.4467 -84.886 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 -134.4 1.4467 -84.886 1  
+				<Mesh>: 489 SM_cactus_04
+					<Bounds>: 0 0.500794 -1.043081E-07 0.2595738 0.4827013 0.2627115
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 11 0 SM_bush_03_(16)
+				<Transform>: -95.66899 1.4467 -86.693 2.504478E-06 84.86727 -3.053333E-13 6.45657 6.45657 6.45657 1.61308E-08 0.6747358 -1.474682E-08 0.7380593  
+				<TransformMatrix>: 0.5776256 -3.440752E-14 -6.43068 0 2.810939E-07 6.45657 2.524878E-08 0 6.43068 -2.822256E-07 0.5776256 0 -95.66899 1.4467 -86.693 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 12 0 SM_grass_03_(1)
+				<Transform>: -157 1.4467 12.48 2.504481E-06 323.2479 -9.159997E-13 6.45657 6.45657 6.45657 2.074125E-08 -0.3152526 6.890065E-09 0.9490079  
+				<TransformMatrix>: 5.173208 -1.032226E-13 3.863317 0 -1.688711E-07 6.45657 2.261284E-07 0 -3.863317 -2.82226E-07 5.173208 0 -157 1.4467 12.48 1  
+				<Mesh>: 506 grass_03
+					<Bounds>: 9.313226E-08 0.3238616 1.221895E-06 0.07124993 0.3260766 0.4619397
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 13 0 SM_rockplat_04_(4)
+				<Transform>: -238 -3.3 -274 2.504478E-06 0 0 7.598576 16.39636 10.07785 2.185569E-08 0 0 1  
+				<TransformMatrix>: 7.598576 0 0 0 0 16.39636 7.167075E-07 0 0 -4.405169E-07 10.07785 0 -238 -3.3 -274 1  
+				<Mesh>: 1990 SM_rockplat_04
+					<Bounds>: 0 3.490204 2.622604E-06 4.156518 3.446207 4.675962
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 14 0 SM_rockplat_04_(2)
+				<Transform>: -255.5 2.1 -159.5 2.504481E-06 330.2741 7.124442E-13 7.598576 8.530532 10.07785 2.112448E-08 -0.2565074 5.606161E-09 0.9665423  
+				<TransformMatrix>: 6.598663 9.448447E-14 3.767758 0 -1.848938E-07 8.530532 3.238135E-07 0 -4.997108 -4.405175E-07 8.751685 0 -255.5 2.1 -159.5 1  
+				<Mesh>: 1990 SM_rockplat_04
+					<Bounds>: 0 3.490204 2.622604E-06 4.156518 3.446207 4.675962
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 15 0 SM_rock_09_(2)
+				<Transform>: -31.8382 0 -72.40229 2.504479E-06 322.4202 -3.562221E-13 6.45657 6.45657 6.45657 2.069093E-08 -0.3220986 7.039688E-09 0.9467062  
+				<TransformMatrix>: 5.116864 -4.01421E-14 3.937639 0 -1.721197E-07 6.45657 2.236654E-07 0 -3.937639 -2.822258E-07 5.116864 0 -31.8382 0 -72.40229 1  
+				<Mesh>: 673 SM_rock_09
+					<Bounds>: 1.192093E-07 1.484079 -0.2409754 2.43922 2.035046 2.068317
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 16 0 SM_grass_01_(2)
+				<Transform>: -91.427 1.3245 -157.069 2.504479E-06 51.40967 1.017777E-13 6.45657 6.45657 6.45657 1.969287E-08 0.4337351 -9.479582E-09 0.9010405  
+				<TransformMatrix>: 4.027271 1.146917E-14 -5.046622 0 2.205949E-07 6.45657 1.760376E-07 0 5.046622 -2.822257E-07 4.027271 0 -91.427 1.3245 -157.069 1  
+				<Mesh>: 867 grass_01
+					<Bounds>: 0.0006170254 0.5461949 0.01825073 0.0565947 0.5279292 0.4016955
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 17 0 SM_mountain_03_(1)
+				<Transform>: -248.3 5.587936 14.63489 2.504478E-06 0 0 4.930938 4.930938 4.930938 2.185569E-08 0 0 1  
+				<TransformMatrix>: 4.930938 0 0 0 0 4.930938 2.155382E-07 0 0 -2.155382E-07 4.930938 0 -248.3 5.587936 14.63489 1  
+				<Mesh>: 2219 SM_mountain_03
+					<Bounds>: 0 3.662676 -2.861023E-06 8.59558 3.706943 10.13646
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 18 0 SM_rock_01_(1)
+				<Transform>: -147.0029 1.42741 -119.566 2.50448E-06 295.0184 3.053332E-13 6.45657 6.45657 6.45657 1.84348E-08 -0.5371642 1.17401E-08 0.8434778  
+				<TransformMatrix>: 2.730544 3.440752E-14 5.850763 0 -2.557451E-07 6.45657 1.193559E-07 0 -5.850763 -2.822258E-07 2.730544 0 -147.0029 1.42741 -119.566 1  
+				<Mesh>: 1005 SM_rock_01
+					<Bounds>: 0 0.3070781 2.205372E-06 1.042643 0.3735972 1.50364
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 19 0 SM_rock_05_(3)
+				<Transform>: -138.2309 2.84771 113.058 9.236398E-07 68.35866 2.327939E-06 4.773278 4.773278 4.773278 1.808085E-08 0.561785 1.22782E-08 0.8272833  
+				<TransformMatrix>: 1.760362 1.939392E-07 -4.436813 0 0 4.773278 2.086466E-07 0 4.436813 -7.694789E-08 1.760362 0 -138.2309 2.84771 113.058 1  
+				<Mesh>: 816 SM_rock_05
+					<Bounds>: 0 0.5648491 -0.1422592 1.316995 1.080055 1.16392
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 20 0 SM_desert_tree_02_(1)
+				<Transform>: 8.857306 0 10.099 2.504481E-06 252.2659 1.119555E-12 6.45657 6.45657 6.45657 1.288745E-08 -0.807651 1.76518E-08 0.5896608  
+				<TransformMatrix>: -1.966674 1.261609E-13 6.149755 0 -2.688145E-07 6.45657 -8.596624E-08 0 -6.149755 -2.822259E-07 -1.966674 0 8.857306 0 10.099 1  
+				<Mesh>: 7512 SM_desert_tree_02
+					<Bounds>: 0 2.432374 -1.549721E-06 2.312332 2.432943 2.774205
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 21 0 SM_desert_tree_05_(7)
+				<Transform>: 76.8 0 -203.7 5.375443E-07 226.6002 2.446116E-06 6.45657 6.45657 6.45657 1.775E-08 0.9184457 -1.275189E-08 -0.3955472  
+				<TransformMatrix>: -4.436213 2.756489E-07 4.691196 0 1.453818E-07 6.45657 -2.419004E-07 0 -4.691196 -6.057501E-08 -4.436213 0 76.8 0 -203.7 1  
+				<Mesh>: 5201 SM_desert_tree_05
+					<Bounds>: 0 2.566257 -5.364418E-07 2.350076 2.613629 1.515413
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 22 0 SM_bush_03_(11)
+				<Transform>: -80.062 1.4467 -139.77 2.504478E-06 45.20236 -1.017777E-13 6.45657 6.45657 6.45657 2.017723E-08 0.3843144 -8.399458E-09 0.9232023  
+				<TransformMatrix>: 4.549332 -1.146917E-14 -4.581581 0 2.002673E-07 6.45657 1.988576E-07 0 4.581581 -2.822257E-07 4.549332 0 -80.062 1.4467 -139.77 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 23 0 SM_cactus_04_(3)
+				<Transform>: -132.8485 1.42741 -127.8953 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 -132.8485 1.42741 -127.8953 1  
+				<Mesh>: 489 SM_cactus_04
+					<Bounds>: 0 0.500794 -1.043081E-07 0.2595738 0.4827013 0.2627115
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 24 0 SM_bush_03_(3)
+				<Transform>: -129.0513 1.42741 -124.346 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 -129.0513 1.42741 -124.346 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 25 0 SM_rockplat_04
+				<Transform>: 121.7 -26.7 -284.2 2.504478E-06 0 0 7.598576 16.39636 10.07785 2.185569E-08 0 0 1  
+				<TransformMatrix>: 7.598576 0 0 0 0 16.39636 7.167075E-07 0 0 -4.405169E-07 10.07785 0 121.7 -26.7 -284.2 1  
+				<Mesh>: 1990 SM_rockplat_04
+					<Bounds>: 0 3.490204 2.622604E-06 4.156518 3.446207 4.675962
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 26 0 SM_bush_03_(4)
+				<Transform>: 28.52701 -0.6 -121.9239 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 28.52701 -0.6 -121.9239 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 27 0 SM_desert_tree_04_(1)
+				<Transform>: 187.02 2.1658 2.4725 2.50448E-06 58.91201 2.035555E-13 6.45657 6.45657 6.45657 1.90305E-08 0.4917551 -1.074766E-08 0.8707336  
+				<TransformMatrix>: 3.333874 2.293835E-14 -5.529248 0 2.416913E-07 6.45657 1.457284E-07 0 5.529248 -2.822259E-07 3.333874 0 187.02 2.1658 2.4725 1  
+				<Mesh>: 4866 SM_desert_tree_04
+					<Bounds>: 0 2.154838 1.430511E-06 2.969304 2.266244 2.123766
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 28 0 SM_cactus_04_(4)
+				<Transform>: -173.407 1.4467 -14.782 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 -173.407 1.4467 -14.782 1  
+				<Mesh>: 489 SM_cactus_04
+					<Bounds>: 0 0.500794 -1.043081E-07 0.2595738 0.4827013 0.2627115
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 29 0 SM_rock_09_(1)
+				<Transform>: -68.5 1.4467 -138.5 2.504479E-06 126.4275 -5.088888E-13 3.628657 3.628657 3.628657 9.849563E-09 0.8926939 -1.951046E-08 0.4506634  
+				<TransformMatrix>: -2.154714 -3.222895E-14 -2.91965 0 1.27622E-07 3.628657 -9.418564E-08 0 2.91965 -1.586137E-07 -2.154714 0 -68.5 1.4467 -138.5 1  
+				<Mesh>: 673 SM_rock_09
+					<Bounds>: 1.192093E-07 1.484079 -0.2409754 2.43922 2.035046 2.068317
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 30 0 SM_rock_01_(8)
+				<Transform>: -134.859 1.4467 -43.379 2.504483E-06 224.8162 2.035555E-13 6.45657 6.45657 6.45657 8.331434E-09 -0.9244921 2.020545E-08 0.3812014  
+				<TransformMatrix>: -4.580104 2.293835E-14 4.550819 0 -1.989229E-07 6.45657 -2.00203E-07 0 -4.550819 -2.822262E-07 -4.580104 0 -134.859 1.4467 -43.379 1  
+				<Mesh>: 1005 SM_rock_01
+					<Bounds>: 0 0.3070781 2.205372E-06 1.042643 0.3735972 1.50364
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 31 0 SM_rockplat_02_(1)
+				<Transform>: 169.92 -1.0718 69.299 0 117.627 0 6.45657 6.45657 6.45657 0 0.8554862 0 0.5178257  
+				<TransformMatrix>: -2.993997 0 -5.720427 0 0 6.45657 0 0 5.720427 0 -2.993997 0 169.92 -1.0718 69.299 1  
+				<Mesh>: 1574 SM_rockplat_02
+					<Bounds>: 0 1.166349 -1.66893E-06 1.811695 1.152435 3.152574
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 32 0 SM_desert_tree_02_(3)
+				<Transform>: 86.2 1.5 161.4 2.50448E-06 82.59127 1.017777E-13 6.45657 6.45657 6.45657 1.642051E-08 0.6599445 -1.442355E-08 0.7513145  
+				<TransformMatrix>: 0.8325528 1.146917E-14 -6.402668 0 2.798697E-07 6.45657 3.639211E-08 0 6.402668 -2.822258E-07 0.8325528 0 86.2 1.5 161.4 1  
+				<Mesh>: 7512 SM_desert_tree_02
+					<Bounds>: 0 2.432374 -1.549721E-06 2.312332 2.432943 2.774205
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 33 0 SM_rockplat_02_(2)
+				<Transform>: 72.809 -1.0718 76.078 0 98.21735 0 6.45657 6.45657 6.45657 0 0.7559526 0 0.6546264  
+				<TransformMatrix>: -0.9228286 0 -6.390281 0 0 6.45657 0 0 6.390281 0 -0.9228286 0 72.809 -1.0718 76.078 1  
+				<Mesh>: 1574 SM_rockplat_02
+					<Bounds>: 0 1.166349 -1.66893E-06 1.811695 1.152435 3.152574
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 34 0 SM_rock_05_(1)
+				<Transform>: -91.532 2.867 -61.697 9.236398E-07 68.35866 2.327939E-06 4.773278 4.773278 4.773278 1.808085E-08 0.561785 1.22782E-08 0.8272833  
+				<TransformMatrix>: 1.760362 1.939392E-07 -4.436813 0 0 4.773278 2.086466E-07 0 4.436813 -7.694789E-08 1.760362 0 -91.532 2.867 -61.697 1  
+				<Mesh>: 816 SM_rock_05
+					<Bounds>: 0 0.5648491 -0.1422592 1.316995 1.080055 1.16392
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 35 0 SM_cactus_04_(6)
+				<Transform>: -134.531 1.4467 4.4745 2.504479E-06 32.65355 3.053333E-13 8.928146 8.928145 8.928146 2.097435E-08 0.2811152 -6.143966E-09 0.9596741  
+				<TransformMatrix>: 7.517039 4.757872E-14 -4.817252 0 2.105687E-07 8.928145 3.285803E-07 0 4.817252 -3.902617E-07 7.517039 0 -134.531 1.4467 4.4745 1  
+				<Mesh>: 489 SM_cactus_04
+					<Bounds>: 0 0.500794 -1.043081E-07 0.2595738 0.4827013 0.2627115
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 36 0 SM_rock_01_(9)
+				<Transform>: 68.9 1.4 -104.2 2.504484E-06 272.2381 1.933777E-12 6.45657 6.45657 6.45657 1.575321E-08 -0.6931623 1.514959E-08 0.7207816  
+				<TransformMatrix>: 0.2521428 2.179143E-13 6.451645 0 -2.82011E-07 6.45657 1.102132E-08 0 -6.451645 -2.822263E-07 0.2521428 0 68.9 1.4 -104.2 1  
+				<Mesh>: 1005 SM_rock_01
+					<Bounds>: 0 0.3070781 2.205372E-06 1.042643 0.3735972 1.50364
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 37 0 SM_rock_09
+				<Transform>: -31.9686 0 -152.879 2.504479E-06 322.4202 -3.562221E-13 6.45657 6.45657 6.45657 2.069093E-08 -0.3220986 7.039688E-09 0.9467062  
+				<TransformMatrix>: 5.116864 -4.01421E-14 3.937639 0 -1.721197E-07 6.45657 2.236654E-07 0 -3.937639 -2.822258E-07 5.116864 0 -31.9686 0 -152.879 1  
+				<Mesh>: 673 SM_rock_09
+					<Bounds>: 1.192093E-07 1.484079 -0.2409754 2.43922 2.035046 2.068317
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 38 0 SM_rock_01_(6)
+				<Transform>: -97.14899 1.4467 -85.986 2.504484E-06 67.73267 1.832E-12 6.45657 6.45657 6.45657 1.814771E-08 0.5572574 -1.217926E-08 0.8303398  
+				<TransformMatrix>: 2.446578 2.064451E-13 -5.975078 0 2.611795E-07 6.45657 1.069438E-07 0 5.975078 -2.822263E-07 2.446578 0 -97.14899 1.4467 -85.986 1  
+				<Mesh>: 1005 SM_rock_01
+					<Bounds>: 0 0.3070781 2.205372E-06 1.042643 0.3735972 1.50364
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 39 0 SM_cliff_03
+				<Transform>: 38.416 8.4847 139.5 2.504479E-06 30.57539 5.088887E-14 6.45657 6.45657 6.45657 2.108231E-08 0.2636659 -5.762602E-09 0.9646141  
+				<TransformMatrix>: 5.558853 5.734586E-15 -3.284275 0 1.435602E-07 6.45657 2.429852E-07 0 3.284275 -2.822257E-07 5.558853 0 38.416 8.4847 139.5 1  
+				<Mesh>: 475 SM_cliff_03
+					<Bounds>: 0 2.396929 0 1.984351 2.40576 3.013988
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 40 0 SM_cactus_05
+				<Transform>: -157.131 1.4467 -80.042 2.50448E-06 40.76546 3.562221E-13 6.45657 6.45657 6.45657 2.048726E-08 0.3482896 -7.612112E-09 0.937387  
+				<TransformMatrix>: 4.890133 4.01421E-14 -4.21591 0 1.842833E-07 6.45657 2.137547E-07 0 4.21591 -2.822258E-07 4.890133 0 -157.131 1.4467 -80.042 1  
+				<Mesh>: 841 SM_cactus_05
+					<Bounds>: 0 0.3063556 1.490116E-07 0.4348164 0.2842294 0.4364142
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 41 0 SM_desert_tree_03_(1)
+				<Transform>: -97.9 10.5 -61.4 324.2138 326.4965 13.75511 6.45657 6.45657 6.45657 -0.3249316 -0.2370808 0.021202 0.9152937  
+				<TransformMatrix>: 5.724952 1.245358 2.713172 0 0.7441712 5.087389 -3.905378 0 -2.891094 3.77556 4.367381 0 -97.9 10.5 -61.4 1  
+				<Mesh>: 5891 SM_desert_tree_03
+					<Bounds>: 0 2.271396 1.549721E-06 2.673072 2.370756 2.586464
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 42 0 SM_dune_01_(13)
+				<Transform>: -214.3 -4.8 238.5 2.504478E-06 0 0 4.930938 4.930938 4.930938 2.185569E-08 0 0 1  
+				<TransformMatrix>: 4.930938 0 0 0 0 4.930938 2.155382E-07 0 0 -2.155382E-07 4.930938 0 -214.3 -4.8 238.5 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 43 0 SM_dune_01_(9)
+				<Transform>: 298.3 -7.2 -3.8 1.179779E-06 298.1036 -2.209193E-06 8.30792 5 5.878103 1.874416E-08 -0.5142627 -1.123957E-08 0.8576328  
+				<TransformMatrix>: 3.913592 -3.203342E-07 7.328392 0 8.881784E-15 5 2.18557E-07 0 -5.185058 -1.210362E-07 2.768984 0 298.3 -7.2 -3.8 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 44 0 SM_dune_01_(19)
+				<Transform>: 288.9 -7 103.9 -1.419617E-06 235.4704 -2.063273E-06 5.815544 3.5 4.114672 1.017134E-08 -0.8851078 -1.934465E-08 0.4653861  
+				<TransformMatrix>: -3.296435 -2.094231E-07 4.791041 0 0 3.5 1.529899E-07 0 -3.389806 1.019492E-07 -2.332326 0 288.9 -7 103.9 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 45 0 SM_dune_01_(20)
+				<Transform>: 285 -3.8 162.9 2.504478E-06 0 0 4.930938 4.930938 4.930938 2.185569E-08 0 0 1  
+				<TransformMatrix>: 4.930938 0 0 0 0 4.930938 2.155382E-07 0 0 -2.155382E-07 4.930938 0 285 -3.8 162.9 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 46 0 SM_dune_01_(2)
+				<Transform>: -274 -5 -95.7 2.504478E-06 0 0 9.969502 6 7.053722 2.185569E-08 0 0 1  
+				<TransformMatrix>: 9.969502 0 0 0 0 6 2.622683E-07 0 0 -3.08328E-07 7.053722 0 -274 -5 -95.7 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 47 0 SM_bush_03_(12)
+				<Transform>: -141.196 1.4467 -85.659 2.504478E-06 84.86727 -3.053333E-13 6.45657 6.45657 6.45657 1.61308E-08 0.6747358 -1.474682E-08 0.7380593  
+				<TransformMatrix>: 0.5776256 -3.440752E-14 -6.43068 0 2.810939E-07 6.45657 2.524878E-08 0 6.43068 -2.822256E-07 0.5776256 0 -141.196 1.4467 -85.659 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 48 0 SM_dune_01_(16)
+				<Transform>: 79 -2 289 1.48534E-06 306.3754 -2.016476E-06 4.930938 3.963371 4.930938 1.950597E-08 -0.4510689 -9.858423E-09 0.8924892  
+				<TransformMatrix>: 2.92441 -1.735402E-07 3.970136 0 -7.04036E-15 3.963371 1.732445E-07 0 -3.970136 -1.2783E-07 2.92441 0 79 -2 289 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 49 0 SM_rock_05_(2)
+				<Transform>: -11.425 0 -170.249 9.236398E-07 68.35866 2.327939E-06 4.773278 4.773278 4.773278 1.808085E-08 0.561785 1.22782E-08 0.8272833  
+				<TransformMatrix>: 1.760362 1.939392E-07 -4.436813 0 0 4.773278 2.086466E-07 0 4.436813 -7.694789E-08 1.760362 0 -11.425 0 -170.249 1  
+				<Mesh>: 816 SM_rock_05
+					<Bounds>: 0 0.5648491 -0.1422592 1.316995 1.080055 1.16392
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 50 0 SM_cactus_04_(7)
+				<Transform>: 9.4 1.4 -23.7 2.504479E-06 32.65355 3.053333E-13 8.928146 8.928145 8.928146 2.097435E-08 0.2811152 -6.143966E-09 0.9596741  
+				<TransformMatrix>: 7.517039 4.757872E-14 -4.817252 0 2.105687E-07 8.928145 3.285803E-07 0 4.817252 -3.902617E-07 7.517039 0 9.4 1.4 -23.7 1  
+				<Mesh>: 489 SM_cactus_04
+					<Bounds>: 0 0.500794 -1.043081E-07 0.2595738 0.4827013 0.2627115
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 51 0 SM_cliff_03_(4)
+				<Transform>: 21.646 -3.1 -255.044 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 21.646 -3.1 -255.044 1  
+				<Mesh>: 475 SM_cliff_03
+					<Bounds>: 0 2.396929 0 1.984351 2.40576 3.013988
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 52 0 SM_dune_01_(3)
+				<Transform>: 47 -7 -323 2.006372E-06 323.2366 -1.498961E-06 6.646336 4 4.702482 2.074055E-08 -0.3153462 -6.89211E-09 0.9489768  
+				<TransformMatrix>: 5.32447 -1.738802E-07 3.977914 0 3.552714E-15 4 1.748456E-07 0 -2.814493 -1.646705E-07 3.767222 0 47 -7 -323 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 53 0 SM_desert_tree_05_(8)
+				<Transform>: 105.6 -1.2 -107 355.6363 1.359018 4.704973 6.45657 6.45657 6.45657 -0.03754985 0.0134034 0.04146557 0.9983441  
+				<TransformMatrix>: 6.432048 0.528065 -0.1928995 0 -0.5410632 6.41616 -0.4769066 0 0.1526873 0.4912604 6.436043 0 105.6 -1.2 -107 1  
+				<Mesh>: 5201 SM_desert_tree_05
+					<Bounds>: 0 2.566257 -5.364418E-07 2.350076 2.613629 1.515413
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 54 0 SM_rockplat_02_(3)
+				<Transform>: -127.4549 -0.7033401 86.91 357.0356 142.0462 2.573788 6.45657 6.45657 6.45657 0.01282164 0.9452839 0.03175515 0.3244466  
+				<TransformMatrix>: -5.095139 0.2895506 -3.955127 0 0.02346622 6.441426 0.4413398 0 3.965643 0.3339041 -5.08424 0 -127.4549 -0.7033401 86.91 1  
+				<Mesh>: 1574 SM_rockplat_02
+					<Bounds>: 0 1.166349 -1.66893E-06 1.811695 1.152435 3.152574
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 55 0 SM_rock_01
+				<Transform>: -173.21 1.4467 29.307 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 -173.21 1.4467 29.307 1  
+				<Mesh>: 1005 SM_rock_01
+					<Bounds>: 0 0.3070781 2.205372E-06 1.042643 0.3735972 1.50364
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 56 0 SM_desert_tree_04_(2)
+				<Transform>: -22.0639 8.33601 74.061 9.135041 125.9296 347.6427 6.45657 6.45657 6.45657 -0.05957694 0.8866369 -0.1192859 0.442828  
+				<TransformMatrix>: -3.878513 -1.364225 -4.978285 0 3.367364E-07 6.226993 -1.706415 0 5.161825 -1.025057 -3.740605 0 -22.0639 8.33601 74.061 1  
+				<Mesh>: 4866 SM_desert_tree_04
+					<Bounds>: 0 2.154838 1.430511E-06 2.969304 2.266244 2.123766
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 57 0 SM_bush_03_(25)
+				<Transform>: -101.863 0.21929 -51.248 2.504479E-06 78.13093 3.053333E-13 6.45657 6.45657 6.45657 1.696935E-08 0.630208 -1.377364E-08 0.7764264  
+				<TransformMatrix>: 1.32796 3.440752E-14 -6.31853 0 2.761919E-07 6.45657 5.804709E-08 0 6.31853 -2.822258E-07 1.32796 0 -101.863 0.21929 -51.248 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 58 0 SM_dune_01_(5)
+				<Transform>: -26 -7.5 -322.9 2.208181E-06 331.8473 -1.181672E-06 5.714623 5 4.043267 2.119942E-08 -0.2432151 -5.315634E-09 0.9699724  
+				<TransformMatrix>: 5.038542 -1.178588E-07 2.696295 0 0 5 2.18557E-07 0 -1.90771 -1.558276E-07 3.56492 0 -26 -7.5 -322.9 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 59 0 SM_dune_01_(18)
+				<Transform>: 254 -4 -195 1.48534E-06 306.3754 -2.016476E-06 14.89785 6.333569 14.89785 1.950597E-08 -0.4510689 -9.858423E-09 0.8924892  
+				<TransformMatrix>: 8.835521 -5.24317E-07 11.99497 0 -1.125068E-14 6.333569 2.768491E-07 0 -11.99497 -3.86213E-07 8.835521 0 254 -4 -195 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 60 0 SM_bush_03_(1)
+				<Transform>: 26.6874 1.4 -56.6763 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 26.6874 1.4 -56.6763 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 61 0 SM_desert_tree_02_(2)
+				<Transform>: 140.35 1.4502 85.633 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 140.35 1.4502 85.633 1  
+				<Mesh>: 7512 SM_desert_tree_02
+					<Bounds>: 0 2.432374 -1.549721E-06 2.312332 2.432943 2.774205
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 62 0 SM_grass_03
+				<Transform>: -159.828 1.2007 13.177 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 -159.828 1.2007 13.177 1  
+				<Mesh>: 506 grass_03
+					<Bounds>: 9.313226E-08 0.3238616 1.221895E-06 0.07124993 0.3260766 0.4619397
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 63 0 SM_cliff_03_(3)
+				<Transform>: 43.416 0 -169.65 2.504479E-06 23.65227 5.088888E-14 4.822994 4.822993 4.822994 2.139179E-08 0.2049425 -4.479162E-09 0.978774  
+				<TransformMatrix>: 4.417849 4.283679E-15 -1.934912 0 8.457771E-08 4.822993 1.931103E-07 0 1.934912 -2.108198E-07 4.417849 0 43.416 0 -169.65 1  
+				<Mesh>: 475 SM_cliff_03
+					<Bounds>: 0 2.396929 0 1.984351 2.40576 3.013988
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 64 0 SM_desert_tree_05_(1)
+				<Transform>: -70.6 1.42741 22.2 2.504478E-06 68.02071 -1.017778E-13 6.45657 6.45657 6.45657 1.811698E-08 0.5593427 -1.222482E-08 0.8289365  
+				<TransformMatrix>: 2.416509 -1.146917E-14 -5.987302 0 2.617133E-07 6.45657 1.05629E-07 0 5.987302 -2.822256E-07 2.416509 0 -70.6 1.42741 22.2 1  
+				<Mesh>: 5201 SM_desert_tree_05
+					<Bounds>: 0 2.566257 -5.364418E-07 2.350076 2.613629 1.515413
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 65 0 SM_desert_tree_03
+				<Transform>: 83.234 4.042 -38.03 322.3104 70.13474 11.14058 6.45657 6.45657 6.45657 -0.2103453 0.5668364 0.2598917 0.7529328  
+				<TransformMatrix>: 1.435332 0.9872044 -6.217117 0 -4.066506 5.013026 -0.142817 0 4.805272 3.947442 1.73619 0 83.234 4.042 -38.03 1  
+				<Mesh>: 5891 SM_desert_tree_03
+					<Bounds>: 0 2.271396 1.549721E-06 2.673072 2.370756 2.586464
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 66 0 SM_dune_01_(11)
+				<Transform>: -204.3 -5 -217.8 1.48534E-06 306.3754 -2.016476E-06 4.930938 3.963371 4.930938 1.950597E-08 -0.4510689 -9.858423E-09 0.8924892  
+				<TransformMatrix>: 2.92441 -1.735402E-07 3.970136 0 -7.04036E-15 3.963371 1.732445E-07 0 -3.970136 -1.2783E-07 2.92441 0 -204.3 -5 -217.8 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 67 0 SM_cliff_03_(2)
+				<Transform>: -124.2339 2.52541 122.162 11.58022 102.1211 0.09314741 6.45657 6.45657 6.45657 0.06403483 0.7737903 -0.07796072 0.6253561  
+				<TransformMatrix>: -1.353676 0.01028297 -6.313063 0 1.269397 6.325136 -0.2618872 0 6.184133 -1.29609 -1.328141 0 -124.2339 2.52541 122.162 1  
+				<Mesh>: 475 SM_cliff_03
+					<Bounds>: 0 2.396929 0 1.984351 2.40576 3.013988
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 68 0 SM_bush_03_(24)
+				<Transform>: 34.60201 0.1533 -130.9609 2.504479E-06 78.13093 3.053333E-13 6.45657 6.45657 6.45657 1.696935E-08 0.630208 -1.377364E-08 0.7764264  
+				<TransformMatrix>: 1.32796 3.440752E-14 -6.31853 0 2.761919E-07 6.45657 5.804709E-08 0 6.31853 -2.822258E-07 1.32796 0 34.60201 0.1533 -130.9609 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 69 0 SM_mountain_03
+				<Transform>: -266.1 5.6 66.1 2.504478E-06 0 0 6.144935 6.144935 6.144935 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.144935 0 0 0 0 6.144935 2.686036E-07 0 0 -2.686036E-07 6.144935 0 -266.1 5.6 66.1 1  
+				<Mesh>: 2219 SM_mountain_03
+					<Bounds>: 0 3.662676 -2.861023E-06 8.59558 3.706943 10.13646
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 70 0 SM_bush_03_(20)
+				<Transform>: -127.762 0.21929 -90.883 2.504479E-06 78.13093 3.053333E-13 6.45657 6.45657 6.45657 1.696935E-08 0.630208 -1.377364E-08 0.7764264  
+				<TransformMatrix>: 1.32796 3.440752E-14 -6.31853 0 2.761919E-07 6.45657 5.804709E-08 0 6.31853 -2.822258E-07 1.32796 0 -127.762 0.21929 -90.883 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 71 0 SM_dune_01_(6)
+				<Transform>: -82.7998 1.150037 -307.4655 1.755423E-06 45.49966 1.78631E-06 4.930938 2.967613 3.488786 2.015537E-08 0.3867082 8.451776E-09 0.9222022  
+				<TransformMatrix>: 3.456161 1.537318E-07 -3.516973 0 0 2.967613 1.297185E-07 0 2.488364 -1.068891E-07 2.445338 0 -82.7998 1.150037 -307.4655 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 72 0 SM_bush_03_(9)
+				<Transform>: -97.28 1.4467 -42.528 2.504478E-06 45.20236 -1.017777E-13 6.45657 6.45657 6.45657 2.017723E-08 0.3843144 -8.399458E-09 0.9232023  
+				<TransformMatrix>: 4.549332 -1.146917E-14 -4.581581 0 2.002673E-07 6.45657 1.988576E-07 0 4.581581 -2.822257E-07 4.549332 0 -97.28 1.4467 -42.528 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 73 0 SM_rock_01_(3)
+				<Transform>: 6.100399 1.4 -16.1463 2.504481E-06 238.7626 5.088888E-13 6.45657 6.45657 6.45657 1.072283E-08 -0.8713741 1.904451E-08 0.4906192  
+				<TransformMatrix>: -3.348284 5.734587E-14 5.520533 0 -2.413104E-07 6.45657 -1.463584E-07 0 -5.520533 -2.82226E-07 -3.348284 0 6.100399 1.4 -16.1463 1  
+				<Mesh>: 1005 SM_rock_01
+					<Bounds>: 0 0.3070781 2.205372E-06 1.042643 0.3735972 1.50364
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 74 0 SM_bush_03_(23)
+				<Transform>: -130.4 0.2 -128.8 2.50448E-06 112.1762 -4.07111E-13 6.45657 6.45657 6.45657 1.219368E-08 0.8298965 -1.813798E-08 0.5579175  
+				<TransformMatrix>: -2.437072 -4.587669E-14 -5.978961 0 2.613488E-07 6.45657 -1.065279E-07 0 5.978961 -2.822258E-07 -2.437072 0 -130.4 0.2 -128.8 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 75 0 SM_bush_03_(21)
+				<Transform>: -154.106 0.21929 -83.328 2.504479E-06 78.13093 3.053333E-13 6.45657 6.45657 6.45657 1.696935E-08 0.630208 -1.377364E-08 0.7764264  
+				<TransformMatrix>: 1.32796 3.440752E-14 -6.31853 0 2.761919E-07 6.45657 5.804709E-08 0 6.31853 -2.822258E-07 1.32796 0 -154.106 0.21929 -83.328 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 76 0 SM_bush_03_(19)
+				<Transform>: -147.9 0.21929 -83.145 2.504479E-06 78.13093 3.053333E-13 6.45657 6.45657 6.45657 1.696935E-08 0.630208 -1.377364E-08 0.7764264  
+				<TransformMatrix>: 1.32796 3.440752E-14 -6.31853 0 2.761919E-07 6.45657 5.804709E-08 0 6.31853 -2.822258E-07 1.32796 0 -147.9 0.21929 -83.145 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 77 0 SM_rockplat_04_(3)
+				<Transform>: 200.5 2.136077 250.8 2.504481E-06 330.2741 7.124442E-13 15 16.83973 19.89422 2.112448E-08 -0.2565074 5.606161E-09 0.9665423  
+				<TransformMatrix>: 13.02612 1.865175E-13 7.437758 0 -3.649903E-07 16.83973 6.392255E-07 0 -9.864562 -8.696053E-07 17.2763 0 200.5 2.136077 250.8 1  
+				<Mesh>: 1990 SM_rockplat_04
+					<Bounds>: 0 3.490204 2.622604E-06 4.156518 3.446207 4.675962
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 78 0 SM_bush_03_(17)
+				<Transform>: -166.1 1.4467 11.707 2.504478E-06 45.20236 -1.017777E-13 6.45657 6.45657 6.45657 2.017723E-08 0.3843144 -8.399458E-09 0.9232023  
+				<TransformMatrix>: 4.549332 -1.146917E-14 -4.581581 0 2.002673E-07 6.45657 1.988576E-07 0 4.581581 -2.822257E-07 4.549332 0 -166.1 1.4467 11.707 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 79 0 SM_rockplat_02
+				<Transform>: 32.702 0 -215.392 0 262.8971 0 6.45657 6.45657 6.45657 0 -0.7495503 0 0.6619474  
+				<TransformMatrix>: -0.7983639 0 6.407022 0 0 6.45657 0 0 -6.407022 0 -0.7983639 0 32.702 0 -215.392 1  
+				<Mesh>: 1574 SM_rockplat_02
+					<Bounds>: 0 1.166349 -1.66893E-06 1.811695 1.152435 3.152574
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 80 0 SM_dune_01_(4)
+				<Transform>: -158 -7 209 -1.419617E-06 235.4704 -2.063273E-06 4.930938 2.967613 3.488787 1.017134E-08 -0.8851078 -1.934465E-08 0.4653861  
+				<TransformMatrix>: -2.795012 -1.775676E-07 4.062274 0 0 2.967613 1.297185E-07 0 -2.87418 8.644166E-08 -1.977555 0 -158 -7 209 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 81 0 SM_dune_01_(12)
+				<Transform>: -155 -3.8 257.9 2.504478E-06 0 0 4.930938 4.930938 4.930938 2.185569E-08 0 0 1  
+				<TransformMatrix>: 4.930938 0 0 0 0 4.930938 2.155382E-07 0 0 -2.155382E-07 4.930938 0 -155 -3.8 257.9 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 82 0 SM_bush_03
+				<Transform>: 120.908 -1.0063 38.603 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 120.908 -1.0063 38.603 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 83 0 SM_rock_05_(5)
+				<Transform>: 56.65601 -0.7883202 -175.169 9.236402E-07 164.7008 2.32794E-06 4.773278 4.773278 10.82388 2.120725E-08 0.9911007 -5.284321E-09 0.1331142  
+				<TransformMatrix>: -4.604119 1.939393E-07 -1.259473 0 2.073697E-07 4.773278 -2.304832E-08 0 2.855982 -1.744871E-07 -10.4403 0 56.65601 -0.7883202 -175.169 1  
+				<Mesh>: 816 SM_rock_05
+					<Bounds>: 0 0.5648491 -0.1422592 1.316995 1.080055 1.16392
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 84 0 SM_bush_03_(15)
+				<Transform>: -80.494 1.4467 -75.341 2.504478E-06 121.0711 1.017778E-13 6.45657 6.45657 6.45657 1.075045E-08 0.8706611 -1.90289E-08 0.4918833  
+				<TransformMatrix>: -3.332246 1.146917E-14 -5.530229 0 2.41734E-07 6.45657 -1.456571E-07 0 5.530229 -2.822256E-07 -3.332246 0 -80.494 1.4467 -75.341 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 85 0 SM_bush_03_(18)
+				<Transform>: -158.493 0.21929 23.587 2.504479E-06 78.13093 3.053333E-13 6.45657 6.45657 6.45657 1.696935E-08 0.630208 -1.377364E-08 0.7764264  
+				<TransformMatrix>: 1.32796 3.440752E-14 -6.31853 0 2.761919E-07 6.45657 5.804709E-08 0 6.31853 -2.822258E-07 1.32796 0 -158.493 0.21929 23.587 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 86 0 SM_desert_tree_02_(4)
+				<Transform>: -60.2056 13.11371 77.095 2.504481E-06 252.2659 1.119555E-12 6.45657 6.45657 6.45657 1.288745E-08 -0.807651 1.76518E-08 0.5896608  
+				<TransformMatrix>: -1.966674 1.261609E-13 6.149755 0 -2.688145E-07 6.45657 -8.596624E-08 0 -6.149755 -2.822259E-07 -1.966674 0 -60.2056 13.11371 77.095 1  
+				<Mesh>: 7512 SM_desert_tree_02
+					<Bounds>: 0 2.432374 -1.549721E-06 2.312332 2.432943 2.774205
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 87 0 SM_bush_03_(6)
+				<Transform>: 91.42699 1.4467 -54.658 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 91.42699 1.4467 -54.658 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 88 0 SM_bush_03_(10)
+				<Transform>: -125.313 1.4467 -99.158 2.504478E-06 45.20236 -1.017777E-13 6.45657 6.45657 6.45657 2.017723E-08 0.3843144 -8.399458E-09 0.9232023  
+				<TransformMatrix>: 4.549332 -1.146917E-14 -4.581581 0 2.002673E-07 6.45657 1.988576E-07 0 4.581581 -2.822257E-07 4.549332 0 -125.313 1.4467 -99.158 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 89 0 SM_bush_03_(5)
+				<Transform>: 81.35799 1.4467 -62.985 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 81.35799 1.4467 -62.985 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 90 0 SM_cactus_04_(5)
+				<Transform>: -117.5095 1.4467 -42.646 2.504479E-06 32.65355 3.053333E-13 8.928146 8.928145 8.928146 2.097435E-08 0.2811152 -6.143966E-09 0.9596741  
+				<TransformMatrix>: 7.517039 4.757872E-14 -4.817252 0 2.105687E-07 8.928145 3.285803E-07 0 4.817252 -3.902617E-07 7.517039 0 -117.5095 1.4467 -42.646 1  
+				<Mesh>: 489 SM_cactus_04
+					<Bounds>: 0 0.500794 -1.043081E-07 0.2595738 0.4827013 0.2627115
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 91 0 SM_bush_03_(8)
+				<Transform>: -96.769 1.4467 -51.314 2.504478E-06 45.20236 -1.017777E-13 6.45657 6.45657 6.45657 2.017723E-08 0.3843144 -8.399458E-09 0.9232023  
+				<TransformMatrix>: 4.549332 -1.146917E-14 -4.581581 0 2.002673E-07 6.45657 1.988576E-07 0 4.581581 -2.822257E-07 4.549332 0 -96.769 1.4467 -51.314 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 92 0 SM_desert_tree_05_(4)
+				<Transform>: -140.549 1.7689 -158.4206 5.375423E-07 67.92655 2.446114E-06 6.45657 6.45657 6.45657 1.581604E-08 0.5586615 1.508394E-08 0.8293958  
+				<TransformMatrix>: 2.426345 2.756487E-07 -5.983323 0 -4.745248E-08 6.45657 2.782081E-07 0 5.983323 -6.057479E-08 2.426345 0 -140.549 1.7689 -158.4206 1  
+				<Mesh>: 5201 SM_desert_tree_05
+					<Bounds>: 0 2.566257 -5.364418E-07 2.350076 2.613629 1.515413
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 93 0 SM_desert_tree_05_(5)
+				<Transform>: -129.962 1.7689 -80.356 5.375443E-07 226.6002 2.446116E-06 6.45657 6.45657 6.45657 1.775E-08 0.9184457 -1.275189E-08 -0.3955472  
+				<TransformMatrix>: -4.436213 2.756489E-07 4.691196 0 1.453818E-07 6.45657 -2.419004E-07 0 -4.691196 -6.057501E-08 -4.436213 0 -129.962 1.7689 -80.356 1  
+				<Mesh>: 5201 SM_desert_tree_05
+					<Bounds>: 0 2.566257 -5.364418E-07 2.350076 2.613629 1.515413
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 94 0 SM_cactus_04_(1)
+				<Transform>: -149.445 1.4467 7.5738 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 -149.445 1.4467 7.5738 1  
+				<Mesh>: 489 SM_cactus_04
+					<Bounds>: 0 0.500794 -1.043081E-07 0.2595738 0.4827013 0.2627115
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 95 0 SM_bush_03_(7)
+				<Transform>: 77.42999 1.4467 -72.72701 2.504478E-06 45.20236 -1.017777E-13 6.45657 6.45657 6.45657 2.017723E-08 0.3843144 -8.399458E-09 0.9232023  
+				<TransformMatrix>: 4.549332 -1.146917E-14 -4.581581 0 2.002673E-07 6.45657 1.988576E-07 0 4.581581 -2.822257E-07 4.549332 0 77.42999 1.4467 -72.72701 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 96 0 SM_rock_01_(4)
+				<Transform>: 66.13 1.4467 -64.923 2.504481E-06 316.8293 4.07111E-13 6.45657 6.45657 6.45657 2.032299E-08 -0.3678868 8.040433E-09 0.9298706  
+				<TransformMatrix>: 4.708897 4.587669E-14 4.417418 0 -1.930918E-07 6.45657 2.058326E-07 0 -4.417418 -2.82226E-07 4.708897 0 66.13 1.4467 -64.923 1  
+				<Mesh>: 1005 SM_rock_01
+					<Bounds>: 0 0.3070781 2.205372E-06 1.042643 0.3735972 1.50364
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 97 0 SM_desert_tree_05_(6)
+				<Transform>: -25.1206 0 -173.669 5.375437E-07 135.6751 2.446114E-06 6.45657 6.45657 6.45657 2.153884E-08 0.926118 3.708206E-09 0.3772343  
+				<TransformMatrix>: -4.618958 2.756487E-07 -4.511379 0 2.395213E-07 6.45657 1.492685E-07 0 4.511379 -6.057494E-08 -4.618958 0 -25.1206 0 -173.669 1  
+				<Mesh>: 5201 SM_desert_tree_05
+					<Bounds>: 0 2.566257 -5.364418E-07 2.350076 2.613629 1.515413
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 98 0 SM_dune_01_(1)
+				<Transform>: -244.6 1.2 -34.9 2.504478E-06 0 0 4.930938 2.967613 3.488787 2.185569E-08 0 0 1  
+				<TransformMatrix>: 4.930938 0 0 0 0 2.967613 1.297185E-07 0 0 -1.524997E-07 3.488787 0 -244.6 1.2 -34.9 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 99 0 SM_rock_15
+				<Transform>: 167.45 1.4467 12.768 2.504479E-06 114.5128 -2.035555E-13 6.45657 6.45657 6.45657 1.182133E-08 0.8410993 -1.838281E-08 0.5408809  
+				<TransformMatrix>: -2.678804 -2.293835E-14 -5.874633 0 2.567884E-07 6.45657 -1.170943E-07 0 5.874633 -2.822257E-07 -2.678804 0 167.45 1.4467 12.768 1  
+				<Mesh>: 393 SM_rock_15
+					<Bounds>: 0 1.035533 -1.192093E-07 1.063049 1.119712 2.310619
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 100 0 SM_rock_09_(3)
+				<Transform>: -61.2 0 -22.1 11.3755 321.5314 351.0934 6.45657 5.743536 6.45657 0.1187456 -0.3195549 -0.04040091 0.9392294  
+				<TransformMatrix>: 5.116864 -0.9799972 3.81374 0 -2.567561E-07 5.562813 1.429448 0 -3.93764 -1.273482 4.955859 0 -61.2 0 -22.1 1  
+				<Mesh>: 673 SM_rock_09
+					<Bounds>: 1.192093E-07 1.484079 -0.2409754 2.43922 2.035046 2.068317
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 101 0 SM_rock_05
+				<Transform>: 158.49 -1.2959 -35.549 2.504478E-06 0 0 17.20095 17.20095 17.20095 2.185569E-08 0 0 1  
+				<TransformMatrix>: 17.20095 0 0 0 0 17.20095 7.518773E-07 0 0 -7.518773E-07 17.20095 0 158.49 -1.2959 -35.549 1  
+				<Mesh>: 816 SM_rock_05
+					<Bounds>: 0 0.5648491 -0.1422592 1.316995 1.080055 1.16392
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 102 0 SM_rock_05_(4)
+				<Transform>: 44.99901 0 -128.7019 9.2364E-07 123.786 2.327939E-06 4.773277 4.773278 4.773277 2.171668E-08 0.8820694 2.461114E-09 0.4711196  
+				<TransformMatrix>: -2.654385 1.939392E-07 -3.967168 0 1.718012E-07 4.773278 1.183966E-07 0 3.967168 -7.69479E-08 -2.654385 0 44.99901 0 -128.7019 1  
+				<Mesh>: 816 SM_rock_05
+					<Bounds>: 0 0.5648491 -0.1422592 1.316995 1.080055 1.16392
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 103 0 SM_dune_01_(15)
+				<Transform>: -175 2.728527 -269.9 2.504478E-06 0 0 4.930938 4.930938 4.930938 2.185569E-08 0 0 1  
+				<TransformMatrix>: 4.930938 0 0 0 0 4.930938 2.155382E-07 0 0 -2.155382E-07 4.930938 0 -175 2.728527 -269.9 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 104 0 SM_cliff_03_(1)
+				<Transform>: -45.477 16.877 101 11.15468 0 0 6.45657 6.45657 6.45657 0.09718928 0 0 0.9952659  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.334596 1.249077 0 0 -1.249077 6.334596 0 -45.477 16.877 101 1  
+				<Mesh>: 475 SM_cliff_03
+					<Bounds>: 0 2.396929 0 1.984351 2.40576 3.013988
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 105 0 SM_mountain_03_(3)
+				<Transform>: -13 5.6 280 2.50448E-06 300.4437 1.017777E-13 6 6 6 1.896977E-08 -0.4966431 1.085449E-08 0.8679549  
+				<TransformMatrix>: 3.040148 1.065814E-14 5.172766 0 -2.261089E-07 6 1.328892E-07 0 -5.172766 -2.622685E-07 3.040148 0 -13 5.6 280 1  
+				<Mesh>: 2219 SM_mountain_03
+					<Bounds>: 0 3.662676 -2.861023E-06 8.59558 3.706943 10.13646
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 106 0 SM_dune_01_(10)
+				<Transform>: -96 -15 410 1.48534E-06 306.3754 -2.016476E-06 14.89785 11.97453 14.89785 1.950597E-08 -0.4510689 -9.858423E-09 0.8924892  
+				<TransformMatrix>: 8.835521 -5.24317E-07 11.99497 0 -2.127104E-14 11.97453 5.234235E-07 0 -11.99497 -3.86213E-07 8.835521 0 -96 -15 410 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 107 0 SM_rockplat_04_(1)
+				<Transform>: -193.7 -1 300 2.504481E-06 143.237 4.07111E-13 6.95146 15 9.219596 -6.892048E-09 -0.9489778 2.074059E-08 -0.3153429  
+				<TransformMatrix>: -5.568938 4.93931E-14 -4.160497 0 3.924239E-07 15 -5.2527E-07 0 5.517992 -4.030018E-07 -7.385982 0 -193.7 -1 300 1  
+				<Mesh>: 1990 SM_rockplat_04
+					<Bounds>: 0 3.490204 2.622604E-06 4.156518 3.446207 4.675962
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 108 0 SM_bush_03_(13)
+				<Transform>: 11.6676 1.4467 -113.8766 2.504478E-06 84.86727 -3.053333E-13 6.45657 6.45657 6.45657 1.61308E-08 0.6747358 -1.474682E-08 0.7380593  
+				<TransformMatrix>: 0.5776256 -3.440752E-14 -6.43068 0 2.810939E-07 6.45657 2.524878E-08 0 6.43068 -2.822256E-07 0.5776256 0 11.6676 1.4467 -113.8766 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 109 0 SM_grass_01
+				<Transform>: -93.81 1.3245 -159.819 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 -93.81 1.3245 -159.819 1  
+				<Mesh>: 867 grass_01
+					<Bounds>: 0.0006170254 0.5461949 0.01825073 0.0565947 0.5279292 0.4016955
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 110 0 SM_desert_tree_05_(2)
+				<Transform>: 193.2 1.4467 -62.823 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 193.2 1.4467 -62.823 1  
+				<Mesh>: 5201 SM_desert_tree_05
+					<Bounds>: 0 2.566257 -5.364418E-07 2.350076 2.613629 1.515413
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 111 0 SM_rock_08
+				<Transform>: -65.999 1.4467 -159.139 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 -65.999 1.4467 -159.139 1  
+				<Mesh>: 267 SM_rock_08
+					<Bounds>: 2.980232E-08 0.4297683 8.940697E-07 0.7326386 0.4852174 0.8858067
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 112 0 SM_rock_01_(7)
+				<Transform>: -163.914 1.4467 -9.4009 2.504481E-06 339.8561 -1.017778E-13 6.45657 6.45657 6.45657 2.151891E-08 -0.1748843 3.822223E-09 0.984589  
+				<TransformMatrix>: 6.061628 -1.146917E-14 2.223503 0 -9.719252E-08 6.45657 2.649626E-07 0 -2.223503 -2.82226E-07 6.061628 0 -163.914 1.4467 -9.4009 1  
+				<Mesh>: 1005 SM_rock_01
+					<Bounds>: 0 0.3070781 2.205372E-06 1.042643 0.3735972 1.50364
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 113 0 SM_desert_tree_02
+				<Transform>: 93.669 1.4502 20.171 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 93.669 1.4502 20.171 1  
+				<Mesh>: 7512 SM_desert_tree_02
+					<Bounds>: 0 2.432374 -1.549721E-06 2.312332 2.432943 2.774205
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 114 0 SM_grass_01_(3)
+				<Transform>: -92.46201 1.3245 -152.749 2.504479E-06 7.954436 2.798888E-13 6.45657 6.45657 6.45657 2.180307E-08 0.06935981 -1.515905E-09 0.9975917  
+				<TransformMatrix>: 6.394448 3.154022E-14 -0.893496 0 3.905594E-08 6.45657 2.795104E-07 0 0.893496 -2.822258E-07 6.394448 0 -92.46201 1.3245 -152.749 1  
+				<Mesh>: 867 grass_01
+					<Bounds>: 0.0006170254 0.5461949 0.01825073 0.0565947 0.5279292 0.4016955
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 115 0 SM_cactus_05_(1)
+				<Transform>: -6.8085 1.38071 9.665697 2.50448E-06 40.76546 3.562221E-13 6.45657 6.45657 6.45657 2.048726E-08 0.3482896 -7.612112E-09 0.937387  
+				<TransformMatrix>: 4.890133 4.01421E-14 -4.21591 0 1.842833E-07 6.45657 2.137547E-07 0 4.21591 -2.822258E-07 4.890133 0 -6.8085 1.38071 9.665697 1  
+				<Mesh>: 841 SM_cactus_05
+					<Bounds>: 0 0.3063556 1.490116E-07 0.4348164 0.2842294 0.4364142
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 116 0 SM_bush_03_(14)
+				<Transform>: -107.1655 1.4467 -89.207 2.504478E-06 84.86727 -3.053333E-13 6.45657 6.45657 6.45657 1.61308E-08 0.6747358 -1.474682E-08 0.7380593  
+				<TransformMatrix>: 0.5776256 -3.440752E-14 -6.43068 0 2.810939E-07 6.45657 2.524878E-08 0 6.43068 -2.822256E-07 0.5776256 0 -107.1655 1.4467 -89.207 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 117 0 SM_bush_03_(2)
+				<Transform>: 6.1085 1.38071 20.3837 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 6.1085 1.38071 20.3837 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 118 0 SM_desert_tree_04
+				<Transform>: 31.5674 0.68966 -15.2703 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 31.5674 0.68966 -15.2703 1  
+				<Mesh>: 4866 SM_desert_tree_04
+					<Bounds>: 0 2.154838 1.430511E-06 2.969304 2.266244 2.123766
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 119 0 SM_dune_01_(14)
+				<Transform>: -98.0898 3.615737 -324.0855 2.504478E-06 0 0 4.930938 4.930938 4.930938 2.185569E-08 0 0 1  
+				<TransformMatrix>: 4.930938 0 0 0 0 4.930938 2.155382E-07 0 0 -2.155382E-07 4.930938 0 -98.0898 3.615737 -324.0855 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 120 0 SM_rockplat_03
+				<Transform>: -139.756 -1.5871 -68.283 2.504478E-06 0 0 2.734422 2.734422 2.734422 2.185569E-08 0 0 1  
+				<TransformMatrix>: 2.734422 0 0 0 0 2.734422 1.195254E-07 0 0 -1.195254E-07 2.734422 0 -139.756 -1.5871 -68.283 1  
+				<Mesh>: 1875 SM_rockplat_03
+					<Bounds>: 0 1.989118 7.152557E-07 4.340936 1.93598 5.107033
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 121 0 SM_rock_01_(5)
+				<Transform>: -97.14899 1.4467 -70.418 2.504484E-06 67.73267 1.832E-12 6.45657 6.45657 6.45657 1.814771E-08 0.5572574 -1.217926E-08 0.8303398  
+				<TransformMatrix>: 2.446578 2.064451E-13 -5.975078 0 2.611795E-07 6.45657 1.069438E-07 0 5.975078 -2.822263E-07 2.446578 0 -97.14899 1.4467 -70.418 1  
+				<Mesh>: 1005 SM_rock_01
+					<Bounds>: 0 0.3070781 2.205372E-06 1.042643 0.3735972 1.50364
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 122 0 SM_cactus_04
+				<Transform>: -117.5095 1.4467 -63.596 2.504478E-06 0 0 6.45657 6.45657 6.45657 2.185569E-08 0 0 1  
+				<TransformMatrix>: 6.45657 0 0 0 0 6.45657 2.822256E-07 0 0 -2.822256E-07 6.45657 0 -117.5095 1.4467 -63.596 1  
+				<Mesh>: 489 SM_cactus_04
+					<Bounds>: 0 0.500794 -1.043081E-07 0.2595738 0.4827013 0.2627115
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 123 0 SM_dune_01_(7)
+				<Transform>: -248 -13 151 8.270129E-07 289.2817 -2.363993E-06 8 4.814683 5.66024 1.782421E-08 -0.5786996 -1.264788E-08 0.8155409  
+				<TransformMatrix>: 2.641708 -3.300756E-07 7.55125 0 8.552596E-15 4.814683 2.104565E-07 0 -5.342736 -8.170046E-08 1.869088 0 -248 -13 151 1  
+				<Mesh>: 1253 SM_dune_01
+					<Bounds>: 0 3.052805 8.106232E-06 9.841615 3.083297 9.842196
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 124 0 SM_desert_tree_05
+				<Transform>: 14.1004 0 -99.34129 5.375416E-07 77.60605 2.446111E-06 6.45657 6.45657 6.45657 1.703225E-08 0.626645 1.369576E-08 0.7793049  
+				<TransformMatrix>: 1.385788 2.756484E-07 -6.3061 0 -1.146917E-14 6.45657 2.822257E-07 0 6.3061 -6.057471E-08 1.385788 0 14.1004 0 -99.34129 1  
+				<Mesh>: 5201 SM_desert_tree_05
+					<Bounds>: 0 2.566257 -5.364418E-07 2.350076 2.613629 1.515413
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 125 0 SM_dune_02
+				<Transform>: -119.7098 4.601837 -295.3655 2.504478E-06 0 0 4.930938 4.930938 4.930938 2.185569E-08 0 0 1  
+				<TransformMatrix>: 4.930938 0 0 0 0 4.930938 2.155382E-07 0 0 -2.155382E-07 4.930938 0 -119.7098 4.601837 -295.3655 1  
+				<Mesh>: 1967 SM_dune_02
+					<Bounds>: 0 3.672401 -6.67572E-06 12.47501 3.681123 15.23482
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 126 0 SM_bush_03_(22)
+				<Transform>: -154.237 0.21929 8.671 2.504479E-06 78.13093 3.053333E-13 6.45657 6.45657 6.45657 1.696935E-08 0.630208 -1.377364E-08 0.7764264  
+				<TransformMatrix>: 1.32796 3.440752E-14 -6.31853 0 2.761919E-07 6.45657 5.804709E-08 0 6.31853 -2.822258E-07 1.32796 0 -154.237 0.21929 8.671 1  
+				<Mesh>: 802 SM_bush_03
+					<Bounds>: -2.980232E-08 0.3895542 -5.364418E-07 0.4945831 0.3809371 0.5716729
+					<Positions>: 0  
+					<Colors>: 0  
+					<TextureCoords0>: 0  
+					<TextureCoords1>: 0  
+					<Normals>: 0  
+					<SubMeshes>: 1
+						<SubMesh>: 0 0  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 1 1 1 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: @T_colorpallete_desert
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+			<Frame>: 127 0 Plane
+				<Transform>: 0 0 0 0 0 0 60 5 70 0 0 0 1  
+				<TransformMatrix>: 60 0 0 0 0 5 0 0 0 0 70 0 0 0 0 1  
+				<Mesh>: 121 Plane
+					<Bounds>: 0 0 0 5 1.110223E-16 5
+					<Positions>: 121 5 -1.110223E-16 5 4 -1.110223E-16 5 3 -1.110223E-16 5 2 -1.110223E-16 5 0.9999999 -1.110223E-16 5 0 -1.110223E-16 5 -1 -1.110223E-16 5 -2 -1.110223E-16 5 -3 -1.110223E-16 5 -4 -1.110223E-16 5 -5 -1.110223E-16 5 5 -8.881784E-17 4 4 -8.881784E-17 4 3 -8.881784E-17 4 2 -8.881784E-17 4 0.9999999 -8.881784E-17 4 0 -8.881784E-17 4 -1 -8.881784E-17 4 -2 -8.881784E-17 4 -3 -8.881784E-17 4 -4 -8.881784E-17 4 -5 -8.881784E-17 4 5 -6.661338E-17 3 4 -6.661338E-17 3 3 -6.661338E-17 3 2 -6.661338E-17 3 0.9999999 -6.661338E-17 3 0 -6.661338E-17 3 -1 -6.661338E-17 3 -2 -6.661338E-17 3 -3 -6.661338E-17 3 -4 -6.661338E-17 3 -5 -6.661338E-17 3 5 -4.440892E-17 2 4 -4.440892E-17 2 3 -4.440892E-17 2 2 -4.440892E-17 2 0.9999999 -4.440892E-17 2 0 -4.440892E-17 2 -1 -4.440892E-17 2 -2 -4.440892E-17 2 -3 -4.440892E-17 2 -4 -4.440892E-17 2 -5 -4.440892E-17 2 5 -2.220446E-17 0.9999999 4 -2.220446E-17 0.9999999 3 -2.220446E-17 0.9999999 2 -2.220446E-17 0.9999999 0.9999999 -2.220446E-17 0.9999999 0 -2.220446E-17 0.9999999 -1 -2.220446E-17 0.9999999 -2 -2.220446E-17 0.9999999 -3 -2.220446E-17 0.9999999 -4 -2.220446E-17 0.9999999 -5 -2.220446E-17 0.9999999 5 0 0 4 0 0 3 0 0 2 0 0 0.9999999 0 0 0 0 0 -1 0 0 -2 0 0 -3 0 0 -4 0 0 -5 0 0 5 2.220447E-17 -1 4 2.220447E-17 -1 3 2.220447E-17 -1 2 2.220447E-17 -1 0.9999999 2.220447E-17 -1 0 2.220447E-17 -1 -1 2.220447E-17 -1 -2 2.220447E-17 -1 -3 2.220447E-17 -1 -4 2.220447E-17 -1 -5 2.220447E-17 -1 5 4.440892E-17 -2 4 4.440892E-17 -2 3 4.440892E-17 -2 2 4.440892E-17 -2 0.9999999 4.440892E-17 -2 0 4.440892E-17 -2 -1 4.440892E-17 -2 -2 4.440892E-17 -2 -3 4.440892E-17 -2 -4 4.440892E-17 -2 -5 4.440892E-17 -2 5 6.661338E-17 -3 4 6.661338E-17 -3 3 6.661338E-17 -3 2 6.661338E-17 -3 0.9999999 6.661338E-17 -3 0 6.661338E-17 -3 -1 6.661338E-17 -3 -2 6.661338E-17 -3 -3 6.661338E-17 -3 -4 6.661338E-17 -3 -5 6.661338E-17 -3 5 8.881785E-17 -4 4 8.881785E-17 -4 3 8.881785E-17 -4 2 8.881785E-17 -4 0.9999999 8.881785E-17 -4 0 8.881785E-17 -4 -1 8.881785E-17 -4 -2 8.881785E-17 -4 -3 8.881785E-17 -4 -4 8.881785E-17 -4 -5 8.881785E-17 -4 5 1.110223E-16 -5 4 1.110223E-16 -5 3 1.110223E-16 -5 2 1.110223E-16 -5 0.9999999 1.110223E-16 -5 0 1.110223E-16 -5 -1 1.110223E-16 -5 -2 1.110223E-16 -5 -3 1.110223E-16 -5 -4 1.110223E-16 -5 -5 1.110223E-16 -5  
+					<Colors>: 0  
+					<TextureCoords0>: 121 0 1 0.1 1 0.2 1 0.3 1 0.4 1 0.5 1 0.6 1 0.7 1 0.8 1 0.9 1 1 1 0 0.9 0.1 0.9 0.2 0.9 0.3 0.9 0.4 0.9 0.5 0.9 0.6 0.9 0.7 0.9 0.8 0.9 0.9 0.9 1 0.9 0 0.8 0.1 0.8 0.2 0.8 0.3 0.8 0.4 0.8 0.5 0.8 0.6 0.8 0.7 0.8 0.8 0.8 0.9 0.8 1 0.8 0 0.7 0.1 0.7 0.2 0.7 0.3 0.7 0.4 0.7 0.5 0.7 0.6 0.7 0.7 0.7 0.8 0.7 0.9 0.7 1 0.7 0 0.6 0.1 0.6 0.2 0.6 0.3 0.6 0.4 0.6 0.5 0.6 0.6 0.6 0.7 0.6 0.8 0.6 0.9 0.6 1 0.6 0 0.5 0.1 0.5 0.2 0.5 0.3 0.5 0.4 0.5 0.5 0.5 0.6 0.5 0.7 0.5 0.8 0.5 0.9 0.5 1 0.5 0 0.4 0.1 0.4 0.2 0.4 0.3 0.4 0.4 0.4 0.5 0.4 0.6 0.4 0.7 0.4 0.8 0.4 0.9 0.4 1 0.4 0 0.3 0.1 0.3 0.2 0.3 0.3 0.3 0.4 0.3 0.5 0.3 0.6 0.3 0.7 0.3 0.8 0.3 0.9 0.3 1 0.3 0 0.2 0.1 0.2 0.2 0.2 0.3 0.2 0.4 0.2 0.5 0.2 0.6 0.2 0.7 0.2 0.8 0.2 0.9 0.2 1 0.2 0 0.09999996 0.1 0.09999996 0.2 0.09999996 0.3 0.09999996 0.4 0.09999996 0.5 0.09999996 0.6 0.09999996 0.7 0.09999996 0.8 0.09999996 0.9 0.09999996 1 0.09999996 0 0 0.1 0 0.2 0 0.3 0 0.4 0 0.5 0 0.6 0 0.7 0 0.8 0 0.9 0 1 0  
+					<TextureCoords1>: 0  
+					<Normals>: 121 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0  
+					<Tangents>: 121 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0  
+					<BiTangents>: 121 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -1  
+					<SubMeshes>: 1
+						<SubMesh>: 0 600 9 21 10 9 20 21 8 20 9 20 32 21 8 19 20 7 19 8 20 31 32 19 31 20 31 43 32 7 18 19 6 18 7 19 30 31 18 30 19 31 42 43 30 42 31 42 54 43 6 17 18 5 17 6 18 29 30 17 29 18 30 41 42 29 41 30 42 53 54 41 53 42 53 65 54 5 16 17 4 16 5 17 28 29 16 28 17 29 40 41 28 40 29 41 52 53 40 52 41 53 64 65 52 64 53 64 76 65 4 15 16 3 15 4 16 27 28 15 27 16 28 39 40 27 39 28 40 51 52 39 51 40 52 63 64 51 63 52 64 75 76 63 75 64 75 87 76 3 14 15 2 14 3 15 26 27 14 26 15 27 38 39 26 38 27 39 50 51 38 50 39 51 62 63 50 62 51 63 74 75 62 74 63 75 86 87 74 86 75 86 98 87 86 97 98 97 109 98 74 85 86 85 97 86 62 73 74 73 85 74 50 61 62 61 73 62 38 49 50 49 61 50 97 108 109 108 120 109 108 119 120 85 96 97 96 108 97 107 119 108 96 107 108 107 118 119 73 84 85 84 96 85 61 72 73 72 84 73 95 107 96 84 95 96 106 118 107 95 106 107 106 117 118 83 95 84 72 83 84 60 72 61 49 60 61 94 106 95 83 94 95 105 117 106 94 105 106 105 116 117 71 83 72 60 71 72 82 94 83 71 82 83 93 105 94 82 93 94 104 116 105 93 104 105 104 115 116 103 115 104 103 114 115 92 104 93 92 103 104 81 93 82 81 92 93 70 82 71 70 81 82 59 71 60 59 70 71 102 114 103 102 113 114 91 103 92 91 102 103 80 92 81 80 91 92 69 81 70 69 80 81 101 113 102 101 112 113 90 102 91 90 101 102 79 91 80 79 90 91 100 112 101 100 111 112 89 101 90 89 100 101 99 111 100 99 110 111 88 99 100 88 100 89 77 88 89 78 89 90 77 89 78 78 90 79 66 77 78 66 78 67 67 78 79 55 66 67 67 79 68 68 79 80 68 80 69 55 67 56 56 67 68 44 55 56 57 68 69 56 68 57 44 56 45 45 56 57 33 44 45 57 69 58 58 69 70 58 70 59 33 45 34 22 33 34 45 57 46 46 57 58 34 45 46 47 58 59 46 58 47 22 34 23 11 22 23 34 46 35 35 46 47 23 34 35 47 59 48 48 59 60 48 60 49 11 23 12 0 11 12 0 12 1 23 35 24 12 23 24 35 47 36 36 47 48 24 35 36 37 48 49 36 48 37 37 49 38 26 37 38 1 12 13 12 24 13 1 13 2 2 13 14 24 36 25 25 36 37 25 37 26 13 24 25 13 25 14 14 25 26  
+				</Mesh>
+				<Materials>: 1
+					<Material>: 0
+						<AlbedoColor>: 0.8962264 0.5276981 0.2747864 1
+						<EmissiveColor>: 0 0 0 1
+						<Glossiness>: 0.5
+						<Metallic>: 0
+						<SpecularHighlight>: 1
+						<GlossyReflection>: 1
+						<AlbedoMap>: null
+						<MetallicMap>: null
+						<NormalMap>: null
+						<EmissionMap>: null
+						<DetailAlbedoMap>: null
+						<DetailNormalMap>: null
+				</Materials>
+				<Children>: 0
+			</Frame>
+	</Frame>
+</Hierarchy>
