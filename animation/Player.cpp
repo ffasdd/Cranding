@@ -40,6 +40,14 @@ CPlayer::~CPlayer()
 	if (m_pCamera) delete m_pCamera;
 }
 
+void CPlayer::SetPosition(const XMFLOAT3& xmf3Position)
+{
+	// ** 약간 불안함 이게 될라나
+	if (m_pSkinnedAnimationController->m_bIsMove) 
+		Move(XMFLOAT3(xmf3Position.x - m_xmf3Position.x, xmf3Position.y - m_xmf3Position.y, xmf3Position.z - m_xmf3Position.z), false);
+	else m_xmf3Position = xmf3Position;
+}
+
 void CPlayer::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
 {
 	if (m_pCamera) m_pCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);

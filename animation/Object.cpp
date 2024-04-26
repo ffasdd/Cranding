@@ -6,6 +6,7 @@
 #include "Object.h"
 #include "Shader.h"
 #include "Scene.h"
+#include "GameFramework.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -690,7 +691,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 				{
 					// 상하체 분리 o일때
 					if (this->m_bIsAttack == true)
-					{
+					{ 
 						CAnimationSet* pAnimationSet = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[k].m_nAnimationSet];
 						CAnimationSet* pAnimationSet2 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[m_nAttackAniNum].m_nAnimationSet];
 
@@ -815,6 +816,9 @@ CGameObject::~CGameObject()
 	if (m_ppMaterials) delete[] m_ppMaterials;
 
 	if (m_pSkinnedAnimationController) delete m_pSkinnedAnimationController;
+
+	if (m_pBoundingBoxMesh) m_pBoundingBoxMesh->Release();
+	m_pBoundingBoxMesh = NULL;
 }
 
 void CGameObject::AddRef() 
@@ -938,6 +942,7 @@ void CGameObject::Animate(float fTimeElapsed)
 	// 나머지는 그냥 넘긴다..
 	//
 	OnPrepareRender();
+	UpdateBoundingBox();
 
 	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->AdvanceTime(fTimeElapsed, this);
 
@@ -1316,6 +1321,9 @@ CGameObject *CGameObject::LoadFrameHierarchyFromFile(ID3D12Device *pd3dDevice, I
 
 	CGameObject *pGameObject = new CGameObject();
 
+	CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
+	pGameObject->SetBoundingBoxMesh(pBoundingBoxMesh);
+
 	for ( ; ; )
 	{
 		::ReadStringFromFile(pInFile, pstrToken);
@@ -1384,6 +1392,8 @@ CGameObject *CGameObject::LoadFrameHierarchyFromFile(ID3D12Device *pd3dDevice, I
 			break;
 		}
 	}
+
+
 	return(pGameObject);
 }
 
@@ -1396,6 +1406,32 @@ void CGameObject::PrintFrameInfo(CGameObject *pGameObject, CGameObject *pParent)
 
 	if (pGameObject->m_pSibling) CGameObject::PrintFrameInfo(pGameObject->m_pSibling, pParent);
 	if (pGameObject->m_pChild) CGameObject::PrintFrameInfo(pGameObject->m_pChild, pGameObject);
+}
+
+void CGameObject::SetBoundingBoxMesh(CBoundingBoxMesh* pMesh)
+{
+	if (m_pBoundingBoxMesh) m_pBoundingBoxMesh->Release();
+	m_pBoundingBoxMesh = pMesh;
+	if (pMesh) pMesh->AddRef();
+}
+
+void CGameObject::UpdateBoundingBox()
+{
+	OnPrepareRender();
+	if (m_pMesh)
+	{
+		m_pMesh->m_xmBoundingBox.Transform(m_xmBoundingBox, XMLoadFloat4x4(&m_xmf4x4World));
+		XMStoreFloat4(&m_xmBoundingBox.Orientation, XMQuaternionNormalize(XMLoadFloat4(&m_xmBoundingBox.Orientation)));
+	}
+}
+
+void CGameObject::RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	if (m_pBoundingBoxMesh)
+	{
+		m_pBoundingBoxMesh->UpdateVertexPosition(&m_xmBoundingBox);
+		m_pBoundingBoxMesh->Render(pd3dCommandList);
+	}
 }
 
 void CGameObject::LoadAnimationFromFile(FILE *pInFile, CLoadedModelInfo *pLoadedModel)

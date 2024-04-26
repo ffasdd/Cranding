@@ -355,6 +355,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 					m_nDrawOption = (int)wParam;
 					break;
 				}
+				case 'B': // 바운딩 박스
+					m_bRenderBoundingBox = !m_bRenderBoundingBox;
+					break;
 			case VK_SPACE:
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
 				break;
@@ -576,6 +579,8 @@ void CGameFramework::ReleaseObjects()
 // 플레이어 조작 부분 -> 상하좌우, 마우스
 void CGameFramework::ProcessInput()
 {
+	m_pPlayer->m_xmf3BeforeCollidedPosition = m_pPlayer->GetPosition();
+
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
@@ -686,6 +691,16 @@ void CGameFramework::AnimateObjects()
 {
 	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 
+	m_pPlayer->UpdateBoundingBox();
+
+	// 플레이어가 다른 플레이어들 + 맵과 충돌하면
+	if (m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+	{
+		// 충돌 이전 위치로 포지션 set
+		m_pPlayer->m_pSkinnedAnimationController->m_bIsMove = false;
+		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
+	}
+
 	if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
 	m_pPlayer->Animate(fTimeElapsed);
@@ -744,6 +759,9 @@ void CGameFramework::FrameAdvance()
 		m_pScene->Render(m_pd3dCommandList, m_pCamera);
 
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+
+		// 얘가 true면 바운딩 박스 그려
+		if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 
 		m_pPostProcessingShader->OnPostRenderTarget(m_pd3dCommandList);
 	}

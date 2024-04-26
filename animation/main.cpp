@@ -10,6 +10,7 @@ HINSTANCE						ghAppInstance;
 TCHAR							szTitle[MAX_LOADSTRING];
 TCHAR							szWindowClass[MAX_LOADSTRING];
 
+// 객체 생성
 CGameFramework					gGameFramework;
 Network							gNetwork;
 

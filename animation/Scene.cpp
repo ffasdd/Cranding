@@ -103,6 +103,9 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 
 	m_nHierarchicalGameObjects = 3;
 	m_ppHierarchicalGameObjects = new CGameObject*[m_nHierarchicalGameObjects];
+	//**
+	m_pBoundingBoxShader = new CBoundingBoxShader();
+	m_pBoundingBoxShader->CreateShader(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
 
 	CLoadedModelInfo *pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 
@@ -197,7 +200,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 //	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 //	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f,20.0f, 735.0f);
 //	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
-if (pPlayerModel) delete pPlayerModel;
+	if (pPlayerModel) delete pPlayerModel;
 
 
 
@@ -236,6 +239,8 @@ void CScene::ReleaseObjects()
 		for (int i = 0; i < m_nHierarchicalGameObjects; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Release();
 		delete[] m_ppHierarchicalGameObjects;
 	}
+
+	if (m_pBoundingBoxShader) m_pBoundingBoxShader->Release();
 
 	ReleaseShaderVariables();
 
@@ -470,6 +475,21 @@ void CScene::ReleaseUploadBuffers()
 	for (int i = 0; i < m_nShaders; i++) m_ppShaders[i]->ReleaseUploadBuffers();
 	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->ReleaseUploadBuffers();
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++) m_ppHierarchicalGameObjects[i]->ReleaseUploadBuffers();
+}
+
+bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
+{
+	// 불안 -> 좀 많이 바꿈
+	// **충돌체크 m_nHierarchicalGameObjects끼리만 하면 되는거 맞겠지??
+	//for (int i = 0; i < m_nHierarchicalGameObjects; i++)
+	//{
+		for (int j = 0; j < m_nHierarchicalGameObjects; j++)
+		{
+			//CGameObject* pGameObject = m_ppObjectShaders[i]->m_ppObjects[j];
+			if (m_ppHierarchicalGameObjects[j]->m_xmBoundingBox.Intersects(pTargetGameObject->m_xmBoundingBox)) return(true);
+		}
+	//}
+	return(false);
 }
 
 void CScene::CreateCbvSrvDescriptorHeaps(ID3D12Device *pd3dDevice, int nConstantBufferViews, int nShaderResourceViews)
@@ -730,5 +750,16 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 		}
 	}	
 	
+}
+
+//**
+void CScene::RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	m_pBoundingBoxShader->Render(pd3dCommandList, pCamera);
+	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
+	{
+		if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->RenderBoundingBox(pd3dCommandList, pCamera);
+	}
+	m_pPlayer->RenderBoundingBox(pd3dCommandList, pCamera);
 }
 

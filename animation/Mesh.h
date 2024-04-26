@@ -30,6 +30,8 @@ class CMesh
 {
 public:
 	CMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
+	// **기본 생성자 이거 만드는게 맞는지 아닌지를 모르겠음
+	//CMesh();
 	virtual ~CMesh();
 
 private:
@@ -42,6 +44,7 @@ public:
 public:
 	char							m_pstrMeshName[64] = { 0 };
 
+	BoundingOrientedBox				m_xmBoundingBox = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 protected:
 	UINT							m_nType = 0x00;
 
@@ -54,6 +57,10 @@ protected:
 
 protected:
 	int								m_nVertices = 0;
+	UINT							m_nStride = 0;
+
+	UINT							m_nVertexBufferViews = 0;
+	D3D12_VERTEX_BUFFER_VIEW* m_pd3dVertexBufferViews = NULL;
 
 	XMFLOAT3						*m_pxmf3Positions = NULL;
 
@@ -78,6 +85,7 @@ public:
 
 	virtual void ReleaseUploadBuffers();
 
+	virtual void OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, int nSubSet);
 	virtual void OnPostRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext);
@@ -199,6 +207,10 @@ public:
 	virtual void ReleaseUploadBuffers();
 
 	virtual void OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext);
+
+	// 얘네에서 자꾸 오류나는데 왜 이지랄인지 모르겠음
+	//CBoundingBoxMesh* m_pBoundingBoxMesh = NULL;
+	//void SetBoundingBoxMesh(CBoundingBoxMesh* pMesh);
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -252,3 +264,20 @@ public:
 
 	virtual void OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext);
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CBoundingBoxMesh : public CMesh
+{
+public:
+	CBoundingBoxMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual ~CBoundingBoxMesh();
+
+	//void SetBoundingBoxMesh(CBoundingBoxMesh* pMesh);
+
+	XMFLOAT3* m_pcbMappedPositions = NULL;
+	CBoundingBoxMesh* m_pBoundingBoxMesh = NULL;
+
+	void UpdateVertexPosition(BoundingOrientedBox* pxmBoundingBox);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList);
+};  

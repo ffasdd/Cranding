@@ -15,7 +15,7 @@
 #define DRAW_SCENE_LIGHTING				'L'
 #define DRAW_SCENE_NORMAL				'N'
 #define DRAW_SCENE_Z_DEPTH				'Z'
-#define DRAW_SCENE_DEPTH				'D'
+#define DRAW_SCENE_DEPTH					'D'
 
 #include "Timer.h"
 #include "Player.h"
@@ -71,6 +71,8 @@ public:
 	// 다른 클라들 애니메이션 변경해주는 함수
 	void myFunc_SetAnimation(int n, int id, int prevAni, int curAni);
 
+	ID3D12Device* ReturnPd3dDevice() { return m_pd3dDevice; };
+
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 
@@ -121,5 +123,8 @@ private:
 	POINT						m_ptOldCursorPos;
 
 	_TCHAR						m_pszFrameRate[70];
+
+	// ** 바운딩 박스 그릴까 말까 변수
+	bool						m_bRenderBoundingBox = false;
 };
 

@@ -92,8 +92,11 @@ public:
 
 	void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
     void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
+	void RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 
 	void ReleaseUploadBuffers();
+
+	virtual bool CheckObjectByObjectCollisions(CGameObject* pTargetGameObject);
 
 	CPlayer								*m_pPlayer = NULL;
 protected:
@@ -101,6 +104,8 @@ protected:
 
 	static ID3D12DescriptorHeap			*m_pd3dCbvSrvDescriptorHeap;
 
+	// **  
+	CBoundingBoxShader* m_pBoundingBoxShader = NULL;
 
 
 public:
