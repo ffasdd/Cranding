@@ -46,7 +46,7 @@ public:
 
 	void ChangeSwapChainState();
 
-    void BuildObjects();
+    void BuildObjects(int SceneNum);
     void ReleaseObjects();
 
     void ProcessInput();
@@ -71,6 +71,7 @@ public:
 	// 다른 클라들 애니메이션 변경해주는 함수
 	void myFunc_SetAnimation(int n, int id, int prevAni, int curAni);
 
+	CScene* m_pScene = NULL;
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 
@@ -110,7 +111,7 @@ private:
 
 	CGameTimer					m_GameTimer;
 
-	CScene						*m_pScene = NULL;
+
 
 	CCamera						*m_pCamera = NULL;
 

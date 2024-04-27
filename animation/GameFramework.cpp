@@ -55,7 +55,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	CoInitialize(NULL);
 
-	BuildObjects();
+	BuildObjects(0);
 
 	return(true);
 }
@@ -375,6 +375,15 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			case VK_SPACE:
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
 				break;
+			case '9':
+				ReleaseObjects();
+				BuildObjects(0);
+				break;
+			case '0':
+				ReleaseObjects();
+				BuildObjects(1);
+				break;
+			
 			default:
 				break;
 			}
@@ -546,30 +555,77 @@ void CGameFramework::OnDestroy()
 
 #define _WITH_TERRAIN_PLAYER
 
-void CGameFramework::BuildObjects()
+void CGameFramework::BuildObjects(int SceneNum)
 {
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
+	switch (SceneNum)
+	{
+	case 0:
+	{
+		m_pScene = new CCanaleScene();
+		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-	m_pScene = new CScene();
-	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+		m_pCamera = m_pPlayer->GetCamera();
+		m_pPostProcessingShader = new CTextureToFullScreenShader();
+		m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
+		m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
+		D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
 
-	CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+		m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
 
-	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
-	m_pCamera = m_pPlayer->GetCamera();
+		// µª½º SRV ¾îÂ¼±¸..
+		D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
+		break;
+	}
+	case 1:
+	{
+		m_pScene = new CNightScene();
+		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-	m_pPostProcessingShader = new CTextureToFullScreenShader();
-	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
-	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+		m_pCamera = m_pPlayer->GetCamera();
+		m_pPostProcessingShader = new CTextureToFullScreenShader();
+		m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
+		m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
+		D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
+		DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+		m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
 
-	DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
-	m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
+		// µª½º SRV ¾îÂ¼±¸..
+		D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
+		break;
+	}
+	default:
+		break;
+	}
 
-	// µª½º SRV ¾îÂ¼±¸..
-	D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
+	//m_pScene = new CScene();
+//	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+	// CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+	// 
+	// m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+	// m_pCamera = m_pPlayer->GetCamera();
+	// 
+	// m_pPostProcessingShader = new CTextureToFullScreenShader();
+	// m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
+	// m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
+	// 
+	// D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	// d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
+	// 
+	// DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+	// m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
+	// 
+	// // µª½º SRV ¾îÂ¼±¸..
+	// D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
 
 	m_pd3dCommandList->Close();
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };

@@ -38,6 +38,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	MyRegisterClass(hInstance);
 
 	while (!gNetwork.ReadytoConnect());
+	
 	// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
 	gNetwork.StartServer();
 
@@ -53,7 +54,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	gNetwork.SendReady();
 
 	WaitForSingleObject(g_event, INFINITE);
-
+	
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
 	gGameFramework.cl_id = gNetwork.Getmyid();
