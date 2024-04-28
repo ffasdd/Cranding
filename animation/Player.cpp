@@ -515,9 +515,8 @@ CLoginPlayer::CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
 
-	SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
-	SetScale(XMFLOAT3(20.0f, 20.0f, 20.0f));
-	Rotate(0.0f, 00.0f, 90.0f);
+	SetPosition(XMFLOAT3(0.0f, 0.0f, -50.0f));
+	SetScale(XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 	if (pAngrybotModel) delete pAngrybotModel;
 }
@@ -574,7 +573,7 @@ CCamera* CLoginPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetMaxVelocityY(40.0f);
 		m_pCamera = OnChangeCamera(LOGIN_SCENE_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.25f);
-		m_pCamera->SetOffset(XMFLOAT3(20.0f, 80.0f, -70.0f));
+		m_pCamera->SetOffset(XMFLOAT3(0.0f, 75.0f, -80.0f));
 		m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 75.0f);
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
