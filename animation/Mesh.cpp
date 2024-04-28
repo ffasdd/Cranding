@@ -809,14 +809,6 @@ CBoundingBoxMesh::~CBoundingBoxMesh()
 	if (m_pd3dPositionBuffer) m_pd3dPositionBuffer->Unmap(0, NULL);
 }
 
-//void CBoundingBoxMesh::SetBoundingBoxMesh(CBoundingBoxMesh* pMesh)
-//{
-//	if (m_pBoundingBoxMesh) m_pBoundingBoxMesh->Release();
-//	m_pBoundingBoxMesh = pMesh;
-//
-//	if (pMesh) pMesh->AddRef();
-//}
-
 void CBoundingBoxMesh::UpdateVertexPosition(BoundingOrientedBox* pxmBoundingBox)
 {
 	XMFLOAT3 xmf3Corners[8];
