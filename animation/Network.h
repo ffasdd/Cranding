@@ -42,8 +42,11 @@ public: // thread send
 	void SendMovePlayer(XMFLOAT3 _pos);
 	void SendRotatePlayer(XMFLOAT3 _look,XMFLOAT3 _right, XMFLOAT3 _up);
 	void SendChangeAnimation(int curanimate, int prevanimate);
+	void SendChangeScene(int scenenum);
+	void SendAttack(bool is_attack);
 
 	void SendReady();
+
 public: // utils
 	int getmyid(int _id);
 
@@ -51,6 +54,7 @@ public:
 	int prev_remain = 0;
 	int my_id = 0;
 	int my_roomid = -1;
+	
 private:
 	SOCKET clientsocket;
 	char _buf[BUF_SIZE];

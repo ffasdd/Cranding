@@ -376,10 +376,12 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
 				break;
 			case '9':
+				gNetwork.SendChangeScene(9); // 9 == lobby?
 				ReleaseObjects();
 				BuildObjects(0);
 				break;
 			case '0':
+				gNetwork.SendChangeScene(0); // 0 == ingame? 
 				ReleaseObjects();
 				BuildObjects(1);
 				break;

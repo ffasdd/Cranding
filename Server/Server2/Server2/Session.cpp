@@ -138,6 +138,24 @@ void Session::send_change_animate_packet(int client_id, animateState animate, an
 	do_send(&p);
 }
 
+void Session::send_attack_packet(int client_id, bool is_attack)
+{
+	SC_ATTACK_PACKET p;
+	p.size = sizeof(SC_ATTACK_PACKET);
+	p.type = SC_ATTACK;
+	p.id = client_id;
+	do_send(&p);
+}
+
+void Session::send_change_scene(int client_id, int stagenum)
+{
+	SC_CHANGE_SCENE_PACKET p;
+	p.size = sizeof(SC_CHANGE_SCENE_PACKET);
+	p.type = SC_CHANGE_SCENE;
+	p.stage = stagenum;
+	do_send(&p);
+}
+
 void Session::send_game_start(int r_id)
 {
 	SC_GAMESTART_PACKET p;

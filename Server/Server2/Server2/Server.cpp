@@ -102,9 +102,7 @@ void Server::WorkerThread()
 		switch (ex_over->_comptype)
 		{
 		case COMP_TYPE::Accept: {
-			// 여기서 로비접속? 매칭? 
-			// 애초에 clients 에 담지말고 lobby 에 담는다
-			// 근데? 애초에 클라에서 ready를 눌렀을 때 connect를 걸면되는거아닌가? 
+
 			int c_id = get_new_client_id();
 			if (c_id != -1) {
 
@@ -249,7 +247,6 @@ void Server::ProcessPacket(int id, char* packet)
 	}
 				break;
 	case CS_ROTATE: {
-
 		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
 		int r_id = p->roomid;
 		ingameroom[r_id].ingamePlayer[id]->_look = p->look;
@@ -278,6 +275,33 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 	}
 							break;
+	case CS_CHANGE_SCENE: {
+		cout << " Change scenen" << endl;
+		CS_CHANGE_SCENE_PACKET* p = reinterpret_cast<CS_CHANGE_SCENE_PACKET*>(packet);
+		int scenenum = p->scenenum;
+		int r_id = p->roomid;
+		ingameroom[r_id].ingamePlayer[id]->_stage = scenenum;
+		ingameroom[r_id].ingamePlayer[id]->send_change_scene(id, scenenum);
+
+		for (auto& pl : ingameroom[r_id].ingamePlayer)
+		{
+			if (pl->_id == id)continue;
+			pl->send_change_scene(id, ingameroom[r_id].ingamePlayer[id]->_stage);
+		}
+	}
+						break;
+	case CS_ATTACK: {
+		CS_ATTACK_PACKET* p = reinterpret_cast<CS_ATTACK_PACKET*>(packet);
+		int r_id = p->roomid;
+		ingameroom[r_id].ingamePlayer[id]->_isAttack = p->isAttack;
+		ingameroom[r_id].ingamePlayer[id]->send_attack_packet(id, ingameroom[r_id].ingamePlayer[id]->_isAttack);
+		for (auto& pl : ingameroom[r_id].ingamePlayer)
+		{
+			if (pl->_id == id)continue;
+			pl->send_attack_packet(id,ingameroom[r_id].ingamePlayer[id]->_isAttack);
+		}
+	}
+				  break;
 
 	}
 }
@@ -342,9 +366,6 @@ void Server::ReadyToStart()
 				readySession.emplace_back(_session);
 			}
 
-			
-
-
 			if (readySession.size() == MAX_ROOM_USER)
 			{
 				
@@ -373,7 +394,7 @@ void Server::ReadyToStart()
 				{
 					pc->send_game_start(room_id);
 				}
-				// (1 2 )  (  3 4 ) 3, 4 
+				
 			}
 			else continue;
 		}

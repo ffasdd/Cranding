@@ -18,6 +18,7 @@ public:
 	int _id;
 	int _hp;
 	int _maxhp;
+	bool _isAttack = false;
 	SOCKET _socket;
 	XMFLOAT3 _pos;
 	XMFLOAT3 _look;
@@ -27,6 +28,7 @@ public:
 	int _prevremain;
 
 	int room_id;
+	int _stage;
 	
 	animateState animationstate;
 	animateState prevanimationstate;
@@ -203,6 +205,10 @@ public:
 	void send_test_packet(int client_id);
 
 	void send_change_animate_packet(int client_id, animateState animate, animateState prevanimate);
+
+	void send_attack_packet(int client_id, bool is_attack);
+
+	void send_change_scene(int client_id, int stagenum);
 
 };
 extern array<Session, MAX_USER> clients;

@@ -33,6 +33,7 @@ constexpr char SC_ROTATE_OBJECT = 10;
 constexpr char SC_CHANGE_ANIMATION = 13;
 constexpr char SC_START_GAME = 14;
 constexpr char SC_CHANGE_SCENE = 15;
+constexpr char SC_ATTACK = 16;
 
 
 constexpr char CS_TEST = 11;
@@ -143,6 +144,14 @@ struct CS_START_PACKET {
 struct CS_CHANGE_SCENE_PACKET {
 	unsigned char size;
 	char type;
+	int scenenum;
+	int roomid;
+};
+struct CS_ATTACK_PACKET {
+	unsigned char size;
+	char type;
+	int roomid;
+	bool isAttack;
 };
 
 struct SC_GAMESTART_PACKET {
@@ -233,6 +242,13 @@ struct SC_LOGIN_FAIL_PACKET {
 struct SC_CHANGE_SCENE_PACKET {
 	unsigned char size;
 	char type;
+	int stage;
+};
+struct SC_ATTACK_PACKET {
+	unsigned char size;
+	char type;
+	int id;
+	bool isAttack;
 };
 
 #pragma pack (pop)

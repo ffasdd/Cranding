@@ -38,7 +38,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	MyRegisterClass(hInstance);
 
 	while (!gNetwork.ReadytoConnect());
-	
+
 	// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
 	gNetwork.StartServer();
 
@@ -54,7 +54,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	gNetwork.SendReady();
 
 	WaitForSingleObject(g_event, INFINITE);
-	
+
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
 	gGameFramework.cl_id = gNetwork.Getmyid();
@@ -77,7 +77,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			}
 		}
 		else
-		{	
+		{
 			if (gGameFramework.m_pPlayer != NULL)
 			{
 				for (int i = 0; i < g_clients.size(); ++i)
@@ -133,7 +133,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	::UpdateWindow(hMainWnd);
 
 
-	return(TRUE); 
+	return(TRUE);
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

@@ -105,6 +105,14 @@ void Network::SendProcess(SENDTYPE sendtype)
 		SendChangeAnimation(g_clients[my_id].getAnimation(),g_clients[my_id].getprevAnimation());
 		break;
 	}
+	case SENDTYPE::CHANGE_SCENE_LOBBY: {
+		//SendChangeScene();// 로비번호
+		break;
+	}
+	case SENDTYPE::ATTACK: {
+		SendAttack(g_clients[my_id].getAttack());
+		break;
+	}
 	}
 }
 
@@ -199,12 +207,13 @@ void Network::ProcessPacket(char* buf)
 		SetEvent(g_event);
 		break;
 	}
-
-	case SC_TEST: {
-		SC_TEST_PACKET* p = reinterpret_cast<SC_TEST_PACKET*>(buf);
-		cout << " Test Success " << endl;
+	case SC_ATTACK: {
+		SC_ATTACK_PACKET* p = reinterpret_cast<SC_ATTACK_PACKET*>(&buf);
+		int ob_id = p->id;
+		g_clients[ob_id].setAttack(p->isAttack);
 		break;
 	}
+
 	}
 }
 
@@ -257,6 +266,26 @@ void Network::SendChangeAnimation(int curanimate, int prevanimate )
 	p.type = CS_CHANGE_ANIMATION;
 	p.a_state = curanimate;
 	p.prev_a_state = prevanimate;
+	p.roomid = my_roomid;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendChangeScene(int scenenum)
+{
+	CS_CHANGE_SCENE_PACKET p;
+	p.size = sizeof(CS_CHANGE_SCENE_PACKET);
+	p.type = CS_CHANGE_SCENE;
+	p.roomid = my_roomid;
+	p.scenenum = scenenum;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendAttack(bool is_attack)
+{
+	CS_ATTACK_PACKET p;
+	p.size = sizeof(CS_ATTACK_PACKET);
+	p.type = CS_ATTACK;
+	p.isAttack = is_attack;
 	p.roomid = my_roomid;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
