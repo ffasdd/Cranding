@@ -375,13 +375,15 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			case VK_SPACE:
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
 				break;
+
 			case '9':
-				gNetwork.SendChangeScene(9); // 9 == lobby?
 				ReleaseObjects();
 				BuildObjects(0);
 				break;
 			case '0':
-				gNetwork.SendChangeScene(0); // 0 == ingame? 
+
+				gNetwork.SendReady();
+				while (!gNetwork.gamestart);
 				ReleaseObjects();
 				BuildObjects(1);
 				break;
@@ -448,7 +450,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 			break;
 		}
 
-		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetPosition(position);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetPosition(position);
 	}
 }
 
@@ -476,10 +478,10 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 			others_id = n;
 			break;
 		}
-		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetLook(Look.x, Look.y, Look.z);
-		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetUp(0,1,0);
-		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetRight(Right.x, Right.y, Right.z);
-		m_pScene->m_ppHierarchicalGameObjects[others_id]->SetScale(10.0f, 10.0f, 10.0f);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetLook(Look.x, Look.y, Look.z);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(0,1,0);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetRight(Right.x, Right.y, Right.z);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetScale(10.0f, 10.0f, 10.0f);
 	}
 }
 
@@ -506,15 +508,15 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 		{
 			
 		// 이전 애니메이션 번호, 이후 애니메이션 번호 저장
-			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_bIsBlending = true;
-
-			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
-			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->m_nAnimationAfter = curAni;
-
-			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackEnable(prevAni, false);
-			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackEnable(curAni, true);
-
-			m_pScene->m_ppHierarchicalGameObjects[others_id]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
+														
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationAfter = curAni;
+														    
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackEnable(prevAni, false);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackEnable(curAni, true);
+														   
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
 
 			g_clients[others_id].setprevAnimation(curAni);
 		}
@@ -584,7 +586,7 @@ void CGameFramework::BuildObjects(int SceneNum)
 		break;
 	}
 	case 1:
-	{
+	{// 1  []  []   [] 
 		m_pScene = new CNightScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 

@@ -213,6 +213,7 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			if (pl->_state != STATE::Ingame) continue;
 			if (pl->_id == id)continue;
+			if (pl->_stage != ingameroom[r_id].ingamePlayer[id]->_stage)continue;
 			if (can_see(id, pl->_id))
 				near_list.insert(pl->_id);
 		}
@@ -256,6 +257,7 @@ void Server::ProcessPacket(int id, char* packet)
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
 			if (pl->_id == id) continue;
+			if (pl->_stage != ingameroom[r_id].ingamePlayer[id]->_stage)continue;
 			pl->send_rotate_packet(id,ingameroom[r_id].ingamePlayer[id]->_look, ingameroom[r_id].ingamePlayer[id]->_right,
 				ingameroom[r_id].ingamePlayer[id]->_up);
 		}
@@ -271,6 +273,7 @@ void Server::ProcessPacket(int id, char* packet)
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
 			if (pl->_id == id)continue;
+			if (pl->_stage != ingameroom[r_id].ingamePlayer[id]->_stage)continue;
 			pl->send_change_animate_packet(id, ingameroom[r_id].ingamePlayer[id]->animationstate, ingameroom[r_id].ingamePlayer[id]->prevanimationstate);
 		}
 	}
@@ -297,11 +300,14 @@ void Server::ProcessPacket(int id, char* packet)
 		ingameroom[r_id].ingamePlayer[id]->send_attack_packet(id, ingameroom[r_id].ingamePlayer[id]->_isAttack);
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
+
 			if (pl->_id == id)continue;
+			if (pl->_stage != ingameroom[r_id].ingamePlayer[id]->_stage)continue;
 			pl->send_attack_packet(id,ingameroom[r_id].ingamePlayer[id]->_isAttack);
 		}
 	}
 				  break;
+	
 
 	}
 }
@@ -352,7 +358,6 @@ int Server::get_new_room_id(std::unordered_map<int, Room> rooms)
 
 void Server::ReadyToStart()
 {
-
 	std::deque<Session*> readySession;
 	int usercnt = 0;
 	while (true)

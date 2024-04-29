@@ -96,8 +96,6 @@ void Session::send_move_packet(int client_id,XMFLOAT3 _pos)
 	do_send(&p);
 }
 
-
-
 void Session::send_remove_packet(int client_id)
 {
 	SC_REMOVE_OBJECT_PACKET p;

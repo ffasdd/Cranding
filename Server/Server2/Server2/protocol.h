@@ -243,6 +243,7 @@ struct SC_CHANGE_SCENE_PACKET {
 	unsigned char size;
 	char type;
 	int stage;
+	int id;
 };
 struct SC_ATTACK_PACKET {
 	unsigned char size;

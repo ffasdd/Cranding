@@ -106,7 +106,11 @@ void Network::SendProcess(SENDTYPE sendtype)
 		break;
 	}
 	case SENDTYPE::CHANGE_SCENE_LOBBY: {
-		//SendChangeScene();// 로비번호
+		SendChangeScene(9);// 로비번호
+		break;
+	}
+	case SENDTYPE::CHANGE_SCENE_INGAME: {
+		SendChangeScene(0);
 		break;
 	}
 	case SENDTYPE::ATTACK: {
@@ -147,6 +151,7 @@ void Network::ProcessPacket(char* buf)
 	switch (buf[1])
 	{
 	case SC_LOGIN_INFO: {
+		// 로그인 되자마자 로그인 씬 
 		SC_LOGIN_INFO_PACKET* p = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
 		my_id = getmyid(p->id);
 
@@ -159,6 +164,8 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setCharacterType(p->charactertype);
 		g_clients[my_id].setAnimation(int(p->a_state));
 		g_clients[my_id].setprevAnimation(int(p->prev_state));
+
+		SetEvent(loginevent);
 		break;
 	}
 
@@ -204,7 +211,10 @@ void Network::ProcessPacket(char* buf)
 	case SC_START_GAME: {
 		SC_GAMESTART_PACKET* p = reinterpret_cast<SC_GAMESTART_PACKET*>(buf);
 		my_roomid = p->roomid;
-		SetEvent(g_event);
+		gamestart = true;
+		//SetEvent(startevent);
+		//Start가 되었을 때 인게임 씬으로 이동 
+
 		break;
 	}
 	case SC_ATTACK: {
@@ -213,7 +223,18 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setAttack(p->isAttack);
 		break;
 	}
-
+	case SC_CHANGE_SCENE: {
+		SC_CHANGE_SCENE_PACKET* p = reinterpret_cast<SC_CHANGE_SCENE_PACKET*>(&buf);
+		int ob_id = p->id;
+		g_clients[ob_id].scene_num = p->stage;
+		break;
+	}
+	case SC_REMOVE_OBJECT: {
+		SC_REMOVE_OBJECT_PACKET* p = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(&buf);
+		int ob_id = p->id;
+		g_clients.erase(ob_id);
+		break;
+	}
 	}
 }
 

@@ -17,8 +17,8 @@ unordered_map<int, Session> g_clients;
 
 
 concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
-HANDLE g_event = CreateEvent(NULL, FALSE, FALSE, NULL);
-
+HANDLE loginevent = CreateEvent(NULL, FALSE, FALSE, NULL);
+//HANDLE startevent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -48,12 +48,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	cin >> name;
 	gNetwork.SendLoginfo(name);
 	cout << "send to login info " << endl;
+
 	system("cls");
 
-	cout << " Ready " << endl;
-	gNetwork.SendReady();
-
-	WaitForSingleObject(g_event, INFINITE);
+	WaitForSingleObject(loginevent, INFINITE);
+	// 로그인 완료 
 
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
@@ -80,11 +79,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		{
 			if (gGameFramework.m_pPlayer != NULL)
 			{
-				for (int i = 0; i < g_clients.size(); ++i)
+				if (gNetwork.gamestart)
 				{
-					gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
-					gGameFramework.myFunc_SetLookRight(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
-					gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
+					for (int i = 0; i < g_clients.size(); ++i)
+					{
+						gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
+						gGameFramework.myFunc_SetLookRight(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
+						gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
+					}
 				}
 			}
 			gGameFramework.FrameAdvance();

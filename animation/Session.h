@@ -35,7 +35,6 @@ public:
 
 
 	int scene_num = -1;
-
 private:
 	int m_id  = -1;
 	int r_id = -1;
