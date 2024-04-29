@@ -122,3 +122,15 @@ public:
 	virtual void Update(float fTimeElapsed);
 };
 
+class CLoginPlayer : public CPlayer
+{
+public:
+	CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext = NULL);
+	virtual ~CLoginPlayer();
+
+public:
+	virtual CCamera* ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
+
+	virtual void OnPlayerUpdateCallback(float fTimeElapsed);
+	virtual void OnCameraUpdateCallback(float fTimeElapsed);
+};
