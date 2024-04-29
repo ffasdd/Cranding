@@ -28,6 +28,21 @@ CScene::~CScene()
 {
 }
 
+bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
+{
+	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
+	{
+		//for (int j = 0; j < m_ppObjectShaders[i]->m_nObjects; j++)
+		//{
+		//CGameObject* pGameObject = m_ppObjectShaders[i]->m_ppObjects[j];
+		CGameObject* pGameObject = m_ppHierarchicalGameObjects[i];
+
+		if (pGameObject->m_xmBoundingBox.Intersects(pTargetGameObject->m_xmBoundingBox)) return(true);
+		//}
+	}
+	return(false);
+}
+
 void CScene::BuildDefaultLightsAndMaterials()
 {
 	m_nLights = 1;
@@ -626,6 +641,17 @@ void CScene::CreateShaderResourceViews(ID3D12Device* pd3dDevice, int nResources,
 			m_pDescriptorHeap->m_d3dSrvGPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
 		}
 	}
+}
+
+void CScene::RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	m_pBoundingBoxShader->Render(pd3dCommandList, pCamera);
+	for (int i = 0; i < m_nObjectShaders; i++)
+	{
+		if (m_ppObjectShaders[i]) m_ppObjectShaders[i]->RenderBoundingBox(pd3dCommandList, pCamera);
+	}
+
+	m_pPlayer->RenderBoundingBox(pd3dCommandList, pCamera);
 }
 
 bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)

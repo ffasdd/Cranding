@@ -576,6 +576,8 @@ void CGameFramework::ReleaseObjects()
 // 플레이어 조작 부분 -> 상하좌우, 마우스
 void CGameFramework::ProcessInput()
 {
+	m_pPlayer->m_xmf3BeforeCollidedPosition = m_pPlayer->GetPosition();
+
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
@@ -689,6 +691,12 @@ void CGameFramework::AnimateObjects()
 	if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
 	m_pPlayer->Animate(fTimeElapsed);
+
+	m_pPlayer->UpdateBoundingBox();
+	if (m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+	{
+		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
+	}
 }
 
 void CGameFramework::WaitForGpuComplete()
@@ -754,6 +762,7 @@ void CGameFramework::FrameAdvance()
 
 		m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera, &m_nDrawOption);
 
+		if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 		//m_pScene->Render(m_pd3dCommandList, m_pCamera);
 
 	}

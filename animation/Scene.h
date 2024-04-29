@@ -73,6 +73,12 @@ public:
     CScene();
     ~CScene();
 
+	// 충돌체크 함수
+	virtual bool CheckObjectByObjectCollisions(CGameObject* pGameObject);
+
+	// 바운딩박스
+	void RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
+
 	bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
@@ -101,7 +107,7 @@ protected:
 
 	static ID3D12DescriptorHeap			*m_pd3dCbvSrvDescriptorHeap;
 
-
+	CBoundingBoxShader* m_pBoundingBoxShader = NULL;
 
 public:
 	static CDescriptorHeap* m_pDescriptorHeap;

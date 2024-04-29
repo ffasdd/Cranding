@@ -817,6 +817,16 @@ CGameObject::~CGameObject()
 	if (m_pSkinnedAnimationController) delete m_pSkinnedAnimationController;
 }
 
+void CGameObject::UpdateBoundingBox()
+{
+	OnPrepareRender();
+	if (m_pMesh)
+	{
+		m_pMesh->m_xmBoundingBox.Transform(m_xmBoundingBox, XMLoadFloat4x4(&m_xmf4x4World));
+		XMStoreFloat4(&m_xmBoundingBox.Orientation, XMQuaternionNormalize(XMLoadFloat4(&m_xmBoundingBox.Orientation)));
+	}
+}
+
 void CGameObject::AddRef() 
 { 
 	m_nReferences++; 
@@ -938,6 +948,7 @@ void CGameObject::Animate(float fTimeElapsed)
 	// 나머지는 그냥 넘긴다..
 	//
 	OnPrepareRender();
+	UpdateBoundingBox();
 
 	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->AdvanceTime(fTimeElapsed, this);
 
@@ -958,6 +969,8 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 	if (m_pMesh)
 	{
 		UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
+
+		m_pMesh->OnPreRender(pd3dCommandList, NULL);
 
 		//SetRootParameter(pd3dCommandList);
 		if (m_nMaterials > 0)
