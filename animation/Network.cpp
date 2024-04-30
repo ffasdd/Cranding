@@ -187,6 +187,7 @@ void Network::ProcessPacket(char* buf)
 	}
 			
 	case SC_MOVE_OBJECT: {
+	
 		SC_MOVE_OBJECT_PACKET* p = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(buf);
 		int ob_id = getmyid(p->id);
 		std::cout << ob_id << " Player Move " << endl;

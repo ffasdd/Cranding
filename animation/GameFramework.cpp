@@ -5,6 +5,8 @@
 #include "stdafx.h"
 #include "GameFramework.h"
 
+
+
 CGameFramework::CGameFramework()
 {
 	m_pdxgiFactory = NULL;
@@ -300,22 +302,23 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		::GetCursorPos(&m_ptOldCursorPos);
 		if (g_clients[cl_id].getCharacterType() == 0)
 		{
-			if (g_clients[cl_id].getAnimation() != (int)animateState::SWORD_ATTACK_2)
-			{
-				g_clients[cl_id].setprevAnimation(g_clients[cl_id].getAnimation()); // 이전 애니메이션이 담김 
-				g_clients[cl_id].setAnimation((int)animateState::SWORD_ATTACK_2);
-			}
-
+			g_clients[cl_id].setAttack(true);
+			//if (g_clients[cl_id].getAnimation() != (int)animateState::SWORD_ATTACK_2)
+			//{
+			//	g_clients[cl_id].setprevAnimation(g_clients[cl_id].getAnimation()); // 이전 애니메이션이 담김 
+			//	g_clients[cl_id].setAnimation((int)animateState::SWORD_ATTACK_2);
+			//}
+			gNetwork.SendAttack(g_clients[cl_id].getAttack());
 		}
-		else if (g_clients[cl_id].getCharacterType() == 1)
-		{
-			if (g_clients[cl_id].getAnimation() != (int)animateState::SHOOTING)
-			{
-				g_clients[cl_id].setprevAnimation(g_clients[cl_id].getAnimation()); // 이전 애니메이션이 담김 
-				g_clients[cl_id].setAnimation((int)animateState::SHOOTING);
-			}
-		}
-		gNetwork.SendChangeAnimation(g_clients[cl_id].getAnimation(), g_clients[cl_id].getprevAnimation());
+		//else if (g_clients[cl_id].getCharacterType() == 1)
+		//{
+		//	if (g_clients[cl_id].getAnimation() != (int)animateState::SHOOTING)
+		//	{
+		//		g_clients[cl_id].setprevAnimation(g_clients[cl_id].getAnimation()); // 이전 애니메이션이 담김 
+		//		g_clients[cl_id].setAnimation((int)animateState::SHOOTING);
+		//	}
+		//}
+	
 
 		break;
 

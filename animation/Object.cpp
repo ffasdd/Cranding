@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "Scene.h"
 
+extern Network g_network;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers, int nRootParameters)
@@ -726,6 +727,8 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							if (m_nAttackAniNum == 8) m_nAttackAniNum = 9;
 							else m_nAttackAniNum = 8;
 							this->m_bIsAttack = false;
+							
+							g_network.SendAttack(false);
 						}
 					}
 
