@@ -438,7 +438,6 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	}
 	else
 	{
-		// 이 부분들 수정 필요함
 		int others_id = -1;
 		switch (cl_id) {
 		case 0:
