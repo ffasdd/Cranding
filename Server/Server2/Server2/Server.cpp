@@ -113,7 +113,7 @@ void Server::WorkerThread()
 				}
 				if (c_id == 0)
 					clients[c_id]._pos = { 0.0f,0.0f,0.0f };
-				else 
+				else
 					clients[c_id]._pos = { 10.0f,0.0f,10.0f };
 				clients[c_id]._id = c_id;
 				clients[c_id]._name[0] = 0;
@@ -178,7 +178,6 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_READY_GAME: {
 		CS_READY_PACKET* p = reinterpret_cast<CS_READY_PACKET*>(packet);
 		clients[id].isReady = true;
-		matchingqueue.push( &clients[id]);
 	}
 					  break;
 	case CS_LOGIN: {
@@ -190,9 +189,9 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Ingame;
 		}
-
+		matchingqueue.push(&clients[id]);
+		while (clients[id].room_id == -1);
 		clients[id].send_login_info_packet();
-	
 		// ADD X 
 	}
 				 break;
@@ -201,7 +200,7 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 		int r_id = p->roomid;
 		ingameroom[r_id].ingamePlayer[id]->_pos = p->pos;
-	
+
 
 		// view List 
 		unordered_set<int> near_list;
@@ -225,7 +224,7 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			auto& cpl = ingameroom[r_id].ingamePlayer[pl];
 			cpl->_v_lock.lock();
-			if (ingameroom[r_id].ingamePlayer[pl]->_view_list.count(id)) 
+			if (ingameroom[r_id].ingamePlayer[pl]->_view_list.count(id))
 			{
 				cpl->_v_lock.unlock();
 				ingameroom[r_id].ingamePlayer[pl]->send_move_packet(id, ingameroom[r_id].ingamePlayer[id]->_pos);
@@ -253,12 +252,12 @@ void Server::ProcessPacket(int id, char* packet)
 		ingameroom[r_id].ingamePlayer[id]->_look = p->look;
 		ingameroom[r_id].ingamePlayer[id]->_right = p->right;
 		ingameroom[r_id].ingamePlayer[id]->_up = p->up;
-		ingameroom[r_id].ingamePlayer[id]->send_rotate_packet(id,p->look,p->right,p->up);
+		ingameroom[r_id].ingamePlayer[id]->send_rotate_packet(id, p->look, p->right, p->up);
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
 			if (pl->_id == id) continue;
 			if (pl->_stage != ingameroom[r_id].ingamePlayer[id]->_stage)continue;
-			pl->send_rotate_packet(id,ingameroom[r_id].ingamePlayer[id]->_look, ingameroom[r_id].ingamePlayer[id]->_right,
+			pl->send_rotate_packet(id, ingameroom[r_id].ingamePlayer[id]->_look, ingameroom[r_id].ingamePlayer[id]->_right,
 				ingameroom[r_id].ingamePlayer[id]->_up);
 		}
 		break;
@@ -303,11 +302,11 @@ void Server::ProcessPacket(int id, char* packet)
 
 			if (pl->_id == id)continue;
 			if (pl->_stage != ingameroom[r_id].ingamePlayer[id]->_stage)continue;
-			pl->send_attack_packet(id,ingameroom[r_id].ingamePlayer[id]->_isAttack);
+			pl->send_attack_packet(id, ingameroom[r_id].ingamePlayer[id]->_isAttack);
 		}
 	}
 				  break;
-	
+
 
 	}
 }
@@ -344,7 +343,7 @@ int Server::get_new_client_id()
 
 }
 
-int Server::get_new_room_id(std::unordered_map<int, Room> rooms)
+int Server::get_new_room_id(unordered_map<int, Room>& rooms)
 {
 	for (int i = 0; i < MAX_ROOM; ++i)
 	{
@@ -352,59 +351,59 @@ int Server::get_new_room_id(std::unordered_map<int, Room> rooms)
 		{
 			return i;
 		}
+		else
+		{
+			if (rooms[i].fullcheck == false)
+				return i;
+		}
 	}
 	return -1;
 }
 
 void Server::ReadyToStart()
 {
-	std::deque<Session*> readySession;
-	int usercnt = 0;
 	while (true)
 	{
 		if (!matchingqueue.empty())
-		{	
+		{
 			Session* _session = nullptr;
 			bool sessionok = matchingqueue.try_pop(_session);
-			if (sessionok)
+
+			if (!sessionok) continue;
+
+			int room_id = get_new_room_id(ingameroom); // room ID를 부여받음 ;
 			{
-				readySession.emplace_back(_session);
+				lock_guard<mutex>{r_l};
+				ingameroom[room_id]._state = roomState::Ingame; // 상태를 Ingame상태로 바꿔준다 
+				ingameroom[room_id].ingamePlayer.emplace_back(_session);
+				clients[_session->_id].room_id = room_id;
+				if (ingameroom[room_id].ingamePlayer.size() == MAX_ROOM_USER)
+					ingameroom[room_id].fullcheck = true;
 			}
 
-			if (readySession.size() == MAX_ROOM_USER)
+			/*	readySession.emplace_back(_session);*/
+			//size_t readySessionSize = ingameroom[room_id].ingamePlayer.size();
+			// 방안에 있는 애들한테 다 add를 보내줘야함 
+
+			for (auto& ingameplayer : ingameroom[room_id].ingamePlayer)
 			{
-				
-				int room_id = get_new_room_id(ingameroom); // room ID를 부여받음 
-				ingameroom[room_id]._state = roomState::Ingame; // 상태를 Ingame상태로 바꿔준다 
-
-				size_t readySessionSize = readySession.size();
-
-				for (int i = 0; i < readySessionSize; i++)
+				for (auto& player : ingameroom[room_id].ingamePlayer)
 				{
-					ingameroom[room_id].ingamePlayer.emplace_back(readySession.front());
-			
-					readySession.pop_front();			
+					if (ingameplayer->_id == player->_id)continue;
+					player->send_add_info_packet(ingameplayer->_id);
 				}
-				// 방안에 있는 애들한테 다 add를 보내줘야함 
-				for (auto& ingameplayer : ingameroom[room_id].ingamePlayer)
-				{
-					for (auto& player : ingameroom[room_id].ingamePlayer)
-					{
-						if (ingameplayer->_id == player->_id)continue;
-						player->send_add_info_packet(ingameplayer->_id);
-					}
-				}
-				
+			}
+
+			if (ingameroom[room_id].ingamePlayer.size() == MAX_ROOM_USER)
+			{
 				for (auto& pc : ingameroom[room_id].ingamePlayer)
 				{
 					pc->send_game_start(room_id);
 				}
-				
 			}
-			else continue;
 		}
 		else
-			this_thread::sleep_for(1s);
+			this_thread::sleep_for(1ms);
 
 	}
 }

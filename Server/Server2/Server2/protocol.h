@@ -171,6 +171,7 @@ struct SC_LOGIN_INFO_PACKET {
 	int		exp;
 	int		level;
 	int		charactertype;
+	int		room_id;
 
 	XMFLOAT3 pos;
 	XMFLOAT3 look;

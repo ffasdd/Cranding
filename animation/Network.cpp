@@ -156,7 +156,7 @@ void Network::ProcessPacket(char* buf)
 		// 로그인 되자마자 로그인 씬 
 		SC_LOGIN_INFO_PACKET* p = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
 		my_id = getmyid(p->id);
-
+		my_roomid = p->room_id;
 		g_clients[my_id].setId(my_id);
 		g_clients[my_id].setHp(p->hp);
 		g_clients[my_id].setPos(p->pos);
@@ -166,7 +166,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setCharacterType(p->charactertype);
 		g_clients[my_id].setAnimation(int(p->a_state));
 		g_clients[my_id].setprevAnimation(int(p->prev_state));
-		gamestart = true;
+		
 		SetEvent(loginevent);
 		break;
 	}
@@ -214,7 +214,7 @@ void Network::ProcessPacket(char* buf)
 	case SC_START_GAME: {
 		SC_GAMESTART_PACKET* p = reinterpret_cast<SC_GAMESTART_PACKET*>(buf);
 		my_roomid = p->roomid;
-
+		gamestart = true;
 		//SetEvent(startevent);
 		//Start가 되었을 때 인게임 씬으로 이동 
 

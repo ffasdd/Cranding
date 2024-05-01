@@ -36,6 +36,7 @@ void Session::send_login_info_packet()
 	p.up = { 0.0f,1.0f,0.0f };
 	p.right = { 1.0f,0.0f,0.0f };
 	p.charactertype = clients[_id].characterType;
+	p.room_id = clients[_id].room_id;
 
 	if (clients[_id].characterType == 0)
 	{

@@ -28,7 +28,7 @@ public:
 
 	bool can_see(int to, int from);
 	int get_new_client_id();
-	int get_new_room_id(std::unordered_map<int,Room> rooms);
+	int get_new_room_id(unordered_map<int,Room>& rooms);
 
 	void ReadyToStart(); // 로비 관찰 스레드 함수 
 	
@@ -53,7 +53,7 @@ public:
 	// 1 - [ 3 , 4, 5 ]
 	// room 안에 array 두어서 Room 으로 전체를 관리한다? 
 
-
+	mutex r_l;
 
 
 	int readycnt = 0;
