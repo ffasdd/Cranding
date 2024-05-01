@@ -7,7 +7,7 @@
 #include "Shader.h"
 #include "Scene.h"
 
-extern Network g_network;
+extern Network gNetwork;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers, int nRootParameters)
@@ -728,7 +728,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							else m_nAttackAniNum = 8;
 							this->m_bIsAttack = false;
 							
-							g_network.SendAttack(false);
+							gNetwork.SendAttack(false);
 						}
 					}
 
@@ -941,6 +941,7 @@ void CGameObject::Animate(float fTimeElapsed)
 	// 나머지는 그냥 넘긴다..
 	//
 	OnPrepareRender();
+
 
 	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->AdvanceTime(fTimeElapsed, this);
 

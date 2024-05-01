@@ -452,7 +452,6 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 				{
 					if (g_clients[c_id].getAnimation() != (int)animateState::SWORD_MOVE)
 					{
-						cout << g_clients[c_id].getAnimation() << " cirani" << endl;
 						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation()); // 이전 애니메이션이 담김 
 						g_clients[c_id].setAnimation((int)animateState::SWORD_MOVE);
 					}

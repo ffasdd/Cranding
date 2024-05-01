@@ -521,7 +521,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 														   
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
 
-			g_clients[others_id].setprevAnimation(curAni);
+			g_clients[others_id + 1].setprevAnimation(curAni);
 		}
 
 		//float fTimeElapsed = m_GameTimer.GetTimeElapsed();
@@ -741,9 +741,6 @@ void CGameFramework::ProcessInput()
 				m_pPlayer->Move(xmf3Velocity, false);
 				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
 				g_sendqueue.push(SENDTYPE::MOVE);
-
-	
-				
 
 			}
 		}

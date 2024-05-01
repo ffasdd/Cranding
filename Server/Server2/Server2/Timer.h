@@ -1,5 +1,7 @@
 #pragma once
 #include"pch.h"
+#include"Over_Exp.h"
+
 enum class EVENT_TYPE : int  {
 	EV_MOVE,
 	EV_ATTACK,
@@ -7,6 +9,10 @@ enum class EVENT_TYPE : int  {
 
 class Timer
 {
+public:
+	Timer();
+	~Timer();
+
 public:
 	int obj_id;
 	chrono::system_clock::time_point wakeup_time;
@@ -16,5 +22,14 @@ public:
 	{
 		return (wakeup_time > L.wakeup_time);
 	}
+
+private:
+	bool isRunning = false;
+	thread m_timerthread;
+	concurrency::concurrent_priority_queue<EVENT_TYPE> timer_queue;
+	std::mutex m_TimerQueueLock;
+public:
+	void TimerThread();
+	void InitTimerQueue(EVENT_TYPE ev);
 };
-extern concurrency::concurrent_priority_queue<Timer> timer_queue;
+ 
