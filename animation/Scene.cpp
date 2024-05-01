@@ -103,6 +103,9 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 {
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
+	m_pBoundingBoxShader = new CBoundingBoxShader();
+	m_pBoundingBoxShader->CreateShader(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
+
 	m_pDescriptorHeap = new CDescriptorHeap();
 	CreateCbvSrvDescriptorHeaps(pd3dDevice, 0, 500); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
 
@@ -646,9 +649,9 @@ void CScene::CreateShaderResourceViews(ID3D12Device* pd3dDevice, int nResources,
 void CScene::RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	m_pBoundingBoxShader->Render(pd3dCommandList, pCamera);
-	for (int i = 0; i < m_nObjectShaders; i++)
+	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
-		if (m_ppObjectShaders[i]) m_ppObjectShaders[i]->RenderBoundingBox(pd3dCommandList, pCamera);
+		if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->RenderBoundingBox(pd3dCommandList, pCamera);
 	}
 
 	m_pPlayer->RenderBoundingBox(pd3dCommandList, pCamera);

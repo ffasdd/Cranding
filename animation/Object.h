@@ -391,6 +391,9 @@ public:
 	// 바운딩 박스
 	void UpdateBoundingBox();
 	BoundingOrientedBox				m_xmBoundingBox = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	void RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+	CBoundingBoxMesh* m_pBoundingBoxMesh = NULL;
+	void SetBoundingBoxMesh(CBoundingBoxMesh* pMesh);
 
 	// 상하체 분리 변수
 	bool							m_bUpperBody = false;

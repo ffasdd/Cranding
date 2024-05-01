@@ -799,11 +799,17 @@ CGameObject::CGameObject(int nMaterials) : CGameObject()
 		m_ppMaterials = new CMaterial*[m_nMaterials];
 		for(int i = 0; i < m_nMaterials; i++) m_ppMaterials[i] = NULL;
 	}
+
+	//CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
+	//SetBoundingBoxMesh(pBoundingBoxMesh);
 }
 
 CGameObject::~CGameObject()
 {
 	if (m_pMesh) m_pMesh->Release();
+
+	if (m_pBoundingBoxMesh) m_pBoundingBoxMesh->Release();
+	m_pBoundingBoxMesh = NULL;
 
 	if (m_nMaterials > 0)
 	{
@@ -825,6 +831,22 @@ void CGameObject::UpdateBoundingBox()
 		m_pMesh->m_xmBoundingBox.Transform(m_xmBoundingBox, XMLoadFloat4x4(&m_xmf4x4World));
 		XMStoreFloat4(&m_xmBoundingBox.Orientation, XMQuaternionNormalize(XMLoadFloat4(&m_xmBoundingBox.Orientation)));
 	}
+}
+
+void CGameObject::RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	if (m_pBoundingBoxMesh)
+	{
+		m_pBoundingBoxMesh->UpdateVertexPosition(&m_xmBoundingBox);
+		m_pBoundingBoxMesh->Render(pd3dCommandList);
+	}
+}
+
+void CGameObject::SetBoundingBoxMesh(CBoundingBoxMesh* pMesh)
+{
+	if (m_pBoundingBoxMesh) m_pBoundingBoxMesh->Release();
+	m_pBoundingBoxMesh = pMesh;
+	if (pMesh) pMesh->AddRef();
 }
 
 void CGameObject::AddRef() 
@@ -1534,6 +1556,9 @@ CLoadedModelInfo *CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device *pd
 		}
 	}
 
+	//CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
+	//SetBoundingBoxMesh(pBoundingBoxMesh);
+
 #ifdef _WITH_DEBUG_FRAME_HIERARCHY
 	TCHAR pstrDebug[256] = { 0 };
 	_stprintf_s(pstrDebug, 256, "Frame Hierarchy\n"));
@@ -1647,6 +1672,10 @@ CPlayerObject::CPlayerObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList
 
 	SetChild(pPlayerModel->m_pModelRootObject, true);
 	m_pSkinnedAnimationController = new CPlayerAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pPlayerModel);
+
+	// ** 여기에서 만들어주는게 맞을까
+	CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
+	SetBoundingBoxMesh(pBoundingBoxMesh);
 }
 
 CPlayerObject::~CPlayerObject()
@@ -1661,6 +1690,10 @@ CMapObject::CMapObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3d
 	if (!pMapModel) pMapModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/mapforzz.bin", NULL);
 
 	SetChild(pMapModel->m_pModelRootObject, true);
+
+	// ** 여기에서 만드는게 맞을까..............
+	CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
+	SetBoundingBoxMesh(pBoundingBoxMesh);
 }
 
 CMapObject::~CMapObject()

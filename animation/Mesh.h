@@ -41,8 +41,12 @@ public:
 
 public:
 	char							m_pstrMeshName[64] = { 0 };
+	UINT							m_nStride = 0;
 
 protected:
+	UINT							m_nVertexBufferViews = 0;
+	D3D12_VERTEX_BUFFER_VIEW* m_pd3dVertexBufferViews = NULL;
+
 	UINT							m_nType = 0x00;
 
 	XMFLOAT3						m_xmf3AABBCenter = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -254,4 +258,18 @@ public:
 	virtual void ReleaseUploadBuffers();
 
 	virtual void OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext);
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+class CBoundingBoxMesh : public CMesh
+{
+public:
+	CBoundingBoxMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual ~CBoundingBoxMesh();
+
+	XMFLOAT3* m_pcbMappedPositions = NULL;
+
+	void UpdateVertexPosition(BoundingOrientedBox* pxmBoundingBox);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList);
 };

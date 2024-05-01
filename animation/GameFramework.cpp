@@ -355,6 +355,11 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 					m_nDrawOption = (int)wParam;
 					break;
 				}
+
+				case 'B': // 바운딩 박스 그리기
+					m_bRenderBoundingBox = !m_bRenderBoundingBox;
+					break;
+
 			case VK_SPACE:
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
 				break;
@@ -576,6 +581,7 @@ void CGameFramework::ReleaseObjects()
 // 플레이어 조작 부분 -> 상하좌우, 마우스
 void CGameFramework::ProcessInput()
 {
+	//if(m_pPlayer)
 	m_pPlayer->m_xmf3BeforeCollidedPosition = m_pPlayer->GetPosition();
 
 	static UCHAR pKeysBuffer[256];
@@ -679,6 +685,7 @@ void CGameFramework::ProcessInput()
 			}
 		}
 	}
+	//if(m_pPlayer)
 	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
 
 
