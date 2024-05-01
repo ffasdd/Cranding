@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "GameFramework.h"
+#include "UI.h"
 
 CGameFramework::CGameFramework()
 {
@@ -349,12 +350,14 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 					m_nDrawOption = (int)wParam;
 					break;
 				}
-				case '1':
+				case '0':
 					ReleaseObjects();
+					SceneNum = 0;
 					BuildObjects(0);
 					break;
-				case '2':
+				case '1':
 					ReleaseObjects();
+					SceneNum = 1;
 					BuildObjects(1);
 					break;
 				default:
@@ -432,11 +435,61 @@ void CGameFramework::OnDestroy()
 void CGameFramework::BuildObjects(int nScene)
 {
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
-
 	switch (nScene)
 	{
 	case 0:
 	{
+
+		m_pUILayer = new UILayer(m_nSwapChainBuffers, 4, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+
+		ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+		IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"Ravie", m_nWndClientHeight / 4.5f);
+		D2D1_RECT_F d2dRect = D2D1::RectF(-200.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+
+		WCHAR pstrOutputText[256];
+		wcscpy_s(pstrOutputText, 256, L"Cranding\n");
+		m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
+		/////////////////////////////////////////////////////////
+	
+		// 두 번째 텍스트 박스를 위한 위치 및 형식 설정
+		pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+		d2dRect = D2D1::RectF(-400.0f, 150.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+		IDWriteTextFormat* pdwTextFormat1 = m_pUILayer->CreateTextFormat(L"바탕체", m_nWndClientHeight / 10.0f);
+
+		// 두 번째 텍스트 박스에 "text2" 입력
+		WCHAR pstrOutputText2[256];
+		wcscpy_s(pstrOutputText2, 256, L"게임 시작\n");
+
+		// 두 번째 텍스트 박스 그리기
+		m_pUILayer->UpdateTextOutputs(1, pstrOutputText2, &d2dRect, pdwTextFormat1, pd2dBrush);
+	/////////////////////////////////////////////////////////////////////
+		// 세 번째 텍스트 박스를 위한 위치 및 형식 설정
+		pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+		d2dRect = D2D1::RectF(-400.0f, 250.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+		pdwTextFormat = m_pUILayer->CreateTextFormat(L"바탕체", m_nWndClientHeight / 10.0f);
+
+		// 세 번째 텍스트 박스에 "text2" 입력
+		WCHAR pstrOutputText3[256];
+		wcscpy_s(pstrOutputText3, 256, L"게임 방법\n");
+
+		// 세 번째 텍스트 박스 그리기
+		m_pUILayer->UpdateTextOutputs(2, pstrOutputText3, &d2dRect, pdwTextFormat, pd2dBrush);
+		////////////////////////////////////////////////////////////////////
+		// 네 번째 텍스트 박스를 위한 위치 및 형식 설정
+		pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+		d2dRect = D2D1::RectF(-400.0f, 350.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+		pdwTextFormat = m_pUILayer->CreateTextFormat(L"나눔바른펜", m_nWndClientHeight / 10.0f);
+
+		// 네 번째 텍스트 박스에 "text2" 입력
+		WCHAR pstrOutputText4[256];
+		wcscpy_s(pstrOutputText4, 256, L"게임 종료\n");
+
+		// 네 번째 텍스트 박스 그리기
+		m_pUILayer->UpdateTextOutputs(3, pstrOutputText4, &d2dRect, pdwTextFormat, pd2dBrush);
+		//////////////////////////////////////////////////////////////////
+
+
+
 		m_pScene = new CLoginScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
@@ -505,6 +558,12 @@ void CGameFramework::BuildObjects(int nScene)
 
 void CGameFramework::ReleaseObjects()
 {
+	if (SceneNum == 0) {
+
+		if (m_pUILayer) m_pUILayer->ReleaseResources();
+		if (m_pUILayer) delete m_pUILayer;
+	}
+
 	if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pScene) m_pScene->ReleaseObjects();
@@ -592,6 +651,11 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
+void CGameFramework::UpdateUI()
+{
+	m_pUILayer->UpdateTextOutputs(1, m_pszFrameRate, NULL, NULL, NULL);
+}
+
 //#define _WITH_PLAYER_TOP
 
 void CGameFramework::FrameAdvance()
@@ -641,6 +705,11 @@ void CGameFramework::FrameAdvance()
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 
 	WaitForGpuComplete();
+
+	if (SceneNum == 0)
+	{
+		m_pUILayer->Render(m_nSwapChainBufferIndex);
+	}
 
 #ifdef _WITH_PRESENT_PARAMETERS
 	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;

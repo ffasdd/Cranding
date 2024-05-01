@@ -629,7 +629,8 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject *pRootGam
 	}
 } 
 //*/
-//*
+
+
 void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGameObject)
 {
 	m_fTime += fTimeElapsed;
