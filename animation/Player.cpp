@@ -651,7 +651,7 @@ CLoginPlayer::CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
 
-	SetPosition(XMFLOAT3(0.0f, 0.0f, -50.0f));
+	SetPosition(XMFLOAT3(-5.0f, 0.0f, -50.0f));
 	SetScale(XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 	if (pAngrybotModel) delete pAngrybotModel;
