@@ -297,7 +297,6 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		// 좌클릭으로 공격
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
-		//gNetwork.SendTest();
 		::GetCursorPos(&m_ptOldCursorPos);
 		if (g_clients[cl_id].getCharacterType() == 0)
 		{

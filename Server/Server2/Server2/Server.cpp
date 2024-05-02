@@ -238,11 +238,11 @@ void Server::ProcessPacket(int id, char* packet)
 				ingameroom[r_id].ingamePlayer[id]->send_add_info_packet(pl);
 		}
 
-		for (auto& pl : old_vlist)
-			if (0 == near_list.count(pl)) {
-				ingameroom[r_id].ingamePlayer[id]->send_remove_packet(pl);
-				ingameroom[r_id].ingamePlayer[pl]->send_remove_packet(id);
-			}
+		//for (auto& pl : old_vlist)
+		//	if (0 == near_list.count(pl)) {
+		//		ingameroom[r_id].ingamePlayer[id]->send_remove_packet(pl);
+		//		ingameroom[r_id].ingamePlayer[pl]->send_remove_packet(id);
+		//	}
 		// ------------------------------------------
 	}
 				break;
@@ -373,7 +373,7 @@ void Server::ReadyToStart()
 
 			int room_id = get_new_room_id(ingameroom); // room ID를 부여받음 ;
 			{
-				lock_guard<mutex>{r_l};
+				lock_guard<mutex> rl{r_l};
 				ingameroom[room_id]._state = roomState::Ingame; // 상태를 Ingame상태로 바꿔준다 
 				ingameroom[room_id].ingamePlayer.emplace_back(_session);
 				clients[_session->_id].room_id = room_id;
