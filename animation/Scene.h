@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------
+dma//-----------------------------------------------------------------------------
 // File: Scene.h
 //-----------------------------------------------------------------------------
 
@@ -155,20 +155,23 @@ public:
 	ID3D12Resource						*m_pd3dcbLights = NULL;
 	LIGHTS								*m_pcbMappedLights = NULL;
 };
-class CCanaleScene : public CScene
+
+class CLoginScene : public CScene
 {
 public:
-	CCanaleScene() { }
-	~CCanaleScene() { }
+	CLoginScene() { }
+	~CLoginScene() { }
+
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 };
 
-class CNightScene : public CScene
+class CLobbyScene : public CScene
 {
 public:
-	CNightScene() { }
-	~CNightScene() { }
+	CLobbyScene() { }
+	~CLobbyScene() { }
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 };
+

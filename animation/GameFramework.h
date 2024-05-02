@@ -26,6 +26,8 @@ extern Network							gNetwork;
 
 
 
+class UILayer;
+
 class CGameFramework
 {
 public:
@@ -46,8 +48,9 @@ public:
 
 	void ChangeSwapChainState();
 
-    void BuildObjects(int SceneNum);
-    void ReleaseObjects();
+   // void BuildObjects();
+	void BuildObjects(int nScene);
+	void ReleaseObjects();
 
     void ProcessInput();
     void AnimateObjects();
@@ -56,9 +59,12 @@ public:
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
 
+	void UpdateUI();
+
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+
 
 	// 서버로부터 받은 좌표 렌더링
 public:
@@ -72,6 +78,9 @@ public:
 	void myFunc_SetAnimation(int n, int id, int prevAni, int curAni);
 
 	CScene* m_pScene = NULL;
+
+	int SceneNum = 0;
+
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 
@@ -114,6 +123,9 @@ private:
 
 
 	CCamera						*m_pCamera = NULL;
+
+	UILayer* m_pUILayer = NULL;
+
 
 	CPostProcessingShader* m_pPostProcessingShader = NULL;
 

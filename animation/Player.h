@@ -20,6 +20,7 @@ struct CB_PLAYER_INFO
 
 extern unordered_map<int, Session> g_clients;
 extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
+
 class CPlayer : public CGameObject
 {
 protected:
@@ -99,6 +100,7 @@ public:
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
 
+
 public:
 	void SetId(int id) { c_id = id; }
 	void SetLook(const XMFLOAT3& xmf3Look) { m_xmf3Look = xmf3Look; }
@@ -139,3 +141,15 @@ public:
 	virtual void Update(float fTimeElapsed);
 };
 
+class CLoginPlayer : public CPlayer
+{
+public:
+	CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext = NULL);
+	virtual ~CLoginPlayer();
+
+public:
+	virtual CCamera* ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
+
+	virtual void OnPlayerUpdateCallback(float fTimeElapsed);
+	virtual void OnCameraUpdateCallback(float fTimeElapsed);
+};

@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "GameFramework.h"
+#include "UI.h"
 
 
 
@@ -197,13 +198,11 @@ void CGameFramework::CreateRtvAndDsvDescriptorHeaps()
 	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	d3dDescriptorHeapDesc.NodeMask = 0;
-	HRESULT hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void **)&m_pd3dRtvDescriptorHeap);
-	::gnRtvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	HRESULT hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dRtvDescriptorHeap);
 
 	d3dDescriptorHeapDesc.NumDescriptors = 1;
 	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-	hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void **)&m_pd3dDsvDescriptorHeap);
-	::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dDsvDescriptorHeap);
 }
 
 void CGameFramework::CreateSwapChainRenderTargetViews()
@@ -354,43 +353,44 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case WM_KEYUP:
 			switch (wParam)
 			{
-				case VK_ESCAPE:
-					::PostQuitMessage(0);
+			case VK_ESCAPE:
+				::PostQuitMessage(0);
+				break;
+			case VK_RETURN:
+				break;
+			case VK_F1:
+			case VK_F2:
+			case VK_F3:
+			case VK_F4:
+				m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
+				break;
+			case VK_F9:
+				ChangeSwapChainState();
+				break;
+			case 'P': // scene
+			case 'O': // texture
+			case 'Z': // depth
+			case 'N': // normal
+			{
+				m_nDrawOption = (int)wParam;
+				break;
+			}
+			case '0':
+				ReleaseObjects();
+				SceneNum = 0;
+				BuildObjects(0);
+				break;
+			case '1':
+				ReleaseObjects();
+				SceneNum = 1;
+				BuildObjects(1);
+				break;
+				default
 					break;
-				case VK_RETURN:
-					break;
-				case VK_F1:
-				case VK_F2:
-				case VK_F3:
-					m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
-					break;
-				case VK_F9:
-					ChangeSwapChainState();
-					break;
-				case 'P': // scene
-				case 'O': // texture
-				case 'Z': // depth
-				case 'N': // normal
-				{
-					m_nDrawOption = (int)wParam;
-					break;
-				}
+
 			case VK_SPACE:
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
 				break;
-
-			case '9':
-				ReleaseObjects();
-				BuildObjects(0);
-				break;
-			case '0':
-
-				gNetwork.SendReady();
-				while (!gNetwork.gamestart);
-				ReleaseObjects();
-				BuildObjects(1);
-				break;
-			
 			default:
 				break;
 			}
@@ -561,22 +561,76 @@ void CGameFramework::OnDestroy()
 
 #define _WITH_TERRAIN_PLAYER
 
-void CGameFramework::BuildObjects(int SceneNum)
+void CGameFramework::BuildObjects(int nScene)
 {
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
-	switch (SceneNum)
+	switch (nScene)
 	{
 	case 0:
 	{
-		m_pScene = new CCanaleScene();
+
+		m_pUILayer = new UILayer(m_nSwapChainBuffers, 4, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+
+		ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+		IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"Ravie", m_nWndClientHeight / 4.5f);
+		D2D1_RECT_F d2dRect = D2D1::RectF(-200.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+
+		WCHAR pstrOutputText[256];
+		wcscpy_s(pstrOutputText, 256, L"Cranding\n");
+		m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
+		/////////////////////////////////////////////////////////
+	
+		// 두 번째 텍스트 박스를 위한 위치 및 형식 설정
+		pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+		d2dRect = D2D1::RectF(-400.0f, 150.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+		IDWriteTextFormat* pdwTextFormat1 = m_pUILayer->CreateTextFormat(L"바탕체", m_nWndClientHeight / 10.0f);
+
+		// 두 번째 텍스트 박스에 "text2" 입력
+		WCHAR pstrOutputText2[256];
+		wcscpy_s(pstrOutputText2, 256, L"게임 시작\n");
+
+		// 두 번째 텍스트 박스 그리기
+		m_pUILayer->UpdateTextOutputs(1, pstrOutputText2, &d2dRect, pdwTextFormat1, pd2dBrush);
+	/////////////////////////////////////////////////////////////////////
+		// 세 번째 텍스트 박스를 위한 위치 및 형식 설정
+		pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+		d2dRect = D2D1::RectF(-400.0f, 250.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+		pdwTextFormat = m_pUILayer->CreateTextFormat(L"바탕체", m_nWndClientHeight / 10.0f);
+
+		// 세 번째 텍스트 박스에 "text2" 입력
+		WCHAR pstrOutputText3[256];
+		wcscpy_s(pstrOutputText3, 256, L"게임 방법\n");
+
+		// 세 번째 텍스트 박스 그리기
+		m_pUILayer->UpdateTextOutputs(2, pstrOutputText3, &d2dRect, pdwTextFormat, pd2dBrush);
+		////////////////////////////////////////////////////////////////////
+		// 네 번째 텍스트 박스를 위한 위치 및 형식 설정
+		pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+		d2dRect = D2D1::RectF(-400.0f, 350.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+		pdwTextFormat = m_pUILayer->CreateTextFormat(L"나눔바른펜", m_nWndClientHeight / 10.0f);
+
+		// 네 번째 텍스트 박스에 "text2" 입력
+		WCHAR pstrOutputText4[256];
+		wcscpy_s(pstrOutputText4, 256, L"게임 종료\n");
+
+		// 네 번째 텍스트 박스 그리기
+		m_pUILayer->UpdateTextOutputs(3, pstrOutputText4, &d2dRect, pdwTextFormat, pd2dBrush);
+		//////////////////////////////////////////////////////////////////
+
+
+
+		m_pScene = new CLoginScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CLoginPlayer* pPlayer = new CLoginPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
+
 		m_pPostProcessingShader = new CTextureToFullScreenShader();
 		m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
 		m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
+
 		D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 		d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
 
@@ -588,16 +642,19 @@ void CGameFramework::BuildObjects(int SceneNum)
 		break;
 	}
 	case 1:
-	{// 1  []  []   [] 
-		m_pScene = new CNightScene();
+	{
+		m_pScene = new CLobbyScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
+
 		m_pPostProcessingShader = new CTextureToFullScreenShader();
 		m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
 		m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
+
 		D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 		d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
 
@@ -633,6 +690,11 @@ void CGameFramework::BuildObjects(int SceneNum)
 	// // 뎁스 SRV 어쩌구..
 	// D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
 
+	//m_pScene = new CScene();
+	//if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+	
+
 	m_pd3dCommandList->Close();
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
@@ -647,6 +709,12 @@ void CGameFramework::BuildObjects(int SceneNum)
 
 void CGameFramework::ReleaseObjects()
 {
+	if (SceneNum == 0) {
+
+		if (m_pUILayer) m_pUILayer->ReleaseResources();
+		if (m_pUILayer) delete m_pUILayer;
+	}
+
 	if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pScene) m_pScene->ReleaseObjects();
@@ -784,6 +852,11 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
+void CGameFramework::UpdateUI()
+{
+	m_pUILayer->UpdateTextOutputs(1, m_pszFrameRate, NULL, NULL, NULL);
+}
+
 //#define _WITH_PLAYER_TOP
 
 void CGameFramework::FrameAdvance()
@@ -833,6 +906,11 @@ void CGameFramework::FrameAdvance()
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 
 	WaitForGpuComplete();
+
+	if (SceneNum == 0)
+	{
+		m_pUILayer->Render(m_nSwapChainBufferIndex);
+	}
 
 #ifdef _WITH_PRESENT_PARAMETERS
 	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;
