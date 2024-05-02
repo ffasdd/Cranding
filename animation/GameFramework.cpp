@@ -381,6 +381,12 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				BuildObjects(0);
 				break;
 			case '1':
+				gNetwork.SendLoginfo();
+				// 로그인 리시블 받을 때까지 대기 해줘야함 
+				WaitForSingleObject(loginevent, INFINITE);
+				cl_id = gNetwork.Getmyid();
+				m_pPlayer->c_id = gNetwork.Getmyid();
+
 				ReleaseObjects();
 				SceneNum = 1;
 				BuildObjects(1);

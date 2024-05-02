@@ -241,10 +241,10 @@ void Network::ProcessPacket(char* buf)
 	}
 }
 
-void Network::SendLoginfo(char* name)
+void Network::SendLoginfo()
 {
 	CS_LOGIN_PACKET p;
-	strcpy_s(p.name, name);
+	strcpy_s(p.name, "Test");
 	p.size = sizeof(CS_LOGIN_PACKET);
 	p.type = CS_LOGIN;
 	p.charactertype = 0;

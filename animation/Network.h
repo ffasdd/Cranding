@@ -38,7 +38,7 @@ public: // thread send
 	
 	void SendThreadFunc();
 	void SendProcess(SENDTYPE sendtype);
-	void SendLoginfo(char* name);
+	void SendLoginfo();
 	void SendTest();
 	void SendMovePlayer(XMFLOAT3 _pos);
 	void SendRotatePlayer(XMFLOAT3 _look,XMFLOAT3 _right, XMFLOAT3 _up);
