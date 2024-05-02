@@ -321,7 +321,7 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
 
-	SetPosition(XMFLOAT3(310.0f,00.0f, 590.0f));
+	SetPosition(XMFLOAT3(100.0f,00.0f, 300.0f));
 	SetScale(XMFLOAT3(20.0f, 20.0f, 20.0f));
 
 	if (pAngrybotModel) delete pAngrybotModel;
@@ -367,7 +367,7 @@ CCamera *CTerrainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 			SetMaxVelocityXZ(90.0f);
 			SetMaxVelocityY(40.0f);
 			m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
-			m_pCamera->SetTimeLag(0.25f);
+			m_pCamera->SetTimeLag(1.5f);
 			m_pCamera->SetOffset(XMFLOAT3(20.0f, 40.0f, -70.0f));
 			m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 70.0f);
 			m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
@@ -389,7 +389,7 @@ CCamera *CTerrainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 			break;
 	}
 	m_pCamera->SetPosition(Vector3::Add(m_xmf3Position, m_pCamera->GetOffset()));
-	m_pCamera->SetPosition(XMFLOAT3(m_xmf3Position.x, m_xmf3Position.y+100.0f,m_xmf3Position.z));
+	m_pCamera->SetPosition(XMFLOAT3(m_xmf3Position.x+3000, m_xmf3Position.y+3000.0f,m_xmf3Position.z+3000));
 	Update(fTimeElapsed);
 
 	return(m_pCamera);
