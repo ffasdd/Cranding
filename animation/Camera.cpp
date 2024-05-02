@@ -300,7 +300,7 @@ void CThirdPersonCamera::SetLookAt(XMFLOAT3& xmf3LookAt)
 
 CLoginSceneCamera::CLoginSceneCamera(CCamera* pCamera) : CCamera(pCamera)
 {
-	m_nMode = LOGIN_SCENE_CAMERA;
+	m_nMode = INGAME_SCENE_CAMERA;
 	if (pCamera)
 	{
 		if (pCamera->GetMode() == SPACESHIP_CAMERA)
