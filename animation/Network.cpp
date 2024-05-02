@@ -221,19 +221,19 @@ void Network::ProcessPacket(char* buf)
 		break;
 	}
 	case SC_ATTACK: {
-		SC_ATTACK_PACKET* p = reinterpret_cast<SC_ATTACK_PACKET*>(&buf);
+		SC_ATTACK_PACKET* p = reinterpret_cast<SC_ATTACK_PACKET*>(buf);
 		int ob_id = p->id;
 		g_clients[ob_id].setAttack(p->isAttack);
 		break;
 	}
 	case SC_CHANGE_SCENE: {
-		SC_CHANGE_SCENE_PACKET* p = reinterpret_cast<SC_CHANGE_SCENE_PACKET*>(&buf);
+		SC_CHANGE_SCENE_PACKET* p = reinterpret_cast<SC_CHANGE_SCENE_PACKET*>(buf);
 		int ob_id = p->id;
 		g_clients[ob_id].scene_num = p->stage;
 		break;
 	}
 	case SC_REMOVE_OBJECT: {
-		SC_REMOVE_OBJECT_PACKET* p = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(&buf);
+		SC_REMOVE_OBJECT_PACKET* p = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(buf);
 		int ob_id = p->id;
 		g_clients.erase(ob_id);
 		break;

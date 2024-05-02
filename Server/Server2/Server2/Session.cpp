@@ -143,6 +143,7 @@ void Session::send_attack_packet(int client_id, bool is_attack)
 	p.size = sizeof(SC_ATTACK_PACKET);
 	p.type = SC_ATTACK;
 	p.id = client_id;
+	p.isAttack = is_attack;
 	do_send(&p);
 }
 
