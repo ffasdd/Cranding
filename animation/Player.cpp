@@ -697,7 +697,7 @@ CCamera* CLoginPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetMaxVelocityY(40.0f);
 		m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.25f);
-		m_pCamera->SetOffset(XMFLOAT3(20.0f, 40.0f, -70.0f));
+		m_pCamera->SetOffset(XMFLOAT3(20.0f, 20.0f, -70.0f));
 		m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 75.0f);
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
@@ -769,7 +769,7 @@ CLobbyPlayer::CLobbyPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
+	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
 
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 3, pAngrybotModel);
@@ -795,7 +795,7 @@ CLobbyPlayer::CLobbyPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 	SetCameraUpdatedContext(pContext);
 
 	SetPosition(XMFLOAT3(-5.0f, 0.0f, -50.0f));
-	SetScale(XMFLOAT3(0.0f, 0.0f, 0.0f));
+	SetScale(XMFLOAT3(50.0f, 50.0f, 50.0f));
 
 	if (pAngrybotModel) delete pAngrybotModel;
 }
@@ -840,7 +840,7 @@ CCamera* CLobbyPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetMaxVelocityY(40.0f);
 		m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.25f);
-		m_pCamera->SetOffset(XMFLOAT3(20.0f, 40.0f, -70.0f));
+		m_pCamera->SetOffset(XMFLOAT3(150.0f, 120.0f, -80.0f));
 		m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 75.0f);
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
