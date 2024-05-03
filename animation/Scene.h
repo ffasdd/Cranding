@@ -175,11 +175,40 @@ public:
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 };
 
-class CInGameScene : public CScene
+class CSpaceShipScene : public CScene
 {
 public:
-	CInGameScene() { }
-	~CInGameScene() { }
+	CSpaceShipScene() { }
+	~CSpaceShipScene() { }
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 };
+
+class CIceScene : public CScene
+{
+public:
+	CIceScene() { }
+	~CIceScene() { }
+
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+};
+
+class CFireScene : public CScene
+{
+public:
+	CFireScene() { }
+	~CFireScene() { }
+
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+};
+/*
+* 아직 맵이 없습니다
+class CGrassScene : public CScene
+{
+public:
+	CGrassScene() { }
+	~CGrassScene() { }
+
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+};
+*/
