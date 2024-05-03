@@ -807,9 +807,9 @@ void CInGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandL
 	m_nHierarchicalGameObjects = 3;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/mapforzz.bin", NULL);
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/spaceshipmap.bin", NULL);
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
-	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 0.0f, 620.0f);
+	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 190.0f, 620.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
 	if (map) delete map;
 

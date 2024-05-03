@@ -100,7 +100,7 @@ void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 void CPlayer::Rotate(float x, float y, float z)
 {
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
-	if ((nCurrentCameraMode == FIRST_PERSON_CAMERA) || (nCurrentCameraMode == THIRD_PERSON_CAMERA))
+	if ((nCurrentCameraMode == FIRST_PERSON_CAMERA) || (nCurrentCameraMode == THIRD_PERSON_CAMERA) || (nCurrentCameraMode == INGAME_SCENE_CAMERA))
 	{
 		if (x != 0.0f)
 		{
@@ -273,7 +273,7 @@ void CSoundCallbackHandler::HandleCallback(void* pCallbackData, float fTrackPosi
 // 플레이어 애니메이션 생성
 CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext)
 {
-	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
+	m_pCamera = ChangeCamera(INGAME_SCENE_CAMERA, 0.0f);
 
 	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
@@ -383,7 +383,7 @@ CCamera* CTerrainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetMaxVelocityXZ(90.0f);
 		SetMaxVelocityY(40.0f);
 		m_pCamera = OnChangeCamera(INGAME_SCENE_CAMERA, nCurrentCameraMode);
-		m_pCamera->SetTimeLag(0.25f);
+		m_pCamera->SetTimeLag(2.5f);
 		m_pCamera->SetOffset(XMFLOAT3(20.0f, 40.0f, -70.0f));
 		m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 75.0f);
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
@@ -393,7 +393,7 @@ CCamera* CTerrainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		break;
 	}
 	m_pCamera->SetPosition(Vector3::Add(m_xmf3Position, m_pCamera->GetOffset()));
-	m_pCamera->SetPosition(XMFLOAT3(m_xmf3Position.x+3000, m_xmf3Position.y+3000.0f,m_xmf3Position.z+3000));
+	m_pCamera->SetPosition(XMFLOAT3(m_xmf3Position.x+0000, m_xmf3Position.y+7000.0f,m_xmf3Position.z+0000));
 
 	Update(fTimeElapsed);
 
