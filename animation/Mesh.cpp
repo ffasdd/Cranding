@@ -49,7 +49,8 @@ void CMesh::ReleaseUploadBuffers()
 
 void CMesh::OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext)
 {
-	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_d3dPositionBufferView);
+	pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
+	pd3dCommandList->IASetVertexBuffers(m_nSlot, m_nVertexBufferViews, m_pd3dVertexBufferViews);
 }
 
 void CMesh::Render(ID3D12GraphicsCommandList *pd3dCommandList, int nSubSet)
@@ -682,8 +683,8 @@ void CSkinnedMesh::LoadSkinInfoFromFile(ID3D12Device *pd3dDevice, ID3D12Graphics
 		}
 		else if (!strcmp(pstrToken, "<Bounds>:"))
 		{
-			nReads = (UINT)::fread(&m_xmf3AABBCenter, sizeof(XMFLOAT3), 1, pInFile);
-			nReads = (UINT)::fread(&m_xmf3AABBExtents, sizeof(XMFLOAT3), 1, pInFile);
+			nReads = (UINT)::fread(&m_xmBoundingBox.Center, sizeof(XMFLOAT3), 1, pInFile);
+			nReads = (UINT)::fread(&m_xmBoundingBox.Extents, sizeof(XMFLOAT3), 1, pInFile);
 		}
 		else if (!strcmp(pstrToken, "<BoneNames>:"))
 		{

@@ -1381,6 +1381,7 @@ CGameObject *CGameObject::LoadFrameHierarchyFromFile(ID3D12Device *pd3dDevice, I
 			pGameObject->SetMesh(pMesh);
 
 			CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
+			// 애니메이션 x인 애들 바운딩 박스 셋
 			pGameObject->SetBoundingBoxMesh(pBoundingBoxMesh);
 		}
 		else if (!strcmp(pstrToken, "<SkinningInfo>:"))
@@ -1397,6 +1398,7 @@ CGameObject *CGameObject::LoadFrameHierarchyFromFile(ID3D12Device *pd3dDevice, I
 				pSkinnedMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
 
 				CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
+				// 애니메이션 o인 애들 바운딩 박스 셋
 				pGameObject->SetBoundingBoxMesh(pBoundingBoxMesh);
 			}
 
