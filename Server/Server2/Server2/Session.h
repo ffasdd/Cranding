@@ -210,6 +210,7 @@ public:
 
 	void send_change_scene(int client_id, int stagenum);
 
+	void send_ingame_start();
 
 };
 extern array<Session, MAX_USER> clients;

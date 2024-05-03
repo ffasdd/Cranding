@@ -379,21 +379,28 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 0;
 				BuildObjects(0);
 				break;
+
 			case '1':
-				//gNetwork.SendLoginfo();
-				//// 로그인 리시블 받을 때까지 대기 해줘야함 
-				//WaitForSingleObject(loginevent, INFINITE);
-				//cl_id = gNetwork.Getmyid();
-				//m_pPlayer->c_id = gNetwork.Getmyid();
+				SceneNum = 1;
+				gNetwork.SendLoginfo();
+				// 로그인 리시블 받을 때까지 대기 해줘야함 
+				WaitForSingleObject(loginevent, INFINITE);
+
+				cl_id = gNetwork.Getmyid();
+				m_pPlayer->c_id = gNetwork.Getmyid();
 
 				ReleaseObjects();
-				SceneNum = 1;
 				BuildObjects(1);
+				gNetwork.SendChangeScene(SceneNum);
+		
+
 				break;
 			case '2':
-				ReleaseObjects();
 				SceneNum = 2;
-				BuildObjects(2);
+				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_READY);
+				//ReleaseObjects();
+				//BuildObjects(2);
+
 				break;
 			case VK_SPACE:
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
@@ -490,7 +497,7 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetLook(Look.x, Look.y, Look.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(0,1,0);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetRight(Right.x, Right.y, Right.z);
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetScale(10.0f, 10.0f, 10.0f);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetScale(50.0f, 50.0f, 50.0f);
 	}
 }
 
@@ -757,8 +764,8 @@ void CGameFramework::ProcessInput()
 {
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
-	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
-	if (!bProcessedByScene)
+	if (GetKeyboardState(pKeysBuffer) && m_pScene ) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
+	if (!bProcessedByScene && (SceneNum != 0)) // 로그인씬에서 키입력 제한 
 	{
 		float cxDelta = 0.0f, cyDelta = 0.0f;
 		POINT ptCursorPos;

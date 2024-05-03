@@ -21,6 +21,7 @@ Session::Session()
 	_maxhp = 100;
 	_hp = _maxhp;
 	room_id = -1;
+	_stage = 0;
 }
 
 void Session::send_login_info_packet()
@@ -153,6 +154,15 @@ void Session::send_change_scene(int client_id, int stagenum)
 	p.size = sizeof(SC_CHANGE_SCENE_PACKET);
 	p.type = SC_CHANGE_SCENE;
 	p.stage = stagenum;
+	p.id = client_id;
+	do_send(&p);
+}
+
+void Session::send_ingame_start()
+{
+	SC_INGAME_START_PACKET p;
+	p.type = SC_INGAME_STRAT;
+	p.size = sizeof(SC_INGAME_START_PACKET);
 	do_send(&p);
 }
 

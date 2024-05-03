@@ -44,6 +44,7 @@ public: // thread send
 	void SendRotatePlayer(XMFLOAT3 _look,XMFLOAT3 _right, XMFLOAT3 _up);
 	void SendChangeAnimation(int curanimate, int prevanimate);
 	void SendChangeScene(int scenenum);
+	void SendIngameStart();
 	void SendAttack(bool is_attack);
 
 	void SendReady();
@@ -63,6 +64,8 @@ private:
 
 	thread netThread;
 	thread sendThread;
+
+	int ingamecnt = 0;
 
 	//CPlayer* PlayerInfo;
 
