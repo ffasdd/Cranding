@@ -201,8 +201,7 @@ public:
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 };
-/*
-* 아직 맵이 없습니다
+
 class CGrassScene : public CScene
 {
 public:
@@ -211,4 +210,3 @@ public:
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 };
-*/

@@ -375,42 +375,52 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				break;
 			}
 			case '0':
+				// ㅁㅔ인화면
 				ReleaseObjects();
 				SceneNum = 0;
 				BuildObjects(0);
 				break;
 
 			case '1':
+				// 로비화면
 				SceneNum = 1;
-				gNetwork.SendLoginfo();
+				//gNetwork.SendLoginfo();
 				// 로그인 리시블 받을 때까지 대기 해줘야함 
-				WaitForSingleObject(loginevent, INFINITE);
+				//WaitForSingleObject(loginevent, INFINITE);
 
-				cl_id = gNetwork.Getmyid();
-				m_pPlayer->c_id = gNetwork.Getmyid();
+				//cl_id = gNetwork.Getmyid();
+				//m_pPlayer->c_id = gNetwork.Getmyid();
 
 				ReleaseObjects();
 				BuildObjects(1);
-				gNetwork.SendChangeScene(SceneNum);
+				//gNetwork.SendChangeScene(SceneNum);
 		
 
 				break;
 			case '2':
+				// spaceship map
 				SceneNum = 2;
-				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_READY);
-				//ReleaseObjects();
-				//BuildObjects(2);
-
+				//g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_READY);
+				ReleaseObjects();
+				BuildObjects(2);
 				break;
 			case '3':
+				// ice map
 				ReleaseObjects();
 				SceneNum = 3;
 				BuildObjects(3);
 				break;
 			case '4':
+				// fire map
 				ReleaseObjects();
 				SceneNum = 4;
 				BuildObjects(4);
+				break;
+			case '5':
+				// grass map
+				ReleaseObjects();
+				SceneNum = 5;
+				BuildObjects(5);
 				break;
 			case VK_SPACE:
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
@@ -719,7 +729,7 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene = new CIceScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
@@ -744,7 +754,7 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene = new CFireScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
@@ -763,14 +773,14 @@ void CGameFramework::BuildObjects(int nScene)
 		D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
 		break;
 	}
-	/*
+	
 	case 5:
 	{
 		// grass map
-		m_pScene = new CSpaceShipScene();
+		m_pScene = new CGrassScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
@@ -788,7 +798,7 @@ void CGameFramework::BuildObjects(int nScene)
 		// 뎁스 SRV 어쩌구..
 		D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
 		break;
-	}*/
+	}
 	default:
 		break;
 	}
