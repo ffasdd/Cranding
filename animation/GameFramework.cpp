@@ -585,6 +585,7 @@ void CGameFramework::BuildObjects(int nScene)
 	{
 	case 0:
 	{
+		/*
 		m_pUILayer = new UILayer(m_nSwapChainBuffers, 4, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 
 		ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
@@ -632,8 +633,8 @@ void CGameFramework::BuildObjects(int nScene)
 		// 네 번째 텍스트 박스 그리기
 		m_pUILayer->UpdateTextOutputs(3, pstrOutputText4, &d2dRect, pdwTextFormat, pd2dBrush);
 		//////////////////////////////////////////////////////////////////
-
-
+		
+		*/
 
 		m_pScene = new CLoginScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
@@ -835,6 +836,11 @@ void CGameFramework::ReleaseObjects()
 
 	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) delete m_pScene;
+
+	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseObjects();
+	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseShaderVariables();
+	if (m_pPostProcessingShader) m_pPostProcessingShader->Release();
+	m_pPostProcessingShader = nullptr;
 }
 
 // 플레이어 조작 부분 -> 상하좌우, 마우스
@@ -968,11 +974,6 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
-void CGameFramework::UpdateUI()
-{
-	m_pUILayer->UpdateTextOutputs(1, m_pszFrameRate, NULL, NULL, NULL);
-}
-
 //#define _WITH_PLAYER_TOP
 
 void CGameFramework::FrameAdvance()
@@ -1025,7 +1026,7 @@ void CGameFramework::FrameAdvance()
 
 	if (SceneNum == 0)
 	{
-		m_pUILayer->Render(m_nSwapChainBufferIndex);
+		//m_pUILayer->Render(m_nSwapChainBufferIndex);
 	}
 
 #ifdef _WITH_PRESENT_PARAMETERS

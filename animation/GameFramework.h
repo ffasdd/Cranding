@@ -59,7 +59,7 @@ public:
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
 
-	void UpdateUI();
+	//void UpdateUI();
 
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
