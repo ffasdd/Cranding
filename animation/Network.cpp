@@ -1,8 +1,9 @@
 #include"stdafx.h"
 #include<iostream>
 #include "Network.h"
+#include"GameFramework.h"
 
-
+extern CGameFramework					gGameFramework;
 
 Network::Network()
 {
@@ -111,14 +112,19 @@ void Network::SendProcess(SENDTYPE sendtype)
 		SendChangeScene(9);// 로비번호
 		break;
 	}
-	case SENDTYPE::CHANGE_SCENE_INGAME: {
-		SendChangeScene(0);
+	case SENDTYPE::CHANGE_SCENE_INGAME_READY: {
+		SendChangeScene(2);
+		break;
+	}	
+	case SENDTYPE::CHANGE_SCENE_INGAME_START: {
+		SendIngameStart();
 		break;
 	}
 	case SENDTYPE::ATTACK: {
 		SendAttack(g_clients[my_id].getAttack());
 		break;
 	}
+
 	}
 }
 
@@ -230,8 +236,23 @@ void Network::ProcessPacket(char* buf)
 		SC_CHANGE_SCENE_PACKET* p = reinterpret_cast<SC_CHANGE_SCENE_PACKET*>(buf);
 		int ob_id = p->id;
 		g_clients[ob_id].scene_num = p->stage;
+		if (g_clients[ob_id].scene_num == 2)
+		{
+			ingamecnt++;
+			if (ingamecnt == 2)
+			{
+				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+				ingamecnt = 0;
+			}
+		}
 		break;
 	}
+	case SC_INGAME_STRAT: {
+		gGameFramework.ReleaseObjects();
+		gGameFramework.BuildObjects(2);
+		break;
+	}
+
 	case SC_REMOVE_OBJECT: {
 		SC_REMOVE_OBJECT_PACKET* p = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(buf);
 		int ob_id = p->id;
@@ -301,6 +322,15 @@ void Network::SendChangeScene(int scenenum)
 	p.type = CS_CHANGE_SCENE;
 	p.roomid = my_roomid;
 	p.scenenum = scenenum;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendIngameStart()
+{
+	CS_INGAME_START_PACKET p;
+	p.size = sizeof(CS_INGAME_START_PACKET);
+	p.type = CS_INGAME_START;
+	p.roomid = my_roomid;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 

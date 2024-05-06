@@ -20,6 +20,7 @@ constexpr char CS_CHANGE_ANIMATION = 7;
 constexpr char CS_READY_GAME = 8;
 constexpr char CS_START_GAME = 9;
 constexpr char CS_CHANGE_SCENE = 10;
+constexpr char CS_INGAME_START = 11;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -34,6 +35,8 @@ constexpr char SC_CHANGE_ANIMATION = 13;
 constexpr char SC_START_GAME = 14;
 constexpr char SC_CHANGE_SCENE = 15;
 constexpr char SC_ATTACK = 16;
+constexpr char SC_INGAME_STRAT = 17;
+
 
 
 constexpr char CS_TEST = 11;
@@ -147,6 +150,12 @@ struct CS_CHANGE_SCENE_PACKET {
 	int scenenum;
 	int roomid;
 };
+struct CS_INGAME_START_PACKET {
+	unsigned char size;
+	char type;
+	int roomid;
+	
+};
 struct CS_ATTACK_PACKET {
 	unsigned char size;
 	char type;
@@ -245,6 +254,10 @@ struct SC_CHANGE_SCENE_PACKET {
 	char type;
 	int stage;
 	int id;
+};
+struct SC_INGAME_START_PACKET {
+	unsigned char size;
+	char type;
 };
 struct SC_ATTACK_PACKET {
 	unsigned char size;

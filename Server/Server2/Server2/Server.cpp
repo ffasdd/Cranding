@@ -238,12 +238,6 @@ void Server::ProcessPacket(int id, char* packet)
 				ingameroom[r_id].ingamePlayer[id]->send_add_info_packet(pl);
 		}
 
-		//for (auto& pl : old_vlist)
-		//	if (0 == near_list.count(pl)) {
-		//		ingameroom[r_id].ingamePlayer[id]->send_remove_packet(pl);
-		//		ingameroom[r_id].ingamePlayer[pl]->send_remove_packet(id);
-		//	}
-		// ------------------------------------------
 	}
 				break;
 	case CS_ROTATE: {
@@ -292,6 +286,17 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 	}
 						break;
+	case CS_INGAME_START: {
+		cout << " Game START " << endl;
+		CS_INGAME_START_PACKET* p = reinterpret_cast<CS_INGAME_START_PACKET*>(packet);
+		int r_id = p->roomid;
+		for (auto& pl : ingameroom[r_id].ingamePlayer)
+		{
+			pl->send_ingame_start();
+		}
+	}
+						break;
+
 	case CS_ATTACK: {
 		CS_ATTACK_PACKET* p = reinterpret_cast<CS_ATTACK_PACKET*>(packet);
 		int r_id = p->roomid;
