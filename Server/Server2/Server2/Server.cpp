@@ -190,7 +190,17 @@ void Server::ProcessPacket(int id, char* packet)
 			clients[id]._state = STATE::Ingame;
 		}
 		matchingqueue.push(&clients[id]);
-		while (clients[id].room_id == -1);
+		int r_id = 0;
+		while (clients[id].room_id == -1)
+		{
+			if (clients[id].room_id != -1)
+			{
+				r_id = clients[id].room_id;
+				break;
+			}
+		}
+		// 로그인을 했으면 로그인 정보를 제대로 서버에 저장하는걸 보장해줘야 한다. 
+
 		clients[id].send_login_info_packet();
 		// ADD X 
 	}
@@ -199,43 +209,48 @@ void Server::ProcessPacket(int id, char* packet)
 		// 속한 룸넘버도 같이 넘겨줘야 할듯 
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 		int r_id = p->roomid;
-		ingameroom[r_id].ingamePlayer[id]->_pos = p->pos;
+		clients[id]._pos = p->pos;
+
+		//ingameroom[r_id].ingamePlayer[id]->_pos = p->pos;
 
 
 		// view List 
 		unordered_set<int> near_list;
-		ingameroom[r_id].ingamePlayer[id]->_v_lock.lock();
-		unordered_set<int> old_vlist = ingameroom[r_id].ingamePlayer[id]->_view_list;
-		ingameroom[r_id].ingamePlayer[id]->_v_lock.unlock();
+		clients[id]._v_lock.lock();
+		//ingameroom[r_id].ingamePlayer[id]->_v_lock.lock();
+		//unordered_set<int> old_vlist = ingameroom[r_id].ingamePlayer[id]->_view_list;
+		unordered_set<int> old_vlist = clients[id]._view_list;
+		//ingameroom[r_id].ingamePlayer[id]->_v_lock.unlock();
+		clients[id]._v_lock.unlock();
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
 			if (pl->_state != STATE::Ingame) continue;
 			if (pl->_id == id)continue;
-			if (pl->_stage != ingameroom[r_id].ingamePlayer[id]->_stage)continue;
+			if (pl->_stage != clients[id]._stage)continue;
 			if (can_see(id, pl->_id))
 				near_list.insert(pl->_id);
 		}
 		// -------------------------------
-
-		ingameroom[r_id].ingamePlayer[id]->send_move_packet(id, ingameroom[r_id].ingamePlayer[id]->_pos);
+		clients[id].send_move_packet(id);
 		// -------------------view list 
 		for (auto& pl : near_list)
 		{
-			auto& cpl = ingameroom[r_id].ingamePlayer[pl];
-			cpl->_v_lock.lock();
-			if (ingameroom[r_id].ingamePlayer[pl]->_view_list.count(id))
+
+			clients[pl]._v_lock.lock();
+
+			if (clients[pl]._view_list.count(id))
 			{
-				cpl->_v_lock.unlock();
-				ingameroom[r_id].ingamePlayer[pl]->send_move_packet(id, ingameroom[r_id].ingamePlayer[id]->_pos);
+				clients[pl]._v_lock.unlock();
+				clients[pl].send_move_packet(id);
 			}
 			else
 			{
-				cpl->_v_lock.unlock();
-				ingameroom[r_id].ingamePlayer[pl]->send_add_info_packet(id);
+				clients[id]._v_lock.unlock();
+				clients[id].send_add_info_packet(pl);
 			}
 			if (old_vlist.count(pl) == 0)
-				ingameroom[r_id].ingamePlayer[id]->send_add_info_packet(pl);
+				clients[id].send_add_info_packet(pl);
 		}
 
 	}
@@ -243,31 +258,90 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_ROTATE: {
 		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
 		int r_id = p->roomid;
-		ingameroom[r_id].ingamePlayer[id]->_look = p->look;
-		ingameroom[r_id].ingamePlayer[id]->_right = p->right;
-		ingameroom[r_id].ingamePlayer[id]->_up = p->up;
-		ingameroom[r_id].ingamePlayer[id]->send_rotate_packet(id, p->look, p->right, p->up);
+
+		clients[id]._look  = p->look;
+		clients[id]._right = p->right;
+		clients[id]._up   = p->up;
+
+		unordered_set<int> near_list;
+		clients[id]._v_lock.lock();
+		unordered_set<int> old_vlist = clients[id]._view_list;
+		clients[id]._v_lock.unlock();
+
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-			if (pl->_id == id) continue;
-			if (pl->_stage != ingameroom[r_id].ingamePlayer[id]->_stage)continue;
-			pl->send_rotate_packet(id, ingameroom[r_id].ingamePlayer[id]->_look, ingameroom[r_id].ingamePlayer[id]->_right,
-				ingameroom[r_id].ingamePlayer[id]->_up);
+			if (pl->_state != STATE::Ingame) continue;
+			if (pl->_id == id)continue;
+			if (pl->_stage != clients[id]._stage)continue;
+			if (can_see(id, pl->_id))
+				near_list.insert(pl->_id);
 		}
+
+		clients[id].send_rotate_packet(id);
+		
+		for (auto& pl : near_list)
+		{
+
+			clients[pl]._v_lock.lock();
+
+			if (clients[pl]._view_list.count(id))
+			{
+				clients[pl]._v_lock.unlock();
+				clients[pl].send_rotate_packet(id);
+			}
+			else
+			{
+				clients[id]._v_lock.unlock();
+				clients[id].send_add_info_packet(pl);
+			}
+			if (old_vlist.count(pl) == 0)
+				clients[id].send_add_info_packet(pl);
+		}
+
 		break;
 	}
 	case CS_CHANGE_ANIMATION: {
 
 		CS_CHANGE_ANIMATION_PACKET* p = reinterpret_cast<CS_CHANGE_ANIMATION_PACKET*>(packet);
+
 		int r_id = p->roomid;
-		ingameroom[r_id].ingamePlayer[id]->animationstate = (animateState)p->a_state;
-		ingameroom[r_id].ingamePlayer[id]->prevanimationstate = (animateState)p->prev_a_state;
-		ingameroom[r_id].ingamePlayer[id]->send_change_animate_packet(id, ingameroom[r_id].ingamePlayer[id]->animationstate, ingameroom[r_id].ingamePlayer[id]->prevanimationstate);
+
+		clients[id].animationstate = (animateState)p->a_state;
+		clients[id].prevanimationstate = (animateState)p->prev_a_state;
+
+		unordered_set<int> near_list;
+		clients[id]._v_lock.lock();
+		unordered_set<int> old_vlist = clients[id]._view_list;
+		clients[id]._v_lock.unlock();
+
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
+			if (pl->_state != STATE::Ingame) continue;
 			if (pl->_id == id)continue;
-			if (pl->_stage != ingameroom[r_id].ingamePlayer[id]->_stage)continue;
-			pl->send_change_animate_packet(id, ingameroom[r_id].ingamePlayer[id]->animationstate, ingameroom[r_id].ingamePlayer[id]->prevanimationstate);
+			if (pl->_stage != clients[id]._stage)continue;
+			if (can_see(id, pl->_id))
+				near_list.insert(pl->_id);
+		}
+
+		clients[id].send_change_animate_packet(id);
+
+		for (auto& pl : near_list)
+		{
+
+			clients[pl]._v_lock.lock();
+
+			if (clients[pl]._view_list.count(id))
+			{
+				clients[pl]._v_lock.unlock();
+				clients[pl].send_change_animate_packet(id);
+			}
+			else
+			{
+				clients[id]._v_lock.unlock();
+				clients[id].send_add_info_packet(pl);
+			}
+			if (old_vlist.count(pl) == 0)
+				clients[id].send_add_info_packet(pl);
 		}
 	}
 							break;
@@ -276,13 +350,13 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_CHANGE_SCENE_PACKET* p = reinterpret_cast<CS_CHANGE_SCENE_PACKET*>(packet);
 		int scenenum = p->scenenum;
 		int r_id = p->roomid;
-		ingameroom[r_id].ingamePlayer[id]->_stage = scenenum;
-		ingameroom[r_id].ingamePlayer[id]->send_change_scene(id, scenenum);
-
+		clients[id]._stage = scenenum;
+		clients[id].send_change_scene(id, scenenum);
+	
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
 			if (pl->_id == id)continue;
-			pl->send_change_scene(id, ingameroom[r_id].ingamePlayer[id]->_stage);
+			pl->send_change_scene(id, clients[id]._stage);
 		}
 	}
 						break;
@@ -300,14 +374,42 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_ATTACK: {
 		CS_ATTACK_PACKET* p = reinterpret_cast<CS_ATTACK_PACKET*>(packet);
 		int r_id = p->roomid;
-		ingameroom[r_id].ingamePlayer[id]->_isAttack = p->isAttack;
-		ingameroom[r_id].ingamePlayer[id]->send_attack_packet(id, ingameroom[r_id].ingamePlayer[id]->_isAttack);
+		
+		clients[id]._isAttack = p->isAttack;
+
+		unordered_set<int> near_list;
+		clients[id]._v_lock.lock();
+		unordered_set<int> old_vlist = clients[id]._view_list;
+		clients[id]._v_lock.unlock();
+
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-
+			if (pl->_state != STATE::Ingame) continue;
 			if (pl->_id == id)continue;
-			if (pl->_stage != ingameroom[r_id].ingamePlayer[id]->_stage)continue;
-			pl->send_attack_packet(id, ingameroom[r_id].ingamePlayer[id]->_isAttack);
+			if (pl->_stage != clients[id]._stage)continue;
+			if (can_see(id, pl->_id))
+				near_list.insert(pl->_id);
+		}
+
+		clients[id].send_attack_packet(id);
+
+		for (auto& pl : near_list)
+		{
+
+			clients[pl]._v_lock.lock();
+
+			if (clients[pl]._view_list.count(id))
+			{
+				clients[pl]._v_lock.unlock();
+				clients[pl].send_attack_packet(id);
+			}
+			else
+			{
+				clients[id]._v_lock.unlock();
+				clients[id].send_add_info_packet(pl);
+			}
+			if (old_vlist.count(pl) == 0)
+				clients[id].send_add_info_packet(pl);
 		}
 	}
 				  break;
@@ -371,7 +473,7 @@ void Server::ReadyToStart()
 	{
 		if (!matchingqueue.empty())
 		{
-			Session* _session = nullptr;
+			Session* _session = nullptr; 
 			bool sessionok = matchingqueue.try_pop(_session);
 
 			if (!sessionok) continue;
@@ -399,13 +501,13 @@ void Server::ReadyToStart()
 				}
 			}
 
-			if (ingameroom[room_id].ingamePlayer.size() == MAX_ROOM_USER)
+	/*		if (ingameroom[room_id].ingamePlayer.size() == MAX_ROOM_USER)
 			{
 				for (auto& pc : ingameroom[room_id].ingamePlayer)
 				{
 					pc->send_game_start(room_id);
 				}
-			}
+			}*/
 		}
 		else
 			this_thread::sleep_for(1ms);

@@ -196,17 +196,17 @@ public:
 
 	void send_add_info_packet(int client_id);
 
-	void send_move_packet(int client_id, XMFLOAT3 _pos);
+	void send_move_packet(int client_id);
 
 	void send_remove_packet(int client_id);
 
-	void send_rotate_packet(int client_id, XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up);
+	void send_rotate_packet(int client_id);
 
 	void send_test_packet(int client_id);
 
-	void send_change_animate_packet(int client_id, animateState animate, animateState prevanimate);
+	void send_change_animate_packet(int client_id);
 
-	void send_attack_packet(int client_id, bool is_attack);
+	void send_attack_packet(int client_id);
 
 	void send_change_scene(int client_id, int stagenum);
 

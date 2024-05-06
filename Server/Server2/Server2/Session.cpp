@@ -88,13 +88,14 @@ void Session::send_add_info_packet(int client_id)
 	do_send(&p);
 }
 
-void Session::send_move_packet(int client_id,XMFLOAT3 _pos)
+void Session::send_move_packet(int client_id)
 {
 	SC_MOVE_OBJECT_PACKET p;
 	p.id = client_id;
 	p.size = sizeof(SC_MOVE_OBJECT_PACKET);
 	p.type = SC_MOVE_OBJECT;
-	p.pos =_pos; // 여기서 클라이언트 포스를 보내고 있기 때문에 이동 확인 X  
+	p.pos = clients[client_id]._pos;
+	//p.pos =_pos; // 여기서 클라이언트 포스를 보내고 있기 때문에 이동 확인 X  
 	do_send(&p);
 }
 
@@ -107,15 +108,15 @@ void Session::send_remove_packet(int client_id)
 	do_send(&p);
 }
  
-void Session::send_rotate_packet(int client_id,XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up)
+void Session::send_rotate_packet(int client_id)
 {
 	SC_ROTATE_OBJECT_PACKET p;
 	p.id = client_id;
 	p.size = sizeof(SC_ROTATE_OBJECT_PACKET);
 	p.type = SC_ROTATE_OBJECT;
-	p.look = _look;
-	p.right = _right;
-	p.up = _up;
+	p.look = clients[client_id]._look;
+	p.right = clients[client_id]._right;
+	p.up = { 0.f,1.0f,0.f };
 	do_send(&p);
 }
 
@@ -127,24 +128,24 @@ void Session::send_test_packet(int client_id)
 	do_send(&p);
 }
 
-void Session::send_change_animate_packet(int client_id, animateState animate, animateState prevanimate)
+void Session::send_change_animate_packet(int client_id)
 {
 	SC_CHANGE_ANIMATION_PACKET p;
 	p.size = sizeof(SC_CHANGE_ANIMATION_PACKET);
 	p.id = client_id;
 	p.type = SC_CHANGE_ANIMATION;
-	p.a_state = animate;
-	p.prev_a_state = prevanimate;
+	p.a_state = clients[client_id].animationstate;
+	p.prev_a_state = clients[client_id].prevanimationstate;
 	do_send(&p);
 }
 
-void Session::send_attack_packet(int client_id, bool is_attack)
+void Session::send_attack_packet(int client_id)
 {
 	SC_ATTACK_PACKET p;
 	p.size = sizeof(SC_ATTACK_PACKET);
 	p.type = SC_ATTACK;
 	p.id = client_id;
-	p.isAttack = is_attack;
+	p.isAttack = clients[client_id]._isAttack;
 	do_send(&p);
 }
 
