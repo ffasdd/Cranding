@@ -400,6 +400,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			case '2':
 				// spaceship map
 				SceneNum = 2;
+<<<<<<< Updated upstream
 				//g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_READY);
 				ReleaseObjects();
 				BuildObjects(2);
@@ -421,6 +422,14 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				ReleaseObjects();
 				SceneNum = 5;
 				BuildObjects(5);
+=======
+				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+				// ------------------------------------ 
+
+				ReleaseObjects();
+				BuildObjects(2);
+
+>>>>>>> Stashed changes
 				break;
 			case VK_SPACE:
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;

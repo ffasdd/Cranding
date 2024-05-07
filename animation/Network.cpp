@@ -17,7 +17,7 @@ Network::Network()
 	{
 		std::cout << " client socket Error " << std::endl;
 	}
-	
+
 }
 
 Network::~Network()
@@ -29,7 +29,7 @@ bool Network::ReadytoConnect()
 {
 	sockaddr_in sockaddrIn;
 	sockaddrIn.sin_family = AF_INET;
-	sockaddrIn.sin_port = htons(9000);
+	sockaddrIn.sin_port = htons(PORT_NUM);
 	inet_pton(AF_INET, "127.0.0.1", &sockaddrIn.sin_addr);
 
 	int ret = connect(clientsocket, reinterpret_cast<sockaddr*>(&sockaddrIn), sizeof(sockaddrIn));
@@ -61,7 +61,6 @@ void Network::StartServer()
 	netThread = std::thread([this]() {NetThreadFunc(); });
 	sendThread = std::thread([this]() {SendThreadFunc(); });
 
-
 }
 
 void Network::NetThreadFunc()
@@ -69,7 +68,7 @@ void Network::NetThreadFunc()
 	while (ServerStart)
 	{
 		int ioByte = recv(clientsocket, _buf, BUF_SIZE, 0);
-		
+
 		ProcessData(ioByte);
 
 		cout << " recvByte : " << ioByte << endl;
@@ -84,7 +83,7 @@ void Network::SendThreadFunc()
 		{
 			SENDTYPE _sendtype;
 			bool getcheck = g_sendqueue.try_pop(_sendtype);
-			if(getcheck)
+			if (getcheck)
 				SendProcess(_sendtype);
 		}
 		else
@@ -101,11 +100,11 @@ void Network::SendProcess(SENDTYPE sendtype)
 		break;
 	}
 	case SENDTYPE::ROTATE: {
-		SendRotatePlayer(g_clients[my_id].getLook(),g_clients[my_id].getRight(),g_clients[my_id].getUp());
+		SendRotatePlayer(g_clients[my_id].getLook(), g_clients[my_id].getRight(), g_clients[my_id].getUp());
 		break;
 	}
 	case SENDTYPE::CHANGE_ANIMATION: {
-		SendChangeAnimation(g_clients[my_id].getAnimation(),g_clients[my_id].getprevAnimation());
+		SendChangeAnimation(g_clients[my_id].getAnimation(), g_clients[my_id].getprevAnimation());
 		break;
 	}
 	case SENDTYPE::CHANGE_SCENE_LOBBY: {
@@ -115,7 +114,7 @@ void Network::SendProcess(SENDTYPE sendtype)
 	case SENDTYPE::CHANGE_SCENE_INGAME_READY: {
 		SendChangeScene(2);
 		break;
-	}	
+	}
 	case SENDTYPE::CHANGE_SCENE_INGAME_START: {
 		SendIngameStart();
 		break;
@@ -124,7 +123,31 @@ void Network::SendProcess(SENDTYPE sendtype)
 		SendAttack(g_clients[my_id].getAttack());
 		break;
 	}
+	case SENDTYPE::TIME_CHECK: {
+		cout << " Send Time " << endl;
+		SendTime(curTimer);
+		break;
+	}
 
+	}
+}
+
+void Network::TimerThread()
+{
+	while (ServerStart)
+	{
+		start = clock();
+		while (true)
+		{
+			end = clock();
+			if (double(end - start) / CLOCKS_PER_SEC == second) {
+				curTimer++;
+				g_sendqueue.push(SENDTYPE::TIME_CHECK);
+				break;
+			}
+
+		}
+		
 	}
 }
 
@@ -191,11 +214,11 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setCharacterType(p->charactertype);
 		g_clients[ob_id].setAnimation(int(p->a_state));
 		g_clients[ob_id].setprevAnimation(int(p->prev_state));
-			break;
+		break;
 	}
-			
+
 	case SC_MOVE_OBJECT: {
-	
+
 		SC_MOVE_OBJECT_PACKET* p = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(buf);
 		int ob_id = getmyid(p->id);
 		std::cout << ob_id << " Player Move " << endl;
@@ -220,7 +243,7 @@ void Network::ProcessPacket(char* buf)
 	case SC_START_GAME: {
 		SC_GAMESTART_PACKET* p = reinterpret_cast<SC_GAMESTART_PACKET*>(buf);
 		my_roomid = p->roomid;
-	
+
 		//SetEvent(startevent);
 		//Start가 되었을 때 인게임 씬으로 이동 
 
@@ -248,11 +271,10 @@ void Network::ProcessPacket(char* buf)
 		break;
 	}
 	case SC_INGAME_STRAT: {
-		gGameFramework.ReleaseObjects();
-		gGameFramework.BuildObjects(2);
+		// Timer 쓰레드를 켜줘야함 
+		timerThread = std::thread([this]() {TimerThread(); });
 		break;
 	}
-
 	case SC_REMOVE_OBJECT: {
 		SC_REMOVE_OBJECT_PACKET* p = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(buf);
 		int ob_id = p->id;
@@ -304,7 +326,7 @@ void Network::SendRotatePlayer(XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up)
 
 }
 
-void Network::SendChangeAnimation(int curanimate, int prevanimate )
+void Network::SendChangeAnimation(int curanimate, int prevanimate)
 {
 	CS_CHANGE_ANIMATION_PACKET p;
 	p.size = sizeof(CS_CHANGE_ANIMATION_PACKET);
@@ -351,6 +373,17 @@ void Network::SendReady()
 	p.type = CS_READY_GAME;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
+
+void Network::SendTime(int time)
+{
+	CS_TIME_CHECK_PACKET p;
+	p.size = sizeof(CS_TIME_CHECK_PACKET);
+	p.type = CS_TIME_CHECK;
+	p.roomid = my_roomid;
+	p.time = time;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
 
 int Network::getmyid(int _id)
 {

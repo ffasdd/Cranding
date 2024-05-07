@@ -19,6 +19,9 @@
     <Filter Include="pch">
       <UniqueIdentifier>{c11c271d-5d62-4a04-ba94-d7622d281211}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Monster">
+      <UniqueIdentifier>{77d11154-a4d8-480f-b9d1-8d8d172d5739}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -45,6 +48,18 @@
     <ClCompile Include="pch.cpp">
       <Filter>pch</Filter>
     </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>Object\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="FlameMonster.cpp">
+      <Filter>Object\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="IceMonster.cpp">
+      <Filter>Object\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="NatureMonster.cpp">
+      <Filter>Object\Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Room.h">
@@ -70,6 +85,18 @@
     </ClInclude>
     <ClInclude Include="protocol.h">
       <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>Object\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="FlameMonster.h">
+      <Filter>Object\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="IceMonster.h">
+      <Filter>Object\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="NatureMonster.h">
+      <Filter>Object\Monster</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

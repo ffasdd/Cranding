@@ -139,7 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FlameMonster.cpp" />
+    <ClCompile Include="IceMonster.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Monster.cpp" />
+    <ClCompile Include="NatureMonster.cpp" />
     <ClCompile Include="Over_Exp.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -154,6 +158,10 @@
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FlameMonster.h" />
+    <ClInclude Include="IceMonster.h" />
+    <ClInclude Include="Monster.h" />
+    <ClInclude Include="NatureMonster.h" />
     <ClInclude Include="Over_Exp.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="protocol.h" />

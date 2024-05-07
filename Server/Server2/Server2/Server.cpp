@@ -1,5 +1,9 @@
 #include "pch.h"
 #include "Server.h"
+
+extern Timer g_Timer;
+extern array<Monster, MAX_NPC> Monsters;
+
 Server& Server::GetInstance()
 {
 	static Server instance;
@@ -38,14 +42,48 @@ void Server::NetworkSet()
 	memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_addr.S_un.S_addr = INADDR_ANY;
-	serverAddr.sin_port = htons(9000);
+	serverAddr.sin_port = htons(PORT_NUM);
 
-	bind(listensocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr));
-	listen(listensocket, SOMAXCONN);
+	if (SOCKET_ERROR == bind(listensocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr)))
+		cout << "Bind Error" << endl;
+
+	if (SOCKET_ERROR == listen(listensocket, SOMAXCONN))
+		cout << " Listen Error " << endl;
+	if (listensocket != INVALID_SOCKET) {
+		cout << "Listen socket successfully created." << endl;
+
+		// listensocket의 현재 상태 확인
+		int optval;
+		int optlen = sizeof(optval);
+		if (getsockopt(listensocket, SOL_SOCKET, SO_TYPE, reinterpret_cast<char*>(&optval), &optlen) == SOCKET_ERROR) {
+			cout << "Failed to get listen socket options." << endl;
+		}
+		else {
+			cout << "Listen socket options retrieved successfully." << endl;
+			// 여기서 optval을 통해 listensocket의 상태를 확인할 수 있습니다.
+		}
+
+		// 포트 확인
+		// getsockname 함수를 사용하여 소켓의 로컬 주소를 가져올 수 있습니다.
+		sockaddr_in addr;
+		int addrlen = sizeof(addr);
+		if (getsockname(listensocket, reinterpret_cast<sockaddr*>(&addr), &addrlen) == SOCKET_ERROR) {
+			cout << "Failed to get local address of listen socket." << endl;
+		}
+		else {
+			cout << "Listen socket is bound to port " << ntohs(addr.sin_port) << endl;
+		}
+	}
+	else {
+		cout << "Failed to create listen socket." << endl;
+	}
+
+
 }
 
 void Server::Iocp()
 {
+
 	SOCKADDR_IN cl_addr;
 	int addr_size = sizeof(cl_addr);
 
@@ -60,11 +98,13 @@ void Server::Iocp()
 	{
 		int error_num = WSAGetLastError();
 		if (ERROR_IO_PENDING != error_num)
-			cout << " Error " << endl;
+			cout << error_num <<" Error " << endl;
 	}
 
-	lobbythread = thread([this]() {ReadyToStart(); });
+	//InitialziedMonster();
 
+	lobbythread = thread([this]() {ReadyToStart(); });
+	
 	int num_thread = std::thread::hardware_concurrency();
 	for (int i = 0; i < num_thread; ++i)
 		worker_thread.emplace_back(&Server::WorkerThread, this);
@@ -171,6 +211,28 @@ void Server::WorkerThread()
 
 }
 
+void Server::InitialziedMonster()
+{
+	cout << " NPC intialize begin " << endl;
+
+	std::random_device rd;
+	std::default_random_engine dre;
+	std::uniform_real_distribution<float> xpos(0, 100);
+	std::uniform_real_distribution<float> zpos(0, 100);
+
+	for (int i = 0; i < MAX_NPC; ++i)
+	{
+		Monsters[i]._pos = XMFLOAT3(xpos(dre), 0.f, zpos(dre));
+		Monsters[i]._att = 10;
+		Monsters[i]._hp = 50;
+		Monsters[i]._look = XMFLOAT3(0.f, 0.f, 1.0f);
+		Monsters[i]._right = XMFLOAT3(1.0f, 0.f, 0.0f);
+		Monsters[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
+	}
+
+	cout << " NPC intialzie end " << endl;
+}
+
 void Server::ProcessPacket(int id, char* packet)
 {
 	switch (packet[1])
@@ -225,7 +287,7 @@ void Server::ProcessPacket(int id, char* packet)
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-			if (pl->_state != STATE::Ingame) continue;
+			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
 			if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage)continue;
 			if (can_see(id, pl->_id))
@@ -270,7 +332,7 @@ void Server::ProcessPacket(int id, char* packet)
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-			if (pl->_state != STATE::Ingame) continue;
+			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
 			if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage)continue;
 			if (can_see(id, pl->_id))
@@ -316,7 +378,7 @@ void Server::ProcessPacket(int id, char* packet)
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-			if (pl->_state != STATE::Ingame) continue;
+			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
 			if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage)continue;
 			if (can_see(id, pl->_id))
@@ -358,18 +420,56 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == id)continue;
 			pl->send_change_scene(id, clients[id]._stage);
 		}
+		// 3번 맵 얼음
+		if (p->scenenum == 3)
+		{
+
+		}
+		// 4번 맵 불 
+		else if (p->scenenum == 4)
+		{
+
+		}
+		// 5번 맵 자연 
+		else if (p->scenenum == 5)
+		{
+
+		}
+
 	}
 						break;
 	case CS_INGAME_START: {
+
 		cout << " Game START " << endl;
 		CS_INGAME_START_PACKET* p = reinterpret_cast<CS_INGAME_START_PACKET*>(packet);
 		int r_id = p->roomid;
-		for (auto& pl : ingameroom[r_id].ingamePlayer)
+
 		{
-			pl->send_ingame_start();
+			lock_guard<mutex>ll{ clients[id]._s_lock };
+			clients[id]._state = STATE::Start;
+			ingameroom[r_id].startcnt++;
 		}
+
+		
+		if (ingameroom[r_id].startcnt == 2)
+		{
+			for (auto& pl : ingameroom[r_id].ingamePlayer)
+			{
+				pl->send_ingame_start();
+			}
+		}
+		// 마지막으로 스타트 들어온애가 문닫는거니까? 
+		// 
+		// 몬스터의 정보들을 전달 
+		
+		
 	}
 						break;
+	case CS_TIME_CHECK: {
+		CS_TIME_CHECK_PACKET* p = reinterpret_cast<CS_TIME_CHECK_PACKET*>(packet);
+		cout << p->roomid << " 번 방 " << p->time << " 분 경과 " << endl;
+		break;
+	};
 
 	case CS_ATTACK: {
 		CS_ATTACK_PACKET* p = reinterpret_cast<CS_ATTACK_PACKET*>(packet);

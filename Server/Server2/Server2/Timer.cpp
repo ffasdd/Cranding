@@ -1,11 +1,14 @@
 #include "pch.h"
 #include "Timer.h"
 
+extern HANDLE _IocpHandle;
 Timer::Timer()
 {
 	isRunning = true;
 	m_timerthread = std::thread{ [&]() {TimerThread(); } };
 }
+
+
 
 Timer::~Timer()
 {
@@ -36,15 +39,30 @@ void Timer::TimerThread()
 				{
 				case EVENT_TYPE::EV_MOVE: {
 					Over_Exp* ov = new Over_Exp;
-					
+					ov->_comptype = COMP_TYPE::NPC_MOVE;
+
+
 					break;
 				}
 				case EVENT_TYPE::EV_ATTACK: {
 					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::NPC_ATTACK;
+					PostQueuedCompletionStatus(_IocpHandle, 1, target_id, &ov->_over);
+					break;
+				}
+				case EVENT_TYPE::EV_FIND: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::FIND_PLAYER;
+					PostQueuedCompletionStatus(_IocpHandle, 1, target_id, &ov->_over);
 					break;
 				}
 				}
 			}
+			continue;
+		}
+		else
+		{
+			this_thread::yield();
 		}
 	}
 }
@@ -53,4 +71,8 @@ void Timer::InitTimerQueue(EVENT_TYPE ev)
 {
 	std::lock_guard<std::mutex> timer_lg{ m_TimerQueueLock };
 	timer_queue.push(ev);
+}
+
+void Timer::WakeupNpc(int npc_id, int waker)
+{
 }

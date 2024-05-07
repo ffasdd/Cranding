@@ -3,7 +3,7 @@
 #include "Over_Exp.h"
 #include "Room.h"
 #include"protocol.h"
-enum class STATE: unsigned int {Free, Alloc , Ingame};
+enum class STATE: unsigned int {Free, Alloc , Ingame ,Start};
 
 class Session
 {
@@ -36,7 +36,10 @@ public:
 	mutex _v_lock;
 	unordered_set<int> _view_list;
 
+	BoundingOrientedBox _OBB = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f),XMFLOAT3(0.1f,0.1f,0.1f),XMFLOAT4(0.0f,0.0f,0.0f,1.0f));
+	
 
+	
 
 public:
 	Session();

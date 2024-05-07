@@ -12,6 +12,8 @@
 #include<mutex>
 #include<thread>
 #include<atomic>
+
+
 using namespace std;
 
 #include <winsock2.h>
@@ -61,3 +63,5 @@ extern HINSTANCE						ghAppInstance;
 #pragma comment(lib, "dxguid.lib")
 
 #include<random>
+#include<time.h>
+constexpr int MAX_NPC = 10;

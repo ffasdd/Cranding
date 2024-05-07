@@ -31,5 +31,8 @@ public:
 	mutex r_l;
 	bool fullcheck = false;
 
+	int startcnt = 0;
+	clock_t start_time;
+	clock_t end_time;
 };
 

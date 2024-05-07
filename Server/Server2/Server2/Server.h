@@ -2,7 +2,11 @@
 #include"Over_Exp.h"
 #include"Session.h"
 #include"Room.h"
+#include"Monster.h"
+#include"Timer.h"
 #include <queue>
+
+extern HANDLE _IocpHandle;
 
 class Server
 {
@@ -22,6 +26,8 @@ public:
 	void Iocp();
 	void WorkerThread();
 
+	void InitialziedMonster();
+
 	void ProcessPacket(int id, char* packet);
 
 	void disconnect(int id);
@@ -38,11 +44,13 @@ public:
 	SOCKET clientsocket;
 
 	Over_Exp _overlapped;
-	HANDLE _IocpHandle;
+
 
 	thread lobbythread;
-
+	thread timer_thread;
 	vector<thread> worker_thread;
+
+
 
 	concurrency::concurrent_queue<Session*> matchingqueue;
 	
@@ -54,7 +62,6 @@ public:
 	// room 안에 array 두어서 Room 으로 전체를 관리한다? 
 
 	mutex r_l;
-
 
 	int readycnt = 0;
 	//bool lobbyrun = false;

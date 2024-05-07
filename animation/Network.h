@@ -1,6 +1,7 @@
 #pragma once
 #include<thread>
 #include<WS2tcpip.h>
+
 #include"Session.h"
 #include"Player.h"
 #include"../Server/Server2/Server2/protocol.h"
@@ -29,6 +30,7 @@ public:
 	// thread recv
 	void StartServer();
 	void NetThreadFunc();
+	void TimerThread();
 	void ProcessData(size_t _size);
 	void ProcessPacket(char* buf);
 
@@ -46,9 +48,9 @@ public: // thread send
 	void SendChangeScene(int scenenum);
 	void SendIngameStart();
 	void SendAttack(bool is_attack);
-
 	void SendReady();
-
+	void SendTime(int time);
+	
 public: // utils
 	int getmyid(int _id);
 
@@ -64,9 +66,14 @@ private:
 
 	thread netThread;
 	thread sendThread;
+	thread timerThread;
 
 	int ingamecnt = 0;
 
+	clock_t start;
+	clock_t end;
+	int second{ 10 };
+	unsigned int curTimer = 0;
 	//CPlayer* PlayerInfo;
 
 private:

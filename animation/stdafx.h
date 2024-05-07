@@ -9,6 +9,7 @@
 // Windows 헤더 파일:
 #include <windows.h>
 
+#include<time.h>
 
 // C의 런타임 헤더 파일입니다.
 #include<iostream>
@@ -28,6 +29,7 @@
 
 #include <concurrent_priority_queue.h>
 #include <concurrent_queue.h>
+
 
 
 
@@ -119,7 +121,7 @@ inline void Swap(float *pfS, float *pfT) { float fTemp = *pfS; *pfS = *pfT; *pfT
 // 비교해서 다를떄만 블랜딩되게
 // 보내야되는게 지금 애니메이션이랑 
 // prev 지금 서버에선 지금꺼만, 클라에서는 두칸짜리 배열을 만들어서 
-enum class SENDTYPE : INT { MOVE, ROTATE, ATTACK,CHANGE_ANIMATION,CHANGE_SCENE_LOBBY, CHANGE_SCENE_INGAME_READY,CHANGE_SCENE_INGAME_START
+enum class SENDTYPE : INT { MOVE, ROTATE, ATTACK,CHANGE_ANIMATION,CHANGE_SCENE_LOBBY, CHANGE_SCENE_INGAME_READY,CHANGE_SCENE_INGAME_START,TIME_CHECK
 };
 
 namespace Vector3

@@ -1,10 +1,10 @@
 #pragma once
 #include"pch.h"
 #include"Over_Exp.h"
-
 enum class EVENT_TYPE : int  {
 	EV_MOVE,
 	EV_ATTACK,
+	EV_FIND
 };
 
 class Timer
@@ -31,5 +31,6 @@ private:
 public:
 	void TimerThread();
 	void InitTimerQueue(EVENT_TYPE ev);
+	void WakeupNpc(int npc_id, int waker);
 };
  
