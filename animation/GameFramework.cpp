@@ -695,11 +695,11 @@ void CGameFramework::AnimateObjects()
 {
 	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 
+	//m_pPlayer->UpdateBoundingBox();
 	if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
 	m_pPlayer->Animate(fTimeElapsed);
 
-	m_pPlayer->UpdateBoundingBox();
 	if (m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
 	{
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
@@ -740,6 +740,7 @@ void CGameFramework::FrameAdvance()
 
 	ProcessInput();
 
+	// 이거 시작 전에 이미 m_pMesh가 값이 들어있어야 함 - 근데 우리 플젝은 없음
 	AnimateObjects();
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();

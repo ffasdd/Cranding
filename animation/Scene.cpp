@@ -30,15 +30,34 @@ CScene::~CScene()
 
 bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 {
+
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
-		//for (int j = 0; j < m_ppObjectShaders[i]->m_nObjects; j++)
-		//{
-		//CGameObject* pGameObject = m_ppObjectShaders[i]->m_ppObjects[j];
-		CGameObject* pGameObject = m_ppHierarchicalGameObjects[i];
+		// 맵과 충돌한 경우
+		if (i == 2)
+		{
+			CGameObject* pMapObject = m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild;
+			//std::string str(pMapObject->m_pSibling->m_pSibling->m_pstrFrameName);
 
-		if (pGameObject->m_xmBoundingBox.Intersects(pTargetGameObject->m_xmBoundingBox)) return(true);
-		//}
+			for (int j = 0; j < m_ppHierarchicalGameObjects[2]->m_pChild->nChilds; j++)
+			{
+				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
+					return(true);
+					pMapObject = pMapObject->m_pSibling;
+
+					const char* str = pMapObject->m_pstrFrameName;
+					if (pMapObject == NULL)break;
+
+					if (!strcmp( str, "Plane"))
+						pMapObject = pMapObject->m_pSibling;
+			}
+		}
+		// 다른 클라들과 충돌한 경우
+		else
+		{
+			if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
+				return(true);
+		}
 	}
 	return(false);
 }
@@ -109,6 +128,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_pDescriptorHeap = new CDescriptorHeap();
 	CreateCbvSrvDescriptorHeaps(pd3dDevice, 0, 500); //SuperCobra(17), Gunship(2), Player:Mi24(1), Angrybot()
 
+	// 여기 내부에서 CStandardShader 만들어주는데 CStandardShader가 바운딩 박스 플젝에서는 바운딩박스 쉐이더 역할 함 -> 비교해보기
 	CMaterial::PrepareShaders(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature); 
 
 	BuildDefaultLightsAndMaterials();
@@ -118,11 +138,11 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("Terrain/HeightMap.raw"), 257, 257, xmf3Scale, xmf4Color);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
-
+	 
 	m_nHierarchicalGameObjects = 3;
 	m_ppHierarchicalGameObjects = new CGameObject*[m_nHierarchicalGameObjects];
 
-	CLoadedModelInfo *pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
+	CLoadedModelInfo *pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/player.bin", NULL);
 
 	m_ppHierarchicalGameObjects[0] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
 
@@ -204,7 +224,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, /*m_pTerrain->GetHeight(410.0f, 735.0f)*/0.0f, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(10.0f, 10.0f, 10.0f);
 
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/mapforzz.bin", NULL);
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/icemap.bin", NULL);
 	m_ppHierarchicalGameObjects[2] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[2]->SetPosition(280.0f, 0.0f, 620.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(5.0f, 5.0f, 5.0f);
