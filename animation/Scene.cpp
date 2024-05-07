@@ -778,7 +778,7 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_nHierarchicalGameObjects = 3;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/base.bin", NULL);
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/robbymap.bin", NULL);
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 0.0f, 620.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
@@ -798,7 +798,7 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 //
-void CInGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
 
@@ -809,7 +809,7 @@ void CInGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandL
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/spaceshipmap.bin", NULL);
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
-	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 190.0f, 620.0f);
+	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, -50.0f, 620.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
 	if (map) delete map;
 
@@ -872,4 +872,281 @@ void CInGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandL
 	m_ppHierarchicalGameObjects[2]->SetScale(50.0f, 50.0f, 50.0f);
 
 	if (pPlayerModel) delete pPlayerModel;
+}
+void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
+
+	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+
+	m_nHierarchicalGameObjects = 3+10;
+	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
+
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/icemap.bin", NULL);
+	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
+	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 0.0f, 620.0f);
+	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
+	if (map) delete map;
+
+	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut.bin", NULL);
+
+	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
+
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(7, 7);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
+
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(7, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(8, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
+
+	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
+
+	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
+
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(7, 7);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
+
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(7, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(8, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
+
+	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
+
+	if (pPlayerModel) delete pPlayerModel;
+
+	// 여기서부터 적 객체 그리기
+	CLoadedModelInfo* pIceEnemyModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+
+	for (int i = 0; i < 10; i++)
+	{
+
+	m_ppHierarchicalGameObjects[3+i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 5);
+
+	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+
+	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	
+	float posX = (rand() % 2000) / 10.0;
+	float posY = (rand() % 2000) / 10.0;
+	m_ppHierarchicalGameObjects[3+i]->SetPosition(posX, 0.0f, posY);
+	m_ppHierarchicalGameObjects[3+i]->SetScale(10.0f, 10.0f, 10.0f);
+	}
+}
+void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
+
+	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+
+	m_nHierarchicalGameObjects = 3+10;
+	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
+
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/firemap.bin", NULL);
+	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
+	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 00.0f, 620.0f);
+	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
+	if (map) delete map;
+
+	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut.bin", NULL);
+
+	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
+
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(7, 7);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
+
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(7, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(8, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
+
+	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
+
+	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
+
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(7, 7);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
+
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(7, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(8, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
+
+	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
+
+	if (pPlayerModel) delete pPlayerModel;
+
+	// 여기서부터 적 객체 그리기
+	CLoadedModelInfo* pIceEnemyModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+
+	for (int i = 0; i < 10; i++)
+	{
+
+		m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 5);
+
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+
+		float posX = (rand() % 2000) / 10.0;
+		float posY = (rand() % 2000) / 10.0;
+		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
+		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
+	}
+}
+void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
+
+	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+
+	m_nHierarchicalGameObjects = 3;
+	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
+
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/grassmap.bin", NULL);
+	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
+	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 00.0f, 620.0f);
+	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
+	if (map) delete map;
+
+	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut.bin", NULL);
+
+	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
+
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(7, 7);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
+
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(7, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(8, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
+
+	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
+
+	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
+
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(7, 7);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
+
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(7, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(8, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
+
+	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
+
+	if (pPlayerModel) delete pPlayerModel;
+
+	
 }

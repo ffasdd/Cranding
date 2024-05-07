@@ -375,32 +375,52 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				break;
 			}
 			case '0':
+				// ㅁㅔ인화면
 				ReleaseObjects();
 				SceneNum = 0;
 				BuildObjects(0);
 				break;
 
 			case '1':
+				// 로비화면
 				SceneNum = 1;
-				gNetwork.SendLoginfo();
+				//gNetwork.SendLoginfo();
 				// 로그인 리시블 받을 때까지 대기 해줘야함 
-				WaitForSingleObject(loginevent, INFINITE);
+				//WaitForSingleObject(loginevent, INFINITE);
 
-				cl_id = gNetwork.Getmyid();
-				m_pPlayer->c_id = gNetwork.Getmyid();
+				//cl_id = gNetwork.Getmyid();
+				//m_pPlayer->c_id = gNetwork.Getmyid();
 
 				ReleaseObjects();
 				BuildObjects(1);
-				gNetwork.SendChangeScene(SceneNum);
+				//gNetwork.SendChangeScene(SceneNum);
 		
 
 				break;
 			case '2':
+				// spaceship map
 				SceneNum = 2;
-				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_READY);
-				//ReleaseObjects();
-				//BuildObjects(2);
-
+				//g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_READY);
+				ReleaseObjects();
+				BuildObjects(2);
+				break;
+			case '3':
+				// ice map
+				ReleaseObjects();
+				SceneNum = 3;
+				BuildObjects(3);
+				break;
+			case '4':
+				// fire map
+				ReleaseObjects();
+				SceneNum = 4;
+				BuildObjects(4);
+				break;
+			case '5':
+				// grass map
+				ReleaseObjects();
+				SceneNum = 5;
+				BuildObjects(5);
 				break;
 			case VK_SPACE:
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
@@ -582,7 +602,7 @@ void CGameFramework::BuildObjects(int nScene)
 	{
 	case 0:
 	{
-
+		/*
 		m_pUILayer = new UILayer(m_nSwapChainBuffers, 4, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 
 		ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
@@ -630,8 +650,8 @@ void CGameFramework::BuildObjects(int nScene)
 		// 네 번째 텍스트 박스 그리기
 		m_pUILayer->UpdateTextOutputs(3, pstrOutputText4, &d2dRect, pdwTextFormat, pd2dBrush);
 		//////////////////////////////////////////////////////////////////
-
-
+		
+		*/
 
 		m_pScene = new CLoginScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
@@ -681,10 +701,86 @@ void CGameFramework::BuildObjects(int nScene)
 	}
 	case 2:
 	{
-		m_pScene = new CInGameScene();
+		m_pScene = new CSpaceShipScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+
+		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+		m_pCamera = m_pPlayer->GetCamera();
+
+		m_pPostProcessingShader = new CTextureToFullScreenShader();
+		m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
+		m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
+
+		D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
+
+		DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+		m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
+
+		// 뎁스 SRV 어쩌구..
+		D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
+		break;
+	}
+	case 3:
+	{
+		// ice map
+		m_pScene = new CIceScene();
+		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+		CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+
+		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+		m_pCamera = m_pPlayer->GetCamera();
+
+		m_pPostProcessingShader = new CTextureToFullScreenShader();
+		m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
+		m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
+
+		D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
+
+		DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+		m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
+
+		// 뎁스 SRV 어쩌구..
+		D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
+		break;
+	}
+	case 4:
+	{
+		// fire map
+		m_pScene = new CFireScene();
+		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+		CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+
+		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+		m_pCamera = m_pPlayer->GetCamera();
+
+		m_pPostProcessingShader = new CTextureToFullScreenShader();
+		m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
+		m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
+
+		D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
+
+		DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+		m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
+
+		// 뎁스 SRV 어쩌구..
+		D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
+		break;
+	}
+	
+	case 5:
+	{
+		// grass map
+		m_pScene = new CGrassScene();
+		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+		CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
@@ -757,6 +853,11 @@ void CGameFramework::ReleaseObjects()
 
 	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) delete m_pScene;
+
+	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseObjects();
+	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseShaderVariables();
+	if (m_pPostProcessingShader) m_pPostProcessingShader->Release();
+	//m_pPostProcessingShader = nullptr;
 }
 
 // 플레이어 조작 부분 -> 상하좌우, 마우스
@@ -890,11 +991,6 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
-void CGameFramework::UpdateUI()
-{
-	m_pUILayer->UpdateTextOutputs(1, m_pszFrameRate, NULL, NULL, NULL);
-}
-
 //#define _WITH_PLAYER_TOP
 
 void CGameFramework::FrameAdvance()
@@ -947,7 +1043,7 @@ void CGameFramework::FrameAdvance()
 
 	if (SceneNum == 0)
 	{
-		m_pUILayer->Render(m_nSwapChainBufferIndex);
+		//m_pUILayer->Render(m_nSwapChainBufferIndex);
 	}
 
 #ifdef _WITH_PRESENT_PARAMETERS
