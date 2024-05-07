@@ -857,7 +857,7 @@ void CGameFramework::ReleaseObjects()
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseObjects();
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseShaderVariables();
 	if (m_pPostProcessingShader) m_pPostProcessingShader->Release();
-	m_pPostProcessingShader = nullptr;
+	//m_pPostProcessingShader = nullptr;
 }
 
 // 플레이어 조작 부분 -> 상하좌우, 마우스
