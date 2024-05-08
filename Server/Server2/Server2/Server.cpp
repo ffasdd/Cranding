@@ -474,8 +474,8 @@ void Server::ProcessPacket(int id, char* packet)
 			// 모든 클라이언트들 한테 밤에나오는 NPC들 정보들을 모두 보내줘야 함 
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
-				for(auto& npc : ingameroom[r_id].NightMonster)
-					pl->send_add_monster(npc._id);
+				for (int i = 0; i < ingameroom[r_id].NightMonster.max_size(); ++i)
+					pl->send_add_monster(i);
 			}
 			// 시간이 2분 일때, 4분일때, 6분일때... 
 			// 몬스터 출현 함수로뺴줘야할듯 

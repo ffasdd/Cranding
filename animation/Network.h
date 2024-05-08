@@ -9,6 +9,7 @@
 
 #define SERVER_IP "172.0.0.1"
 extern unordered_map<int, Session> g_clients;
+extern unordered_map<int, Session> g_monsters;
 
 extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 extern HANDLE loginevent;
@@ -58,6 +59,7 @@ public:
 	int prev_remain = 0;
 	int my_id = 0;
 	int my_roomid = -1;
+	bool isNight = false;
 	
 private:
 	SOCKET clientsocket;

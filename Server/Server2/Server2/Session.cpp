@@ -5,8 +5,8 @@
 array<Session, MAX_USER> clients; //전체 클라이언트 
 std::random_device rd;
 std::default_random_engine dre;
-std::uniform_real_distribution<float> xpos(0, 100);
-std::uniform_real_distribution<float> zpos(0, 100);
+std::uniform_real_distribution<float> xpos(0, 500);
+std::uniform_real_distribution<float> zpos(0, 500);
 
 Session::Session()
 {

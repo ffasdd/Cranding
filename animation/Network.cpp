@@ -143,6 +143,8 @@ void Network::TimerThread()
 			if (double(end - start) / CLOCKS_PER_SEC == second) {
 				curTimer++;
 				g_sendqueue.push(SENDTYPE::TIME_CHECK);
+				if (curTimer % 2 == 0) isNight = true;
+				else if (curTimer % 7 == 0) isNight = false;
 				break;
 			}
 			else continue;
@@ -285,6 +287,8 @@ void Network::ProcessPacket(char* buf)
 	case SC_ADD_MONSTER: {
 		SC_ADD_MONSTER_PACKET* p = reinterpret_cast<SC_ADD_MONSTER_PACKET*>(buf);
 		int npc_id = p->id;
+		g_monsters[npc_id].setPos(p->pos);
+		break;
 		// 클라에도 몬스터를 담는 어레이나 벡터가 필요 
 
 	}

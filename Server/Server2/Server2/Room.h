@@ -37,7 +37,7 @@ public:
 	clock_t end_time;
 
 	// Night Monster
-	array<Monster, 30> NightMonster;
+	array<Monster, 10> NightMonster;
 	// Fire Monster
 	array<Monster, 30> FireMonster;
 	// Ice Monster
