@@ -14,6 +14,7 @@ CGameFramework					gGameFramework;
 Network							gNetwork;
 
 unordered_map<int, Session> g_clients;
+unordered_map<int, Session> g_monsters;
 
 
 concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
@@ -75,6 +76,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			 			gGameFramework.myFunc_SetLookRight(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
 			 			gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
 			 		}
+					for (int i = 0; i < g_monsters.size(); ++i)
+					{
+						gGameFramework.myFunc_SetMonPosition(i, scenenum, g_monsters[i].getPos());
+						
+					}
 			 	}
 			 }
 			gGameFramework.FrameAdvance();

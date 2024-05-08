@@ -6,7 +6,7 @@
 #include "GameFramework.h"
 #include "UI.h"
 
-
+#define monsternum 10
 
 CGameFramework::CGameFramework()
 {
@@ -498,6 +498,18 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetPosition(position);
 	}
 }
+
+void CGameFramework::myFunc_SetMonPosition(int n, int SCSceneNum, XMFLOAT3 position)
+{
+	if (SCSceneNum > 1)
+	{
+		for (int i = 0; i < monsternum; i++)
+		{
+			m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
+		}
+	}
+}
+
 
 void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
 {
