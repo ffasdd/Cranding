@@ -38,10 +38,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	MyRegisterClass(hInstance);
 
 	
-	//while (!gNetwork.ReadytoConnect());
+	while (!gNetwork.ReadytoConnect());
 	
 	// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
-	//gNetwork.StartServer();
+	gNetwork.StartServer();
 
 	// 로그인 완료 
 	
@@ -65,18 +65,18 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
-			 //if (gGameFramework.m_pPlayer != NULL)
-			 //{
-			 //	if (gNetwork.gamestart)
-			 //	{
-			 //		for (int i = 0; i < g_clients.size(); ++i)
-			 //		{
-			 //			gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
-			 //			gGameFramework.myFunc_SetLookRight(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
-			 //			gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
-			 //		}
-			 //	}
-			 //}
+			 if (gGameFramework.m_pPlayer != NULL)
+			 {
+			 	if (gNetwork.gamestart)
+			 	{
+			 		for (int i = 0; i < g_clients.size(); ++i)
+			 		{
+			 			gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
+			 			gGameFramework.myFunc_SetLookRight(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
+			 			gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
+			 		}
+			 	}
+			 }
 			gGameFramework.FrameAdvance();
 		}
 	}

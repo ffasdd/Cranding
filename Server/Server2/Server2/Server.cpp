@@ -468,6 +468,7 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_TIME_CHECK: {
 		CS_TIME_CHECK_PACKET* p = reinterpret_cast<CS_TIME_CHECK_PACKET*>(packet);
 		cout << p->roomid << " 번 방 " << p->time << " 분 경과 " << endl;
+		//if(p->time )
 		break;
 	};
 

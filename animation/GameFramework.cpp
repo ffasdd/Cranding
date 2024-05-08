@@ -51,7 +51,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	CreateRtvAndDsvDescriptorHeaps();
 
 	CreateSwapChain();
-	
+
 	CreateSwapChainRenderTargetViews();
 
 	CreateDepthStencilView();
@@ -111,7 +111,7 @@ void CGameFramework::CreateSwapChain()
 	dxgiSwapChainDesc.Windowed = TRUE;
 	dxgiSwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-	HRESULT hResult = m_pdxgiFactory->CreateSwapChain(m_pd3dCommandQueue, &dxgiSwapChainDesc, (IDXGISwapChain **)&m_pdxgiSwapChain);
+	HRESULT hResult = m_pdxgiFactory->CreateSwapChain(m_pd3dCommandQueue, &dxgiSwapChainDesc, (IDXGISwapChain**)&m_pdxgiSwapChain);
 
 #endif
 
@@ -316,7 +316,7 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		//		g_clients[cl_id].setAnimation((int)animateState::SHOOTING);
 		//	}
 		//}
-	
+
 
 		break;
 
@@ -349,96 +349,96 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 	//if (m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
-		case WM_KEYUP:
-			switch (wParam)
-			{
-			case VK_ESCAPE:
-				::PostQuitMessage(0);
-				break;
-			case VK_RETURN:
-				break;
-			case VK_F1:
-			case VK_F2:
-			case VK_F3:
-			case VK_F4:
-				m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
-				break;
-			case VK_F9:
-				ChangeSwapChainState();
-				break;
-			case 'P': // scene
-			case 'O': // texture
-			case 'Z': // depth
-			case 'N': // normal
-			{
-				m_nDrawOption = (int)wParam;
-				break;
-			}
-			case '0':
-				// ㅁㅔ인화면
-				ReleaseObjects();
-				SceneNum = 0;
-				BuildObjects(0);
-				break;
-
-			case '1':
-				// 로비화면
-				SceneNum = 1;
-				//gNetwork.SendLoginfo();
-				// 로그인 리시블 받을 때까지 대기 해줘야함 
-				//WaitForSingleObject(loginevent, INFINITE);
-
-				//cl_id = gNetwork.Getmyid();
-				//m_pPlayer->c_id = gNetwork.Getmyid();
-
-				ReleaseObjects();
-				BuildObjects(1);
-				//gNetwork.SendChangeScene(SceneNum);
-		
-
-				break;
-			case '2':
-				// spaceship map
-				SceneNum = 2;
-<<<<<<< Updated upstream
-				//g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_READY);
-				ReleaseObjects();
-				BuildObjects(2);
-				break;
-			case '3':
-				// ice map
-				ReleaseObjects();
-				SceneNum = 3;
-				BuildObjects(3);
-				break;
-			case '4':
-				// fire map
-				ReleaseObjects();
-				SceneNum = 4;
-				BuildObjects(4);
-				break;
-			case '5':
-				// grass map
-				ReleaseObjects();
-				SceneNum = 5;
-				BuildObjects(5);
-=======
-				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-				// ------------------------------------ 
-
-				ReleaseObjects();
-				BuildObjects(2);
-
->>>>>>> Stashed changes
-				break;
-			case VK_SPACE:
-				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
-				break;
-			default:
-				break;
-			}
+	case WM_KEYUP:
+		switch (wParam)
+		{
+		case VK_ESCAPE:
+			::PostQuitMessage(0);
 			break;
-		
+		case VK_RETURN:
+			break;
+		case VK_F1:
+		case VK_F2:
+		case VK_F3:
+		case VK_F4:
+			m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
+			break;
+		case VK_F9:
+			ChangeSwapChainState();
+			break;
+		case 'P': // scene
+		case 'O': // texture
+		case 'Z': // depth
+		case 'N': // normal
+		{
+			m_nDrawOption = (int)wParam;
+			break;
+		}
+		case '0':
+			// ㅁㅔ인화면
+			ReleaseObjects();
+			SceneNum = 0;
+			BuildObjects(0);
+			break;
+
+		case '1':
+			// 로비화면
+			SceneNum = 1;
+			gNetwork.SendLoginfo();
+			// 로그인 리시블 받을 때까지 대기 해줘야함 
+			WaitForSingleObject(loginevent, INFINITE);
+
+			cl_id = gNetwork.Getmyid();
+			m_pPlayer->c_id = gNetwork.Getmyid();
+
+			ReleaseObjects();
+			BuildObjects(1);
+			gNetwork.SendChangeScene(SceneNum);
+
+
+			break;
+		case '2':
+			// spaceship map
+			SceneNum = 2;
+
+			g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+			ReleaseObjects();
+			BuildObjects(2);
+			break;
+		case '3':
+			// ice map
+			ReleaseObjects();
+			SceneNum = 3;
+			BuildObjects(3);
+			break;
+		case '4':
+			// fire map
+			ReleaseObjects();
+			SceneNum = 4;
+			BuildObjects(4);
+			break;
+		case '5':
+			// grass map
+			ReleaseObjects();
+			SceneNum = 5;
+			BuildObjects(5);
+
+			g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+			// ------------------------------------ 
+
+			ReleaseObjects();
+			BuildObjects(2);
+
+
+			break;
+		case VK_SPACE:
+			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
+			break;
+		default:
+			break;
+		}
+		break;
+
 	}
 }
 
@@ -524,7 +524,7 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 			break;
 		}
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetLook(Look.x, Look.y, Look.z);
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(0,1,0);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(0, 1, 0);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetRight(Right.x, Right.y, Right.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetScale(50.0f, 50.0f, 50.0f);
 	}
@@ -551,16 +551,16 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 		// 서버에서 받은 이전 애니메이션 번호와 현재 애니메이션 번호가 다른 경우(블렌딩 해야하는 경우)
 		if (prevAni != curAni)
 		{
-			
-		// 이전 애니메이션 번호, 이후 애니메이션 번호 저장
+
+			// 이전 애니메이션 번호, 이후 애니메이션 번호 저장
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
-														
+
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationAfter = curAni;
-														    
+
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackEnable(prevAni, false);
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackEnable(curAni, true);
-														   
+
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
 
 			g_clients[others_id + 1].setprevAnimation(curAni);
@@ -622,7 +622,7 @@ void CGameFramework::BuildObjects(int nScene)
 		wcscpy_s(pstrOutputText, 256, L"Cranding\n");
 		m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
 		/////////////////////////////////////////////////////////
-	
+
 		// 두 번째 텍스트 박스를 위한 위치 및 형식 설정
 		pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
 		d2dRect = D2D1::RectF(-400.0f, 150.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
@@ -659,7 +659,7 @@ void CGameFramework::BuildObjects(int nScene)
 		// 네 번째 텍스트 박스 그리기
 		m_pUILayer->UpdateTextOutputs(3, pstrOutputText4, &d2dRect, pdwTextFormat, pd2dBrush);
 		//////////////////////////////////////////////////////////////////
-		
+
 		*/
 
 		m_pScene = new CLoginScene();
@@ -782,7 +782,7 @@ void CGameFramework::BuildObjects(int nScene)
 		D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
 		break;
 	}
-	
+
 	case 5:
 	{
 		// grass map
@@ -836,7 +836,7 @@ void CGameFramework::BuildObjects(int nScene)
 	//m_pScene = new CScene();
 	//if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-	
+
 
 	m_pd3dCommandList->Close();
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
@@ -874,7 +874,7 @@ void CGameFramework::ProcessInput()
 {
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
-	if (GetKeyboardState(pKeysBuffer) && m_pScene ) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
+	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
 	if (!bProcessedByScene && (SceneNum != 0)) // 로그인씬에서 키입력 제한 
 	{
 		float cxDelta = 0.0f, cyDelta = 0.0f;
@@ -891,13 +891,13 @@ void CGameFramework::ProcessInput()
 		DWORD dwDirection = 0;
 		// 위쪽 키가 눌려있는지 확인하는 비트 연산
 		// 위쪽 키가 눌려있으면 dwDirection에 dwDirection과 DIR_FORWARD의 비트 |(or) 연산 후 할당 연산(=)을 시행
-		if (pKeysBuffer[KEY_W] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false) 
+		if (pKeysBuffer[KEY_W] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			dwDirection |= DIR_FORWARD;
 		if (pKeysBuffer[KEY_S] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			dwDirection |= DIR_BACKWARD;
 		if (pKeysBuffer[KEY_A] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			dwDirection |= DIR_LEFT;
-		if (pKeysBuffer[KEY_D] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false) 
+		if (pKeysBuffer[KEY_D] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			dwDirection |= DIR_RIGHT;
 
 		// f1 누르면 기절, f2 누르면 부활
@@ -919,7 +919,7 @@ void CGameFramework::ProcessInput()
 		// 공격 키
 		if (pKeysBuffer[VK_LBUTTON] & 0xF0)
 		{
-	
+
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
 		}
 
@@ -1004,7 +1004,7 @@ void CGameFramework::MoveToNextFrame()
 
 void CGameFramework::FrameAdvance()
 {
-	m_GameTimer.Tick(30.0f);
+	m_GameTimer.Tick(60.0f);
 
 	ProcessInput();
 
@@ -1014,7 +1014,7 @@ void CGameFramework::FrameAdvance()
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	
+
 	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera);
 
 	//if (m_nDrawOption == DRAW_SCENE_COLOR)//'S'

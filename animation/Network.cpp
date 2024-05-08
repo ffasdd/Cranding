@@ -87,7 +87,7 @@ void Network::SendThreadFunc()
 				SendProcess(_sendtype);
 		}
 		else
-			std::this_thread::sleep_for(std::chrono::milliseconds(1ms));
+			std::this_thread::sleep_for(std::chrono::milliseconds(3ms));
 	}
 }
 
@@ -145,6 +145,7 @@ void Network::TimerThread()
 				g_sendqueue.push(SENDTYPE::TIME_CHECK);
 				break;
 			}
+			else continue;
 
 		}
 		
