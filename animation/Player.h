@@ -154,7 +154,7 @@ public:
 	virtual void OnCameraUpdateCallback(float fTimeElapsed);
 }; 
 
-class CLobbyPlayer : public CPlayer
+class CLobbyPlayer : public CTerrainPlayer
 {
 public:
 	CLobbyPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext = NULL);

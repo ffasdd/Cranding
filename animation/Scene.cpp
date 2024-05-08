@@ -725,6 +725,7 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //
+// ·Î±×ÀÎ¾À
 void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
@@ -768,7 +769,6 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //
-// ÀÎ°ÔÀÓ¾ÀÀÓ
 void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
@@ -900,6 +900,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
 	}
 }
+
 void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
@@ -1002,6 +1003,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[3+i]->SetScale(10.0f, 10.0f, 10.0f);
 	}
 }
+
 void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
@@ -1104,6 +1106,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
 	}
 }
+
 void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);

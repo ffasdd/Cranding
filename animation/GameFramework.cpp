@@ -702,7 +702,7 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene = new CLobbyScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-		CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();

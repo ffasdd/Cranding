@@ -765,21 +765,37 @@ void CLoginPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 }
 
 // lobby
-CLobbyPlayer::CLobbyPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext)
+CLobbyPlayer::CLobbyPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext) : CTerrainPlayer(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, pContext)
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
 	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 3, pAngrybotModel);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 11, pAngrybotModel);
+
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(7, 7);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
 
-	m_pSkinnedAnimationController->SetTrackEnable(0, true);
-	m_pSkinnedAnimationController->SetTrackEnable(1, false);
+	m_pSkinnedAnimationController->SetTrackEnable(0, false);
 	m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_pSkinnedAnimationController->SetTrackEnable(6, false);
+	m_pSkinnedAnimationController->SetTrackEnable(7, false);
+	m_pSkinnedAnimationController->SetTrackEnable(8, false);
+	m_pSkinnedAnimationController->SetTrackEnable(9, false);
+	m_pSkinnedAnimationController->SetTrackEnable(10, false);
 
 	CAnimationCallbackHandler* pAnimationCallbackHandler = new CSoundCallbackHandler();
 	m_pSkinnedAnimationController->SetAnimationCallbackHandler(0, pAnimationCallbackHandler);
