@@ -496,7 +496,7 @@ void Server::ProcessPacket(int id, char* packet)
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-			if (pl->_state != STATE::Ingame) continue;
+			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
 			if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage)continue;
 			if (can_see(id, pl->_id))

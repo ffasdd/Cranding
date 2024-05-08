@@ -211,7 +211,7 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGr
 void CShader::OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, int nPipelineState)
 {
 	if (m_pd3dPipelineState) pd3dCommandList->SetPipelineState(m_pd3dPipelineState);
-	//if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
+	if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 }
 
 void CShader::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, void* pContext)
@@ -830,7 +830,7 @@ CTextureToFullScreenShader::CTextureToFullScreenShader()
 
 CTextureToFullScreenShader::~CTextureToFullScreenShader()
 {
-	ReleaseShaderVariables();
+	//ReleaseShaderVariables();
 }
 
 D3D12_SHADER_BYTECODE CTextureToFullScreenShader::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
@@ -854,7 +854,7 @@ void CTextureToFullScreenShader::CreateShaderVariables(ID3D12Device* pd3dDevice,
 
 void CTextureToFullScreenShader::ReleaseShaderVariables()
 {
-	if (m_pd3dcbDrawOptions) m_pd3dcbDrawOptions->Release();
+	//if (m_pd3dcbDrawOptions) m_pd3dcbDrawOptions->Release();
 }
 
 void CTextureToFullScreenShader::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
