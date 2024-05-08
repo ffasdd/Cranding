@@ -505,6 +505,7 @@ void CGameFramework::myFunc_SetMonPosition(int n, int SCSceneNum, XMFLOAT3 posit
 	{
 		for (int i = 0; i < monsternum; i++)
 		{
+			m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
 			m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
 		}
 	}

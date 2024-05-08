@@ -713,7 +713,7 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
-		if (m_ppHierarchicalGameObjects[i])
+		if (m_ppHierarchicalGameObjects[i] && m_ppHierarchicalGameObjects[i]->isdraw == true)
 		{
 			m_ppHierarchicalGameObjects[i]->Animate(m_fElapsedTime);
 			if (!m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController) m_ppHierarchicalGameObjects[i]->UpdateTransform(NULL);
@@ -892,6 +892,8 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 
+		m_ppHierarchicalGameObjects[3 + i]->isdraw = false;
+
 		float posX = (rand() % 2000) / 10.0;
 		float posY = (rand() % 2000) / 10.0;
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
@@ -991,6 +993,8 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+
+	m_ppHierarchicalGameObjects[3 + i]->isdraw = false;
 	
 	float posX = (rand() % 2000) / 10.0;
 	float posY = (rand() % 2000) / 10.0;
@@ -1092,6 +1096,8 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 
+		m_ppHierarchicalGameObjects[3 + i]->isdraw = false;
+
 		float posX = (rand() % 2000) / 10.0;
 		float posY = (rand() % 2000) / 10.0;
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
@@ -1191,6 +1197,8 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+
+		m_ppHierarchicalGameObjects[3 + i]->isdraw = false;
 
 		float posX = (rand() % 2000) / 10.0;
 		float posY = (rand() % 2000) / 10.0;

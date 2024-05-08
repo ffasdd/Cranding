@@ -411,6 +411,9 @@ public:
 	// 이것만 잘 하면 됩니덩
 	CAnimationController*			m_pSkinnedAnimationController = NULL;
 
+	// 서버에서 그리기 on/off
+	bool isdraw = true;
+
 	void SetMesh(CMesh *pMesh);
 	void SetShader(CShader *pShader);
 	void SetShader(int nMaterial, CShader *pShader);
