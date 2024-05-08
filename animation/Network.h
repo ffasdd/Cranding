@@ -8,9 +8,8 @@
 #pragma comment(lib,"WS2_32.lib")
 
 #define SERVER_IP "172.0.0.1"
+extern unordered_map<int, Session> g_clients;
 
-extern unordered_map<int, Session> 
-;
 extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 extern HANDLE loginevent;
 extern HANDLE startevent;

@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "Timer.h"
+#include"Monster.h"
+#include"Session.h"
 
+extern array<Monster, MAX_NPC> Monsters; //ÀüÃ¼ NPC 
 extern HANDLE _IocpHandle;
 Timer::Timer()
 {
@@ -75,4 +78,13 @@ void Timer::InitTimerQueue(EVENT_TYPE ev)
 
 void Timer::WakeupNpc(int npc_id, int waker)
 {
+	Over_Exp* exover = new Over_Exp;
+	exover->_comptype = COMP_TYPE::NPC_MOVE;
+	exover->_ai_target_obj = waker;
+	PostQueuedCompletionStatus(_IocpHandle, 1, npc_id, &exover->_over);
+
+	//if (Monsters[npc_id]._is_active)return;
+	//bool old_state = false;
+	//if (false == atomic_compare_exchange_strong());
+
 }

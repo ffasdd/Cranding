@@ -37,6 +37,8 @@ constexpr char SC_CHANGE_SCENE = 15;
 constexpr char SC_ATTACK = 16;
 constexpr char SC_INGAME_STRAT = 17;
 constexpr char SC_TIME_CHECK = 18;
+constexpr char SC_ADD_MONSTER = 19;
+
 
 
 
@@ -170,6 +172,7 @@ struct CS_TIME_CHECK_PACKET {
 	char type;
 	int roomid;
 	int time;
+
 };
 
 struct SC_GAMESTART_PACKET {
@@ -212,6 +215,21 @@ struct SC_ADD_OBJECT_PACKET {
 	XMFLOAT3 right;
 	XMFLOAT3 up;
 	char	name[NAME_SIZE];
+	int		roomid;
+	animateState a_state;
+	animateState prev_state;
+};
+
+struct SC_ADD_MONSTER_PACKET {
+	unsigned char size;
+	char	type;
+	int		id;
+	int		hp;
+	int		monstertype;
+	XMFLOAT3 pos;
+	XMFLOAT3 look;
+	XMFLOAT3 right;
+	XMFLOAT3 up;
 	int		roomid;
 	animateState a_state;
 	animateState prev_state;

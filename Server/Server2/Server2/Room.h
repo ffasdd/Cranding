@@ -1,5 +1,6 @@
 #pragma once
 #include "Session.h"
+#include "Monster.h"
 class Session;
 
 enum class roomState : int { Free, Ingame };
@@ -34,5 +35,15 @@ public:
 	int startcnt = 0;
 	clock_t start_time;
 	clock_t end_time;
+
+	// Night Monster
+	array<Monster, 30> NightMonster;
+	// Fire Monster
+	array<Monster, 30> FireMonster;
+	// Ice Monster
+	array<Monster, 30> IceMonster;
+	// Nature Monster 
+	array<Monster, 30> NatureMonster;
+
 };
 

@@ -461,14 +461,25 @@ void Server::ProcessPacket(int id, char* packet)
 		// 마지막으로 스타트 들어온애가 문닫는거니까? 
 		// 
 		// 몬스터의 정보들을 전달 
-		
-		
+
 	}
 						break;
 	case CS_TIME_CHECK: {
 		CS_TIME_CHECK_PACKET* p = reinterpret_cast<CS_TIME_CHECK_PACKET*>(packet);
 		cout << p->roomid << " 번 방 " << p->time << " 분 경과 " << endl;
-		//if(p->time )
+		int r_id = p->roomid;
+		if (p->time % 2 == 0)
+		{
+			cout << " 몬스터 생성  " << endl; 
+			// 모든 클라이언트들 한테 밤에나오는 NPC들 정보들을 모두 보내줘야 함 
+			for (auto& pl : ingameroom[r_id].ingamePlayer)
+			{
+				for(auto& npc : ingameroom[r_id].NightMonster)
+					pl->send_add_monster(npc._id);
+			}
+			// 시간이 2분 일때, 4분일때, 6분일때... 
+			// 몬스터 출현 함수로뺴줘야할듯 
+		}
 		break;
 	};
 

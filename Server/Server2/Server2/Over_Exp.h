@@ -10,5 +10,6 @@ public:
 	WSABUF _wsaBuf;
 	char _sendbuf[200];
 	COMP_TYPE _comptype;
+	int _ai_target_obj;
 };
 

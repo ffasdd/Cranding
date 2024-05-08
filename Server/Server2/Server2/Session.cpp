@@ -3,6 +3,10 @@
 
 
 array<Session, MAX_USER> clients; //전체 클라이언트 
+std::random_device rd;
+std::default_random_engine dre;
+std::uniform_real_distribution<float> xpos(0, 100);
+std::uniform_real_distribution<float> zpos(0, 100);
 
 Session::Session()
 {
@@ -164,6 +168,19 @@ void Session::send_ingame_start()
 	SC_INGAME_START_PACKET p;
 	p.type = SC_INGAME_STRAT;
 	p.size = sizeof(SC_INGAME_START_PACKET);
+	do_send(&p);
+}
+
+void Session::send_add_monster(int npc_id)
+{
+	SC_ADD_MONSTER_PACKET p;
+	p.type = SC_ADD_MONSTER;
+	p.size = sizeof(SC_ADD_MONSTER_PACKET);
+	p.id = npc_id;
+	p.pos = XMFLOAT3(xpos(dre), 0.f, zpos(dre));
+	p.look = XMFLOAT3(0.f, 0.f, 1.0f);
+	p.up = XMFLOAT3(0.f, 1.f, 0.0f);
+	p.right = XMFLOAT3(1.f, 0.f, 0.0f);
 	do_send(&p);
 }
 

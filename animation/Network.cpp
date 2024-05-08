@@ -282,6 +282,12 @@ void Network::ProcessPacket(char* buf)
 		g_clients.erase(ob_id);
 		break;
 	}
+	case SC_ADD_MONSTER: {
+		SC_ADD_MONSTER_PACKET* p = reinterpret_cast<SC_ADD_MONSTER_PACKET*>(buf);
+		int npc_id = p->id;
+		// 클라에도 몬스터를 담는 어레이나 벡터가 필요 
+
+	}
 	}
 }
 
