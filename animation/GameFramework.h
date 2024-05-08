@@ -77,6 +77,8 @@ public:
 
 	// 다른 클라들 애니메이션 변경해주는 함수
 	void myFunc_SetAnimation(int n, int id, int prevAni, int curAni);
+	// 다른 클라들 공격 설정해주는 함수
+	void myFunc_SetAttack(int n, int id, bool isAttack);
 
 	CScene* m_pScene = NULL;
 

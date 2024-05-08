@@ -584,6 +584,29 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 	}
 }
 
+void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
+{
+	if (cl_id != n)
+	{
+		int others_id = -1;
+		switch (cl_id) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+
+		if(isAttack == true)
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsAttack = true;
+	}
+}
+
 void CGameFramework::OnDestroy()
 {
 	ReleaseObjects();

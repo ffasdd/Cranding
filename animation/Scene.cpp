@@ -767,6 +767,16 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 }
 
+void CLoginScene::ReleaseUploadBuffers()
+{
+	CLoginScene::ReleaseUploadBuffers();
+}
+
+void CLoginScene::ReleaseObjects()
+{
+	CScene::ReleaseObjects();
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////
 //
 void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -796,6 +806,17 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[2]->SetScale(50.0f, 50.0f, 50.0f);
 	if (pPlayerModel) delete pPlayerModel;
 }
+
+void CLobbyScene::ReleaseUploadBuffers()
+{
+	CScene::ReleaseUploadBuffers();
+}
+
+void CLobbyScene::ReleaseObjects()
+{
+	CScene::ReleaseObjects();
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////
 //
 void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -900,6 +921,19 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
 	}
 }
+
+void CSpaceShipScene::ReleaseUploadBuffers()
+{
+	CScene::ReleaseUploadBuffers();
+}
+
+void CSpaceShipScene::ReleaseObjects()
+{
+	CScene::ReleaseObjects();
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//
 
 void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
