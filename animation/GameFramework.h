@@ -17,10 +17,11 @@
 #define DRAW_SCENE_Z_DEPTH				'Z'
 #define DRAW_SCENE_DEPTH				'D'
 
+
 #include "Timer.h"
 #include "Player.h"
 #include "Scene.h"
-#include"Network.h"
+#include "Network.h"
 
 extern Network							gNetwork;
 
@@ -59,9 +60,10 @@ public:
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
 
+
 	void UpdateUI();
 
-	//void UpdateUI();
+	void readyUI();
 
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
@@ -83,6 +85,13 @@ public:
 	CScene* m_pScene = NULL;
 
 	int SceneNum = 0;
+	bool isready = false;
+
+	// ½Ã°è
+	int total = 0;
+	int curDay = 0;
+	int curMinute = 0;
+	int curSecond = 0;
 
 private:
 	HINSTANCE					m_hInstance;
@@ -127,6 +136,8 @@ private:
 
 	CCamera						*m_pCamera = NULL;
 
+	UILayer* m_pUILayer1 = NULL;
+	UILayer* m_pUILayer2 = NULL;
 	UILayer* m_pUILayer = NULL;
 
 
