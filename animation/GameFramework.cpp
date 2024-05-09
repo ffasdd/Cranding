@@ -751,7 +751,7 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pUILayer2->UpdateTextOutputs(1, pstrOutputText1, &rect, pdwTextFormat, pd2dBrush);
 		
 
-		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 1);
 
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
@@ -789,7 +789,7 @@ void CGameFramework::BuildObjects(int nScene)
 
 		
 
-		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain,2);
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
@@ -827,7 +827,7 @@ void CGameFramework::BuildObjects(int nScene)
 		/////////////////////////
 
 
-		CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
@@ -863,7 +863,7 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
 		/////////////////////////
 
-		CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
@@ -900,7 +900,7 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
 		/////////////////////////
 
-		CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
