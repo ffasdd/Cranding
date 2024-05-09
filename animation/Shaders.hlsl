@@ -514,8 +514,7 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     
     switch (gvDrawOptions.x)
     {
-        case 79: //'O'
-
+        case 84: //'T'
 		{
 			// ³¡
                 cColor = gtxtTextureTexture.Sample(gssWrap, input.uv);
@@ -529,8 +528,12 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
                 //cColor = gtxtIlluminationTexture.Sample(gssWrap, input.uv);
                 break;
             }
-
-
+        case 68: //'D'
+		{
+                float fDepth = gtxtDepthTexture.Load(uint3((uint) input.position.x, (uint) input.position.y, 0));
+              cColor = fDepth;
+                break;
+            }
         case 90: //'Z'
 		{
                 float fzDepth = gtxtzDepthTexture.Load(uint3((uint) input.position.x, (uint) input.position.y, 0));
@@ -540,4 +543,28 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     }
 	
     return (cColor);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+struct VS_BOUNDINGBOX_INPUT
+{
+    float3 position : POSITION;
+};
+
+struct VS_BOUNDINGBOX_OUTPUT
+{
+    float4 positionH : SV_POSITION;
+};
+
+VS_BOUNDINGBOX_OUTPUT VSBoundingBox(VS_BOUNDINGBOX_INPUT input)
+{
+    VS_BOUNDINGBOX_OUTPUT output;
+    output.positionH = mul(mul(float4(input.position, 1.0f), gmtxView), gmtxProjection);
+    return (output);
+}
+
+float4 PSBoundingBox(VS_BOUNDINGBOX_OUTPUT input) : SV_TARGET
+{
+    return (float4(1.0f, 0.0f, 0.0f, 1.0f));
 }

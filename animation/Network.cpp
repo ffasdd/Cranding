@@ -200,6 +200,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setprevAnimation(int(p->prev_state));
 		gamestart = true;
 		SetEvent(loginevent);
+
 		break;
 	}
 
@@ -217,6 +218,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setCharacterType(p->charactertype);
 		g_clients[ob_id].setAnimation(int(p->a_state));
 		g_clients[ob_id].setprevAnimation(int(p->prev_state));
+
 		break;
 	}
 
