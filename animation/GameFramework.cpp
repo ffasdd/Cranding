@@ -384,18 +384,18 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case '1':
 			// 로비화면
 			SceneNum = 1;
-			//isready = true;
+			isready = true;
 
-			//gNetwork.SendLoginfo();
+			gNetwork.SendLoginfo();
 			// 로그인 리시블 받을 때까지 대기 해줘야함 
-			//WaitForSingleObject(loginevent, INFINITE);
+			WaitForSingleObject(loginevent, INFINITE);
 
-			//cl_id = gNetwork.Getmyid();
-			//m_pPlayer->c_id = gNetwork.Getmyid();
+			cl_id = gNetwork.Getmyid();
+			m_pPlayer->c_id = gNetwork.Getmyid();
 
 			ReleaseObjects();
 			BuildObjects(1);
-			//gNetwork.SendChangeScene(SceneNum);
+			gNetwork.SendChangeScene(SceneNum);
 
 
 			break;
@@ -403,7 +403,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			// spaceship map
 			SceneNum = 2;
 			isready = false;
-			//g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+			g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
 			ReleaseObjects();
 			BuildObjects(2);
 			break;
