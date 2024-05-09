@@ -546,7 +546,7 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetLook(Look.x, Look.y, Look.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(0, 1, 0);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetRight(Right.x, Right.y, Right.z);
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetScale(50.0f, 50.0f, 50.0f);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetScale(20.0f, 20.0f, 20.0f);
 	}
 }
 
@@ -588,6 +588,29 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 
 		//float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 		//m_pScene->m_ppHierarchicalGameObjects[others_id]->Animate(fTimeElapsed);
+	}
+}
+
+void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
+{
+	if (cl_id != n)
+	{
+		int others_id = -1;
+		switch (cl_id) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+
+		if(isAttack == true)
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsAttack = true;
 	}
 }
 
@@ -710,6 +733,7 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene = new CLobbyScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
+
 		m_pUILayer2 = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 
 		ID2D1SolidColorBrush* pd2dBrush = m_pUILayer2->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
@@ -727,7 +751,8 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pUILayer2->UpdateTextOutputs(1, pstrOutputText1, &rect, pdwTextFormat, pd2dBrush);
 		
 
-		CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
