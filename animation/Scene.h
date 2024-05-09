@@ -197,6 +197,8 @@ public:
 	~CIceScene() { }
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void ReleaseUploadBuffers();
+	void ReleaseObjects();
 };
 
 class CFireScene : public CScene
@@ -206,6 +208,8 @@ public:
 	~CFireScene() { }
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void ReleaseUploadBuffers();
+	void ReleaseObjects();
 };
 
 class CGrassScene : public CScene
@@ -215,4 +219,6 @@ public:
 	~CGrassScene() { }
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void ReleaseUploadBuffers();
+	void ReleaseObjects();
 };

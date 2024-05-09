@@ -830,7 +830,7 @@ CTextureToFullScreenShader::CTextureToFullScreenShader()
 
 CTextureToFullScreenShader::~CTextureToFullScreenShader()
 {
-	//ReleaseShaderVariables();
+	ReleaseShaderVariables();
 }
 
 D3D12_SHADER_BYTECODE CTextureToFullScreenShader::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
@@ -854,7 +854,7 @@ void CTextureToFullScreenShader::CreateShaderVariables(ID3D12Device* pd3dDevice,
 
 void CTextureToFullScreenShader::ReleaseShaderVariables()
 {
-	// if (m_pd3dcbDrawOptions) m_pd3dcbDrawOptions->Release();
+	 if (m_pd3dcbDrawOptions) m_pd3dcbDrawOptions->Release();
 }
 
 void CTextureToFullScreenShader::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)

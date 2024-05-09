@@ -1084,6 +1084,15 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[3+i]->SetScale(10.0f, 10.0f, 10.0f);
 	}
 }
+void CIceScene::ReleaseUploadBuffers()
+{
+	CScene::ReleaseUploadBuffers();
+}
+
+void CIceScene::ReleaseObjects()
+{
+	CScene::ReleaseObjects();
+}
 
 void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
@@ -1186,6 +1195,15 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
 	}
+}
+void CFireScene::ReleaseUploadBuffers()
+{
+	CScene::ReleaseUploadBuffers();
+}
+
+void CFireScene::ReleaseObjects()
+{
+	CScene::ReleaseObjects();
 }
 
 void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -1290,4 +1308,13 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
 	}
 	if (pIceEnemyModel) delete pIceEnemyModel;
+}
+void CGrassScene::ReleaseUploadBuffers()
+{
+	CScene::ReleaseUploadBuffers();
+}
+
+void CGrassScene::ReleaseObjects()
+{
+	CScene::ReleaseObjects();
 }
