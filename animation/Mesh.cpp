@@ -602,11 +602,29 @@ CSkinnedMesh::CSkinnedMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *
 
 CSkinnedMesh::~CSkinnedMesh()
 {
-	if (m_pxmn4BoneIndices) delete[] m_pxmn4BoneIndices;
-	if (m_pxmf4BoneWeights) delete[] m_pxmf4BoneWeights;
+	if (m_pxmn4BoneIndices)
+	{
+		delete[] m_pxmn4BoneIndices;
+		m_pxmn4BoneIndices = nullptr;
+	}
 
-	if (m_ppSkinningBoneFrameCaches) delete[] m_ppSkinningBoneFrameCaches;
-	if (m_ppstrSkinningBoneNames) delete[] m_ppstrSkinningBoneNames;
+	if (m_pxmf4BoneWeights)
+	{
+		delete[] m_pxmf4BoneWeights;
+		m_pxmf4BoneWeights = nullptr;
+	}
+
+	if (m_ppSkinningBoneFrameCaches) 
+	{
+		delete[] m_ppSkinningBoneFrameCaches;
+		m_ppSkinningBoneFrameCaches = nullptr;
+	}
+
+	if (m_ppstrSkinningBoneNames) 
+	{
+		delete[] m_ppstrSkinningBoneNames;
+		m_ppstrSkinningBoneNames = nullptr;
+	}
 
 	if (m_pxmf4x4BindPoseBoneOffsets) delete[] m_pxmf4x4BindPoseBoneOffsets;
 	if (m_pd3dcbBindPoseBoneOffsets) m_pd3dcbBindPoseBoneOffsets->Release();

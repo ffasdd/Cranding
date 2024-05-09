@@ -338,6 +338,7 @@ void CLoginSceneCamera::Update(XMFLOAT3& xmf3LookAt, float fTimeElapsed)
 		if (fDistance > 0)
 		{
 			m_xmf3Position = Vector3::Add(m_xmf3Position, xmf3Direction, fDistance);
+			//xmf3LookAt.z = 50;
 			SetLookAt(xmf3LookAt);
 		}
 	}

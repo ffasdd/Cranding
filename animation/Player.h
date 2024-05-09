@@ -107,7 +107,7 @@ public:
 	void SetRight(const XMFLOAT3& xmf3Right) { m_xmf3Right = xmf3Right; }
 	void SetUp(const XMFLOAT3& xmf3Up) { m_xmf3Up = xmf3Up; }
 
-
+	int m_hp;
 
 protected:
 	ID3D12Resource* m_pd3dcbPlayer = NULL;

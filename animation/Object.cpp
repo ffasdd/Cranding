@@ -198,6 +198,7 @@ CMaterial::~CMaterial()
 
 		if (m_ppstrTextureNames) delete[] m_ppstrTextureNames;
 	}
+
 }
 
 void CMaterial::SetShader(CShader *pShader)
@@ -819,6 +820,8 @@ CGameObject::~CGameObject()
 	if (m_ppMaterials) delete[] m_ppMaterials;
 
 	if (m_pSkinnedAnimationController) delete m_pSkinnedAnimationController;
+
+	ReleaseShaderVariables();
 }
 
 void CGameObject::AddRef() 

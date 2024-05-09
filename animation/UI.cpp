@@ -115,7 +115,10 @@ void UILayer::Render(UINT nFrame)
     m_pd2dDeviceContext->BeginDraw();
     for (UINT i = 0; i < m_nTextBlocks; i++)
     {
-        m_pd2dDeviceContext->DrawText(m_pTextBlocks[i].m_pstrText, (UINT)wcslen(m_pTextBlocks[i].m_pstrText), m_pTextBlocks[i].m_pdwFormat, m_pTextBlocks[i].m_d2dLayoutRect, m_pTextBlocks[i].m_pd2dTextBrush);
+        if (m_pTextBlocks[i].m_pdwFormat == NULL)
+            m_pd2dDeviceContext->FillRectangle(m_pTextBlocks[i].m_d2dLayoutRect, m_pTextBlocks[i].m_pd2dTextBrush);
+        else
+            m_pd2dDeviceContext->DrawText(m_pTextBlocks[i].m_pstrText, (UINT)wcslen(m_pTextBlocks[i].m_pstrText), m_pTextBlocks[i].m_pdwFormat, m_pTextBlocks[i].m_d2dLayoutRect, m_pTextBlocks[i].m_pd2dTextBrush);
     }
     m_pd2dDeviceContext->EndDraw();
 
@@ -126,9 +129,11 @@ void UILayer::Render(UINT nFrame)
 void UILayer::ReleaseResources()
 {
     for (UINT i = 0; i < m_nTextBlocks; i++)
-    {
-        m_pTextBlocks[i].m_pdwFormat->Release();
-        m_pTextBlocks[i].m_pd2dTextBrush->Release();
+    {       
+        if (m_pTextBlocks[i].m_pdwFormat)
+            m_pTextBlocks[i].m_pdwFormat->Release();
+        if (m_pTextBlocks[i].m_pd2dTextBrush)
+            m_pTextBlocks[i].m_pd2dTextBrush->Release();
     }
 
     for (UINT i = 0; i < m_nRenderTargets; i++)
@@ -146,11 +151,11 @@ void UILayer::ReleaseResources()
         m_ppd3d11WrappedRenderTargets[i]->Release();
     }
 
-    m_pd2dDeviceContext->Release();
-    m_pd2dWriteFactory->Release();
-    m_pd2dDevice->Release();
-    m_pd2dFactory->Release();
-    m_pd3d11DeviceContext->Release();
-    m_pd3d11On12Device->Release();
+    if(m_pd2dDeviceContext)m_pd2dDeviceContext->Release();
+    if(m_pd2dWriteFactory)m_pd2dWriteFactory->Release();
+    if(m_pd2dDevice)m_pd2dDevice->Release();
+    if(m_pd2dFactory)m_pd2dFactory->Release();
+    if(m_pd3d11DeviceContext)m_pd3d11DeviceContext->Release();
+    if(m_pd3d11On12Device)m_pd3d11On12Device->Release();
 }
 

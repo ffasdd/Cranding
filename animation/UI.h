@@ -4,7 +4,7 @@ struct TextBlock
 {
     WCHAR                           m_pstrText[256];
     D2D1_RECT_F                     m_d2dLayoutRect;
-    IDWriteTextFormat* m_pdwFormat;
+    IDWriteTextFormat* m_pdwFormat = NULL;
     ID2D1SolidColorBrush* m_pd2dTextBrush;
 };
 
