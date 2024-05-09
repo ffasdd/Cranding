@@ -384,18 +384,18 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case '1':
 			// 로비화면
 			SceneNum = 1;
-			//isready = true;
+			isready = true;
 
-			//gNetwork.SendLoginfo();
+			gNetwork.SendLoginfo();
 			// 로그인 리시블 받을 때까지 대기 해줘야함 
-			//WaitForSingleObject(loginevent, INFINITE);
+			WaitForSingleObject(loginevent, INFINITE);
 
-			//cl_id = gNetwork.Getmyid();
-			//m_pPlayer->c_id = gNetwork.Getmyid();
+			cl_id = gNetwork.Getmyid();
+			m_pPlayer->c_id = gNetwork.Getmyid();
 
 			ReleaseObjects();
 			BuildObjects(1);
-			//gNetwork.SendChangeScene(SceneNum);
+			gNetwork.SendChangeScene(SceneNum);
 
 
 			break;
@@ -403,7 +403,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			// spaceship map
 			SceneNum = 2;
 			isready = false;
-			//g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+			g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
 			ReleaseObjects();
 			BuildObjects(2);
 			break;
@@ -571,7 +571,6 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 		// 서버에서 받은 이전 애니메이션 번호와 현재 애니메이션 번호가 다른 경우(블렌딩 해야하는 경우)
 		if (prevAni != curAni)
 		{
-
 			// 이전 애니메이션 번호, 이후 애니메이션 번호 저장
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
 
