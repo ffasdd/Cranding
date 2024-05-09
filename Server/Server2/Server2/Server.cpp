@@ -152,9 +152,12 @@ void Server::WorkerThread()
 
 				}
 				if (c_id == 0)
-					clients[c_id]._pos = { 0.0f,0.0f,0.0f };
+					clients[c_id]._pos = { 240.0f,10.0f,730.0f };
+				else if (c_id == 1)
+					clients[c_id]._pos = { 220.0f,10.0f,760.0f };
 				else
-					clients[c_id]._pos = { 10.0f,0.0f,10.0f };
+					clients[c_id]._pos = { 210.0f, 10.0f,710.0f };
+
 				clients[c_id]._id = c_id;
 				clients[c_id]._name[0] = 0;
 				clients[c_id]._prevremain = 0;
@@ -204,6 +207,9 @@ void Server::WorkerThread()
 			delete ex_over;
 			break;
 		}
+		case COMP_TYPE::NPC_MOVE: {
+
+		}
 		default:
 			break;
 		}
@@ -211,23 +217,23 @@ void Server::WorkerThread()
 
 }
 
-void Server::InitialziedMonster()
+void Server::InitialziedMonster(int room_Id)
 {
 	cout << " NPC intialize begin " << endl;
 
 	std::random_device rd;
 	std::default_random_engine dre;
-	std::uniform_real_distribution<float> xpos(0, 100);
-	std::uniform_real_distribution<float> zpos(0, 100);
+	std::uniform_real_distribution<float> xpos(-10, 450);
+	std::uniform_real_distribution<float> zpos(-641, -521);
 
 	for (int i = 0; i < MAX_NPC; ++i)
 	{
-		Monsters[i]._pos = XMFLOAT3(xpos(dre), 0.f, zpos(dre));
-		Monsters[i]._att = 10;
-		Monsters[i]._hp = 50;
-		Monsters[i]._look = XMFLOAT3(0.f, 0.f, 1.0f);
-		Monsters[i]._right = XMFLOAT3(1.0f, 0.f, 0.0f);
-		Monsters[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
+		ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+		ingameroom[room_Id].NightMonster[i]._att = 10;
+		ingameroom[room_Id].NightMonster[i]._hp = 50;
+		ingameroom[room_Id].NightMonster[i]._look = XMFLOAT3(0.f, 0.f, 1.0f);
+		ingameroom[room_Id].NightMonster[i]._right = XMFLOAT3(1.0f, 0.f, 0.0f);
+		ingameroom[room_Id].NightMonster[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
 	}
 
 	cout << " NPC intialzie end " << endl;
@@ -274,8 +280,6 @@ void Server::ProcessPacket(int id, char* packet)
 		clients[id]._pos = p->pos;
 
 		//ingameroom[r_id].ingamePlayer[id]->_pos = p->pos;
-
-
 		// view List 
 		unordered_set<int> near_list;
 		clients[id]._v_lock.lock();
@@ -472,13 +476,14 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			cout << " 몬스터 생성  " << endl; 
 			// 모든 클라이언트들 한테 밤에나오는 NPC들 정보들을 모두 보내줘야 함 
+			InitialziedMonster(r_id);
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
 				for (int i = 0; i < ingameroom[r_id].NightMonster.max_size(); ++i)
-					pl->send_add_monster(i);
+				{
+					ingameroom[r_id].SendAddMonster(i, id);
+				}
 			}
-			// 시간이 2분 일때, 4분일때, 6분일때... 
-			// 몬스터 출현 함수로뺴줘야할듯 
 		}
 		break;
 	};
@@ -496,7 +501,7 @@ void Server::ProcessPacket(int id, char* packet)
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-			if (pl->_state != STATE::Ingame) continue;
+			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
 			if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage)continue;
 			if (can_see(id, pl->_id))

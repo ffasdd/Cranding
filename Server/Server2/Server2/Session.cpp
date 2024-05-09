@@ -5,8 +5,8 @@
 array<Session, MAX_USER> clients; //전체 클라이언트 
 std::random_device rd;
 std::default_random_engine dre;
-std::uniform_real_distribution<float> xpos(0, 500);
-std::uniform_real_distribution<float> zpos(0, 500);
+std::uniform_real_distribution<float> xpos(-10, 450);
+std::uniform_real_distribution<float> zpos(-641, -521);
 
 Session::Session()
 {
@@ -177,7 +177,7 @@ void Session::send_add_monster(int npc_id)
 	p.type = SC_ADD_MONSTER;
 	p.size = sizeof(SC_ADD_MONSTER_PACKET);
 	p.id = npc_id;
-	p.pos = XMFLOAT3(xpos(dre), 0.f, zpos(dre));
+	p.pos = XMFLOAT3(xpos(dre), 10.f, zpos(dre));
 	p.look = XMFLOAT3(0.f, 0.f, 1.0f);
 	p.up = XMFLOAT3(0.f, 1.f, 0.0f);
 	p.right = XMFLOAT3(1.f, 0.f, 0.0f);

@@ -45,5 +45,10 @@ public:
 	// Nature Monster 
 	array<Monster, 30> NatureMonster;
 
+
+public:
+	void MoveKnightMonster();
+	void SendAddMonster(int npc_id,int _id);
+
 };
 

@@ -26,7 +26,7 @@ public:
 	void Iocp();
 	void WorkerThread();
 
-	void InitialziedMonster();
+	void InitialziedMonster(int room_Id);
 
 	void ProcessPacket(int id, char* packet);
 

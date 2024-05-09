@@ -43,7 +43,8 @@ void Timer::TimerThread()
 				case EVENT_TYPE::EV_MOVE: {
 					Over_Exp* ov = new Over_Exp;
 					ov->_comptype = COMP_TYPE::NPC_MOVE;
-
+					PostQueuedCompletionStatus(_IocpHandle, 1, target_id, &ov->_over);
+					
 
 					break;
 				}
