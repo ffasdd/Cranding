@@ -129,7 +129,7 @@ void UILayer::Render(UINT nFrame)
 void UILayer::ReleaseResources()
 {
     for (UINT i = 0; i < m_nTextBlocks; i++)
-    {       
+    {
         if (m_pTextBlocks[i].m_pdwFormat)
             m_pTextBlocks[i].m_pdwFormat->Release();
         if (m_pTextBlocks[i].m_pd2dTextBrush)
@@ -151,11 +151,10 @@ void UILayer::ReleaseResources()
         m_ppd3d11WrappedRenderTargets[i]->Release();
     }
 
-    if(m_pd2dDeviceContext)m_pd2dDeviceContext->Release();
-    if(m_pd2dWriteFactory)m_pd2dWriteFactory->Release();
-    if(m_pd2dDevice)m_pd2dDevice->Release();
-    if(m_pd2dFactory)m_pd2dFactory->Release();
-    if(m_pd3d11DeviceContext)m_pd3d11DeviceContext->Release();
-    if(m_pd3d11On12Device)m_pd3d11On12Device->Release();
+    if (m_pd2dDeviceContext)m_pd2dDeviceContext->Release();
+    if (m_pd2dWriteFactory)m_pd2dWriteFactory->Release();
+    if (m_pd2dDevice)m_pd2dDevice->Release();
+    if (m_pd2dFactory)m_pd2dFactory->Release();
+    if (m_pd3d11DeviceContext)m_pd3d11DeviceContext->Release();
+    if (m_pd3d11On12Device)m_pd3d11On12Device->Release();
 }
-

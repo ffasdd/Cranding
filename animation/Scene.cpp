@@ -200,7 +200,9 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5f);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5f);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(11, 0.5f);
-	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, /*m_pTerrain->GetHeight(410.0f, 735.0f)*/0.0f, 735.0f);
+	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, /*m_pTerrain->GetHeight(410.0f, 735.0f)0.0f, 735.0f)
+	;*/
+	/*
 	m_ppHierarchicalGameObjects[1]->SetScale(10.0f, 10.0f, 10.0f);
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/icemap.bin", NULL);
@@ -241,6 +243,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppHierarchicalGameObjects[2]->SetScale(5.0f, 5.0f, 5.0f);
 	if (map) delete map;
 	*/
+	
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -828,7 +831,7 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 void CLoginScene::ReleaseUploadBuffers()
 {
-	CLoginScene::ReleaseUploadBuffers();
+	CScene::ReleaseUploadBuffers();
 }
 
 void CLoginScene::ReleaseObjects()
