@@ -127,6 +127,7 @@ public:
 
 	virtual void ReleaseUploadBuffers();
 
+
 public:
 	UINT							m_nType = 0x00;
 

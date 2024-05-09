@@ -425,6 +425,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			case VK_SPACE:
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
 				break;
+			case '9':
+				m_pPlayer->m_hp -= 5.0f;
+				break;
 			default:
 				break;
 			}
@@ -580,6 +583,9 @@ void CGameFramework::OnDestroy()
 
 	if (m_pd3dFence) m_pd3dFence->Release();
 
+	//if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
+	//if (m_pPipelineState) m_pPipelineState->Release();
+
 	m_pdxgiSwapChain->SetFullscreenState(FALSE, NULL);
 	if (m_pdxgiSwapChain) m_pdxgiSwapChain->Release();
 	if (m_pd3dDevice) m_pd3dDevice->Release();
@@ -602,7 +608,6 @@ void CGameFramework::BuildObjects(int nScene)
 	{
 	case 0:
 	{
-		/*
 		m_pUILayer = new UILayer(m_nSwapChainBuffers, 4, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 
 		ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
@@ -651,7 +656,6 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pUILayer->UpdateTextOutputs(3, pstrOutputText4, &d2dRect, pdwTextFormat, pd2dBrush);
 		//////////////////////////////////////////////////////////////////
 		
-		*/
 
 		m_pScene = new CLoginScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
@@ -680,6 +684,16 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene = new CLobbyScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
+		m_pUILayer = new UILayer(m_nSwapChainBuffers, 1, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+
+		ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
+		IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"Ravie", m_nWndClientHeight / 11.0f);
+		D2D1_RECT_F d2dRect = D2D1::RectF(00.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+
+		WCHAR pstrOutputText[256];
+		wcscpy_s(pstrOutputText, 256, L"게임 시작을 위해 '2'를 눌러주세요\n");
+		m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
+
 		CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
@@ -703,6 +717,13 @@ void CGameFramework::BuildObjects(int nScene)
 	{
 		m_pScene = new CSpaceShipScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+		m_pUILayer = new UILayer(m_nSwapChainBuffers, 1, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+
+		D2D1_RECT_F rect = { 00.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight };
+		ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Red, 1.0f));
+
+		m_pUILayer->UpdateTextOutputs(0, NULL, &rect, NULL, pd2dBrush);
 
 		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
@@ -843,21 +864,21 @@ void CGameFramework::BuildObjects(int nScene)
 
 void CGameFramework::ReleaseObjects()
 {
-	if (SceneNum == 0) {
-
-		if (m_pUILayer) m_pUILayer->ReleaseResources();
-		if (m_pUILayer) delete m_pUILayer;
-	}
+	if (m_pUILayer) m_pUILayer->ReleaseResources();
+	if (m_pUILayer) delete m_pUILayer;
 
 	if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pScene) m_pScene->ReleaseObjects();
-	if (m_pScene) delete m_pScene;
+	if (m_pScene) {
+		delete m_pScene;
+		m_pScene = nullptr;
+	}
 
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseObjects();
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseShaderVariables();
 	if (m_pPostProcessingShader) m_pPostProcessingShader->Release();
-	//m_pPostProcessingShader = nullptr;
+	m_pPostProcessingShader = nullptr;
 }
 
 // 플레이어 조작 부분 -> 상하좌우, 마우스
@@ -991,6 +1012,17 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
+void CGameFramework::UpdateUI()
+{
+	float rectWidth = (m_pPlayer->m_hp / 100.0f) * 2.0f * 20.0f;
+
+	D2D1_RECT_F rect = { 400.0f, 430.0f, 400+ rectWidth*5.0, (float)m_nWndClientHeight -20.0};
+	ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Red, 1.0f));
+
+	m_pUILayer->UpdateTextOutputs(0, NULL, &rect, NULL, pd2dBrush);
+
+}
+
 //#define _WITH_PLAYER_TOP
 
 void CGameFramework::FrameAdvance()
@@ -1000,6 +1032,9 @@ void CGameFramework::FrameAdvance()
 	ProcessInput();
 
 	AnimateObjects();
+
+	if (SceneNum > 1)
+		UpdateUI();
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -1041,10 +1076,8 @@ void CGameFramework::FrameAdvance()
 
 	WaitForGpuComplete();
 
-	if (SceneNum == 0)
-	{
-		//m_pUILayer->Render(m_nSwapChainBufferIndex);
-	}
+	m_pUILayer->Render(m_nSwapChainBufferIndex);
+	
 
 #ifdef _WITH_PRESENT_PARAMETERS
 	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;
