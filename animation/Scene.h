@@ -164,6 +164,8 @@ public:
 
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void ReleaseUploadBuffers();
+	void ReleaseObjects();
 };
 
 class CLobbyScene : public CScene
@@ -173,6 +175,8 @@ public:
 	~CLobbyScene() { }
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void ReleaseUploadBuffers();
+	void ReleaseObjects();
 };
 
 class CSpaceShipScene : public CScene
@@ -182,6 +186,8 @@ public:
 	~CSpaceShipScene() { }
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void ReleaseUploadBuffers();
+	void ReleaseObjects();
 };
 
 class CIceScene : public CScene
