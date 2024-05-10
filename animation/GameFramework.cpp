@@ -478,7 +478,8 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
     if (cl_id == n)
     {
         m_pPlayer->SetId(cl_id);
-        m_pPlayer->SetPosition(position);
+        // 꺼도 되는지 안되는지 모르겠음
+        // m_pPlayer->SetPosition(position);
     }
     else
     {
@@ -1072,10 +1073,8 @@ void CGameFramework::AnimateObjects()
 
 	m_pPlayer->Animate(fTimeElapsed);
 
-	if (SceneNum > 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
-	{
-		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
-	}
+    if (SceneNum > 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+        m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 }
 
 void CGameFramework::WaitForGpuComplete()
@@ -1114,9 +1113,7 @@ void CGameFramework::UpdateUI()
             curSecond = 0;
             curMinute++;
 
-            if (curMinute == 1) {
-                curDay++;
-            }
+            curDay++;
         }
     }
     // 시계

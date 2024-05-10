@@ -35,13 +35,13 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 		// 맵과 충돌한 경우
 		if (i == 0)
 		{
-			CGameObject* pMapObject = m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild;
-			//std::string str(pMapObject->m_pSibling->m_pSibling->m_pstrFrameName);
-
+			CGameObject* pMapObject = m_ppHierarchicalGameObjects[0]->m_pChild->m_pChild;
 			for (int j = 0; j < m_ppHierarchicalGameObjects[0]->m_pChild->nChilds; j++)
 			{
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
+				{
 					return(true);
+				}
 					pMapObject = pMapObject->m_pSibling;
 
 					const char* str = pMapObject->m_pstrFrameName;
