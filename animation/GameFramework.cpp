@@ -1072,7 +1072,7 @@ void CGameFramework::AnimateObjects()
 
 	m_pPlayer->Animate(fTimeElapsed);
 
-	if (m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+	if (SceneNum > 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
 	{
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
@@ -1158,7 +1158,7 @@ void CGameFramework::FrameAdvance()
     ProcessInput();
 
     AnimateObjects();
-    if (isready && m_pUILayer2!= NULL)
+    if (isready && m_pUILayer2 != NULL)
         readyUI();
 
     if (SceneNum > 1 && m_pUILayer != NULL) {
@@ -1180,8 +1180,6 @@ void CGameFramework::FrameAdvance()
         m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], &m_d3dDsvDescriptorCPUHandle);
 
         m_pScene->Render(m_pd3dCommandList, m_pCamera);
-
-		if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 
         m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
@@ -1209,7 +1207,7 @@ void CGameFramework::FrameAdvance()
 
     if (SceneNum == 0)
     {
-        if(m_pUILayer1) m_pUILayer1->Render(m_nSwapChainBufferIndex);
+        if (m_pUILayer1) m_pUILayer1->Render(m_nSwapChainBufferIndex);
     }
     else if (SceneNum == 1) {
         if (m_pUILayer2) m_pUILayer2->Render(m_nSwapChainBufferIndex);

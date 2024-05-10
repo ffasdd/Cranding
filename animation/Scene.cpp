@@ -33,12 +33,12 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// ¸Ê°ú Ãæµ¹ÇÑ °æ¿ì
-		if (i == 2)
+		if (i == 0)
 		{
 			CGameObject* pMapObject = m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild;
 			//std::string str(pMapObject->m_pSibling->m_pSibling->m_pstrFrameName);
 
-			for (int j = 0; j < m_ppHierarchicalGameObjects[2]->m_pChild->nChilds; j++)
+			for (int j = 0; j < m_ppHierarchicalGameObjects[0]->m_pChild->nChilds; j++)
 			{
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 					return(true);
@@ -770,29 +770,38 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 //////////////////////////////////////////////////////////////////////////////////////////
 //
 // ·Î±×ÀÎ¾À
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+// ·Î±×ÀÎ¾À
 void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 	m_nHierarchicalGameObjects = 4;
+	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
+
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/plane.bin", NULL);
+	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
+	m_ppHierarchicalGameObjects[0]->SetPosition(400.0f, -20.0f, 400.0f);
+	m_ppHierarchicalGameObjects[0]->SetScale(8.0f, 8.0f, 8.0f);
+	if (map) delete map;
 
 	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
-	m_ppHierarchicalGameObjects[0] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 2); 
-	m_ppHierarchicalGameObjects[0]->SetPosition(30.0f, 0.0f, -65.0f);
-	m_ppHierarchicalGameObjects[0]->SetScale(20.0f, 20.0f, 20.0f);
-	m_ppHierarchicalGameObjects[0]->Rotate(-20.0f, 170.0f, 00.0f);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.7);
-
 	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppHierarchicalGameObjects[1]->SetPosition(50.0f, 0.0f, -85.0f);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 2);
+	m_ppHierarchicalGameObjects[1]->SetPosition(30.0f, 0.0f, -65.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[1]->Rotate(-20.0f, 170.0f, 00.0f);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.6);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.7);
+
+	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[2]->SetPosition(50.0f, 0.0f, -85.0f);
+	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[2]->Rotate(-20.0f, 170.0f, 00.0f);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.6);
 
 	m_ppHierarchicalGameObjects[3] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
 	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
@@ -803,11 +812,6 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	if (pPlayerModel) delete pPlayerModel;
 
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/plane.bin", NULL);
-	m_ppHierarchicalGameObjects[2] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
-	m_ppHierarchicalGameObjects[2]->SetPosition(400.0f, -20.0f, 400.0f);
-	m_ppHierarchicalGameObjects[2]->SetScale(8.0f, 8.0f, 8.0f);
-	if (map) delete map;
 }
 
 void CLoginScene::ReleaseUploadBuffers()
@@ -915,7 +919,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_nHierarchicalGameObjects = 3+10;
+	m_nHierarchicalGameObjects = 3 + 10;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/spaceshipmap.bin", NULL);
@@ -967,7 +971,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
-												 
+
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
@@ -1031,7 +1035,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_nHierarchicalGameObjects = 3+10;
+	m_nHierarchicalGameObjects = 3 + 10;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/icemap.bin", NULL);
@@ -1106,25 +1110,25 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	for (int i = 0; i < 10; i++)
 	{
 
-	m_ppHierarchicalGameObjects[3+i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 5);
+		m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 5);
 
-	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
-	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
-	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
 
-	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-	m_ppHierarchicalGameObjects[3+i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 
-	m_ppHierarchicalGameObjects[3 + i]->isdraw = false;
-	
-	float posX = (rand() % 2000) / 10.0;
-	float posY = (rand() % 2000) / 10.0;
-	m_ppHierarchicalGameObjects[3+i]->SetPosition(posX, 0.0f, posY);
-	m_ppHierarchicalGameObjects[3+i]->SetScale(10.0f, 10.0f, 10.0f);
+		m_ppHierarchicalGameObjects[3 + i]->isdraw = false;
+
+		float posX = (rand() % 2000) / 10.0;
+		float posY = (rand() % 2000) / 10.0;
+		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
+		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
 	}
 }
 void CIceScene::ReleaseUploadBuffers()
@@ -1143,7 +1147,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_nHierarchicalGameObjects = 3+10;
+	m_nHierarchicalGameObjects = 3 + 10;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/firemap.bin", NULL);
@@ -1255,7 +1259,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_nHierarchicalGameObjects = 3+10;
+	m_nHierarchicalGameObjects = 3 + 10;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/grassmap.bin", NULL);
