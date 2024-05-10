@@ -258,14 +258,11 @@ void Server::ProcessPacket(int id, char* packet)
 			clients[id]._state = STATE::Ingame;
 		}
 		matchingqueue.push(&clients[id]);
-		int r_id = 0;
+
 		while (clients[id].room_id == -1)
 		{
-			if (clients[id].room_id != -1)
-			{
-				r_id = clients[id].room_id;
-				break;
-			}
+			cout << "aaa" << endl;
+			//로그인을 해놓고 룸매칭을 하게 해야
 		}
 		// 로그인을 했으면 로그인 정보를 제대로 서버에 저장하는걸 보장해줘야 한다. 
 
@@ -274,19 +271,16 @@ void Server::ProcessPacket(int id, char* packet)
 	}
 				 break;
 	case CS_MOVE: {
-		// 속한 룸넘버도 같이 넘겨줘야 할듯 
+
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 		int r_id = p->roomid;
 		clients[id]._pos = p->pos;
-
-		//ingameroom[r_id].ingamePlayer[id]->_pos = p->pos;
+		cout << " MOVD ID " << id << "Move " << endl;
 		// view List 
 		unordered_set<int> near_list;
 		clients[id]._v_lock.lock();
-		//ingameroom[r_id].ingamePlayer[id]->_v_lock.lock();
-		//unordered_set<int> old_vlist = ingameroom[r_id].ingamePlayer[id]->_view_list;
 		unordered_set<int> old_vlist = clients[id]._view_list;
-		//ingameroom[r_id].ingamePlayer[id]->_v_lock.unlock();
+
 		clients[id]._v_lock.unlock();
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
@@ -298,23 +292,26 @@ void Server::ProcessPacket(int id, char* packet)
 				near_list.insert(pl->_id);
 		}
 		// -------------------------------
+		cout << " Send my packet to me " << id << endl; 
 		clients[id].send_move_packet(id);
+
 		// -------------------view list 
 		for (auto& pl : near_list)
 		{
-
 			clients[pl]._v_lock.lock();
 
 			if (clients[pl]._view_list.count(id))
 			{
 				clients[pl]._v_lock.unlock();
+				cout << " Send my packet to other Player" << pl << endl;
 				clients[pl].send_move_packet(id);
 			}
 			else
 			{
-				clients[id]._v_lock.unlock();
-				clients[id].send_add_info_packet(pl);
+				clients[pl]._v_lock.unlock();
+				clients[pl].send_add_info_packet(id);
 			}
+
 			if (old_vlist.count(pl) == 0)
 				clients[id].send_add_info_packet(pl);
 		}
@@ -357,8 +354,8 @@ void Server::ProcessPacket(int id, char* packet)
 			}
 			else
 			{
-				clients[id]._v_lock.unlock();
-				clients[id].send_add_info_packet(pl);
+				clients[pl]._v_lock.unlock();
+				clients[pl].send_add_info_packet(id);
 			}
 			if (old_vlist.count(pl) == 0)
 				clients[id].send_add_info_packet(pl);
@@ -403,8 +400,8 @@ void Server::ProcessPacket(int id, char* packet)
 			}
 			else
 			{
-				clients[id]._v_lock.unlock();
-				clients[id].send_add_info_packet(pl);
+				clients[pl]._v_lock.unlock();
+				clients[pl].send_add_info_packet(id);
 			}
 			if (old_vlist.count(pl) == 0)
 				clients[id].send_add_info_packet(pl);
@@ -522,8 +519,8 @@ void Server::ProcessPacket(int id, char* packet)
 			}
 			else
 			{
-				clients[id]._v_lock.unlock();
-				clients[id].send_add_info_packet(pl);
+				clients[pl]._v_lock.unlock();
+				clients[pl].send_add_info_packet(id);
 			}
 			if (old_vlist.count(pl) == 0)
 				clients[id].send_add_info_packet(pl);
@@ -601,8 +598,13 @@ void Server::ReadyToStart()
 				ingameroom[room_id]._state = roomState::Ingame; // 상태를 Ingame상태로 바꿔준다 
 				ingameroom[room_id].ingamePlayer.emplace_back(_session);
 				clients[_session->_id].room_id = room_id;
+
 				if (ingameroom[room_id].ingamePlayer.size() == MAX_ROOM_USER)
+				{
 					ingameroom[room_id].fullcheck = true;
+					for (auto& pl : ingameroom[room_id].ingamePlayer)
+						cout << " 접속 ID  - " << pl->_id << endl;
+				}
 			}
 
 			/*	readySession.emplace_back(_session);*/

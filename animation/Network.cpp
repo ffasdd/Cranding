@@ -217,6 +217,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setCharacterType(p->charactertype);
 		g_clients[ob_id].setAnimation(int(p->a_state));
 		g_clients[ob_id].setprevAnimation(int(p->prev_state));
+		cout << " Add Player - " << ob_id << endl;
 		break;
 	}
 
@@ -226,6 +227,7 @@ void Network::ProcessPacket(char* buf)
 		int ob_id = getmyid(p->id);
 		std::cout << ob_id << " Player Move " << endl;
 		g_clients[ob_id].setPos(p->pos);
+		cout << " Move Player ID - " << ob_id << endl;
 	}
 					   break;
 	case SC_ROTATE_OBJECT: {
