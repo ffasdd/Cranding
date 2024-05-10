@@ -8,5 +8,5 @@ int main()
 {
 	Iocp server;
 	server.InitSocketSet();
-	server.StartServer()
+	server.StartServer();
 }

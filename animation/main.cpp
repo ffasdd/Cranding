@@ -38,16 +38,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	::LoadString(hInstance, IDC_CRANDING, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
-
 	while (!gNetwork.ReadytoConnect());
 
 	// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
 	gNetwork.StartServer();
 
 	// 로그인 완료 
-
-
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
+
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CRANDING));
 
 
@@ -88,7 +86,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 					}
 				}
 			}
-			
 			gGameFramework.FrameAdvance();
 		}
 	}
@@ -133,7 +130,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	::ShowWindow(hMainWnd, nCmdShow);
 	::UpdateWindow(hMainWnd);
-
 
 	return(TRUE);
 }

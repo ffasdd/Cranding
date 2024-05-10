@@ -192,17 +192,20 @@ void CGameFramework::CreateCommandQueueAndList()
 
 void CGameFramework::CreateRtvAndDsvDescriptorHeaps()
 {
-    D3D12_DESCRIPTOR_HEAP_DESC d3dDescriptorHeapDesc;
-    ::ZeroMemory(&d3dDescriptorHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
-    d3dDescriptorHeapDesc.NumDescriptors = m_nSwapChainBuffers + 5;
-    d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-    d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    d3dDescriptorHeapDesc.NodeMask = 0;
-    HRESULT hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dRtvDescriptorHeap);
+	D3D12_DESCRIPTOR_HEAP_DESC d3dDescriptorHeapDesc;
+	::ZeroMemory(&d3dDescriptorHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
+	d3dDescriptorHeapDesc.NumDescriptors = m_nSwapChainBuffers + 5;
+	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	d3dDescriptorHeapDesc.NodeMask = 0;
+	HRESULT hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void **)&m_pd3dRtvDescriptorHeap);
+    // **
+	//::gnRtvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
-    d3dDescriptorHeapDesc.NumDescriptors = 1;
-    d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-    hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dDsvDescriptorHeap);
+	d3dDescriptorHeapDesc.NumDescriptors = 1;
+	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+	hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void **)&m_pd3dDsvDescriptorHeap);
+	//::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 }
 
 void CGameFramework::CreateSwapChainRenderTargetViews()
@@ -346,7 +349,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 {
     DWORD dwDirection = 0;
 
-    //if (m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
     switch (nMessageID)
     {
     case WM_KEYUP:
@@ -425,7 +427,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
             BuildObjects(5);
 
             g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-          
+
             break;
         case VK_SPACE:
             m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
@@ -438,7 +440,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
             break;
         }
         break;
-
     }
 }
 
@@ -561,11 +562,10 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
             break;
         }
 
-        // 서버에서 받은 이전 애니메이션 번호와 현재 애니메이션 번호가 다른 경우(블렌딩 해야하는 경우)
-        if (prevAni != curAni)
-        {
-
-            // 이전 애니메이션 번호, 이후 애니메이션 번호 저장
+		// 서버에서 받은 이전 애니메이션 번호와 현재 애니메이션 번호가 다른 경우(블렌딩 해야하는 경우)
+		if (prevAni != curAni)
+		{
+			// 이전 애니메이션 번호, 이후 애니메이션 번호 저장
             m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
 
             m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
@@ -578,9 +578,6 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 
             g_clients[others_id + 1].setprevAnimation(curAni);
         }
-
-        //float fTimeElapsed = m_GameTimer.GetTimeElapsed();
-        //m_pScene->m_ppHierarchicalGameObjects[others_id]->Animate(fTimeElapsed);
     }
 }
 
@@ -971,21 +968,23 @@ void CGameFramework::ReleaseObjects()
 // 플레이어 조작 부분 -> 상하좌우, 마우스
 void CGameFramework::ProcessInput()
 {
-    static UCHAR pKeysBuffer[256];
-    bool bProcessedByScene = false;
-    if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
-    if (!bProcessedByScene && (SceneNum != 0)) // 로그인씬에서 키입력 제한 
-    {
-        float cxDelta = 0.0f, cyDelta = 0.0f;
-        POINT ptCursorPos;
-        if (GetCapture() == m_hWnd)
-        {
-            SetCursor(NULL);
-            GetCursorPos(&ptCursorPos);
-            cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
-            cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
-            SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
-        }
+	m_pPlayer->m_xmf3BeforeCollidedPosition = m_pPlayer->GetPosition();
+
+	static UCHAR pKeysBuffer[256];
+	bool bProcessedByScene = false;
+	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
+	if (!bProcessedByScene)
+	{
+		float cxDelta = 0.0f, cyDelta = 0.0f;
+		POINT ptCursorPos;
+		if (GetCapture() == m_hWnd)
+		{
+			SetCursor(NULL);
+			GetCursorPos(&ptCursorPos);
+			cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+			cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+			SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+		}
 
         DWORD dwDirection = 0;
         // 위쪽 키가 눌려있는지 확인하는 비트 연산
@@ -1062,17 +1061,21 @@ void CGameFramework::ProcessInput()
         }
     }
     m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
-
-
 }
 
 void CGameFramework::AnimateObjects()
 {
     float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 
-    if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
+	//m_pPlayer->UpdateBoundingBox();
+	if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
-    m_pPlayer->Animate(fTimeElapsed);
+	m_pPlayer->Animate(fTimeElapsed);
+
+	if (m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+	{
+		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
+	}
 }
 
 void CGameFramework::WaitForGpuComplete()
@@ -1177,6 +1180,8 @@ void CGameFramework::FrameAdvance()
         m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], &m_d3dDsvDescriptorCPUHandle);
 
         m_pScene->Render(m_pd3dCommandList, m_pCamera);
+
+		if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 
         m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 

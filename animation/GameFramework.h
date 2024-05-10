@@ -131,6 +131,7 @@ private:
 #if defined(_DEBUG)
 	ID3D12Debug					*m_pd3dDebugController;
 #endif
+	bool						m_bRenderBoundingBox = false;
 
 	CGameTimer					m_GameTimer;
 
