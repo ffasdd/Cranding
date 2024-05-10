@@ -613,13 +613,13 @@ CSkinnedMesh::~CSkinnedMesh()
 		delete[] m_pxmf4BoneWeights;
 		m_pxmf4BoneWeights = nullptr;
 	}
-
+	/*
 	if (m_ppSkinningBoneFrameCaches) 
 	{
 		delete[] m_ppSkinningBoneFrameCaches;
 		m_ppSkinningBoneFrameCaches = nullptr;
 	}
-
+	*/
 	if (m_ppstrSkinningBoneNames) 
 	{
 		delete[] m_ppstrSkinningBoneNames;

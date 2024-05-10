@@ -376,40 +376,38 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
         }
         case '0':
             // ㅁㅔ인화면
-            ReleaseObjects();
             SceneNum = 0;
+            ReleaseObjects();
             BuildObjects(SceneNum);
             break;
 
         case '1':
-            ReleaseObjects();
             // 로비화면
             SceneNum = 1;
+            ReleaseObjects();
             isready = true;
 
-            //gNetwork.SendLoginfo();
+            gNetwork.SendLoginfo();
             //// 로그인 리시블 받을 때까지 대기 해줘야함 
-            //WaitForSingleObject(loginevent, INFINITE);
+            WaitForSingleObject(loginevent, INFINITE);
 
-            //cl_id = gNetwork.Getmyid();
-            //m_pPlayer->c_id = gNetwork.Getmyid();
+            cl_id = gNetwork.Getmyid();
+            m_pPlayer->c_id = gNetwork.Getmyid();
 
             BuildObjects(SceneNum);
-            //gNetwork.SendChangeScene(SceneNum);
+            gNetwork.SendChangeScene(SceneNum);
 
 
             break;
         case '2':
+            SceneNum = 2;
             ReleaseObjects();
             // spaceship map
-            SceneNum = 2;
             isready = false;
-            /*isready = false;
-            g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);*/
+            g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
             BuildObjects(SceneNum);
             break;
         case '3':
-
             // ice map
             SceneNum = 3;
             isready = false;
@@ -428,11 +426,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
             ReleaseObjects();
             BuildObjects(5);
 
-            //g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-            // ------------------------------------ 
-
-            /*ReleaseObjects();
-            BuildObjects(2);*/
+            g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+          
             break;
         case VK_SPACE:
             m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
@@ -751,7 +746,7 @@ void CGameFramework::BuildObjects(int nScene)
         m_pUILayer2->UpdateTextOutputs(1, pstrOutputText1, &rect, pdwTextFormat, pd2dBrush);
 
 
-		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 2);
+        CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain,2);
 
 
         m_pScene->m_pPlayer = m_pPlayer = pPlayer;
@@ -786,8 +781,6 @@ void CGameFramework::BuildObjects(int nScene)
         wcscpy_s(pstrOutputText, 256, L"  \n");
         m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
         /////////////////////////
-
-		
 
 		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 1);
 
@@ -825,7 +818,7 @@ void CGameFramework::BuildObjects(int nScene)
         m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
         //////////////////////// 
 
-        CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+        CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
         m_pScene->m_pPlayer = m_pPlayer = pPlayer;
         m_pCamera = m_pPlayer->GetCamera();
@@ -861,7 +854,7 @@ void CGameFramework::BuildObjects(int nScene)
         m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
         /////////////////////////
 
-        CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+        CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
         m_pScene->m_pPlayer = m_pPlayer = pPlayer;
         m_pCamera = m_pPlayer->GetCamera();
@@ -898,7 +891,7 @@ void CGameFramework::BuildObjects(int nScene)
         m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
         /////////////////////////
 
-        CLobbyPlayer* pPlayer = new CLobbyPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+        CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
         m_pScene->m_pPlayer = m_pPlayer = pPlayer;
         m_pCamera = m_pPlayer->GetCamera();
@@ -1164,10 +1157,10 @@ void CGameFramework::FrameAdvance()
     ProcessInput();
 
     AnimateObjects();
-    if (isready)
+    if (isready && m_pUILayer2!= NULL)
         readyUI();
 
-    if (SceneNum > 1) {
+    if (SceneNum > 1 && m_pUILayer != NULL) {
         UpdateUI();
     }
 
@@ -1213,15 +1206,14 @@ void CGameFramework::FrameAdvance()
 
     if (SceneNum == 0)
     {
-        m_pUILayer1->Render(m_nSwapChainBufferIndex);
+        if(m_pUILayer1) m_pUILayer1->Render(m_nSwapChainBufferIndex);
     }
     else if (SceneNum == 1) {
-        m_pUILayer2->Render(m_nSwapChainBufferIndex);
-        //readyUI();
+        if (m_pUILayer2) m_pUILayer2->Render(m_nSwapChainBufferIndex);
     }
     else {
 
-        m_pUILayer->Render(m_nSwapChainBufferIndex);
+        if (m_pUILayer) m_pUILayer->Render(m_nSwapChainBufferIndex);
     }
 
 

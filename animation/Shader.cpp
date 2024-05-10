@@ -632,9 +632,7 @@ CPostProcessingShader::CPostProcessingShader()
 
 CPostProcessingShader::~CPostProcessingShader()
 {
-	if (m_pTexture) delete m_pTexture;
-
-	if (m_pd3dRtvCPUDescriptorHandles) delete[] m_pd3dRtvCPUDescriptorHandles;
+	
 }
 
 D3D12_INPUT_LAYOUT_DESC CPostProcessingShader::CreateInputLayout()
@@ -729,6 +727,16 @@ D3D12_SHADER_BYTECODE CPostProcessingShader::CreateVertexShader()
 D3D12_SHADER_BYTECODE CPostProcessingShader::CreatePixelShader()
 {
 	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSScreenRectSamplingTextured", "ps_5_1", &m_pd3dPixelShaderBlob));
+}
+
+void CPostProcessingShader::ReleaseShaderVariables()
+{
+
+	if (m_pTexture)
+		delete m_pTexture;
+
+	if (m_pd3dRtvCPUDescriptorHandles)
+		delete[] m_pd3dRtvCPUDescriptorHandles;
 }
 
 void CPostProcessingShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets, DXGI_FORMAT* pdxgiRtvFormats, DXGI_FORMAT dxgiDsvFormat)

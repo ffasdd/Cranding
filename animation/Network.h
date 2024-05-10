@@ -7,7 +7,7 @@
 #include"../Server/Server2/Server2/protocol.h"
 #pragma comment(lib,"WS2_32.lib")
 
-#define SERVER_IP "172.0.0.1"
+#define SERVER_IP "121.170.72.178"
 extern unordered_map<int, Session> g_clients;
 extern unordered_map<int, Session> g_monsters;
 
