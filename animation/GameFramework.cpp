@@ -1204,14 +1204,14 @@ void CGameFramework::FrameAdvance()
 
     if (SceneNum == 0)
     {
-        if (m_pUILayer1) m_pUILayer1->Render(m_nSwapChainBufferIndex);
+        if (m_pUILayer1 != NULL) m_pUILayer1->Render(m_nSwapChainBufferIndex);
     }
     else if (SceneNum == 1) {
-        if (m_pUILayer2) m_pUILayer2->Render(m_nSwapChainBufferIndex);
+        if (m_pUILayer2 != NULL) m_pUILayer2->Render(m_nSwapChainBufferIndex);
     }
     else {
 
-        if (m_pUILayer) m_pUILayer->Render(m_nSwapChainBufferIndex);
+        if (m_pUILayer != NULL) m_pUILayer->Render(m_nSwapChainBufferIndex);
     }
 
 

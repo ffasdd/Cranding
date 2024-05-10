@@ -822,7 +822,10 @@ CGameObject::~CGameObject()
 	{
 		for (int i = 0; i < m_nMaterials; i++)
 		{
-			if (m_ppMaterials[i]) m_ppMaterials[i]->Release();
+			if (m_ppMaterials[i]) {
+				m_ppMaterials[i]->Release();
+				m_ppMaterials[i] = nullptr;
+			}
 		}
 	}
 	if (m_ppMaterials) delete[] m_ppMaterials;
