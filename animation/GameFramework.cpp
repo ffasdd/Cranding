@@ -496,8 +496,8 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
             others_id = n;
             break;
         }
-
         m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetPosition(position);
+        //m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pChild->m_pChild->m_xmBoundingBox.Center = position;
     }
 }
 

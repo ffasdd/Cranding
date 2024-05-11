@@ -36,6 +36,7 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 		if (i == 0)
 		{
 			CGameObject* pMapObject = m_ppHierarchicalGameObjects[0]->m_pChild->m_pChild;
+
 			for (int j = 0; j < m_ppHierarchicalGameObjects[0]->m_pChild->nChilds; j++)
 			{
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
@@ -55,7 +56,9 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 		else
 		{
 			if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
+			{
 				return(true);
+			}
 		}
 	}
 	return(false);
@@ -1020,7 +1023,6 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		float posY = (rand() % 2000) / 10.0;
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
-		m_ppHierarchicalGameObjects[3 + i]->isNPC = true;
 	}
 }
 
@@ -1143,7 +1145,6 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
-		m_ppHierarchicalGameObjects[3 + i]->isNPC = true;
 	}
 }
 
@@ -1257,7 +1258,6 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 		float posY = (rand() % 2000) / 10.0;
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
-		m_ppHierarchicalGameObjects[3 + i]->isNPC = true;
 	}
 }
 void CFireScene::ReleaseUploadBuffers()
@@ -1370,7 +1370,6 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 		float posY = (rand() % 2000) / 10.0;
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
-		m_ppHierarchicalGameObjects[3 + i]->isNPC = true;
 	}
 	if (pIceEnemyModel) delete pIceEnemyModel;
 }
