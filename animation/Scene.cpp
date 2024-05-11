@@ -23,17 +23,14 @@ CDescriptorHeap::~CDescriptorHeap()
 CScene::CScene()
 {
 }
-
 CScene::~CScene()
 {
 }
-
 void CScene::BuildDefaultLightsAndMaterials()
 {
 	m_nLights = 1;
 	m_pLights = new LIGHT[m_nLights];
 	::ZeroMemory(m_pLights, sizeof(LIGHT) * m_nLights);
-
 	m_xmf4GlobalAmbient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
 
 	// m_pLights[0].m_bEnable = true;
@@ -215,12 +212,17 @@ void CScene::ReleaseObjects()
 			m_ppShaders[i]->ReleaseShaderVariables();
 			m_ppShaders[i]->ReleaseObjects();
 			m_ppShaders[i]->Release();
+			m_ppShaders[i] = nullptr;
 		}
 		delete[] m_ppShaders;
+		m_ppShaders = nullptr;
 	}
 
-	if (m_pTerrain) delete m_pTerrain;
-	if (m_pSkyBox) delete m_pSkyBox;
+	if (m_pSkyBox)
+	{
+		delete m_pSkyBox;
+		m_pSkyBox = nullptr;
+	}
 
 	if (m_ppHierarchicalGameObjects)
 	{
@@ -230,7 +232,11 @@ void CScene::ReleaseObjects()
 
 	ReleaseShaderVariables();
 
-	if (m_pLights) delete[] m_pLights;
+	if (m_pLights) {
+		delete[] m_pLights;
+		m_pLights = nullptr;
+	}
+	
 }
 
 ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevice)
@@ -456,7 +462,6 @@ void CScene::ReleaseShaderVariables()
 void CScene::ReleaseUploadBuffers()
 {
 	if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
-	if (m_pTerrain) m_pTerrain->ReleaseUploadBuffers();
 
 	for (int i = 0; i < m_nShaders; i++) m_ppShaders[i]->ReleaseUploadBuffers();
 	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->ReleaseUploadBuffers();
