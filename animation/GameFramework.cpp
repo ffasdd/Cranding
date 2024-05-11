@@ -648,52 +648,52 @@ void CGameFramework::BuildObjects(int nScene)
     {
     case 0:
     {
-        m_pUILayer1 = new UILayer(m_nSwapChainBuffers, 4, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+        //m_pUILayer1 = new UILayer(m_nSwapChainBuffers, 4, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 
-        ID2D1SolidColorBrush* pd2dBrush = m_pUILayer1->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
-        IDWriteTextFormat* pdwTextFormat = m_pUILayer1->CreateTextFormat(L"Ravie", m_nWndClientHeight / 4.5f);
-        D2D1_RECT_F d2dRect = D2D1::RectF(-200.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+        //ID2D1SolidColorBrush* pd2dBrush = m_pUILayer1->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+        //IDWriteTextFormat* pdwTextFormat = m_pUILayer1->CreateTextFormat(L"Ravie", m_nWndClientHeight / 4.5f);
+        //D2D1_RECT_F d2dRect = D2D1::RectF(-200.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
 
-        WCHAR pstrOutputText[256];
-        wcscpy_s(pstrOutputText, 256, L"Cranding\n");
-        m_pUILayer1->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
-        /////////////////////////////////////////////////////////
+        //WCHAR pstrOutputText[256];
+        //wcscpy_s(pstrOutputText, 256, L"Cranding\n");
+        //m_pUILayer1->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
+        ///////////////////////////////////////////////////////////
 
-        // 두 번째 텍스트 박스를 위한 위치 및 형식 설정
-        pd2dBrush = m_pUILayer1->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
-        d2dRect = D2D1::RectF(-400.0f, 150.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-        IDWriteTextFormat* pdwTextFormat1 = m_pUILayer1->CreateTextFormat(L"바탕체", m_nWndClientHeight / 10.0f);
+        //// 두 번째 텍스트 박스를 위한 위치 및 형식 설정
+        //pd2dBrush = m_pUILayer1->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+        //d2dRect = D2D1::RectF(-400.0f, 150.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+        //IDWriteTextFormat* pdwTextFormat1 = m_pUILayer1->CreateTextFormat(L"바탕체", m_nWndClientHeight / 10.0f);
 
-        // 두 번째 텍스트 박스에 "text2" 입력
-        WCHAR pstrOutputText2[256];
-        wcscpy_s(pstrOutputText2, 256, L"게임 시작\n");
+        //// 두 번째 텍스트 박스에 "text2" 입력
+        //WCHAR pstrOutputText2[256];
+        //wcscpy_s(pstrOutputText2, 256, L"게임 시작\n");
 
-        // 두 번째 텍스트 박스 그리기
-        m_pUILayer1->UpdateTextOutputs(1, pstrOutputText2, &d2dRect, pdwTextFormat1, pd2dBrush);
-        /////////////////////////////////////////////////////////////////////
-           // 세 번째 텍스트 박스를 위한 위치 및 형식 설정
-        pd2dBrush = m_pUILayer1->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
-        d2dRect = D2D1::RectF(-400.0f, 250.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-        pdwTextFormat = m_pUILayer1->CreateTextFormat(L"바탕체", m_nWndClientHeight / 10.0f);
+        //// 두 번째 텍스트 박스 그리기
+        //m_pUILayer1->UpdateTextOutputs(1, pstrOutputText2, &d2dRect, pdwTextFormat1, pd2dBrush);
+        ///////////////////////////////////////////////////////////////////////
+        //   // 세 번째 텍스트 박스를 위한 위치 및 형식 설정
+        //pd2dBrush = m_pUILayer1->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+        //d2dRect = D2D1::RectF(-400.0f, 250.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+        //pdwTextFormat = m_pUILayer1->CreateTextFormat(L"바탕체", m_nWndClientHeight / 10.0f);
 
-        // 세 번째 텍스트 박스에 "text2" 입력
-        WCHAR pstrOutputText3[256];
-        wcscpy_s(pstrOutputText3, 256, L"게임 방법\n");
+        //// 세 번째 텍스트 박스에 "text2" 입력
+        //WCHAR pstrOutputText3[256];
+        //wcscpy_s(pstrOutputText3, 256, L"게임 방법\n");
 
-        // 세 번째 텍스트 박스 그리기
-        m_pUILayer1->UpdateTextOutputs(2, pstrOutputText3, &d2dRect, pdwTextFormat, pd2dBrush);
-        ////////////////////////////////////////////////////////////////////
-        // 네 번째 텍스트 박스를 위한 위치 및 형식 설정
-        pd2dBrush = m_pUILayer1->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
-        d2dRect = D2D1::RectF(-400.0f, 350.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-        pdwTextFormat = m_pUILayer1->CreateTextFormat(L"나눔바른펜", m_nWndClientHeight / 10.0f);
+        //// 세 번째 텍스트 박스 그리기
+        //m_pUILayer1->UpdateTextOutputs(2, pstrOutputText3, &d2dRect, pdwTextFormat, pd2dBrush);
+        //////////////////////////////////////////////////////////////////////
+        //// 네 번째 텍스트 박스를 위한 위치 및 형식 설정
+        //pd2dBrush = m_pUILayer1->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+        //d2dRect = D2D1::RectF(-400.0f, 350.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+        //pdwTextFormat = m_pUILayer1->CreateTextFormat(L"나눔바른펜", m_nWndClientHeight / 10.0f);
 
-        // 네 번째 텍스트 박스에 "text2" 입력
-        WCHAR pstrOutputText4[256];
-        wcscpy_s(pstrOutputText4, 256, L"게임 종료\n");
+        //// 네 번째 텍스트 박스에 "text2" 입력
+        //WCHAR pstrOutputText4[256];
+        //wcscpy_s(pstrOutputText4, 256, L"게임 종료\n");
 
-        // 네 번째 텍스트 박스 그리기
-        m_pUILayer1->UpdateTextOutputs(3, pstrOutputText4, &d2dRect, pdwTextFormat, pd2dBrush);
+        //// 네 번째 텍스트 박스 그리기
+        //m_pUILayer1->UpdateTextOutputs(3, pstrOutputText4, &d2dRect, pdwTextFormat, pd2dBrush);
         //////////////////////////////////////////////////////////////////
 
 
@@ -725,21 +725,21 @@ void CGameFramework::BuildObjects(int nScene)
         m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 
-        m_pUILayer2 = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+        //m_pUILayer2 = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 
-        ID2D1SolidColorBrush* pd2dBrush = m_pUILayer2->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-        IDWriteTextFormat* pdwTextFormat = m_pUILayer2->CreateTextFormat(L"Ravie", m_nWndClientHeight / 11.0f);
-        D2D1_RECT_F d2dRect = D2D1::RectF(00.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+        //ID2D1SolidColorBrush* pd2dBrush = m_pUILayer2->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
+        //IDWriteTextFormat* pdwTextFormat = m_pUILayer2->CreateTextFormat(L"Ravie", m_nWndClientHeight / 11.0f);
+        //D2D1_RECT_F d2dRect = D2D1::RectF(00.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
 
-        WCHAR pstrOutputText[256];
-        wcscpy_s(pstrOutputText, 256, L"게임 시작을 위해 '2'를 눌러주세요\n");
-        m_pUILayer2->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
+        //WCHAR pstrOutputText[256];
+        //wcscpy_s(pstrOutputText, 256, L"게임 시작을 위해 '2'를 눌러주세요\n");
+        //m_pUILayer2->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
 
 
-        D2D1_RECT_F rect = D2D1::RectF(400.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-        WCHAR pstrOutputText1[256];
-        wcscpy_s(pstrOutputText1, 256, L" \n");
-        m_pUILayer2->UpdateTextOutputs(1, pstrOutputText1, &rect, pdwTextFormat, pd2dBrush);
+        //D2D1_RECT_F rect = D2D1::RectF(400.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+        //WCHAR pstrOutputText1[256];
+        //wcscpy_s(pstrOutputText1, 256, L" \n");
+        //m_pUILayer2->UpdateTextOutputs(1, pstrOutputText1, &rect, pdwTextFormat, pd2dBrush);
 
 
         CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain,2);
@@ -767,16 +767,16 @@ void CGameFramework::BuildObjects(int nScene)
         m_pScene = new CSpaceShipScene();
         m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-        ////////////////////////
-        m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
-        ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-        IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 10.0f);
-        D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
+        //////////////////////////
+        //m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+        //ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
+        //IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 10.0f);
+        //D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
 
-        WCHAR pstrOutputText[256];
-        wcscpy_s(pstrOutputText, 256, L"  \n");
-        m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
-        /////////////////////////
+        //WCHAR pstrOutputText[256];
+        //wcscpy_s(pstrOutputText, 256, L"  \n");
+        //m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
+        ///////////////////////////
 
 		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 1);
 
@@ -803,16 +803,16 @@ void CGameFramework::BuildObjects(int nScene)
         m_pScene = new CIceScene();
         m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-        ////////////////////////
-        m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
-        ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-        IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 10.0f);
-        D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
+        //////////////////////////
+        //m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+        //ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
+        //IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 10.0f);
+        //D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
 
-        WCHAR pstrOutputText[256];
-        wcscpy_s(pstrOutputText, 256, L"  \n");
-        m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
-        //////////////////////// 
+        //WCHAR pstrOutputText[256];
+        //wcscpy_s(pstrOutputText, 256, L"  \n");
+        //m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
+        ////////////////////////// 
 
         CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
@@ -839,16 +839,16 @@ void CGameFramework::BuildObjects(int nScene)
         m_pScene = new CFireScene();
         m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-        ////////////////////////
-        m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
-        ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-        IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 10.0f);
-        D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
+        //////////////////////////
+        //m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+        //ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
+        //IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 10.0f);
+        //D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
 
-        WCHAR pstrOutputText[256];
-        wcscpy_s(pstrOutputText, 256, L"  \n");
-        m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
-        /////////////////////////
+        //WCHAR pstrOutputText[256];
+        //wcscpy_s(pstrOutputText, 256, L"  \n");
+        //m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
+        ///////////////////////////
 
         CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
@@ -876,16 +876,16 @@ void CGameFramework::BuildObjects(int nScene)
         m_pScene = new CGrassScene();
         m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-        ////////////////////////
-        m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
-        ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-        IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 10.0f);
-        D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
+        //////////////////////////
+        //m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+        //ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
+        //IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 10.0f);
+        //D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
 
-        WCHAR pstrOutputText[256];
-        wcscpy_s(pstrOutputText, 256, L"  \n");
-        m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
-        /////////////////////////
+        //WCHAR pstrOutputText[256];
+        //wcscpy_s(pstrOutputText, 256, L"  \n");
+        //m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
+        ///////////////////////////
 
         CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
@@ -949,8 +949,8 @@ void CGameFramework::BuildObjects(int nScene)
 
 void CGameFramework::ReleaseObjects()
 {
-    if (m_pUILayer) m_pUILayer->ReleaseResources();
-    if (m_pUILayer) delete m_pUILayer;
+  /*  if (m_pUILayer) m_pUILayer->ReleaseResources();
+    if (m_pUILayer) delete m_pUILayer;*/
 
     if (m_pPlayer) m_pPlayer->Release();
 
@@ -1155,12 +1155,12 @@ void CGameFramework::FrameAdvance()
     ProcessInput();
 
     AnimateObjects();
-    if (isready && m_pUILayer2 != NULL)
-        readyUI();
+    //if (isready && m_pUILayer2 != NULL)
+    //    readyUI();
 
-    if (SceneNum > 1 && m_pUILayer != NULL) {
-        UpdateUI();
-    }
+    //if (SceneNum > 1 && m_pUILayer != NULL) {
+    //    UpdateUI();
+    //}
 
     HRESULT hResult = m_pd3dCommandAllocator->Reset();
     hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -1202,7 +1202,7 @@ void CGameFramework::FrameAdvance()
 
     WaitForGpuComplete();
 
-    if (SceneNum == 0)
+  /*  if (SceneNum == 0)
     {
         if (m_pUILayer1 != NULL) m_pUILayer1->Render(m_nSwapChainBufferIndex);
     }
@@ -1212,7 +1212,7 @@ void CGameFramework::FrameAdvance()
     else {
 
         if (m_pUILayer != NULL) m_pUILayer->Render(m_nSwapChainBufferIndex);
-    }
+    }*/
 
 
 #ifdef _WITH_PRESENT_PARAMETERS
