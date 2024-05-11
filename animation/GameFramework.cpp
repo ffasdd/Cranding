@@ -192,17 +192,20 @@ void CGameFramework::CreateCommandQueueAndList()
 
 void CGameFramework::CreateRtvAndDsvDescriptorHeaps()
 {
-    D3D12_DESCRIPTOR_HEAP_DESC d3dDescriptorHeapDesc;
-    ::ZeroMemory(&d3dDescriptorHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
-    d3dDescriptorHeapDesc.NumDescriptors = m_nSwapChainBuffers + 5;
-    d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-    d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    d3dDescriptorHeapDesc.NodeMask = 0;
-    HRESULT hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dRtvDescriptorHeap);
+	D3D12_DESCRIPTOR_HEAP_DESC d3dDescriptorHeapDesc;
+	::ZeroMemory(&d3dDescriptorHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
+	d3dDescriptorHeapDesc.NumDescriptors = m_nSwapChainBuffers + 5;
+	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	d3dDescriptorHeapDesc.NodeMask = 0;
+	HRESULT hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void **)&m_pd3dRtvDescriptorHeap);
+    // **
+	//::gnRtvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
-    d3dDescriptorHeapDesc.NumDescriptors = 1;
-    d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-    hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dDsvDescriptorHeap);
+	d3dDescriptorHeapDesc.NumDescriptors = 1;
+	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+	hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void **)&m_pd3dDsvDescriptorHeap);
+	//::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 }
 
 void CGameFramework::CreateSwapChainRenderTargetViews()
@@ -346,7 +349,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 {
     DWORD dwDirection = 0;
 
-    //if (m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
     switch (nMessageID)
     {
     case WM_KEYUP:
@@ -437,7 +439,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
             SceneNum = 5;
             ReleaseObjects();
             BuildObjects(5);
-          
             break;
         case VK_SPACE:
             m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
@@ -450,7 +451,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
             break;
         }
         break;
-
     }
 }
 
@@ -489,7 +489,8 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
     if (cl_id == n)
     {
         m_pPlayer->SetId(cl_id);
-        m_pPlayer->SetPosition(position);
+        // 꺼도 되는지 안되는지 모르겠음
+        // m_pPlayer->SetPosition(position);
     }
     else
     {
@@ -506,8 +507,8 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
             others_id = n;
             break;
         }
-
         m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetPosition(position);
+        //m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pChild->m_pChild->m_xmBoundingBox.Center = position;
     }
 }
 
@@ -573,11 +574,10 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
             break;
         }
 
-        // 서버에서 받은 이전 애니메이션 번호와 현재 애니메이션 번호가 다른 경우(블렌딩 해야하는 경우)
-        if (prevAni != curAni)
-        {
-
-            // 이전 애니메이션 번호, 이후 애니메이션 번호 저장
+		// 서버에서 받은 이전 애니메이션 번호와 현재 애니메이션 번호가 다른 경우(블렌딩 해야하는 경우)
+		if (prevAni != curAni)
+		{
+			// 이전 애니메이션 번호, 이후 애니메이션 번호 저장
             m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
 
             m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
@@ -588,11 +588,22 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 
             m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
 
+            if (id == 1)
+            {
+                m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
+                m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);
+                m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5);
+                m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5);
+                m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5);
+                m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5);
+                m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5);
+                m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5);
+                m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5);
+                m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
+                m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
+            }
             g_clients[others_id + 1].setprevAnimation(curAni);
         }
-
-        //float fTimeElapsed = m_GameTimer.GetTimeElapsed();
-        //m_pScene->m_ppHierarchicalGameObjects[others_id]->Animate(fTimeElapsed);
     }
 }
 
@@ -664,56 +675,6 @@ void CGameFramework::BuildObjects(int nScene)
     {
     case 0:
     {
-        /*
-        m_pUILayer1 = new UILayer(m_nSwapChainBuffers, 4, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
-
-        ID2D1SolidColorBrush* pd2dBrush = m_pUILayer1->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
-        IDWriteTextFormat* pdwTextFormat = m_pUILayer1->CreateTextFormat(L"Ravie", m_nWndClientHeight / 4.5f);
-        D2D1_RECT_F d2dRect = D2D1::RectF(-200.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-
-        WCHAR pstrOutputText[256];
-        wcscpy_s(pstrOutputText, 256, L"Cranding\n");
-        m_pUILayer1->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
-        /////////////////////////////////////////////////////////
-
-        // 두 번째 텍스트 박스를 위한 위치 및 형식 설정
-        pd2dBrush = m_pUILayer1->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
-        d2dRect = D2D1::RectF(-400.0f, 150.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-        IDWriteTextFormat* pdwTextFormat1 = m_pUILayer1->CreateTextFormat(L"바탕체", m_nWndClientHeight / 10.0f);
-
-        // 두 번째 텍스트 박스에 "text2" 입력
-        WCHAR pstrOutputText2[256];
-        wcscpy_s(pstrOutputText2, 256, L"게임 시작\n");
-
-        // 두 번째 텍스트 박스 그리기
-        m_pUILayer1->UpdateTextOutputs(1, pstrOutputText2, &d2dRect, pdwTextFormat1, pd2dBrush);
-        /////////////////////////////////////////////////////////////////////
-           // 세 번째 텍스트 박스를 위한 위치 및 형식 설정
-        pd2dBrush = m_pUILayer1->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
-        d2dRect = D2D1::RectF(-400.0f, 250.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-        pdwTextFormat = m_pUILayer1->CreateTextFormat(L"바탕체", m_nWndClientHeight / 10.0f);
-
-        // 세 번째 텍스트 박스에 "text2" 입력
-        WCHAR pstrOutputText3[256];
-        wcscpy_s(pstrOutputText3, 256, L"게임 방법\n");
-
-        // 세 번째 텍스트 박스 그리기
-        m_pUILayer1->UpdateTextOutputs(2, pstrOutputText3, &d2dRect, pdwTextFormat, pd2dBrush);
-        ////////////////////////////////////////////////////////////////////
-        // 네 번째 텍스트 박스를 위한 위치 및 형식 설정
-        pd2dBrush = m_pUILayer1->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
-        d2dRect = D2D1::RectF(-400.0f, 350.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-        pdwTextFormat = m_pUILayer1->CreateTextFormat(L"나눔바른펜", m_nWndClientHeight / 10.0f);
-
-        // 네 번째 텍스트 박스에 "text2" 입력
-        WCHAR pstrOutputText4[256];
-        wcscpy_s(pstrOutputText4, 256, L"게임 종료\n");
-
-        // 네 번째 텍스트 박스 그리기
-        m_pUILayer1->UpdateTextOutputs(3, pstrOutputText4, &d2dRect, pdwTextFormat, pd2dBrush);
-        //////////////////////////////////////////////////////////////////
-        */
-
         m_pScene = new CLoginScene();
         m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
@@ -967,8 +928,8 @@ void CGameFramework::BuildObjects(int nScene)
 
 void CGameFramework::ReleaseObjects()
 {
-    if (m_pUILayer) m_pUILayer->ReleaseResources();
-    if (m_pUILayer) delete m_pUILayer;
+  /*  if (m_pUILayer) m_pUILayer->ReleaseResources();
+    if (m_pUILayer) delete m_pUILayer;*/
 
     if (m_pPlayer) m_pPlayer->Release();
 
@@ -987,21 +948,23 @@ void CGameFramework::ReleaseObjects()
 // 플레이어 조작 부분 -> 상하좌우, 마우스
 void CGameFramework::ProcessInput()
 {
-    static UCHAR pKeysBuffer[256];
-    bool bProcessedByScene = false;
-    if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
-    if (!bProcessedByScene && (SceneNum != 0)) // 로그인씬에서 키입력 제한 
-    {
-        float cxDelta = 0.0f, cyDelta = 0.0f;
-        POINT ptCursorPos;
-        if (GetCapture() == m_hWnd)
-        {
-            SetCursor(NULL);
-            GetCursorPos(&ptCursorPos);
-            cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
-            cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
-            SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
-        }
+	m_pPlayer->m_xmf3BeforeCollidedPosition = m_pPlayer->GetPosition();
+
+	static UCHAR pKeysBuffer[256];
+	bool bProcessedByScene = false;
+	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
+	if (!bProcessedByScene)
+	{
+		float cxDelta = 0.0f, cyDelta = 0.0f;
+		POINT ptCursorPos;
+		if (GetCapture() == m_hWnd)
+		{
+			SetCursor(NULL);
+			GetCursorPos(&ptCursorPos);
+			cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+			cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+			SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+		}
 
         DWORD dwDirection = 0;
         // 위쪽 키가 눌려있는지 확인하는 비트 연산
@@ -1078,17 +1041,19 @@ void CGameFramework::ProcessInput()
         }
     }
     m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
-
-
 }
 
 void CGameFramework::AnimateObjects()
 {
     float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 
-    if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
+	//m_pPlayer->UpdateBoundingBox();
+	if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
-    m_pPlayer->Animate(fTimeElapsed);
+	m_pPlayer->Animate(fTimeElapsed);
+
+    if (SceneNum > 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+        m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 }
 
 void CGameFramework::WaitForGpuComplete()
@@ -1171,6 +1136,7 @@ void CGameFramework::FrameAdvance()
 
     UpdateUI();
 
+
     HRESULT hResult = m_pd3dCommandAllocator->Reset();
     hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
@@ -1215,6 +1181,7 @@ void CGameFramework::FrameAdvance()
     {
         UILayer::GetInstance()->Render(m_nSwapChainBufferIndex,SceneNum,isready, curDay, curMinute, curSecond);
     }
+
 
 
 #ifdef _WITH_PRESENT_PARAMETERS

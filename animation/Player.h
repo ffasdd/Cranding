@@ -52,6 +52,8 @@ public:
 	CPlayer();
 	virtual ~CPlayer();
 
+	XMFLOAT3					m_xmf3BeforeCollidedPosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
 	XMFLOAT3 GetPosition() { return(m_xmf3Position); }
 	XMFLOAT3 GetLookVector() { return(m_xmf3Look); }
 	XMFLOAT3 GetUpVector() { return(m_xmf3Up); }
@@ -106,7 +108,6 @@ public:
 	void SetLook(const XMFLOAT3& xmf3Look) { m_xmf3Look = xmf3Look; }
 	void SetRight(const XMFLOAT3& xmf3Right) { m_xmf3Right = xmf3Right; }
 	void SetUp(const XMFLOAT3& xmf3Up) { m_xmf3Up = xmf3Up; }
-
 	int m_hp;
 
 protected:

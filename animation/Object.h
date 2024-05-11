@@ -382,19 +382,30 @@ public:
 
 public:
 	CGameObject();
-	CGameObject(int nMaterials);
+	CGameObject(int nMaterials, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
     virtual ~CGameObject();
 
 
 	D3D12_GPU_DESCRIPTOR_HANDLE		m_d3dCbvGPUDescriptorHandle;
 
-public:
+public:	
+	// 바운딩 박스 관련
+	int nChilds = 0;				// 
+	void UpdateBoundingBox();
+	BoundingOrientedBox				m_xmBoundingBox = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+	void RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+	CBoundingBoxMesh* m_pBoundingBoxMesh = NULL;
+	void SetBoundingBoxMesh(CBoundingBoxMesh* pMesh);
+
 	// 상하체 분리 변수
 	bool							m_bUpperBody = false;
 
 	char							m_pstrFrameName[64];
 
 	CMesh							*m_pMesh = NULL;
+	CMesh							*m_pNoSkinMesh = NULL;
+	//CMesh							*m_pChildMesh = NULL;
+
 
 	int								m_nMaterials = 0;
 	CMaterial						**m_ppMaterials = NULL;
@@ -549,11 +560,25 @@ public:
 	virtual void OnRootMotion(CGameObject* pRootGameObject);
 };
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class CPlayerObject : public CGameObject
 {
 public:
 	CPlayerObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks);
 	virtual ~CPlayerObject();
+
+
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class CFireEnemyObject : public CGameObject
+{
+public:
+	CFireEnemyObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
+	virtual ~CFireEnemyObject();
+
+	virtual void Animate(float fTimeElapsed);
+
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
