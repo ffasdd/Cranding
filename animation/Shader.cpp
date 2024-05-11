@@ -780,6 +780,9 @@ void CPostProcessingShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSig
 #endif
 
 	CShader::CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, nRenderTargets, pdxgiRtvFormats, dxgiDsvFormat);
+
+	if (m_pd3dVertexShaderBlob) m_pd3dVertexShaderBlob->Release();
+	if (m_pd3dPixelShaderBlob) m_pd3dPixelShaderBlob->Release();
 }
 
 void CPostProcessingShader::CreateResourcesAndRtvsSrvs(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, UINT nRenderTargets, DXGI_FORMAT* pdxgiFormats, D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle)
@@ -893,7 +896,7 @@ void CTextureToFullScreenShader::CreateShaderVariables(ID3D12Device* pd3dDevice,
 
 void CTextureToFullScreenShader::ReleaseShaderVariables()
 {
-	 if (m_pd3dcbDrawOptions) m_pd3dcbDrawOptions->Release();
+	 //if (m_pd3dcbDrawOptions) m_pd3dcbDrawOptions->Release();
 }
 
 void CTextureToFullScreenShader::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
@@ -982,6 +985,9 @@ void CBoundingBoxShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	DXGI_FORMAT rtvFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 	CShader::CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 1, &rtvFormat, DXGI_FORMAT_D32_FLOAT, d3dPrimitiveTopologyType);
+
+	if (m_pd3dVertexShaderBlob) m_pd3dVertexShaderBlob->Release();
+	if (m_pd3dPixelShaderBlob) m_pd3dPixelShaderBlob->Release();
 }
 
 D3D12_SHADER_BYTECODE CBoundingBoxShader::CreateVertexShader()
