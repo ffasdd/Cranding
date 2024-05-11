@@ -32,9 +32,10 @@ public:
 	mutex r_l;
 	bool fullcheck = false;
 
-	int startcnt = 0;
-	clock_t start_time;
-	clock_t end_time;
+	int _id = -1;
+	int readycnt = 0;
+	std::chrono::system_clock::time_point start_time;
+	
 
 	// Night Monster
 	array<Monster, 10> NightMonster;
@@ -47,8 +48,8 @@ public:
 
 
 public:
-	void MoveKnightMonster();
+	void SendMoveNightMonster(int npc_id);
 	void SendAddMonster(int npc_id,int _id);
-
+	void UpdateNpc();
 };
 

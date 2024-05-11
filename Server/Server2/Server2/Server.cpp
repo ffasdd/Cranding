@@ -98,18 +98,36 @@ void Server::Iocp()
 	{
 		int error_num = WSAGetLastError();
 		if (ERROR_IO_PENDING != error_num)
-			cout << error_num <<" Error " << endl;
+			cout << error_num << " Error " << endl;
 	}
 
-	//InitialziedMonster();
-
 	lobbythread = thread([this]() {ReadyToStart(); });
-	
+
 	int num_thread = std::thread::hardware_concurrency();
 	for (int i = 0; i < num_thread; ++i)
 		worker_thread.emplace_back(&Server::WorkerThread, this);
 	for (auto& th : worker_thread)
 		th.join();
+
+	//constexpr int MAX_FAME = 60;
+	//using frame = std::chrono::duration<int32_t, std::ratio<1, MAX_FAME>>;
+	//using ms = std::chrono::duration<float, std::milli>;
+	//std::chrono::time_point<std::chrono::steady_clock> fps_timer{ std::chrono::steady_clock::now() };
+
+	//frame fps{}, frame_count{};
+
+	//while (true)
+	//{
+	//	fps = chrono::duration_cast<frame>(std::chrono::steady_clock::now() - fps_timer);
+
+	//	if (fps.count() < 1)continue;
+
+	//	if (frame_count.count() & 1)
+	//	{
+	//		// 몬스터 정보 
+	//		
+	//	}
+	//}
 
 
 }
@@ -207,8 +225,34 @@ void Server::WorkerThread()
 			delete ex_over;
 			break;
 		}
-		case COMP_TYPE::NPC_MOVE: {
+		//case COMP_TYPE::NPC_WAKE_UP: {
+		///*	int r_id = ex_over->room_id;
+		//	InitialziedMonster(r_id);
+		//	for (auto& pl : ingameroom[r_id].ingamePlayer)
+		//	{
+		//		for (int i = 0; i < MAX_NPC; ++i)
+		//		{
+		//			pl->send_add_monster(i);
+		//		}
+		//	}*/
+		//	delete ex_over;
+		//}
+		//case COMP_TYPE::NPC_MOVE: {
+		//	//int r_id = ex_over->room_id;
+		//	//ingameroom[r_id].SendMoveNightMonster(static_cast<int>(key));
+		//	//TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),static_cast<int>(key),r_id,EVENT_TYPE::EV_MOVE};
+		//	//g_Timer.InitTimerQueue(ev);
+		//	delete ex_over;
+		//	break;
+		//}
+		case COMP_TYPE::NPC_UPDATE: {
 
+			int r_id = static_cast<int>(key);
+			ingameroom[r_id].UpdateNpc();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over; 
+			break;
 		}
 		default:
 			break;
@@ -261,10 +305,9 @@ void Server::ProcessPacket(int id, char* packet)
 
 		while (clients[id].room_id == -1)
 		{
-			cout << "aaa" << endl;
+			cout << "Matching" << endl;
 			//로그인을 해놓고 룸매칭을 하게 해야
 		}
-		// 로그인을 했으면 로그인 정보를 제대로 서버에 저장하는걸 보장해줘야 한다. 
 
 		clients[id].send_login_info_packet();
 		// ADD X 
@@ -292,7 +335,7 @@ void Server::ProcessPacket(int id, char* packet)
 				near_list.insert(pl->_id);
 		}
 		// -------------------------------
-		cout << " Send my packet to me " << id << endl; 
+		cout << " Send my packet to me " << id << endl;
 		clients[id].send_move_packet(id);
 
 		// -------------------view list 
@@ -316,15 +359,23 @@ void Server::ProcessPacket(int id, char* packet)
 				clients[id].send_add_info_packet(pl);
 		}
 
+		for (auto& pl : old_vlist)
+		{
+			if (0 == near_list.count(pl))
+			{
+				clients[id].send_remove_packet(pl);
+			}
+		}
+
 	}
 				break;
 	case CS_ROTATE: {
 		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
 		int r_id = p->roomid;
 
-		clients[id]._look  = p->look;
+		clients[id]._look = p->look;
 		clients[id]._right = p->right;
-		clients[id]._up   = p->up;
+		clients[id]._up = p->up;
 
 		unordered_set<int> near_list;
 		clients[id]._v_lock.lock();
@@ -341,7 +392,7 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 
 		clients[id].send_rotate_packet(id);
-		
+
 		for (auto& pl : near_list)
 		{
 
@@ -360,7 +411,13 @@ void Server::ProcessPacket(int id, char* packet)
 			if (old_vlist.count(pl) == 0)
 				clients[id].send_add_info_packet(pl);
 		}
-
+		//for (auto& pl : old_vlist)
+		//{
+		//	if (0 == near_list.count(pl))
+		//	{
+		//		clients[id].send_remove_packet(pl);
+		//	}
+		//}
 		break;
 	}
 	case CS_CHANGE_ANIMATION: {
@@ -415,7 +472,7 @@ void Server::ProcessPacket(int id, char* packet)
 		int r_id = p->roomid;
 		clients[id]._stage = scenenum;
 		clients[id].send_change_scene(id, scenenum);
-	
+
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
 			if (pl->_id == id)continue;
@@ -448,47 +505,58 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Start;
-			ingameroom[r_id].startcnt++;
+			ingameroom[r_id].readycnt++;
 		}
 
-		
-		if (ingameroom[r_id].startcnt == 2)
+
+		if (ingameroom[r_id].readycnt == 2)
 		{
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
 				pl->send_ingame_start();
 			}
+
+			InitialziedMonster(r_id);
+
+			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
+			g_Timer.InitTimerQueue(ev);
 		}
-		// 마지막으로 스타트 들어온애가 문닫는거니까? 
-		// 
-		// 몬스터의 정보들을 전달 
+		
+		//ingameroom[r_id].start_time = chrono::system_clock::now();
+		//TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(10s),id,r_id,EVENT_TYPE::EV_WAKE_UP };
+		//g_Timer.InitTimerQueue(ev);
 
 	}
 						break;
 	case CS_TIME_CHECK: {
+
 		CS_TIME_CHECK_PACKET* p = reinterpret_cast<CS_TIME_CHECK_PACKET*>(packet);
 		cout << p->roomid << " 번 방 " << p->time << " 분 경과 " << endl;
 		int r_id = p->roomid;
+
 		if (p->time % 2 == 0)
 		{
-			cout << " 몬스터 생성  " << endl; 
+			cout << " 몬스터 생성  " << endl;
 			// 모든 클라이언트들 한테 밤에나오는 NPC들 정보들을 모두 보내줘야 함 
 			InitialziedMonster(r_id);
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
-				for (int i = 0; i < ingameroom[r_id].NightMonster.max_size(); ++i)
+				for (int i = 0; i < ingameroom[r_id].NightMonster.max_size(); ++i) //
 				{
-					ingameroom[r_id].SendAddMonster(i, id);
+					////send addmonster가 아니라 여기서 바로 WakeupNpc ? 
+					//ingameroom[r_id].SendAddMonster(i, id);
+					//TIMER_EVENT ev{ std::chrono::system_clock::now(), i, r_id, EVENT_TYPE::EV_MOVE };
+					//g_Timer.InitTimerQueue(ev);
 				}
 			}
 		}
 		break;
 	};
-
+	
 	case CS_ATTACK: {
 		CS_ATTACK_PACKET* p = reinterpret_cast<CS_ATTACK_PACKET*>(packet);
 		int r_id = p->roomid;
-		
+
 		clients[id]._isAttack = p->isAttack;
 
 		unordered_set<int> near_list;
@@ -525,6 +593,13 @@ void Server::ProcessPacket(int id, char* packet)
 			if (old_vlist.count(pl) == 0)
 				clients[id].send_add_info_packet(pl);
 		}
+	/*	for (auto& pl : old_vlist)
+		{
+			if (0 == near_list.count(pl))
+			{
+				clients[id].send_remove_packet(pl);
+			}
+		}*/
 	}
 				  break;
 
@@ -587,14 +662,14 @@ void Server::ReadyToStart()
 	{
 		if (!matchingqueue.empty())
 		{
-			Session* _session = nullptr; 
+			Session* _session = nullptr;
 			bool sessionok = matchingqueue.try_pop(_session);
 
 			if (!sessionok) continue;
 
 			int room_id = get_new_room_id(ingameroom); // room ID를 부여받음 ;
 			{
-				lock_guard<mutex> rl{r_l};
+				lock_guard<mutex> rl{ r_l };
 				ingameroom[room_id]._state = roomState::Ingame; // 상태를 Ingame상태로 바꿔준다 
 				ingameroom[room_id].ingamePlayer.emplace_back(_session);
 				clients[_session->_id].room_id = room_id;
@@ -602,8 +677,7 @@ void Server::ReadyToStart()
 				if (ingameroom[room_id].ingamePlayer.size() == MAX_ROOM_USER)
 				{
 					ingameroom[room_id].fullcheck = true;
-					for (auto& pl : ingameroom[room_id].ingamePlayer)
-						cout << " 접속 ID  - " << pl->_id << endl;
+
 				}
 			}
 
@@ -619,17 +693,11 @@ void Server::ReadyToStart()
 					player->send_add_info_packet(ingameplayer->_id);
 				}
 			}
-
-	/*		if (ingameroom[room_id].ingamePlayer.size() == MAX_ROOM_USER)
-			{
-				for (auto& pc : ingameroom[room_id].ingamePlayer)
-				{
-					pc->send_game_start(room_id);
-				}
-			}*/
 		}
 		else
-			this_thread::sleep_for(1ms);
+			this_thread::sleep_for(1s);
 
 	}
 }
+
+

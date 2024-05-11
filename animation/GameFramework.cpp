@@ -383,29 +383,41 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
         case '1':
             // 로비화면
-            SceneNum = 1;
-            isready = true;
+            if (SceneNum == 0) {
 
-            gNetwork.SendLoginfo();
-            //// 로그인 리시블 받을 때까지 대기 해줘야함 
-            WaitForSingleObject(loginevent, INFINITE); // 이벤트 객체 커널, 오버헤드 .
-            cl_id = gNetwork.Getmyid();
-            m_pPlayer->c_id = gNetwork.Getmyid();
+                SceneNum = 1;
+                isready = true;
 
-            ReleaseObjects();
-            BuildObjects(SceneNum);
-            gNetwork.SendChangeScene(SceneNum);
+                gNetwork.SendLoginfo();
+                //// 로그인 리시블 받을 때까지 대기 해줘야함 
+                WaitForSingleObject(loginevent, INFINITE); // 이벤트 객체 커널, 오버헤드 .
 
-            break;
+                cl_id = gNetwork.Getmyid();
+                m_pPlayer->c_id = gNetwork.Getmyid();
+
+                ReleaseObjects();
+                BuildObjects(SceneNum);
+                gNetwork.SendChangeScene(SceneNum);
+                break;
+            }
+            else break;
         case '2':
+            if (SceneNum == 0) break;
             SceneNum = 2;
-            ReleaseObjects();
             // spaceship map
             isready = false;
-            g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+            // send ready packet  
+            gNetwork.SendIngameStart();
+
+            WaitForSingleObject(startevent, INFINITE);
+            // 그리기 전에 세워야함 
+            ReleaseObjects();
             BuildObjects(SceneNum);
+
+ 
             break;
         case '3':
+            if (SceneNum == 1 || SceneNum == 0) break;
             // ice map
             SceneNum = 3;
             isready = false;
@@ -413,18 +425,18 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
             BuildObjects(3);
             break;
         case '4':
+            if (SceneNum == 1 || SceneNum == 0) break;
             // fire map
             SceneNum = 4;
             ReleaseObjects();
             BuildObjects(4);
             break;
         case '5':
+            if (SceneNum == 1 || SceneNum == 0) break;
             // grass map
             SceneNum = 5;
             ReleaseObjects();
             BuildObjects(5);
-
-            g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
           
             break;
         case VK_SPACE:

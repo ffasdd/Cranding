@@ -11,9 +11,9 @@ Over_Exp::Over_Exp()
 
 Over_Exp::Over_Exp(char* packet)
 {
-	_wsaBuf.len = packet[0];
+	_wsaBuf.len = (unsigned char)packet[0];
 	_wsaBuf.buf = _sendbuf;
 	ZeroMemory(&_over, sizeof(_over));
 	_comptype = COMP_TYPE::Send;
-	memcpy(_sendbuf, packet, packet[0]);
+	memcpy(_sendbuf, packet, _wsaBuf.len);
 }

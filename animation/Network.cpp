@@ -71,8 +71,6 @@ void Network::NetThreadFunc()
 
 		ProcessData(ioByte);
 
-		cout << " recvByte : " << ioByte << endl;
-
 	}
 }
 void Network::SendThreadFunc()
@@ -124,7 +122,7 @@ void Network::SendProcess(SENDTYPE sendtype)
 		break;
 	}
 	case SENDTYPE::TIME_CHECK: {
-		cout << " Send Time " << endl;
+
 		SendTime(curTimer);
 		break;
 	}
@@ -162,7 +160,7 @@ void Network::ProcessData(size_t _size)
 	static char packet_buffer[BUF_SIZE];
 
 	while (0 != _size) {
-		if (0 == in_packet_size) in_packet_size = ptr[0];
+		if (0 == in_packet_size) in_packet_size = (unsigned char)ptr[0];
 		if (_size + saved_packet_size >= in_packet_size) {
 			memcpy(packet_buffer + saved_packet_size, ptr, in_packet_size - saved_packet_size);
 			ProcessPacket(packet_buffer);
@@ -225,9 +223,7 @@ void Network::ProcessPacket(char* buf)
 
 		SC_MOVE_OBJECT_PACKET* p = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(buf);
 		int ob_id = getmyid(p->id);
-		std::cout << ob_id << " Player Move " << endl;
 		g_clients[ob_id].setPos(p->pos);
-		cout << " Move Player ID - " << ob_id << endl;
 	}
 					   break;
 	case SC_ROTATE_OBJECT: {
@@ -248,8 +244,6 @@ void Network::ProcessPacket(char* buf)
 	case SC_START_GAME: {
 		SC_GAMESTART_PACKET* p = reinterpret_cast<SC_GAMESTART_PACKET*>(buf);
 		my_roomid = p->roomid;
-
-		//SetEvent(startevent);
 		//Start가 되었을 때 인게임 씬으로 이동 
 
 		break;
@@ -277,6 +271,7 @@ void Network::ProcessPacket(char* buf)
 	}
 	case SC_INGAME_STRAT: {
 		// Timer 쓰레드를 켜줘야함 
+		SetEvent(startevent);
 		timerThread = std::thread([this]() {TimerThread(); });
 		break;
 	}
@@ -293,6 +288,20 @@ void Network::ProcessPacket(char* buf)
 		break;
 		// 클라에도 몬스터를 담는 어레이나 벡터가 필요 
 
+	}
+	case SC_MOVE_MONSTER: {
+		SC_MOVE_MONSTER_PACKET* p = reinterpret_cast<SC_MOVE_MONSTER_PACKET*>(buf);
+		int npc_id = p->id;
+		g_monsters[npc_id].setPos(p->pos);
+		break;
+	}
+	case SC_MONSTER_UPDATE: {
+		NightMonsters* p = reinterpret_cast<NightMonsters*>(buf);
+		for (int i = 0; i < 10; ++i)
+		{
+			g_monsters[i].setPos(p->_monster[i]._pos);
+		}
+		break;
 	}
 	}
 }
@@ -396,7 +405,6 @@ void Network::SendTime(int time)
 	p.time = time;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
-
 
 int Network::getmyid(int _id)
 {

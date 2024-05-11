@@ -3,14 +3,20 @@
 #include"Timer.h"
 extern HANDLE _IocpHandle;
 extern Timer g_Timer;
-void Room::MoveKnightMonster()
+void Room::SendMoveNightMonster(int npcid)
 {
-	//룸안에있는 몬스터들만 움직여 줘야 하니까 
-	//Over_Exp* exover = new Over_Exp;
-	//exover->_comptype = COMP_TYPE::NPC_MOVE;
-	//PostQueuedCompletionStatus()
-	EVENT_TYPE knightmonstermoveevent = EVENT_TYPE::EV_MOVE;
-	g_Timer.InitTimerQueue(knightmonstermoveevent);
+	r_l.lock();
+	NightMonster[npcid].Move();
+	r_l.unlock();
+	SC_MOVE_MONSTER_PACKET p;
+	p.type = SC_MOVE_MONSTER;
+	p.size = sizeof(SC_MOVE_MONSTER_PACKET);
+	p.pos = NightMonster[npcid]._pos;
+	p.id = npcid;
+	for (auto& pl : ingamePlayer)
+	{
+		pl->do_send(&p);
+	}
 }
 
 void Room::SendAddMonster(int npc_id, int _id)
@@ -25,4 +31,27 @@ void Room::SendAddMonster(int npc_id, int _id)
 	p.right = XMFLOAT3(1.f, 0.f, 0.0f);
 
 	ingamePlayer[_id]->do_send(&p);
+}
+
+void Room::UpdateNpc()
+{
+	NightMonsters sendMonsterupdatePacket;
+	sendMonsterupdatePacket.size = sizeof(NightMonsters);
+	sendMonsterupdatePacket.type = SC_MONSTER_UPDATE;
+	int idx = 0;
+	// 전체 NPC UPDATE 
+	for (auto& npc : NightMonster)
+	{
+		npc.Move();
+		sendMonsterupdatePacket._monster[idx]._id = idx;
+		sendMonsterupdatePacket._monster[idx]._pos = npc._pos;
+		idx++;
+	}
+	for (auto& pl : ingamePlayer)
+	{
+		pl->do_send(&sendMonsterupdatePacket);
+	}
+
+
+	//여기다가 타이머를 넣어라 
 }

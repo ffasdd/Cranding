@@ -73,7 +73,7 @@ private:
 
 	clock_t start;
 	clock_t end;
-	int second{ 10 };
+	int second{ 30 };
 	unsigned int curTimer = 0;
 	//CPlayer* PlayerInfo;
 

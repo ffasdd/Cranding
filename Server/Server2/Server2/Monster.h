@@ -10,6 +10,8 @@ public:
 	XMFLOAT3 _right;
 	XMFLOAT3 _up;
 	XMFLOAT3 _look;
+	XMFLOAT3 _velocity;
+	float _speed = 1.0f;
 	int _hp;
 	int _att;
 
@@ -19,7 +21,8 @@ public:
 	BoundingOrientedBox _ob;
 
 public:
-	
+
+	void Move();
 	void send_add_info_packet(int npc_id);
 	void send_move_pakcet(int npc_id);
 	void send_remove_packet(int npc_id);

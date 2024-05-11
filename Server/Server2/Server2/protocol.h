@@ -1,5 +1,5 @@
-constexpr int PORT_NUM = 4000;
-constexpr int BUF_SIZE = 200;
+constexpr int PORT_NUM = 9000;
+constexpr int BUF_SIZE = 512;
 constexpr int NAME_SIZE = 20;
 constexpr int CHAT_SIZE = 100;
 
@@ -21,6 +21,7 @@ constexpr char CS_START_GAME = 9;
 constexpr char CS_CHANGE_SCENE = 10;
 constexpr char CS_INGAME_START = 11;
 constexpr char CS_TIME_CHECK = 12;
+constexpr char CS_MOVE_MONSTER = 13;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -38,7 +39,8 @@ constexpr char SC_ATTACK = 16;
 constexpr char SC_INGAME_STRAT = 17;
 constexpr char SC_TIME_CHECK = 18;
 constexpr char SC_ADD_MONSTER = 19;
-
+constexpr char SC_MOVE_MONSTER = 20;
+constexpr char SC_MONSTER_UPDATE = 21;
 
 
 
@@ -94,7 +96,22 @@ enum class animateState : int {
 //	RUN = 2
 //};
 
+
 #pragma pack (push, 1)
+
+struct NightMonster
+{
+	XMFLOAT3 _pos;
+	int _id;
+
+};
+struct NightMonsters
+{
+	unsigned char size;
+	char type;
+	NightMonster _monster[10];
+};
+
 struct CS_LOGIN_PACKET {
 	unsigned char size;
 	char	type;
@@ -234,7 +251,14 @@ struct SC_ADD_MONSTER_PACKET {
 	animateState a_state;
 	animateState prev_state;
 };
+struct SC_MOVE_MONSTER_PACKET {
+	unsigned char size;
+	char type;
+	int id;
+	XMFLOAT3 pos;
 
+
+};
 struct SC_REMOVE_OBJECT_PACKET {
 	unsigned char size;
 	char	type;

@@ -4,3 +4,8 @@
 
 array<Monster, MAX_NPC> Monsters; //ÀüÃ¼ NPC 
 
+void Monster::Move()
+{
+	_pos = Vector3::Add(_pos, _look, _speed);
+
+}

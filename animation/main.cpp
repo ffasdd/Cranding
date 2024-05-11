@@ -19,7 +19,7 @@ unordered_map<int, Session> g_monsters;
 
 concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 HANDLE loginevent = CreateEvent(NULL, FALSE, FALSE, NULL);
-//HANDLE startevent = CreateEvent(NULL, FALSE, FALSE, NULL);
+HANDLE startevent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
