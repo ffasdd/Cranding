@@ -9,7 +9,6 @@
 // Windows 헤더 파일:
 #include <windows.h>
 
-#include<time.h>
 
 // C의 런타임 헤더 파일입니다.
 #include<iostream>
@@ -26,6 +25,8 @@
 #include <fstream>
 #include <vector>
 #include <queue>
+#include <array>
+#include <time.h>
 
 #include <concurrent_priority_queue.h>
 #include <concurrent_queue.h>
@@ -404,3 +405,18 @@ namespace Plane
 		return(xmf4Result);
 	}
 }
+
+template <typename T>
+void SafeDelete(T& ptr)
+{
+	if (ptr != nullptr)
+	{
+		delete ptr;
+		ptr = nullptr;
+	}
+}
+
+enum BRUSH_COLOR { WHITE, LIME_GREEN, DARK_GRAY, RED, BRUSH_COUNT };
+
+enum TEXT_SIZE { SIZE_15, SIZE_18, SIZE_25, SIZE_30, SIZE_50, SIZE_60, TEXT_COUNT };
+

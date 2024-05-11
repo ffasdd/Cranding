@@ -38,7 +38,7 @@ CPlayer::CPlayer()
 
 CPlayer::~CPlayer()
 {
-	ReleaseShaderVariables();
+	//ReleaseShaderVariables();
 
 	if (m_pCamera) delete m_pCamera;
 }
