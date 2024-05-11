@@ -192,7 +192,7 @@ void UILayer::UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2
     if (pd2dTextBrush) m_pTextBlocks[nIndex].m_pd2dTextBrush = pd2dTextBrush;
 }
 
-void UILayer::Render(UINT nFrame, int scenenum, int curDay, int curMinute, int curSecond)
+void UILayer::Render(UINT nFrame, int scenenum,bool isready, int curDay, int curMinute, int curSecond)
 {
     ID3D11Resource* ppResources[] = { m_ppd3d11WrappedRenderTargets[nFrame] };
 
@@ -214,7 +214,8 @@ void UILayer::Render(UINT nFrame, int scenenum, int curDay, int curMinute, int c
         // lobby
         m_pd2dDeviceContext->BeginDraw();
         m_pd2dDeviceContext->DrawText(m_vecLobbyScene[0], (UINT)wcslen(m_vecLobbyScene[0]), m_textFormats[TEXT_SIZE::SIZE_25], m_Title, m_brushes[BRUSH_COLOR::WHITE]);
-        m_pd2dDeviceContext->DrawText(m_vecLobbyScene[1], (UINT)wcslen(m_vecLobbyScene[1]), m_textFormats[TEXT_SIZE::SIZE_25], m_GameStart, m_brushes[BRUSH_COLOR::WHITE]);
+        if(isready)
+            m_pd2dDeviceContext->DrawText(m_vecLobbyScene[1], (UINT)wcslen(m_vecLobbyScene[1]), m_textFormats[TEXT_SIZE::SIZE_25], m_GameStart, m_brushes[BRUSH_COLOR::WHITE]);
         m_pd2dDeviceContext->EndDraw();
         break;
     default:
