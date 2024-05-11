@@ -835,6 +835,15 @@ CGameObject::~CGameObject()
 	ReleaseShaderVariables();
 }
 
+void CGameObject::NPCMove()
+{
+	SetLook(246, 10, 757);
+
+	m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_pSkinnedAnimationController->SetTrackEnable(1, false);
+	MoveForward();
+}
+
 void CGameObject::UpdateBoundingBox()
 {
 	OnPrepareRender();
@@ -982,9 +991,12 @@ void CGameObject::Animate(float fTimeElapsed)
 	// 나머지는 그냥 넘긴다..
 	//
 	OnPrepareRender();
+
+	// ** npc 이동
+	if(isNPC == true)
+		NPCMove();
+
 	UpdateBoundingBox();
-
-
 
 	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->AdvanceTime(fTimeElapsed, this);
 
