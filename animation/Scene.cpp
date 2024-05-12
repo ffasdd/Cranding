@@ -39,27 +39,67 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 
 			for (int j = 0; j < m_ppHierarchicalGameObjects[0]->m_pChild->nChilds; j++)
 			{
+				const char* str = pMapObject->m_pstrFrameName;
+
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 				{
-					return(true);
+					// grassmap 가는 다리와 충돌
+					if (!strcmp(str, "grassmap"))
+					{
+						m_pPlayer->isGrassMap = true;
+						return(true);
+					}
+
+					// firemap 가는 다리와 충돌
+					else if (!strcmp(str, "firemap"))
+					{
+						m_pPlayer->isFireMap = true;
+						return(true);
+					}
+
+					// icemap 가는 다리와 충돌
+					else if (!strcmp(str, "icemap"))
+					{
+						m_pPlayer->isIceMap = true;
+						return(true);
+					}
+
+					// 바닥은 충돌 체크 안되도록
+					else if (!strcmp(str, "Plane"))
+						pMapObject = pMapObject->m_pSibling;
+
+					else
+						return(true);
 				}
 					pMapObject = pMapObject->m_pSibling;
 
-					const char* str = pMapObject->m_pstrFrameName;
 					if (pMapObject == NULL)break;
-
-					if (!strcmp( str, "Plane"))
-						pMapObject = pMapObject->m_pSibling;
 			}
 		}
 		// 다른 클라들과 충돌한 경우
-		else
+		else if( i == 1 || i == 2)
 		{
 			if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 			{
 				return(true);
 			}
 		}
+		// npc와 칼이 충돌한 경우
+		else if (i > 2)
+		{
+			// 플레이어가 공격 중일때
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true && m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			{
+				// 공격 맞으면?
+				// 일단 충돌 안되도록 해놓음
+				return(true);
+			}
+		}
+
+		// 플레이어 칼과 충돌한 경우
+		//else if ()
+		// 밑에가 클라 칼임............................................
+		// 
 	}
 	return(false);
 }
@@ -1011,25 +1051,26 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	// 적 10마리
 	for (int i = 0; i < 10; i++)
 	{
-		m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 5);
+		m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 7);
 
+		// 0 : idle, 1 : 걷기, 2 : 달리기, 3 : 아파, 4 : 죽음, 5 : 왼손 공격, 6 : 오른손 공격
+		// animation Track -> 내가 만든 적의 애니메이션 묶음 / animation Set -> 실제 bin 파일 속 애니메이션 묶음(순서, 번호)
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
 
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
-		m_ppHierarchicalGameObjects[3 + i]->isdraw = false;
-
-		float posX = (rand() % 2000) / 10.0;
-		float posY = (rand() % 2000) / 10.0;
-		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
-		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
+		m_ppHierarchicalGameObjects[3 + i]->SetScale(20.0f, 20.0f, 20.0f);
 	}
 }
 
@@ -1127,7 +1168,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	for (int i = 0; i < 10; i++)
 	{
-		m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 5);
+		m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 7);
 
 		// 0 : idle, 1 : 걷기, 2 : 달리기, 3 : 아파, 4 : 죽음, 5 : 왼손 공격, 6 : 오른손 공격
 		// animation Track -> 내가 만든 적의 애니메이션 묶음 / animation Set -> 실제 bin 파일 속 애니메이션 묶음(순서, 번호)
@@ -1135,6 +1176,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
 
@@ -1245,19 +1287,24 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	for (int i = 0; i < 10; i++)
 	{
+		m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 7);
 
-		m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 5);
-
+		// 0 : idle, 1 : 걷기, 2 : 달리기, 3 : 아파, 4 : 죽음, 5 : 왼손 공격, 6 : 오른손 공격
+		// animation Track -> 내가 만든 적의 애니메이션 묶음 / animation Set -> 실제 bin 파일 속 애니메이션 묶음(순서, 번호)
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
 
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
 		m_ppHierarchicalGameObjects[3 + i]->isdraw = false;
 
@@ -1358,18 +1405,24 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	for (int i = 0; i < 10; i++)
 	{
 
-		m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 5);
+		m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 7);
 
+		// 0 : idle, 1 : 걷기, 2 : 달리기, 3 : 아파, 4 : 죽음, 5 : 왼손 공격, 6 : 오른손 공격
+		// animation Track -> 내가 만든 적의 애니메이션 묶음 / animation Set -> 실제 bin 파일 속 애니메이션 묶음(순서, 번호)
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
 
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
 		m_ppHierarchicalGameObjects[3 + i]->isdraw = false;
 
