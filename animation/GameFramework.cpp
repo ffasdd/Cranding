@@ -505,6 +505,8 @@ void CGameFramework::myFunc_SetMonPosition(int n, int SCSceneNum, XMFLOAT3 posit
         {
             m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
             m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
+            m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
+            //m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
         }
     }
 }
@@ -1038,7 +1040,26 @@ void CGameFramework::AnimateObjects()
 	m_pPlayer->Animate(fTimeElapsed);
 
     if (SceneNum > 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
-        m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
+    {
+        // 여기서 씬 전환 처리해주면 될 듯
+        if (m_pPlayer->isFireMap == true)
+        {
+            m_pPlayer->isFireMap = false;
+            // 씬전환
+        }
+        else if (m_pPlayer->isGrassMap == true)
+        {
+            m_pPlayer->isGrassMap = false;
+            // 씬전환
+        }
+        else if (m_pPlayer->isIceMap == true)
+        {
+            m_pPlayer->isIceMap = false;
+            // 씬전환
+        }
+        else
+            m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
+    }
 }
 
 void CGameFramework::WaitForGpuComplete()

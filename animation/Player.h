@@ -52,6 +52,11 @@ public:
 	CPlayer();
 	virtual ~CPlayer();
 
+	// 충돌시 씬전환 변수들
+	bool isFireMap = false;
+	bool isGrassMap = false;
+	bool isIceMap = false;
+
 	XMFLOAT3					m_xmf3BeforeCollidedPosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
 	XMFLOAT3 GetPosition() { return(m_xmf3Position); }
