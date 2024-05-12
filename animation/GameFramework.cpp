@@ -67,8 +67,8 @@ void CGameFramework::CreateSwapChain()
 {
     RECT rcClient;
     ::GetClientRect(m_hWnd, &rcClient);
-    m_nWndClientWidth = rcClient.right - rcClient.left;
-    m_nWndClientHeight = rcClient.bottom - rcClient.top;
+    m_nWndClientWidth = FRAME_BUFFER_WIDTH;
+    m_nWndClientHeight = FRAME_BUFFER_HEIGHT;
 
 #ifdef _WITH_CREATE_SWAPCHAIN_FOR_HWND
     DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc;
@@ -422,10 +422,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
             // grass map
             SceneNum = 5;
             ReleaseObjects();
-            BuildObjects(SceneNum);
-
-            //g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-          
+            BuildObjects(SceneNum);          
             break;
         case VK_SPACE:
             m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
@@ -1114,6 +1111,7 @@ void CGameFramework::UpdateUI()
         if (curSecond == 60) {
             curSecond = 0;
             curMinute++;
+            curMinute = curMinute % 5;
             curDay++;
         }
     }
@@ -1221,7 +1219,7 @@ void CGameFramework::FrameAdvance()
 #endif
 
     MoveToNextFrame();
-
+    
     m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
     size_t nLength = _tcslen(m_pszFrameRate);
     XMFLOAT3 xmf3Position = m_pPlayer->GetPosition();

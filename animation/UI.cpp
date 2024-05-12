@@ -86,17 +86,17 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
 
     // brush
     m_brushes[BRUSH_COLOR::WHITE] = CreateBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
-    m_brushes[BRUSH_COLOR::LIME_GREEN] = CreateBrush(D2D1::ColorF(1.0f, 1.0f, 0.501f, 1.0f));
-    m_brushes[BRUSH_COLOR::DARK_GRAY] = CreateBrush(D2D1::ColorF(0.8f, 0.8f, 0.8f, 1.0f));
+    m_brushes[BRUSH_COLOR::LIME_GREEN] = CreateBrush(D2D1::ColorF(1.0f, 0.8f,0.8f, 1.0f));
+    m_brushes[BRUSH_COLOR::BLACK] = CreateBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
     m_brushes[BRUSH_COLOR::RED] = CreateBrush(D2D1::ColorF(1.0f, 0.14f, 0.14f, 1.0f));
 
     // text format
-    m_textFormats[TEXT_SIZE::SIZE_15] = CreateTextFormat(L"¸¼Àº °íµñ", 15.0f * 1.35f);
-    m_textFormats[TEXT_SIZE::SIZE_18] = CreateTextFormat(L"¸¼Àº °íµñ", 18.0f * 1.35f);
-    m_textFormats[TEXT_SIZE::SIZE_25] = CreateTextFormat(L"¸¼Àº °íµñ", 25.0f * 1.35f);
-    m_textFormats[TEXT_SIZE::SIZE_30] = CreateTextFormat(L"¸¼Àº °íµñ", 30.0f * 1.35f);
-    m_textFormats[TEXT_SIZE::SIZE_50] = CreateTextFormat(L"¸¼Àº °íµñ", 50.0f * 1.35f);
-    m_textFormats[TEXT_SIZE::SIZE_60] = CreateTextFormat(L"¸¼Àº °íµñ", 60.0f * 1.35f);
+    m_textFormats[TEXT_SIZE::SIZE_15] = CreateTextFormat(L"¸¼Àº °íµñ", 15.0f * 3.35f);
+    m_textFormats[TEXT_SIZE::SIZE_18] = CreateTextFormat(L"¸¼Àº °íµñ", 18.0f * 3.35f);
+    m_textFormats[TEXT_SIZE::SIZE_25] = CreateTextFormat(L"¸¼Àº °íµñ", 25.0f * 3.35f);
+    m_textFormats[TEXT_SIZE::SIZE_30] = CreateTextFormat(L"¸¼Àº °íµñ", 30.0f * 3.35f);
+    m_textFormats[TEXT_SIZE::SIZE_50] = CreateTextFormat(L"¸¼Àº °íµñ", 50.0f * 3.35f);
+    m_textFormats[TEXT_SIZE::SIZE_60] = CreateTextFormat(L"¸¼Àº °íµñ", 80.0f * 3.35f);
 
 
 
@@ -204,26 +204,33 @@ void UILayer::Render(UINT nFrame, int scenenum,bool isready, int curDay, int cur
     case 0:
         // login
         m_pd2dDeviceContext->BeginDraw();
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[0], (UINT)wcslen(m_vecLoginSceneMenu[0]), m_textFormats[TEXT_SIZE::SIZE_25], m_Title, m_brushes[BRUSH_COLOR::DARK_GRAY]);
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[1], (UINT)wcslen(m_vecLoginSceneMenu[1]), m_textFormats[TEXT_SIZE::SIZE_25], m_GameStart, m_brushes[BRUSH_COLOR::DARK_GRAY]);
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[2], (UINT)wcslen(m_vecLoginSceneMenu[2]), m_textFormats[TEXT_SIZE::SIZE_25], m_GameRule, m_brushes[BRUSH_COLOR::DARK_GRAY]);
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[3], (UINT)wcslen(m_vecLoginSceneMenu[3]), m_textFormats[TEXT_SIZE::SIZE_25], m_GameQuit, m_brushes[BRUSH_COLOR::DARK_GRAY]);
+        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[0], (UINT)wcslen(m_vecLoginSceneMenu[0]), m_textFormats[TEXT_SIZE::SIZE_60], m_Title, m_brushes[BRUSH_COLOR::BLACK]);
+        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[1], (UINT)wcslen(m_vecLoginSceneMenu[1]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameStart, m_brushes[BRUSH_COLOR::BLACK]);
+        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[2], (UINT)wcslen(m_vecLoginSceneMenu[2]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameRule, m_brushes[BRUSH_COLOR::BLACK]);
+        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[3], (UINT)wcslen(m_vecLoginSceneMenu[3]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameQuit, m_brushes[BRUSH_COLOR::BLACK]);
         m_pd2dDeviceContext->EndDraw();
         break;
     case 1:
         // lobby
         m_pd2dDeviceContext->BeginDraw();
-        m_pd2dDeviceContext->DrawText(m_vecLobbyScene[0], (UINT)wcslen(m_vecLobbyScene[0]), m_textFormats[TEXT_SIZE::SIZE_25], m_Title, m_brushes[BRUSH_COLOR::WHITE]);
+        m_pd2dDeviceContext->DrawText(m_vecLobbyScene[0], (UINT)wcslen(m_vecLobbyScene[0]), m_textFormats[TEXT_SIZE::SIZE_25], m_ReadyMent, m_brushes[BRUSH_COLOR::WHITE]);
         if(isready)
-            m_pd2dDeviceContext->DrawText(m_vecLobbyScene[1], (UINT)wcslen(m_vecLobbyScene[1]), m_textFormats[TEXT_SIZE::SIZE_25], m_GameStart, m_brushes[BRUSH_COLOR::WHITE]);
+            m_pd2dDeviceContext->DrawText(m_vecLobbyScene[1], (UINT)wcslen(m_vecLobbyScene[1]), m_textFormats[TEXT_SIZE::SIZE_30], m_Ready, m_brushes[BRUSH_COLOR::WHITE]);
         m_pd2dDeviceContext->EndDraw();
         break;
     default:
         // ingame 
         m_pd2dDeviceContext->BeginDraw();
         WCHAR pstrOutputText[256];
-        swprintf_s(pstrOutputText, 256, L"Day: %d  Time:%02d:%02d", curDay, curMinute, curSecond);
-        m_pd2dDeviceContext->DrawText(pstrOutputText, (UINT)wcslen(pstrOutputText), m_textFormats[TEXT_SIZE::SIZE_18], m_Timer, m_brushes[BRUSH_COLOR::WHITE]);
+        std::wstring DnN[2] = { L"Day", L"Night" };
+        int timenum = 0;
+        if (curMinute == 3)
+            timenum = 1;
+        else if (curMinute == 0)
+            timenum = 0;
+
+        swprintf_s(pstrOutputText, 256, L"Day: %d  Time:%02d:%02d %s", curDay, curMinute, curSecond, DnN[timenum].c_str());
+        m_pd2dDeviceContext->DrawText(pstrOutputText, (UINT)wcslen(pstrOutputText), m_textFormats[TEXT_SIZE::SIZE_18], m_Timer, m_brushes[BRUSH_COLOR::LIME_GREEN]);
         m_pd2dDeviceContext->FillRectangle(m_HPBar, m_brushes[BRUSH_COLOR::RED]);
         m_pd2dDeviceContext->EndDraw();
         break;
