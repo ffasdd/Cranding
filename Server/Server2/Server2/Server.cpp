@@ -238,6 +238,7 @@ void Server::InitialziedMonster(int room_Id)
 		ingameroom[room_Id].NightMonster[i]._look = XMFLOAT3(0.f, 0.f, 1.0f);
 		ingameroom[room_Id].NightMonster[i]._right = XMFLOAT3(1.0f, 0.f, 0.0f);
 		ingameroom[room_Id].NightMonster[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
+		ingameroom[room_Id].NightMonster[i]._is_alive = true;
 	}
 
 	cout << " NPC intialzie end " << endl;
@@ -278,7 +279,6 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 		int r_id = p->roomid;
 		clients[id]._pos = p->pos;
-		cout << " MOVD ID " << id << "Move " << endl;
 		// view List 
 		unordered_set<int> near_list;
 		clients[id]._v_lock.lock();
@@ -295,7 +295,6 @@ void Server::ProcessPacket(int id, char* packet)
 				near_list.insert(pl->_id);
 		}
 		// -------------------------------
-		cout << " Send my packet to me " << id << endl;
 		clients[id].send_move_packet(id);
 
 		// -------------------view list 
@@ -306,7 +305,6 @@ void Server::ProcessPacket(int id, char* packet)
 			if (clients[pl]._view_list.count(id))
 			{
 				clients[pl]._v_lock.unlock();
-				cout << " Send my packet to other Player" << pl << endl;
 				clients[pl].send_move_packet(id);
 			}
 			else
@@ -465,7 +463,7 @@ void Server::ProcessPacket(int id, char* packet)
 			}
 
 			InitialziedMonster(r_id);
-
+			ingameroom[r_id].start_time = chrono::system_clock::now();
 			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
 		}
@@ -475,23 +473,23 @@ void Server::ProcessPacket(int id, char* packet)
 						break;
 	case CS_TIME_CHECK: {
 
-		CS_TIME_CHECK_PACKET* p = reinterpret_cast<CS_TIME_CHECK_PACKET*>(packet);
-		cout << p->roomid << " 번 방 " << p->time << " 분 경과 " << endl;
-		int r_id = p->roomid;
+		//CS_TIME_CHECK_PACKET* p = reinterpret_cast<CS_TIME_CHECK_PACKET*>(packet);
+		//cout << p->roomid << " 번 방 " << p->time << " 분 경과 " << endl;
+		//int r_id = p->roomid;
 
-		if (p->time % 2 == 0)
-		{
-			cout << " 몬스터 생성  " << endl;
-			// 모든 클라이언트들 한테 밤에나오는 NPC들 정보들을 모두 보내줘야 함 
-			InitialziedMonster(r_id);
-			for (auto& pl : ingameroom[r_id].ingamePlayer)
-			{
-				for (int i = 0; i < ingameroom[r_id].NightMonster.max_size(); ++i) //
-				{
+		//if (p->time % 2 == 0)
+		//{
+		//	cout << " 몬스터 생성  " << endl;
+		//	// 모든 클라이언트들 한테 밤에나오는 NPC들 정보들을 모두 보내줘야 함 
+		//	InitialziedMonster(r_id);
+		//	for (auto& pl : ingameroom[r_id].ingamePlayer)
+		//	{
+		//		for (int i = 0; i < ingameroom[r_id].NightMonster.max_size(); ++i) //
+		//		{
 
-				}
-			}
-		}
+		//		}
+		//	}
+		//}
 		break;
 	};
 	
@@ -538,6 +536,14 @@ void Server::ProcessPacket(int id, char* packet)
 
 	}
 				  break;
+	case CS_ATTACK_COLLISION:
+	{
+		CS_ATTACK_COLLISION_PACKET* p = reinterpret_cast<CS_ATTACK_COLLISION_PACKET*>(packet);
+		ingameroom[p->room_id].r_l.lock();
+		ingameroom[p->room_id].NightMonster[p->npc_id]._is_alive = false;
+		ingameroom[p->room_id].r_l.unlock();
+		break;
+	}
 
 
 	}

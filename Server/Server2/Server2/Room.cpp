@@ -42,6 +42,11 @@ void Room::UpdateNpc()
 	// 전체 NPC UPDATE 
 	for (auto& npc : NightMonster)
 	{
+		if (npc._is_alive == false)
+		{
+			npc.Remove();
+			continue;
+		}
 		npc.Move();
 		sendMonsterupdatePacket._monster[idx]._id = idx;
 		sendMonsterupdatePacket._monster[idx]._pos = npc._pos;
@@ -51,7 +56,4 @@ void Room::UpdateNpc()
 	{
 		pl->do_send(&sendMonsterupdatePacket);
 	}
-
-
-	//여기다가 타이머를 넣어라 
 }

@@ -77,15 +77,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
 						gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());
 					}
-					if (gNetwork.isNight)
+
+					for (int i = 0; i < g_monsters.size(); ++i)
 					{
-			
-						for (int i = 0; i < g_monsters.size(); ++i)
-						{
-							gGameFramework.myFunc_SetMonPosition(i, gGameFramework.SceneNum, g_monsters[i].getPos());
-			
-						}
+						gGameFramework.myFunc_SetMonPosition(i, gGameFramework.SceneNum, g_monsters[i].getPos());
+
 					}
+
 				}
 			}
 

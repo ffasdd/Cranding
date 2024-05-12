@@ -126,13 +126,16 @@ void Network::SendProcess(SENDTYPE sendtype)
 		SendTime(curTimer);
 		break;
 	}
+	case SENDTYPE::ATTACK_COLLISION: {
+		break;
+	}
 
 	}
 }
 
 void Network::TimerThread()
 {
-	while (ServerStart)
+	/*while (ServerStart)
 	{
 		start = clock();
 		while (true)
@@ -149,7 +152,7 @@ void Network::TimerThread()
 
 		}
 		
-	}
+	}*/
 }
 
 void Network::ProcessData(size_t _size)
@@ -277,7 +280,7 @@ void Network::ProcessPacket(char* buf)
 	case SC_INGAME_STRAT: {
 		// Timer 쓰레드를 켜줘야함 
 		SetEvent(startevent);
-		timerThread = std::thread([this]() {TimerThread(); });
+		//timerThread = std::thread([this]() {TimerThread(); });
 		break;
 	}
 	case SC_REMOVE_OBJECT: {
@@ -304,6 +307,7 @@ void Network::ProcessPacket(char* buf)
 		NightMonsters* p = reinterpret_cast<NightMonsters*>(buf);
 		for (int i = 0; i < 10; ++i)
 		{
+			g_monsters[i].setId(i);
 			g_monsters[i].setPos(p->_monster[i]._pos);
 		}
 		break;
@@ -393,6 +397,16 @@ void Network::SendAttack(bool is_attack)
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
+void Network::SendAttackCollision(int npc_id)
+{
+	CS_ATTACK_COLLISION_PACKET p;
+	p.size = sizeof(CS_ATTACK_COLLISION_PACKET);
+	p.type = CS_ATTACK_COLLISION;
+	p.npc_id = npc_id;
+	p.room_id = my_roomid;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
 void Network::SendReady()
 {
 	CS_READY_PACKET p;
@@ -410,6 +424,7 @@ void Network::SendTime(int time)
 	p.time = time;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
+
 
 int Network::getmyid(int _id)
 {

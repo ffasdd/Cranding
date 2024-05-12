@@ -24,6 +24,7 @@ public:
 public:
 
 	void Move();
+	void Remove();
 	void send_add_info_packet(int npc_id);
 	void send_move_pakcet(int npc_id);
 	void send_remove_packet(int npc_id);

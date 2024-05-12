@@ -4,7 +4,8 @@
 
 #include "stdafx.h"
 #include "Scene.h"
-
+extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
+extern Network							gNetwork;
 ID3D12DescriptorHeap *CScene::m_pd3dCbvSrvDescriptorHeap = NULL;
 
 CDescriptorHeap* CScene::m_pDescriptorHeap = NULL;
@@ -33,7 +34,7 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// 맵과 충돌한 경우
-		if (i == 0)
+		if (i == 0) 
 		{
 			CGameObject* pMapObject = m_ppHierarchicalGameObjects[0]->m_pChild->m_pChild;
 
@@ -77,7 +78,7 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 			}
 		}
 		// 다른 클라들과 충돌한 경우
-		else if( i == 1 || i == 2)
+		else if( i == 1 || i == 2) 
 		{
 			if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 			{
@@ -87,10 +88,18 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 		// npc와 칼이 충돌한 경우
 		else if (i > 2)
 		{
+			
+			// 10 
 			// 플레이어가 공격 중일때
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true && m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true && //플레이어가 공격중인가 
+				m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects
+				(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
+				cout << i << endl;
 				// 공격 맞으면?
+				cout << " Attack to Monster " << g_monsters[i-3].getId() << endl;
+				gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
+				//g_sendqueue.push(SENDTYPE::ATTACK_COLLISION);
 				// 일단 충돌 안되도록 해놓음
 				return(true);
 			}

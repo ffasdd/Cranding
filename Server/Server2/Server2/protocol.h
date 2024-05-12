@@ -22,6 +22,7 @@ constexpr char CS_CHANGE_SCENE = 10;
 constexpr char CS_INGAME_START = 11;
 constexpr char CS_TIME_CHECK = 12;
 constexpr char CS_MOVE_MONSTER = 13;
+constexpr char CS_ATTACK_COLLISION = 14;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -41,6 +42,7 @@ constexpr char SC_TIME_CHECK = 18;
 constexpr char SC_ADD_MONSTER = 19;
 constexpr char SC_MOVE_MONSTER = 20;
 constexpr char SC_MONSTER_UPDATE = 21;
+constexpr char SC_ATTACK_COLLISION = 22;
 
 
 
@@ -183,6 +185,13 @@ struct CS_ATTACK_PACKET {
 	char type;
 	int roomid;
 	bool isAttack;
+};
+struct CS_ATTACK_COLLISION_PACKET {
+	unsigned char size;
+	char type;
+	int npc_id;
+	int room_id;
+
 };
 struct CS_TIME_CHECK_PACKET {
 	unsigned char size;

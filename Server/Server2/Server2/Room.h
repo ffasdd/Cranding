@@ -50,6 +50,7 @@ public:
 public:
 	void SendMoveNightMonster(int npc_id);
 	void SendAddMonster(int npc_id,int _id);
+	//void SendRemoveMonster(int npc_id);
 	void UpdateNpc();
 };
 

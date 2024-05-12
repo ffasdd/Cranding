@@ -48,8 +48,10 @@ public: // thread send
 	void SendChangeScene(int scenenum);
 	void SendIngameStart();
 	void SendAttack(bool is_attack);
+	void SendAttackCollision(int npc_id);
 	void SendReady();
 	void SendTime(int time);
+	
 	
 public: // utils
 	int getmyid(int _id);
