@@ -67,8 +67,8 @@ void CGameFramework::CreateSwapChain()
 {
     RECT rcClient;
     ::GetClientRect(m_hWnd, &rcClient);
-    m_nWndClientWidth = rcClient.right - rcClient.left;
-    m_nWndClientHeight = rcClient.bottom - rcClient.top;
+    m_nWndClientWidth = FRAME_BUFFER_WIDTH;
+    m_nWndClientHeight = FRAME_BUFFER_HEIGHT;
 
 #ifdef _WITH_CREATE_SWAPCHAIN_FOR_HWND
     DXGI_SWAP_CHAIN_DESC1 dxgiSwapChainDesc;
@@ -423,7 +423,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
             // grass map
             SceneNum = 5;
             ReleaseObjects();
-            BuildObjects(5);
+            BuildObjects(SceneNum);          
             break;
         case VK_SPACE:
             m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
@@ -670,18 +670,6 @@ void CGameFramework::BuildObjects(int nScene)
         m_pScene->m_pPlayer = m_pPlayer = pPlayer;
         m_pCamera = m_pPlayer->GetCamera();
 
-       // m_pPostProcessingShader = new CTextureToFullScreenShader();
-       // m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
-       // m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
-       //
-       // D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-       // d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
-       //
-       // DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
-       // m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
-       //
-       // // µª½º SRV ¾îÂ¼±¸..
-       // D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
         break;
     }
     case 1:
@@ -690,22 +678,6 @@ void CGameFramework::BuildObjects(int nScene)
         m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 
-        //m_pUILayer2 = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
-
-        //ID2D1SolidColorBrush* pd2dBrush = m_pUILayer2->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-        //IDWriteTextFormat* pdwTextFormat = m_pUILayer2->CreateTextFormat(L"Ravie", m_nWndClientHeight / 11.0f);
-        //D2D1_RECT_F d2dRect = D2D1::RectF(00.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-
-        //WCHAR pstrOutputText[256];
-        //wcscpy_s(pstrOutputText, 256, L"°ÔÀÓ ½ÃÀÛÀ» À§ÇØ '2'¸¦ ´­·¯ÁÖ¼¼¿ä\n");
-        //m_pUILayer2->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
-
-
-        //D2D1_RECT_F rect = D2D1::RectF(400.0f, 0.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-        //WCHAR pstrOutputText1[256];
-        //wcscpy_s(pstrOutputText1, 256, L" \n");
-        //m_pUILayer2->UpdateTextOutputs(1, pstrOutputText1, &rect, pdwTextFormat, pd2dBrush);
-
 
         CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain,2);
 
@@ -713,18 +685,7 @@ void CGameFramework::BuildObjects(int nScene)
         m_pScene->m_pPlayer = m_pPlayer = pPlayer;
         m_pCamera = m_pPlayer->GetCamera();
 
-        //m_pPostProcessingShader = new CTextureToFullScreenShader();
-        //m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
-        //m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
-        //
-        //D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-        //d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
-        //
-        //DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
-        //m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
-        //
-        //// µª½º SRV ¾îÂ¼±¸..
-        //D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
+     
         break;
     }
     case 2:
@@ -732,34 +693,13 @@ void CGameFramework::BuildObjects(int nScene)
         m_pScene = new CSpaceShipScene();
         m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-        //////////////////////////
-        //m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
-        //ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-        //IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 10.0f);
-        //D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
-
-        //WCHAR pstrOutputText[256];
-        //wcscpy_s(pstrOutputText, 256, L"  \n");
-        //m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
-        ///////////////////////////
 
 		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 1);
 
         m_pScene->m_pPlayer = m_pPlayer = pPlayer;
         m_pCamera = m_pPlayer->GetCamera();
 
-        //m_pPostProcessingShader = new CTextureToFullScreenShader();
-        //m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
-        //m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
-        //
-        //D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-        //d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
-        //
-        //DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
-        //m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
-        //
-        //// µª½º SRV ¾îÂ¼±¸..
-        //D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
+      
         break;
     }
     case 3:
@@ -768,35 +708,13 @@ void CGameFramework::BuildObjects(int nScene)
         m_pScene = new CIceScene();
         m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-        //////////////////////////
-        //m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
-        //ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-        //IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 10.0f);
-        //D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
-
-        //WCHAR pstrOutputText[256];
-        //wcscpy_s(pstrOutputText, 256, L"  \n");
-        //m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
-        ////////////////////////// 
-
+      
         CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
         m_pScene->m_pPlayer = m_pPlayer = pPlayer;
         m_pCamera = m_pPlayer->GetCamera();
 
-        //m_pPostProcessingShader = new CTextureToFullScreenShader();
-        //m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
-        //m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
-        //
-        //D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-        //d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
-        //
-        //DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
-        //m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
-        //
-        //// µª½º SRV ¾îÂ¼±¸..
-        //D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
-        break;
+      
     }
     case 4:
     {
@@ -804,35 +722,12 @@ void CGameFramework::BuildObjects(int nScene)
         m_pScene = new CFireScene();
         m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-        //////////////////////////
-        //m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
-        //ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-        //IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 10.0f);
-        //D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
-
-        //WCHAR pstrOutputText[256];
-        //wcscpy_s(pstrOutputText, 256, L"  \n");
-        //m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
-        ///////////////////////////
 
         CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
         m_pScene->m_pPlayer = m_pPlayer = pPlayer;
         m_pCamera = m_pPlayer->GetCamera();
 
-       //m_pPostProcessingShader = new CTextureToFullScreenShader();
-       //m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
-       //m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
-       //
-       //D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-       //d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
-       //
-       //DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
-       //m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
-       //
-       //// µª½º SRV ¾îÂ¼±¸..
-       //D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
-        break;
     }
 
     case 5:
@@ -841,16 +736,6 @@ void CGameFramework::BuildObjects(int nScene)
         m_pScene = new CGrassScene();
         m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-        //////////////////////////
-        //m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
-        //ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-        //IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 10.0f);
-        //D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
-
-        //WCHAR pstrOutputText[256];
-        //wcscpy_s(pstrOutputText, 256, L"  \n");
-        //m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
-        ///////////////////////////
 
         CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
@@ -875,30 +760,6 @@ void CGameFramework::BuildObjects(int nScene)
 
     // µª½º SRV ¾îÂ¼±¸..
     D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
-
-    //m_pScene = new CScene();
- //   if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
-    // CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
-    // 
-    // m_pScene->m_pPlayer = m_pPlayer = pPlayer;
-    // m_pCamera = m_pPlayer->GetCamera();
-    // 
-    // m_pPostProcessingShader = new CTextureToFullScreenShader();
-    // m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
-    // m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
-    // 
-    // D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-    // d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
-    // 
-    // DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
-    // m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
-    // 
-    // // µª½º SRV ¾îÂ¼±¸..
-    // D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
-
-    //m_pScene = new CScene();
-    //if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
-
 
 
     m_pd3dCommandList->Close();
@@ -1097,6 +958,7 @@ void CGameFramework::UpdateUI()
         if (curSecond == 60) {
             curSecond = 0;
             curMinute++;
+            curMinute = curMinute % 5;
             curDay++;
         }
     }
@@ -1120,16 +982,7 @@ void CGameFramework::UpdateUI()
 
 }
 
-//void CGameFramework::readyUI()
-//{
-//    ID2D1SolidColorBrush* pd2dBrush = m_pUILayer2->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-//    IDWriteTextFormat* pdwTextFormat = m_pUILayer2->CreateTextFormat(L"Ravie", m_nWndClientHeight / 11.0f);
-//    D2D1_RECT_F d2dRect = D2D1::RectF(400.0f, 400.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-//
-//    WCHAR pstrOutputText[256];
-//    wcscpy_s(pstrOutputText, 256, L"ready\n");
-//    m_pUILayer2->UpdateTextOutputs(1, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
-//}
+
 //#define _WITH_PLAYER_TOP
 
 void CGameFramework::FrameAdvance()
@@ -1206,7 +1059,7 @@ void CGameFramework::FrameAdvance()
 #endif
 
     MoveToNextFrame();
-
+    
     m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
     size_t nLength = _tcslen(m_pszFrameRate);
     XMFLOAT3 xmf3Position = m_pPlayer->GetPosition();
