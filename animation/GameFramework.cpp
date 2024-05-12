@@ -516,13 +516,10 @@ void CGameFramework::myFunc_SetMonPosition(int n, int SCSceneNum, XMFLOAT3 posit
 {
     if (SCSceneNum > 1)
     {
-        for (int i = 0; i < monsternum; i++)
-        {
-            m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
-            m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
-            m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
-            //m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
-        }
+        m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
+        m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
+        m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
+        //m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
     }
 }
 

@@ -44,21 +44,21 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 				{
 					// grassmap 가는 다리와 충돌
-					if (!strcmp(str, "grassmap"))
+					if (!strcmp(str, "bbgrass"))
 					{
 						m_pPlayer->isGrassMap = true;
 						return(true);
 					}
 
 					// firemap 가는 다리와 충돌
-					else if (!strcmp(str, "firemap"))
+					else if (!strcmp(str, "bbfire"))
 					{
 						m_pPlayer->isFireMap = true;
 						return(true);
 					}
 
 					// icemap 가는 다리와 충돌
-					else if (!strcmp(str, "icemap"))
+					else if (!strcmp(str, "bbice"))
 					{
 						m_pPlayer->isIceMap = true;
 						return(true);
@@ -84,22 +84,21 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 				return(true);
 			}
 		}
-		// npc와 칼이 충돌한 경우
+		// npc와 플레이어
 		else if (i > 2)
 		{
-			// 플레이어가 공격 중일때
+			// npc와 플레이어가 충돌
+			//if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
+			//	return true;
+			// 플레이어가 공격 중 && 칼과 npc 충돌
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true && m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				// 공격 맞으면?
-				// 일단 충돌 안되도록 해놓음
+				// 일단 충돌 안되도록
+				g_monsters[i - 3].getId();
 				return(true);
 			}
 		}
-
-		// 플레이어 칼과 충돌한 경우
-		//else if ()
-		// 밑에가 클라 칼임............................................
-		// 
 	}
 	return(false);
 }
@@ -751,7 +750,14 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	m_fElapsedTime = fTimeElapsed;
 
 	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Animate(fTimeElapsed);
+
+	//if (m_nHierarchicalGameObjects > 3)
+	//{
+	//	for (int i = 0; i < 3; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
+	//}
+	//else
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
+
 	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->AnimateObjects(fTimeElapsed);
 
 	if (m_pLights)
@@ -891,9 +897,9 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
 	if (map) delete map;
 
-	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
+	CLoadedModelInfo* pPlayerModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 
-	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
+	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel1, 11);
 
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
@@ -924,7 +930,9 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 
-	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
+	CLoadedModelInfo* pPlayerModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
+
+	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel2, 11);
 
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
@@ -955,7 +963,8 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
 
-	if (pPlayerModel) delete pPlayerModel;
+	if (pPlayerModel1) delete pPlayerModel1;
+	if (pPlayerModel2) delete pPlayerModel2;
 }
 
 void CLobbyScene::ReleaseUploadBuffers()
@@ -985,9 +994,9 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
 	if (map) delete map;
 
-	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
+	CLoadedModelInfo* pPlayerModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 
-	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
+	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel1, 11);
 
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
@@ -1015,7 +1024,9 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 
-	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
+	CLoadedModelInfo* pPlayerModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
+
+	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel2, 11);
 
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
@@ -1043,35 +1054,288 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
 
-	if (pPlayerModel) delete pPlayerModel;
+	if (pPlayerModel1) delete pPlayerModel1;
+	if (pPlayerModel2) delete pPlayerModel2;
 
-	// 여기서부터 적 객체 그리기
-	CLoadedModelInfo* pIceEnemyModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 
-	// 적 10마리
-	for (int i = 0; i < 10; i++)
-	{
-		m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 7);
+	//// 여기서부터 적 객체 그리기
+	//CLoadedModelInfo* pIceEnemyModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 
-		// 0 : idle, 1 : 걷기, 2 : 달리기, 3 : 아파, 4 : 죽음, 5 : 왼손 공격, 6 : 오른손 공격
-		// animation Track -> 내가 만든 적의 애니메이션 묶음 / animation Set -> 실제 bin 파일 속 애니메이션 묶음(순서, 번호)
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+	//// 적 10마리
+	//for (int i = 0; i < 10; i++)
+	//{
+	//	m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel, 7);
 
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
-		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+	//	// 0 : idle, 1 : 걷기, 2 : 달리기, 3 : 아파, 4 : 죽음, 5 : 왼손 공격, 6 : 오른손 공격
+	//	// animation Track -> 내가 만든 적의 애니메이션 묶음 / animation Set -> 실제 bin 파일 속 애니메이션 묶음(순서, 번호)
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
 
-		m_ppHierarchicalGameObjects[3 + i]->SetScale(20.0f, 20.0f, 20.0f);
-	}
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	//	m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	//	m_ppHierarchicalGameObjects[3 + i]->SetScale(20.0f, 20.0f, 20.0f);
+	//}
+	CLoadedModelInfo* pIceEnemyModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	m_ppHierarchicalGameObjects[3] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel1, 7);
+
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	m_ppHierarchicalGameObjects[3]->SetScale(20.0f, 20.0f, 20.0f);
+
+	CLoadedModelInfo* pIceEnemyModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	m_ppHierarchicalGameObjects[4] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel2, 7);
+
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	m_ppHierarchicalGameObjects[4]->SetScale(20.0f, 20.0f, 20.0f);
+
+	CLoadedModelInfo* pIceEnemyModel3 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	m_ppHierarchicalGameObjects[5] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel3, 7);
+
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	m_ppHierarchicalGameObjects[5]->SetScale(20.0f, 20.0f, 20.0f);
+
+	CLoadedModelInfo* pIceEnemyModel4 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	m_ppHierarchicalGameObjects[6] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel4, 7);
+
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	m_ppHierarchicalGameObjects[6]->SetScale(20.0f, 20.0f, 20.0f);
+
+	CLoadedModelInfo* pIceEnemyModel5 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	m_ppHierarchicalGameObjects[7] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel5, 7);
+
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	m_ppHierarchicalGameObjects[7]->SetScale(20.0f, 20.0f, 20.0f);
+
+	CLoadedModelInfo* pIceEnemyModel6 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	m_ppHierarchicalGameObjects[8] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel6, 7);
+
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	m_ppHierarchicalGameObjects[8]->SetScale(20.0f, 20.0f, 20.0f);
+
+	CLoadedModelInfo* pIceEnemyModel7 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	m_ppHierarchicalGameObjects[9] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel7, 7);
+
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	m_ppHierarchicalGameObjects[9]->SetScale(20.0f, 20.0f, 20.0f);
+
+	CLoadedModelInfo* pIceEnemyModel8 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	m_ppHierarchicalGameObjects[10] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel8, 7);
+
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	m_ppHierarchicalGameObjects[10]->SetScale(20.0f, 20.0f, 20.0f);
+
+	CLoadedModelInfo* pIceEnemyModel9 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	m_ppHierarchicalGameObjects[11] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel9, 7);
+
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	m_ppHierarchicalGameObjects[11]->SetScale(20.0f, 20.0f, 20.0f);
+
+	CLoadedModelInfo* pIceEnemyModel10 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	m_ppHierarchicalGameObjects[12] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel10, 7);
+
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	m_ppHierarchicalGameObjects[12]->SetScale(20.0f, 20.0f, 20.0f);
+
+	CLoadedModelInfo* pIceEnemyModel11 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	m_ppHierarchicalGameObjects[13] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel11, 7);
+
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
+
+	//CLoadedModelInfo* pIceEnemyModel12 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	//m_ppHierarchicalGameObjects[12] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel12, 7);
+
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+
+	//m_ppHierarchicalGameObjects[12]->SetScale(20.0f, 20.0f, 20.0f);
+
+	if (pIceEnemyModel1) delete pIceEnemyModel1;
+	if (pIceEnemyModel2) delete pIceEnemyModel2;
+	if (pIceEnemyModel3) delete pIceEnemyModel3;
+	if (pIceEnemyModel4) delete pIceEnemyModel4;
+	if (pIceEnemyModel5) delete pIceEnemyModel5;
+	if (pIceEnemyModel6) delete pIceEnemyModel6;
+	if (pIceEnemyModel7) delete pIceEnemyModel7;
+	if (pIceEnemyModel8) delete pIceEnemyModel8;
+	if (pIceEnemyModel9) delete pIceEnemyModel9;
+	if (pIceEnemyModel10) delete pIceEnemyModel10;
+	if (pIceEnemyModel11) delete pIceEnemyModel11;
 }
 
 void CSpaceShipScene::ReleaseUploadBuffers()

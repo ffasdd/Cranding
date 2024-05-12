@@ -83,7 +83,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						for (int i = 0; i < g_monsters.size(); ++i)
 						{
 							gGameFramework.myFunc_SetMonPosition(i, gGameFramework.SceneNum, g_monsters[i].getPos());
-			
 						}
 					}
 				}
