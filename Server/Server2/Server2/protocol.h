@@ -3,10 +3,10 @@ constexpr int BUF_SIZE = 512;
 constexpr int NAME_SIZE = 20;
 constexpr int CHAT_SIZE = 100;
 
-constexpr int MAX_USER = 4;
-constexpr int MAX_ROOM = 2;
+constexpr int MAX_USER = 6;
+constexpr int MAX_ROOM = 3;
 
-constexpr int MAX_ROOM_USER = 2;
+constexpr int MAX_ROOM_USER = 3;
 
 constexpr char CS_LOGIN = 0;
 constexpr char CS_MOVE = 1;
@@ -61,7 +61,7 @@ struct SC_TEST_PACKET {
 
 };	
 
-constexpr float VIEW_RANGE = 200.0f;
+constexpr float VIEW_RANGE = 1000.0f;
 
 enum class sceneState :char {
 	LOBBY,
@@ -309,6 +309,7 @@ struct SC_CHANGE_SCENE_PACKET {
 struct SC_INGAME_START_PACKET {
 	unsigned char size;
 	char type;
+	//XMFLOAT3 _pos;
 };
 struct SC_ATTACK_PACKET {
 	unsigned char size;

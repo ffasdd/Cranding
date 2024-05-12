@@ -303,24 +303,9 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
         ::GetCursorPos(&m_ptOldCursorPos);
         if (g_clients[cl_id].getCharacterType() == 0)
         {
-            g_clients[cl_id].setAttack(true);
-            //if (g_clients[cl_id].getAnimation() != (int)animateState::SWORD_ATTACK_2)
-            //{
-            //   g_clients[cl_id].setprevAnimation(g_clients[cl_id].getAnimation()); // 이전 애니메이션이 담김 
-            //   g_clients[cl_id].setAnimation((int)animateState::SWORD_ATTACK_2);
-            //}
+            g_clients[cl_id].setAttack(true);   
             gNetwork.SendAttack(g_clients[cl_id].getAttack());
         }
-        //else if (g_clients[cl_id].getCharacterType() == 1)
-        //{
-        //   if (g_clients[cl_id].getAnimation() != (int)animateState::SHOOTING)
-        //   {
-        //      g_clients[cl_id].setprevAnimation(g_clients[cl_id].getAnimation()); // 이전 애니메이션이 담김 
-        //      g_clients[cl_id].setAnimation((int)animateState::SHOOTING);
-        //   }
-        //}
-
-
         break;
 
 
@@ -490,7 +475,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
     {
         m_pPlayer->SetId(cl_id);
         // 꺼도 되는지 안되는지 모르겠음
-        // m_pPlayer->SetPosition(position);
+         m_pPlayer->SetPosition(position);
     }
     else
     {
@@ -953,7 +938,7 @@ void CGameFramework::ProcessInput()
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
-	if (!bProcessedByScene)
+	if (!bProcessedByScene && (SceneNum != 0))
 	{
 		float cxDelta = 0.0f, cyDelta = 0.0f;
 		POINT ptCursorPos;

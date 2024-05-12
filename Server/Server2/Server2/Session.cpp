@@ -5,8 +5,12 @@
 array<Session, MAX_USER> clients; //전체 클라이언트 
 std::random_device rd;
 std::default_random_engine dre;
-std::uniform_real_distribution<float> xpos(-10, 450);
-std::uniform_real_distribution<float> zpos(-641, -521);
+std::uniform_real_distribution<float> m_xpos(-10, 450);
+std::uniform_real_distribution<float> m_zpos(-641, -521);
+
+std::uniform_real_distribution<float> p_xpos(-120, 674);
+std::uniform_real_distribution<float> p_zpos(-312, 455);
+
 
 Session::Session()
 {
@@ -34,6 +38,8 @@ void Session::send_login_info_packet()
 	p.id = _id;
 	p.size = sizeof(SC_LOGIN_INFO_PACKET);
 	p.type = SC_LOGIN_INFO;
+	clients[_id]._pos.x = p_xpos(dre);
+	clients[_id]._pos.z = p_zpos(dre);
 	p.pos = clients[_id]._pos;
 	p.max_hp = _maxhp;
 	p.hp = _hp;
@@ -168,6 +174,7 @@ void Session::send_ingame_start()
 	SC_INGAME_START_PACKET p;
 	p.type = SC_INGAME_STRAT;
 	p.size = sizeof(SC_INGAME_START_PACKET);
+	
 	do_send(&p);
 }
 
@@ -177,7 +184,7 @@ void Session::send_add_monster(int npc_id)
 	p.type = SC_ADD_MONSTER;
 	p.size = sizeof(SC_ADD_MONSTER_PACKET);
 	p.id = npc_id;
-	p.pos = XMFLOAT3(xpos(dre), 10.f, zpos(dre));
+	p.pos = XMFLOAT3(m_xpos(dre), 10.f, m_zpos(dre));
 	p.look = XMFLOAT3(0.f, 0.f, 1.0f);
 	p.up = XMFLOAT3(0.f, 1.f, 0.0f);
 	p.right = XMFLOAT3(1.f, 0.f, 0.0f);

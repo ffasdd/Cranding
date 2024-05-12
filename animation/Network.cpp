@@ -185,7 +185,8 @@ void Network::ProcessPacket(char* buf)
 	case SC_LOGIN_INFO: {
 		// 로그인 되자마자 로그인 씬 
 		SC_LOGIN_INFO_PACKET* p = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
-		my_id = getmyid(p->id);
+		//my_id = getmyid(p->id);
+		my_id = (p->id);
 		my_roomid = p->room_id;
 		g_clients[my_id].setId(my_id);
 		g_clients[my_id].setHp(p->hp);
@@ -205,7 +206,8 @@ void Network::ProcessPacket(char* buf)
 
 		std::cout << "Add Player " << std::endl;
 		SC_ADD_OBJECT_PACKET* p = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
-		int ob_id = getmyid(p->id);
+		//int ob_id = getmyid(p->id);
+		int ob_id = (p->id);
 		g_clients[ob_id].setId(ob_id);
 		g_clients[ob_id].setHp(p->hp);
 		g_clients[ob_id].setPos(p->pos);
@@ -222,13 +224,15 @@ void Network::ProcessPacket(char* buf)
 	case SC_MOVE_OBJECT: {
 
 		SC_MOVE_OBJECT_PACKET* p = reinterpret_cast<SC_MOVE_OBJECT_PACKET*>(buf);
-		int ob_id = getmyid(p->id);
+		//int ob_id = getmyid(p->id);
+		int ob_id = (p->id);
 		g_clients[ob_id].setPos(p->pos);
 	}
 					   break;
 	case SC_ROTATE_OBJECT: {
 		SC_ROTATE_OBJECT_PACKET* p = reinterpret_cast<SC_ROTATE_OBJECT_PACKET*>(buf);
-		int ob_id = getmyid(p->id);
+		int ob_id = (p->id);
+		//int ob_id = getmyid(p->id);
 		g_clients[ob_id].setLook(p->look);
 		g_clients[ob_id].setRight(p->right);
 		g_clients[ob_id].setUp(p->up);
@@ -236,7 +240,8 @@ void Network::ProcessPacket(char* buf)
 						 break;
 	case SC_CHANGE_ANIMATION: {
 		SC_CHANGE_ANIMATION_PACKET* p = reinterpret_cast<SC_CHANGE_ANIMATION_PACKET*>(buf);
-		int ob_id = getmyid(p->id);
+		int ob_id = (p->id);
+		//int ob_id = getmyid(p->id);
 		g_clients[ob_id].setAnimation((int)p->a_state);
 		g_clients[ob_id].setprevAnimation((int)p->prev_a_state);
 	}
@@ -408,22 +413,17 @@ void Network::SendTime(int time)
 
 int Network::getmyid(int _id)
 {
-	if (_id > 1)
+	if (_id > 2)
 	{
-		if (_id % 2 == 0)
+		if (_id % 3 == 0)
 		{
 			return 0;
 		}
+		else if (_id % 2 == 0)
+			return 2;
 		else
 			return 1;
-		//else if (_id % 3 == 0)
-		//{
-		//	return 0;
-		//}
-		//else
-		//{
-		//	return 2;
-		//}
+		
 	}
 	else
 		return _id;

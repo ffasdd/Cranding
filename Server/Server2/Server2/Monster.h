@@ -17,6 +17,7 @@ public:
 
 	int _id;
 	bool _is_active = false;
+	bool _is_alive = false;
 
 	BoundingOrientedBox _ob;
 

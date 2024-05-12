@@ -109,26 +109,6 @@ void Server::Iocp()
 	for (auto& th : worker_thread)
 		th.join();
 
-	//constexpr int MAX_FAME = 60;
-	//using frame = std::chrono::duration<int32_t, std::ratio<1, MAX_FAME>>;
-	//using ms = std::chrono::duration<float, std::milli>;
-	//std::chrono::time_point<std::chrono::steady_clock> fps_timer{ std::chrono::steady_clock::now() };
-
-	//frame fps{}, frame_count{};
-
-	//while (true)
-	//{
-	//	fps = chrono::duration_cast<frame>(std::chrono::steady_clock::now() - fps_timer);
-
-	//	if (fps.count() < 1)continue;
-
-	//	if (frame_count.count() & 1)
-	//	{
-	//		// 몬스터 정보 
-	//		
-	//	}
-	//}
-
 
 }
 
@@ -225,26 +205,6 @@ void Server::WorkerThread()
 			delete ex_over;
 			break;
 		}
-		//case COMP_TYPE::NPC_WAKE_UP: {
-		///*	int r_id = ex_over->room_id;
-		//	InitialziedMonster(r_id);
-		//	for (auto& pl : ingameroom[r_id].ingamePlayer)
-		//	{
-		//		for (int i = 0; i < MAX_NPC; ++i)
-		//		{
-		//			pl->send_add_monster(i);
-		//		}
-		//	}*/
-		//	delete ex_over;
-		//}
-		//case COMP_TYPE::NPC_MOVE: {
-		//	//int r_id = ex_over->room_id;
-		//	//ingameroom[r_id].SendMoveNightMonster(static_cast<int>(key));
-		//	//TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),static_cast<int>(key),r_id,EVENT_TYPE::EV_MOVE};
-		//	//g_Timer.InitTimerQueue(ev);
-		//	delete ex_over;
-		//	break;
-		//}
 		case COMP_TYPE::NPC_UPDATE: {
 
 			int r_id = static_cast<int>(key);
@@ -359,13 +319,7 @@ void Server::ProcessPacket(int id, char* packet)
 				clients[id].send_add_info_packet(pl);
 		}
 
-		for (auto& pl : old_vlist)
-		{
-			if (0 == near_list.count(pl))
-			{
-				clients[id].send_remove_packet(pl);
-			}
-		}
+
 
 	}
 				break;
@@ -411,13 +365,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (old_vlist.count(pl) == 0)
 				clients[id].send_add_info_packet(pl);
 		}
-		//for (auto& pl : old_vlist)
-		//{
-		//	if (0 == near_list.count(pl))
-		//	{
-		//		clients[id].send_remove_packet(pl);
-		//	}
-		//}
+	
 		break;
 	}
 	case CS_CHANGE_ANIMATION: {
@@ -481,17 +429,17 @@ void Server::ProcessPacket(int id, char* packet)
 		// 3번 맵 얼음
 		if (p->scenenum == 3)
 		{
-
+			 // 얼음몬스터 뿌려줘야함 
 		}
 		// 4번 맵 불 
 		else if (p->scenenum == 4)
 		{
-
+			// 불몬스터 뿌려줘야함 
 		}
 		// 5번 맵 자연 
 		else if (p->scenenum == 5)
 		{
-
+			// 자연몬스터 뿌려줘야함 
 		}
 
 	}
@@ -509,7 +457,7 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 
 
-		if (ingameroom[r_id].readycnt == 2)
+		if (ingameroom[r_id].readycnt == 3)
 		{
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
@@ -521,10 +469,7 @@ void Server::ProcessPacket(int id, char* packet)
 			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
 		}
-		
-		//ingameroom[r_id].start_time = chrono::system_clock::now();
-		//TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(10s),id,r_id,EVENT_TYPE::EV_WAKE_UP };
-		//g_Timer.InitTimerQueue(ev);
+
 
 	}
 						break;
@@ -543,10 +488,7 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				for (int i = 0; i < ingameroom[r_id].NightMonster.max_size(); ++i) //
 				{
-					////send addmonster가 아니라 여기서 바로 WakeupNpc ? 
-					//ingameroom[r_id].SendAddMonster(i, id);
-					//TIMER_EVENT ev{ std::chrono::system_clock::now(), i, r_id, EVENT_TYPE::EV_MOVE };
-					//g_Timer.InitTimerQueue(ev);
+
 				}
 			}
 		}
@@ -593,13 +535,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (old_vlist.count(pl) == 0)
 				clients[id].send_add_info_packet(pl);
 		}
-	/*	for (auto& pl : old_vlist)
-		{
-			if (0 == near_list.count(pl))
-			{
-				clients[id].send_remove_packet(pl);
-			}
-		}*/
+
 	}
 				  break;
 
