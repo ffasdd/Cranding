@@ -113,6 +113,13 @@ struct NightMonsters
 	char type;
 	NightMonster _monster[10];
 };
+struct NightMonstersDead
+{
+	unsigned char size;
+	char type;
+	NightMonster _monster[10];
+
+};
 
 struct CS_LOGIN_PACKET {
 	unsigned char size;

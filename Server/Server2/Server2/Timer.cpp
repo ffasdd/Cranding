@@ -38,32 +38,18 @@ void Timer::TimerThread()
 				}
 				switch (ev.eventId)
 				{
-				//case EVENT_TYPE::EV_WAKE_UP: {
-				//	Over_Exp* ov = new Over_Exp;
-				//	ov->_comptype = COMP_TYPE::NPC_WAKE_UP;
-				//	ov->room_id = ev.roomId;
-				//	//PostQueuedCompletionStatus(_IocpHandle, 1, ev.targetId, &ov->_over);
-
-				//}
-
-				//case EVENT_TYPE::EV_MOVE: {
-				//	Over_Exp* ov = new Over_Exp;
-				//	ov->_comptype = COMP_TYPE::NPC_MOVE;
-				//	ov->room_id = ev.roomId;
-				//	//PostQueuedCompletionStatus(_IocpHandle, 1, ev.targetId, &ov->_over);
-
-				//	break;
-				//}
-				//case EVENT_TYPE::EV_ATTACK: {
-				//	Over_Exp* ov = new Over_Exp;
-				//	ov->_comptype = COMP_TYPE::NPC_ATTACK;
-
-				//	break;
-				//}
+			
 				case EVENT_TYPE::EV_NPC_UPDATE: {
 					Over_Exp* ov = new Over_Exp;
 					ov->_comptype = COMP_TYPE::NPC_UPDATE;	
 					PostQueuedCompletionStatus(_IocpHandle, 1,ev.roomId, &ov->_over);
+					break;
+					//att true 
+				}
+				case EVENT_TYPE::EV_NPC_INITIALIZE: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::NPC_INITIALIZE;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
 				}
 				}
