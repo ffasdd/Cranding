@@ -66,8 +66,8 @@ extern HINSTANCE						ghAppInstance;
 
 //#define _WITH_SWAPCHAIN_FULLSCREEN_STATE
 
-#define FRAME_BUFFER_WIDTH				640
-#define FRAME_BUFFER_HEIGHT				480
+#define FRAME_BUFFER_WIDTH				1920
+#define FRAME_BUFFER_HEIGHT				1080
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "d3d12.lib")
@@ -416,7 +416,7 @@ void SafeDelete(T& ptr)
 	}
 }
 
-enum BRUSH_COLOR { WHITE, LIME_GREEN, DARK_GRAY, RED, BRUSH_COUNT };
+enum BRUSH_COLOR { WHITE, LIME_GREEN, BLACK, RED, BRUSH_COUNT };
 
 enum TEXT_SIZE { SIZE_15, SIZE_18, SIZE_25, SIZE_30, SIZE_50, SIZE_60, TEXT_COUNT };
 

@@ -6,8 +6,8 @@
 #define KEY_A 0x41
 #define KEY_D 0x44
 
-#define FRAME_BUFFER_WIDTH		640
-#define FRAME_BUFFER_HEIGHT		480
+#define FRAME_BUFFER_WIDTH				1920
+#define FRAME_BUFFER_HEIGHT				1080
 
 #define DRAW_SCENE_COLOR				'S'
 
