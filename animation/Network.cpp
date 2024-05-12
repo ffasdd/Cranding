@@ -29,8 +29,15 @@ bool Network::ReadytoConnect()
 {
 	sockaddr_in sockaddrIn;
 	sockaddrIn.sin_family = AF_INET;
-	sockaddrIn.sin_port = htons(PORT_NUM);
-	inet_pton(AF_INET, "127.0.0.1", &sockaddrIn.sin_addr);
+	sockaddrIn.sin_port = htons(PORT_NUM);  
+	
+	// 사용자로부터 IP 주소 입력 받기
+	string ipAddress;
+	cout << "Enter IP address: ";
+	cin >> ipAddress;
+
+	// 문자열 형태의 IP 주소를 네트워크 바이트 순서로 변환하여 설정
+	inet_pton(AF_INET, ipAddress.c_str(), &sockaddrIn.sin_addr);
 
 	int ret = connect(clientsocket, reinterpret_cast<sockaddr*>(&sockaddrIn), sizeof(sockaddrIn));
 	if (ret)
