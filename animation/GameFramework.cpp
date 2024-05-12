@@ -475,7 +475,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	{
 		m_pPlayer->SetId(cl_id);
 		// ���� �Ǵ��� �ȵǴ��� �𸣰���
-		m_pPlayer->SetPosition(position);
+		//m_pPlayer->SetPosition(position);
 	}
 	else
 	{
@@ -558,6 +558,20 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 			break;
 		}
 
+		if (id == 1 || id == 2)
+		{
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
+		}
 		// �������� ���� ���� �ִϸ��̼� ��ȣ�� ���� �ִϸ��̼� ��ȣ�� �ٸ� ���(������ �ؾ��ϴ� ���)
 		if (prevAni != curAni)
 		{
@@ -572,20 +586,10 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
 
-			if (id == 1)
-			{
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
-			}
+			//if ()
+			//{
+
+			//}
 			g_clients[others_id + 1].setprevAnimation(curAni);
 		}
 	}
@@ -900,22 +904,22 @@ void CGameFramework::AnimateObjects()
 	if (SceneNum > 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
 	{
 		// ���⼭ �� ��ȯ ó�����ָ� �� ��
-		if (m_pPlayer->isFireMap == true)
-		{
-			m_pPlayer->isFireMap = false;
-			// ����ȯ
-		}
-		else if (m_pPlayer->isGrassMap == true)
-		{
-			m_pPlayer->isGrassMap = false;
-			// ����ȯ
-		}
-		else if (m_pPlayer->isIceMap == true)
-		{
-			m_pPlayer->isIceMap = false;
-			// ����ȯ
-		}
-		else
+		//if (m_pPlayer->isFireMap == true)
+		//{
+		//	m_pPlayer->isFireMap = false;
+		//	// ����ȯ
+		//}
+		//else if (m_pPlayer->isGrassMap == true)
+		//{
+		//	m_pPlayer->isGrassMap = false;
+		//	// ����ȯ
+		//}
+		//else if (m_pPlayer->isIceMap == true)
+		//{
+		//	m_pPlayer->isIceMap = false;
+		//	// ����ȯ
+		//}
+		//else
 			m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
 }

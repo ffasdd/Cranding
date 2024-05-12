@@ -45,28 +45,28 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 				{
 					// grassmap ���� �ٸ��� �浹
-					if (!strcmp(str, "bbgrass"))
-					{
-						m_pPlayer->isGrassMap = true;
-						return(true);
-					}
+					//if (!strcmp(str, "bbgrass"))
+					//{
+					//	m_pPlayer->isGrassMap = true;
+					//	return(true);
+					//}
 
-					// firemap ���� �ٸ��� �浹
-					else if (!strcmp(str, "bbfire"))
-					{
-						m_pPlayer->isFireMap = true;
-						return(true);
-					}
+					//// firemap ���� �ٸ��� �浹
+					//else if (!strcmp(str, "bbfire"))
+					//{
+					//	m_pPlayer->isFireMap = true;
+					//	return(true);
+					//}
 
-					// icemap ���� �ٸ��� �浹
-					else if (!strcmp(str, "bbice"))
-					{
-						m_pPlayer->isIceMap = true;
-						return(true);
-					}
+					//// icemap ���� �ٸ��� �浹
+					//else if (!strcmp(str, "bbice"))
+					//{
+					//	m_pPlayer->isIceMap = true;
+					//	return(true);
+					//}
 
 					// �ٴ��� �浹 üũ �ȵǵ���
-					else if (!strcmp(str, "Plane"))
+					/*else */if (!strcmp(str, "Plane"))
 						pMapObject = pMapObject->m_pSibling;
 
 					else
@@ -1025,6 +1025,18 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
 
+	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
+	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);
+	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5);
+	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5);
+	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5);
+	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5);
+	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5);
+	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5);
+	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5);
+	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
+	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
+
 	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 
@@ -1054,6 +1066,18 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(8, false);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
+
+	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
+	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);
+	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5);
+	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5);
+	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5);
+	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5);
+	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5);
+	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5);
+	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5);
+	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
+	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
 
 	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
@@ -1289,46 +1313,6 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 	m_ppHierarchicalGameObjects[12]->SetScale(20.0f, 20.0f, 20.0f);
 
-	CLoadedModelInfo* pIceEnemyModel11 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
-	m_ppHierarchicalGameObjects[13] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel11, 7);
-
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
-
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
-	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
-
-	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
-
-	//CLoadedModelInfo* pIceEnemyModel12 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
-	//m_ppHierarchicalGameObjects[12] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel12, 7);
-
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
-
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
-	//m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
-
-	//m_ppHierarchicalGameObjects[12]->SetScale(20.0f, 20.0f, 20.0f);
-
 	if (pIceEnemyModel1) delete pIceEnemyModel1;
 	if (pIceEnemyModel2) delete pIceEnemyModel2;
 	if (pIceEnemyModel3) delete pIceEnemyModel3;
@@ -1339,7 +1323,6 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	if (pIceEnemyModel8) delete pIceEnemyModel8;
 	if (pIceEnemyModel9) delete pIceEnemyModel9;
 	if (pIceEnemyModel10) delete pIceEnemyModel10;
-	if (pIceEnemyModel11) delete pIceEnemyModel11;
 }
 
 void CSpaceShipScene::ReleaseUploadBuffers()
