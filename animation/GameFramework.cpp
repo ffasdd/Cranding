@@ -390,7 +390,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			else break;
 		case '2':
 			if (SceneNum == 0) break;
-			SceneNum = 2;
 			// spaceship map
 			isready = false;
 			// send ready packet  
@@ -398,6 +397,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 			WaitForSingleObject(startevent, INFINITE);
 			// �׸��� ���� �������� 
+			SceneNum = 2;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 
@@ -997,7 +997,7 @@ void CGameFramework::FrameAdvance()
 
 	AnimateObjects();
 
-	if(SceneNum > 2)
+	if(SceneNum > 1)
 		UpdateUI();
 
 
