@@ -64,6 +64,8 @@ private:
     D2D1_RECT_F m_Timer = D2D1::RectF(1300.0f, 0.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
     D2D1_RECT_F m_HPBar = D2D1::RectF(1300.0f, 930.0f, 1300 + m_playerhp * 6.0, FRAME_BUFFER_HEIGHT - 50.0);
 
+    D2D1_RECT_F m_Map = D2D1::RectF(-FRAME_BUFFER_WIDTH / 2.0f + 500, -20.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+
 private:
     static UILayer* s_instance;
 
@@ -75,4 +77,8 @@ private:
 
     // lobby scene ui
     vector<WCHAR*> m_vecLobbyScene;
+
+    // ingame scene ui
+    vector<WCHAR*> m_vecIngameScene;
+
 };

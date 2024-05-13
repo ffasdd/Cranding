@@ -1,9 +1,12 @@
 #include "stdafx.h"
 #include "UI.h"
+#include "GameFramework.h"
 
 using namespace std;
 
 UILayer* UILayer::s_instance = nullptr;
+
+extern CGameFramework					gGameFramework;
 
 UILayer::UILayer(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets, UINT nWidth, UINT nHeight)
 {
@@ -82,6 +85,21 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     for (int i = 0; i < lobbyUI_num; ++i) {
         m_vecLobbyScene.push_back(plobbytext[i]);
     }
+
+    //  ingame scene
+    int ingameUI_num = 3;
+    WCHAR** pMap = new WCHAR * [ingameUI_num];
+    for (int i = 0; i < ingameUI_num; ++i)
+    {
+        pMap[i] = new WCHAR[256];
+    }
+
+    wcscpy_s(pMap[0], 256, L"ice map으로 이동하기 위해 3번을 눌러주세요");
+    wcscpy_s(pMap[1], 256, L"fire map으로 이동하기 위해 4번을 눌러주세요");
+    wcscpy_s(pMap[2], 256, L"grass map으로 이동하기 위해 5번을 눌러주세요");
+    for (int i = 0; i < ingameUI_num; ++i) {
+        m_vecIngameScene.push_back(pMap[i]);
+    }
     InitializeDevice(pd3dDevice, pd3dCommandQueue, ppd3dRenderTargets);
 
     // brush
@@ -97,9 +115,6 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     m_textFormats[TEXT_SIZE::SIZE_30] = CreateTextFormat(L"맑은 고딕", 30.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_50] = CreateTextFormat(L"맑은 고딕", 50.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_60] = CreateTextFormat(L"맑은 고딕", 80.0f * 3.35f);
-
-
-
 
     return NOERROR;
 }
@@ -231,7 +246,20 @@ void UILayer::Render(UINT nFrame, int scenenum,bool isready, int curDay, int cur
 
         swprintf_s(pstrOutputText, 256, L"Day: %d  Time:%02d:%02d %s", curDay, curMinute, curSecond, DnN[timenum].c_str());
         m_pd2dDeviceContext->DrawText(pstrOutputText, (UINT)wcslen(pstrOutputText), m_textFormats[TEXT_SIZE::SIZE_18], m_Timer, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+
         m_pd2dDeviceContext->FillRectangle(m_HPBar, m_brushes[BRUSH_COLOR::RED]);
+
+        // map 이동
+        if(gGameFramework.m_pPlayer->isIceMap)
+            m_pd2dDeviceContext->DrawText(m_vecIngameScene[0], (UINT)wcslen(m_vecIngameScene[0]), m_textFormats[TEXT_SIZE::SIZE_18], m_Title, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+
+        if (gGameFramework.m_pPlayer->isFireMap)
+            m_pd2dDeviceContext->DrawText(m_vecIngameScene[1], (UINT)wcslen(m_vecIngameScene[1]), m_textFormats[TEXT_SIZE::SIZE_18], m_Title, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+
+        if (gGameFramework.m_pPlayer->isGrassMap)
+            m_pd2dDeviceContext->DrawText(m_vecIngameScene[2], (UINT)wcslen(m_vecIngameScene[2]), m_textFormats[TEXT_SIZE::SIZE_18], m_Title, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+
+
         m_pd2dDeviceContext->EndDraw();
         break;
     }

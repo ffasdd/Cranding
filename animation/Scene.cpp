@@ -45,25 +45,25 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 				{
 					// grassmap ���� �ٸ��� �浹
-					//if (!strcmp(str, "bbgrass"))
-					//{
-					//	m_pPlayer->isGrassMap = true;
-					//	return(true);
-					//}
+					if (!strcmp(str, "bbgrassmap"))
+					{
+						m_pPlayer->isGrassMap = true;
+						return(true);
+					}
 
-					//// firemap ���� �ٸ��� �浹
-					//else if (!strcmp(str, "bbfire"))
-					//{
-					//	m_pPlayer->isFireMap = true;
-					//	return(true);
-					//}
+					// firemap ���� �ٸ��� �浹
+					else if (!strcmp(str, "bbfiremap"))
+					{
+						m_pPlayer->isFireMap = true;
+						return(true);
+					}
 
-					//// icemap ���� �ٸ��� �浹
-					//else if (!strcmp(str, "bbice"))
-					//{
-					//	m_pPlayer->isIceMap = true;
-					//	return(true);
-					//}
+					// icemap ���� �ٸ��� �浹
+					else if (!strcmp(str, "bbicemap"))
+					{
+						m_pPlayer->isIceMap = true;
+						return(true);
+					}
 
 					// �ٴ��� �浹 üũ �ȵǵ���
 					/*else */if (!strcmp(str, "Plane"))
@@ -171,8 +171,8 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 
 	CMaterial::PrepareShaders(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_pBoundingBoxShader = new CBoundingBoxShader();
-	m_pBoundingBoxShader->CreateShader(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
+	//m_pBoundingBoxShader = new CBoundingBoxShader();
+	//m_pBoundingBoxShader->CreateShader(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
 
 	BuildDefaultLightsAndMaterials();
 
