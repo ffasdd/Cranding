@@ -997,7 +997,8 @@ void CGameFramework::FrameAdvance()
 
 	AnimateObjects();
 
-	UpdateUI();
+	if(SceneNum>1)
+		UpdateUI();
 
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
