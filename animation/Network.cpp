@@ -48,7 +48,7 @@ bool Network::ReadytoConnect()
 		return false;
 	}
 
-	std::cout << " Success Connect " << std::endl;
+	//std::cout << " Success Connect " << std::endl;
 	return true;
 }
 // 연결 완료 
@@ -214,7 +214,7 @@ void Network::ProcessPacket(char* buf)
 
 	case SC_ADD_OBJECT: {
 
-		std::cout << "Add Player " << std::endl;
+		//std::cout << "Add Player " << std::endl;
 		SC_ADD_OBJECT_PACKET* p = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		//int ob_id = getmyid(p->id);
 		int ob_id = (p->id);
@@ -227,7 +227,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setCharacterType(p->charactertype);
 		g_clients[ob_id].setAnimation(int(p->a_state));
 		g_clients[ob_id].setprevAnimation(int(p->prev_state));
-		cout << " Add Player - " << ob_id << endl;
+		//cout << " Add Player - " << ob_id << endl;
 		break;
 	}
 

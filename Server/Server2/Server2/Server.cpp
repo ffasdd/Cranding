@@ -230,7 +230,7 @@ void Server::WorkerThread()
 
 void Server::InitialziedMonster(int room_Id)
 {
-	cout << " NPC intialize begin " << endl;
+	//cout << " NPC intialize begin " << endl;
 
 	std::random_device rd;
 	std::default_random_engine dre;
@@ -248,7 +248,7 @@ void Server::InitialziedMonster(int room_Id)
 		ingameroom[room_Id].NightMonster[i]._is_alive = true;
 	}
 
-	cout << " NPC intialzie end " << endl;
+	//cout << " NPC intialzie end " << endl;
 }
 
 void Server::ProcessPacket(int id, char* packet)
@@ -419,7 +419,7 @@ void Server::ProcessPacket(int id, char* packet)
 	}
 							break;
 	case CS_CHANGE_SCENE: {
-		cout << " Change scenen" << endl;
+		//cout << " Change scenen" << endl;
 		CS_CHANGE_SCENE_PACKET* p = reinterpret_cast<CS_CHANGE_SCENE_PACKET*>(packet);
 		int scenenum = p->scenenum;
 		int r_id = p->roomid;
@@ -451,7 +451,7 @@ void Server::ProcessPacket(int id, char* packet)
 						break;
 	case CS_INGAME_START: {
 
-		cout << " Game START " << endl;
+		//cout << " Game START " << endl;
 		CS_INGAME_START_PACKET* p = reinterpret_cast<CS_INGAME_START_PACKET*>(packet);
 		int r_id = p->roomid;
 
