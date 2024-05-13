@@ -797,7 +797,6 @@ void CGameFramework::ReleaseObjects()
 	m_pPostProcessingShader = nullptr;
 }
 
-// �÷��̾� ���� �κ� -> �����¿�, ���콺
 void CGameFramework::ProcessInput()
 {
 	m_pPlayer->m_xmf3BeforeCollidedPosition = m_pPlayer->GetPosition();

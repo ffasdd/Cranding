@@ -13,5 +13,5 @@ void Monster::Move()
 
 void Monster::Remove()
 {
-	_pos = { 0.f,0.f,0.f };
+	_pos = { 0.f,-30.f,0.f };
 }

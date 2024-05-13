@@ -50,8 +50,7 @@ void Server::NetworkSet()
 	if (SOCKET_ERROR == listen(listensocket, SOMAXCONN))
 		cout << " Listen Error " << endl;
 	if (listensocket != INVALID_SOCKET) {
-		cout << "Listen socket successfully created." << endl;
-
+	
 		// listensocket의 현재 상태 확인
 		int optval;
 		int optlen = sizeof(optval);
@@ -175,7 +174,6 @@ void Server::WorkerThread()
 				cout << " MAX user exceeded" << endl;
 			}
 
-			cout << " Accept " << endl;
 			ZeroMemory(&_overlapped._over, sizeof(_overlapped._over));
 			int addr_size = sizeof(SOCKADDR_IN);
 			AcceptEx(listensocket, clientsocket, _overlapped._sendbuf, 0, addr_size + 16, addr_size + 16, 0, &_overlapped._over);
@@ -230,8 +228,6 @@ void Server::WorkerThread()
 
 void Server::InitialziedMonster(int room_Id)
 {
-	cout << " NPC intialize begin " << endl;
-
 	std::random_device rd;
 	std::default_random_engine dre;
 	std::uniform_real_distribution<float> xpos(-10, 370);
@@ -248,7 +244,6 @@ void Server::InitialziedMonster(int room_Id)
 		ingameroom[room_Id].NightMonster[i]._is_alive = true;
 	}
 
-	cout << " NPC intialzie end " << endl;
 }
 
 void Server::ProcessPacket(int id, char* packet)
@@ -451,7 +446,6 @@ void Server::ProcessPacket(int id, char* packet)
 						break;
 	case CS_INGAME_START: {
 
-		cout << " Game START " << endl;
 		CS_INGAME_START_PACKET* p = reinterpret_cast<CS_INGAME_START_PACKET*>(packet);
 		int r_id = p->roomid;
 
