@@ -432,6 +432,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			m_pPlayer->m_hp -= 5.0f;
 			isready = true;
 			break;
+		case 'B':
+			m_bRenderBoundingBox = !m_bRenderBoundingBox;
+			break;
 		default:
 			break;
 		}
@@ -1011,6 +1014,8 @@ void CGameFramework::FrameAdvance()
 		m_pScene->Render(m_pd3dCommandList, m_pCamera);
 
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+		
+		if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 
 		m_pPostProcessingShader->OnPostRenderTarget(m_pd3dCommandList);
 	}
