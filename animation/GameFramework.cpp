@@ -504,10 +504,16 @@ void CGameFramework::myFunc_SetMonPosition(int n, int SCSceneNum, XMFLOAT3 posit
 {
     if (SCSceneNum > 1)
     {
+		// npc 좌표 + 바운딩박스 set
         m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
         m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
         m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
-        //m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
+
+		// 원소 좌표 + 바운딩박스 set
+		//m_pScene->m_ppHierarchicalGameObjects[n + 3 + 10]->
+		//m_pScene->m_ppHierarchicalGameObjects[n + 3 + 10]->SetPosition(position.x, position.y, -100);
+		//m_pScene->m_ppHierarchicalGameObjects[n + 3 + 10]->isdraw = false;
+		//m_pScene->m_ppHierarchicalGameObjects[n + 3 + 10]->m_pChild->m_xmBoundingBox.Center = position;
     }
 }
 
@@ -923,7 +929,10 @@ void CGameFramework::AnimateObjects()
 		//	// ����ȯ
 		//}
 		//else
-			m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
+
+
+
+		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
 }
 

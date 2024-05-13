@@ -424,6 +424,7 @@ public:
 	CAnimationController*			m_pSkinnedAnimationController = NULL;
 
 	// 서버에서 그리기 on/off
+	// ** 이거 기본값 잠깐만 false로 바꿀게요
 	bool isdraw = true;
 
 	void SetMesh(CMesh *pMesh);

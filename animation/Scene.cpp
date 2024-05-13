@@ -86,7 +86,7 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 			}
 		}
 		// npc�� �÷��̾�
-		else if (i > 2)
+		else if (i > 2 && i < 13)
 		{
 			// npc�� �÷��̾ �浹
 			//if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
@@ -100,8 +100,23 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
 				//g_sendqueue.push(SENDTYPE::ATTACK_COLLISION);
 				// �ϴ� �浹 �ȵǵ��� �س���
+				//m_ppHierarchicalGameObjects[i + 10]->isdraw = true;
+
+				XMFLOAT3 pos = m_ppHierarchicalGameObjects[i]->GetPosition();
+				m_ppHierarchicalGameObjects[i + 10]->SetPosition(pos);
+				m_ppHierarchicalGameObjects[i + 10]->m_pChild->m_xmBoundingBox.Center = pos;
+
 				return(true);
 			}
+		}
+		else if (i > 12)
+		{
+			if (m_ppHierarchicalGameObjects[i]->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
+			{
+				m_ppHierarchicalGameObjects[i]->SetPosition(0, 0, -999);
+				m_ppHierarchicalGameObjects[i]->m_pChild->m_xmBoundingBox.Center.y = -999;
+			}
+			//return(true);
 		}
 	}
 	return(false);
@@ -818,6 +833,7 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Render(pd3dCommandList, pCamera);
 	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera);
 
+	// isdraw가 true일 때만 그리기
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		if (m_ppHierarchicalGameObjects[i] && m_ppHierarchicalGameObjects[i]->isdraw == true)
@@ -849,6 +865,7 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[0]->SetPosition(400.0f, -20.0f, 400.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(8.0f, 8.0f, 8.0f);
+	m_ppHierarchicalGameObjects[0]->isdraw = true;
 	if (map) delete map;
 
 	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
@@ -858,6 +875,7 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[1]->Rotate(-20.0f, 170.0f, 00.0f);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.7);
+	m_ppHierarchicalGameObjects[1]->isdraw = true;
 
 	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
@@ -865,6 +883,7 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[2]->Rotate(-20.0f, 170.0f, 00.0f);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.6);
+	m_ppHierarchicalGameObjects[2]->isdraw = true;
 
 	m_ppHierarchicalGameObjects[3] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
 	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
@@ -872,6 +891,7 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[3]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[3]->Rotate(-20.0f, 170.0f, 0.0f);
 	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.6);
+	m_ppHierarchicalGameObjects[3]->isdraw = true;
 
 	if (pPlayerModel) delete pPlayerModel;
 
@@ -902,6 +922,7 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 0.0f, 620.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
+	m_ppHierarchicalGameObjects[0]->isdraw = true;
 	if (map) delete map;
 
 	CLoadedModelInfo* pPlayerModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
@@ -936,6 +957,7 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[1]->isdraw = true;
 
 	CLoadedModelInfo* pPlayerModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 
@@ -969,6 +991,7 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[2]->isdraw = true;
 
 	if (pPlayerModel1) delete pPlayerModel1;
 	if (pPlayerModel2) delete pPlayerModel2;
@@ -992,13 +1015,14 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_nHierarchicalGameObjects = 3 + 10;
+	m_nHierarchicalGameObjects = 3 + 10 + 10;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/spaceshipmap.bin", NULL);
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, -50.0f, 620.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
+	m_ppHierarchicalGameObjects[0]->isdraw = true;
 	if (map) delete map;
 
 	CLoadedModelInfo* pPlayerModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
@@ -1042,6 +1066,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[1]->isdraw = true;
 
 	CLoadedModelInfo* pPlayerModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 
@@ -1084,6 +1109,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[2]->isdraw = true;
 
 	if (pPlayerModel1) delete pPlayerModel1;
 	if (pPlayerModel2) delete pPlayerModel2;
@@ -1135,6 +1161,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
 	m_ppHierarchicalGameObjects[3]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[3]->isdraw = true;
 
 	CLoadedModelInfo* pIceEnemyModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 	m_ppHierarchicalGameObjects[4] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel2, 7);
@@ -1155,6 +1182,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[4]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
 	m_ppHierarchicalGameObjects[4]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[4]->isdraw = true;
 
 	CLoadedModelInfo* pIceEnemyModel3 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 	m_ppHierarchicalGameObjects[5] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel3, 7);
@@ -1175,6 +1203,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[5]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
 	m_ppHierarchicalGameObjects[5]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[5]->isdraw = true;
 
 	CLoadedModelInfo* pIceEnemyModel4 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 	m_ppHierarchicalGameObjects[6] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel4, 7);
@@ -1195,6 +1224,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[6]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
 	m_ppHierarchicalGameObjects[6]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[6]->isdraw = true;
 
 	CLoadedModelInfo* pIceEnemyModel5 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 	m_ppHierarchicalGameObjects[7] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel5, 7);
@@ -1215,6 +1245,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[7]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
 	m_ppHierarchicalGameObjects[7]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[7]->isdraw = true;
 
 	CLoadedModelInfo* pIceEnemyModel6 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 	m_ppHierarchicalGameObjects[8] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel6, 7);
@@ -1235,6 +1266,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[8]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
 	m_ppHierarchicalGameObjects[8]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[8]->isdraw = true;
 
 	CLoadedModelInfo* pIceEnemyModel7 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 	m_ppHierarchicalGameObjects[9] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel7, 7);
@@ -1255,6 +1287,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[9]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
 	m_ppHierarchicalGameObjects[9]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[9]->isdraw = true;
 
 	CLoadedModelInfo* pIceEnemyModel8 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 	m_ppHierarchicalGameObjects[10] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel8, 7);
@@ -1275,6 +1308,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[10]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
 	m_ppHierarchicalGameObjects[10]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[10]->isdraw = true;
 
 	CLoadedModelInfo* pIceEnemyModel9 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 	m_ppHierarchicalGameObjects[11] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel9, 7);
@@ -1295,6 +1329,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[11]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
 	m_ppHierarchicalGameObjects[11]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[11]->isdraw = true;
 
 	CLoadedModelInfo* pIceEnemyModel10 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 	m_ppHierarchicalGameObjects[12] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceEnemyModel10, 7);
@@ -1315,6 +1350,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[12]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
 	m_ppHierarchicalGameObjects[12]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[12]->isdraw = true;
 
 	if (pIceEnemyModel1) delete pIceEnemyModel1;
 	if (pIceEnemyModel2) delete pIceEnemyModel2;
@@ -1326,6 +1362,68 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	if (pIceEnemyModel8) delete pIceEnemyModel8;
 	if (pIceEnemyModel9) delete pIceEnemyModel9;
 	if (pIceEnemyModel10) delete pIceEnemyModel10;
+
+	CLoadedModelInfo* element1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/element.bin", NULL);
+	m_ppHierarchicalGameObjects[13] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, element1, 0);
+	m_ppHierarchicalGameObjects[13]->SetPosition(280.0f, -100.0f, 620.0f);
+	m_ppHierarchicalGameObjects[13]->SetScale(10.0f, 10.0f, 10.0f);
+
+	CLoadedModelInfo* element2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/element.bin", NULL);
+	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, element2, 0);
+	m_ppHierarchicalGameObjects[14]->SetPosition(280.0f, -100.0f, 620.0f);
+	m_ppHierarchicalGameObjects[14]->SetScale(10.0f, 10.0f, 10.0f);
+
+	CLoadedModelInfo* element3 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/element.bin", NULL);
+	m_ppHierarchicalGameObjects[15] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, element3, 0);
+	m_ppHierarchicalGameObjects[15]->SetPosition(280.0f, -100.0f, 620.0f);
+	m_ppHierarchicalGameObjects[15]->SetScale(10.0f, 10.0f, 10.0f);
+
+	CLoadedModelInfo* element4 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/element.bin", NULL);
+	m_ppHierarchicalGameObjects[16] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, element4, 0);
+	m_ppHierarchicalGameObjects[16]->SetPosition(280.0f, -100.0f, 620.0f);
+	m_ppHierarchicalGameObjects[16]->SetScale(10.0f, 10.0f, 10.0f);
+
+	CLoadedModelInfo* element5 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/element.bin", NULL);
+	m_ppHierarchicalGameObjects[17] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, element5, 0);
+	m_ppHierarchicalGameObjects[17]->SetPosition(280.0f, -100.0f, 620.0f);
+	m_ppHierarchicalGameObjects[17]->SetScale(10.0f, 10.0f, 10.0f);
+
+	CLoadedModelInfo* element6 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/element.bin", NULL);
+	m_ppHierarchicalGameObjects[18] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, element6, 0);
+	m_ppHierarchicalGameObjects[18]->SetPosition(280.0f, -100.0f, 620.0f);
+	m_ppHierarchicalGameObjects[18]->SetScale(10.0f, 10.0f, 10.0f);
+
+	CLoadedModelInfo* element7 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/element.bin", NULL);
+	m_ppHierarchicalGameObjects[19] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, element7, 0);
+	m_ppHierarchicalGameObjects[19]->SetPosition(280.0f, -100.0f, 620.0f);
+	m_ppHierarchicalGameObjects[19]->SetScale(10.0f, 10.0f, 10.0f);
+
+	CLoadedModelInfo* element8 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/element.bin", NULL);
+	m_ppHierarchicalGameObjects[20] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, element8, 0);
+	m_ppHierarchicalGameObjects[20]->SetPosition(280.0f, -100.0f, 620.0f);
+	m_ppHierarchicalGameObjects[20]->SetScale(10.0f, 10.0f, 10.0f);
+
+	CLoadedModelInfo* element9 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/element.bin", NULL);
+	m_ppHierarchicalGameObjects[21] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, element9, 0);
+	m_ppHierarchicalGameObjects[21]->SetPosition(280.0f, -100.0f, 620.0f);
+	m_ppHierarchicalGameObjects[21]->SetScale(10.0f, 10.0f, 10.0f);
+
+	CLoadedModelInfo* element10 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/element.bin", NULL);
+	m_ppHierarchicalGameObjects[22] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, element10, 0);
+	m_ppHierarchicalGameObjects[22]->SetPosition(280.0f, -100.0f, 620.0f);
+	m_ppHierarchicalGameObjects[22]->SetScale(10.0f, 10.0f, 10.0f);
+
+	if (element1) delete element1;
+	if (element2) delete element2;
+	if (element3) delete element3;
+	if (element4) delete element4;
+	if (element5) delete element5;
+	if (element6) delete element6;
+	if (element7) delete element7;
+	if (element8) delete element8;
+	if (element9) delete element9;
+	if (element10) delete element10;
+
 }
 
 void CSpaceShipScene::ReleaseUploadBuffers()
