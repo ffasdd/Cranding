@@ -77,29 +77,25 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 					if (pMapObject == NULL)break;
 			}
 		}
-		// �ٸ� Ŭ���� �浹�� ���
+	
 		else if( i == 1 || i == 2) 
 		{
-			if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
+			/*if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 			{
 				return(true);
-			}
+			}*/
+			return false;
 		}
-		// npc�� �÷��̾�
+	
 		else if (i > 2)
 		{
-			// npc�� �÷��̾ �浹
-			//if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
-			//	return true;
-			// �÷��̾ ���� �� && Į�� npc �浹
+	
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true && m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-				cout << i << endl;
-				// ���� ������?
+	
 				cout << " Attack to Monster " << g_monsters[i-3].getId() << endl;
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
-				//g_sendqueue.push(SENDTYPE::ATTACK_COLLISION);
-				// �ϴ� �浹 �ȵǵ��� �س���
+	
 				return(true);
 			}
 		}

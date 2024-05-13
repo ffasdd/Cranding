@@ -997,7 +997,7 @@ void CGameFramework::FrameAdvance()
 
 	AnimateObjects();
 
-	if(SceneNum>1)
+	if(SceneNum > 2)
 		UpdateUI();
 
 

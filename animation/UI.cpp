@@ -251,13 +251,13 @@ void UILayer::Render(UINT nFrame, int scenenum,bool isready, int curDay, int cur
 
         // map ÀÌµ¿
         if(gGameFramework.m_pPlayer->isIceMap)
-            m_pd2dDeviceContext->DrawText(m_vecIngameScene[0], (UINT)wcslen(m_vecIngameScene[0]), m_textFormats[TEXT_SIZE::SIZE_18], m_Title, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+            m_pd2dDeviceContext->DrawText(m_vecIngameScene[0], (UINT)wcslen(m_vecIngameScene[0]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         if (gGameFramework.m_pPlayer->isFireMap)
-            m_pd2dDeviceContext->DrawText(m_vecIngameScene[1], (UINT)wcslen(m_vecIngameScene[1]), m_textFormats[TEXT_SIZE::SIZE_18], m_Title, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+            m_pd2dDeviceContext->DrawText(m_vecIngameScene[1], (UINT)wcslen(m_vecIngameScene[1]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         if (gGameFramework.m_pPlayer->isGrassMap)
-            m_pd2dDeviceContext->DrawText(m_vecIngameScene[2], (UINT)wcslen(m_vecIngameScene[2]), m_textFormats[TEXT_SIZE::SIZE_18], m_Title, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+            m_pd2dDeviceContext->DrawText(m_vecIngameScene[2], (UINT)wcslen(m_vecIngameScene[2]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
 
         m_pd2dDeviceContext->EndDraw();

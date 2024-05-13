@@ -142,24 +142,7 @@ void Network::SendProcess(SENDTYPE sendtype)
 
 void Network::TimerThread()
 {
-	/*while (ServerStart)
-	{
-		start = clock();
-		while (true)
-		{
-			end = clock();
-			if (double(end - start) / CLOCKS_PER_SEC == second) {
-				curTimer++;
-				g_sendqueue.push(SENDTYPE::TIME_CHECK);
-				if (curTimer % 2 == 0) isNight = true;
-				else if (curTimer % 7 == 0) isNight = false;
-				break;
-			}
-			else continue;
 
-		}
-		
-	}*/
 }
 
 void Network::ProcessData(size_t _size)
@@ -227,7 +210,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setCharacterType(p->charactertype);
 		g_clients[ob_id].setAnimation(int(p->a_state));
 		g_clients[ob_id].setprevAnimation(int(p->prev_state));
-		cout << " Add Player - " << ob_id << endl;
+
 		break;
 	}
 
