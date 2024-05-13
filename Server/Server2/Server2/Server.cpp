@@ -206,12 +206,19 @@ void Server::WorkerThread()
 			break;
 		}
 		case COMP_TYPE::NPC_UPDATE: {
-
 			int r_id = static_cast<int>(key);
 			ingameroom[r_id].UpdateNpc();
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
 			delete ex_over; 
+			break;
+		}
+		case COMP_TYPE::NPC_INITIALIZE: {
+			int r_id = static_cast<int>(key);
+			InitialziedMonster(r_id);
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(60s),r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
 			break;
 		}
 		default:
@@ -227,8 +234,8 @@ void Server::InitialziedMonster(int room_Id)
 
 	std::random_device rd;
 	std::default_random_engine dre;
-	std::uniform_real_distribution<float> xpos(-10, 450);
-	std::uniform_real_distribution<float> zpos(-641, -521);
+	std::uniform_real_distribution<float> xpos(-10, 370);
+	std::uniform_real_distribution<float> zpos(-600, -501);
 
 	for (int i = 0; i < MAX_NPC; ++i)
 	{
@@ -461,13 +468,16 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				pl->send_ingame_start();
 			}
-
-			InitialziedMonster(r_id);
 			ingameroom[r_id].start_time = chrono::system_clock::now();
-			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
-			g_Timer.InitTimerQueue(ev);
-		}
 
+			TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
+			g_Timer.InitTimerQueue(ev1);
+			/*InitialziedMonster(r_id);*/
+		
+			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
+			g_Timer.InitTimerQueue(ev);
+
+		}
 
 	}
 						break;
@@ -539,9 +549,7 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_ATTACK_COLLISION:
 	{
 		CS_ATTACK_COLLISION_PACKET* p = reinterpret_cast<CS_ATTACK_COLLISION_PACKET*>(packet);
-		ingameroom[p->room_id].r_l.lock();
 		ingameroom[p->room_id].NightMonster[p->npc_id]._is_alive = false;
-		ingameroom[p->room_id].r_l.unlock();
 		break;
 	}
 

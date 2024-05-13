@@ -1,5 +1,5 @@
 #pragma once
-enum class COMP_TYPE : int { Accept , Recv , Send, NPC_MOVE, NPC_ATTACK, NPC_DIE, FIND_PLAYER, NPC_WAKE_UP ,NPC_UPDATE };
+enum class COMP_TYPE : int { Accept , Recv , Send, NPC_MOVE, NPC_ATTACK, NPC_DIE, FIND_PLAYER, NPC_WAKE_UP ,NPC_UPDATE ,NPC_DEAD, NPC_INITIALIZE};
 class Over_Exp
 {
 public:

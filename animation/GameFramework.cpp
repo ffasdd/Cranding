@@ -291,13 +291,13 @@ void CGameFramework::ChangeSwapChainState()
 	CreateSwapChainRenderTargetViews();
 }
 
-// ¸¶¿ì½º ÀÔ·Â, Á¶ÀÛ
+// ï¿½ï¿½ï¿½ì½º ï¿½Ô·ï¿½, ï¿½ï¿½ï¿½ï¿½
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
-		// ÁÂÅ¬¸¯À¸·Î °ø°Ý
+		// ï¿½ï¿½Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
@@ -362,22 +362,22 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 		}
 		case '0':
-			// ¤±¤ÄÀÎÈ­¸é
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È­ï¿½ï¿½
 			SceneNum = 0;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			break;
 
 		case '1':
-			// ·ÎºñÈ­¸é
+			// ï¿½Îºï¿½È­ï¿½ï¿½
 			if (SceneNum == 0) {
 
 				SceneNum = 1;
 				isready = true;
 
 				gNetwork.SendLoginfo();
-				//// ·Î±×ÀÎ ¸®½Ãºí ¹ÞÀ» ¶§±îÁö ´ë±â ÇØÁà¾ßÇÔ 
-				WaitForSingleObject(loginevent, INFINITE); // ÀÌº¥Æ® °´Ã¼ Ä¿³Î, ¿À¹öÇìµå .
+				//// ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ãºï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+				WaitForSingleObject(loginevent, INFINITE); // ï¿½Ìºï¿½Æ® ï¿½ï¿½Ã¼ Ä¿ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ .
 
 				cl_id = gNetwork.Getmyid();
 				m_pPlayer->c_id = gNetwork.Getmyid();
@@ -397,7 +397,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			gNetwork.SendIngameStart();
 
 			WaitForSingleObject(startevent, INFINITE);
-			// ±×¸®±â Àü¿¡ ¼¼¿ö¾ßÇÔ 
+			// ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 
@@ -477,8 +477,8 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	if (cl_id == n)
 	{
 		m_pPlayer->SetId(cl_id);
-		// ²¨µµ µÇ´ÂÁö ¾ÈµÇ´ÂÁö ¸ð¸£°ÚÀ½
-		m_pPlayer->SetPosition(position);
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ï¿½ï¿½ ï¿½ÈµÇ´ï¿½ï¿½ï¿½ ï¿½ð¸£°ï¿½ï¿½ï¿½
+		//m_pPlayer->SetPosition(position);
 	}
 	else
 	{
@@ -502,14 +502,13 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 
 void CGameFramework::myFunc_SetMonPosition(int n, int SCSceneNum, XMFLOAT3 position)
 {
-	if (SCSceneNum > 1)
-	{
-		m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
-		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
-		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
-		//m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
-
-	}
+    if (SCSceneNum > 1)
+    {
+        m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
+        m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
+        m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
+        //m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
+    }
 }
 
 
@@ -562,10 +561,24 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 			break;
 		}
 
-		// ¼­¹ö¿¡¼­ ¹ÞÀº ÀÌÀü ¾Ö´Ï¸ÞÀÌ¼Ç ¹øÈ£¿Í ÇöÀç ¾Ö´Ï¸ÞÀÌ¼Ç ¹øÈ£°¡ ´Ù¸¥ °æ¿ì(ºí·»µù ÇØ¾ßÇÏ´Â °æ¿ì)
+		if (id == 1 || id == 2)
+		{
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
+		}
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¾ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½)
 		if (prevAni != curAni)
 		{
-			// ÀÌÀü ¾Ö´Ï¸ÞÀÌ¼Ç ¹øÈ£, ÀÌÈÄ ¾Ö´Ï¸ÞÀÌ¼Ç ¹øÈ£ ÀúÀå
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½È£, ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½È£ ï¿½ï¿½ï¿½ï¿½
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
@@ -576,20 +589,10 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
 
-			if (id == 1)
-			{
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
-				m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
-			}
+			//if ()
+			//{
+
+			//}
 			g_clients[others_id + 1].setprevAnimation(curAni);
 		}
 	}
@@ -759,7 +762,7 @@ void CGameFramework::BuildObjects(int nScene)
 	DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
 	m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
 
-	// µª½º SRV ¾îÂ¼±¸..
+	// ï¿½ï¿½ï¿½ï¿½ SRV ï¿½ï¿½Â¼ï¿½ï¿½..
 	D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
 
 
@@ -794,7 +797,7 @@ void CGameFramework::ReleaseObjects()
 	m_pPostProcessingShader = nullptr;
 }
 
-// ÇÃ·¹ÀÌ¾î Á¶ÀÛ ºÎºÐ -> »óÇÏÁÂ¿ì, ¸¶¿ì½º
+// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½Â¿ï¿½, ï¿½ï¿½ï¿½ì½º
 void CGameFramework::ProcessInput()
 {
 	m_pPlayer->m_xmf3BeforeCollidedPosition = m_pPlayer->GetPosition();
@@ -816,8 +819,8 @@ void CGameFramework::ProcessInput()
 		}
 
 		DWORD dwDirection = 0;
-		// À§ÂÊ Å°°¡ ´­·ÁÀÖ´ÂÁö È®ÀÎÇÏ´Â ºñÆ® ¿¬»ê
-		// À§ÂÊ Å°°¡ ´­·ÁÀÖÀ¸¸é dwDirection¿¡ dwDirection°ú DIR_FORWARDÀÇ ºñÆ® |(or) ¿¬»ê ÈÄ ÇÒ´ç ¿¬»ê(=)À» ½ÃÇà
+		// ï¿½ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+		// ï¿½ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ dwDirectionï¿½ï¿½ dwDirectionï¿½ï¿½ DIR_FORWARDï¿½ï¿½ ï¿½ï¿½Æ® |(or) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ò´ï¿½ ï¿½ï¿½ï¿½ï¿½(=)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 		if (pKeysBuffer[KEY_W] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			dwDirection |= DIR_FORWARD;
@@ -829,7 +832,7 @@ void CGameFramework::ProcessInput()
 			dwDirection |= DIR_RIGHT;
 
 
-		// f1 ´©¸£¸é ±âÀý, f2 ´©¸£¸é ºÎÈ°
+		// f1 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, f2 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°
 		if (pKeysBuffer[VK_F1] & 0xF0)
 		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
@@ -841,11 +844,11 @@ void CGameFramework::ProcessInput()
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsLastBlending = true;
 		}
 
-		// spacebar ´©¸£¸é Ä¡·á
+		// spacebar ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä¡ï¿½ï¿½
 		if ((pKeysBuffer[VK_SPACE] & 0xF0) && m_pPlayer->m_pSkinnedAnimationController->m_bIsMove == false)
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = true;
 
-		// °ø°Ý Å°
+		// ï¿½ï¿½ï¿½ï¿½ Å°
 		if (pKeysBuffer[VK_LBUTTON] & 0xF0)
 		{
 
@@ -903,23 +906,23 @@ void CGameFramework::AnimateObjects()
 
 	if (SceneNum > 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
 	{
-		// ¿©±â¼­ ¾À ÀüÈ¯ Ã³¸®ÇØÁÖ¸é µÉ µí
-		if (m_pPlayer->isFireMap == true)
-		{
-			m_pPlayer->isFireMap = false;
-			// ¾ÀÀüÈ¯
-		}
-		else if (m_pPlayer->isGrassMap == true)
-		{
-			m_pPlayer->isGrassMap = false;
-			// ¾ÀÀüÈ¯
-		}
-		else if (m_pPlayer->isIceMap == true)
-		{
-			m_pPlayer->isIceMap = false;
-			// ¾ÀÀüÈ¯
-		}
-		else
+		// ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ ï¿½ï¿½È¯ Ã³ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ ï¿½ï¿½ ï¿½ï¿½
+		//if (m_pPlayer->isFireMap == true)
+		//{
+		//	m_pPlayer->isFireMap = false;
+		//	// ï¿½ï¿½ï¿½ï¿½È¯
+		//}
+		//else if (m_pPlayer->isGrassMap == true)
+		//{
+		//	m_pPlayer->isGrassMap = false;
+		//	// ï¿½ï¿½ï¿½ï¿½È¯
+		//}
+		//else if (m_pPlayer->isIceMap == true)
+		//{
+		//	m_pPlayer->isIceMap = false;
+		//	// ï¿½ï¿½ï¿½ï¿½È¯
+		//}
+		//else
 			m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
 }
@@ -963,17 +966,17 @@ void CGameFramework::UpdateUI()
 			curDay++;
 		}
 	}
-	// ½Ã°è
+	// ï¿½Ã°ï¿½
 	//id2d1solidcolorbrush* pd2dbrush = m_puilayer->createbrush(d2d1::colorf(d2d1::colorf::pink, 1.0f));
-	//idwritetextformat* pdwtextformat = m_puilayer->createtextformat(l"¸¼Àº °íµñ", m_nwndclientheight / 15.0f);
+	//idwritetextformat* pdwtextformat = m_puilayer->createtextformat(l"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", m_nwndclientheight / 15.0f);
 	//d2d1_rect_f d2drect = d2d1::rectf(00.0f, 0.0f, (float)m_nwndclientwidth, (float)m_nwndclientheight);
 
 	//wchar pstroutputtext[256];
 	//swprintf_s(pstroutputtext, 256, l"day: %d  time:%02d:%02d", curday, curminute, cursecond);
 	//m_puilayer->updatetextoutputs(0, pstroutputtext, &d2drect, pdwtextformat, pd2dbrush);
 
-	// Áö¿ö¹ö¸®
-	// Ã¼·Â¹Ù
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// Ã¼ï¿½Â¹ï¿½
    /* float rectwidth = (m_pplayer->m_hp / 100.0f) * 2.0f * 20.0f;
 
 	d2d1_rect_f rect = { 400.0f, 430.0f, 400 + rectwidth * 5.0, (float)m_nwndclientheight - 20.0 };
@@ -1021,7 +1024,7 @@ void CGameFramework::FrameAdvance()
 	}
 	//else
 	{
-		// ÈÄ¸é ¹öÆÛ¿¡ ÇØ´çÇÏ´Â°Å
+		// ï¿½Ä¸ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½Ø´ï¿½ï¿½Ï´Â°ï¿½
 		m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], TRUE, NULL);
 
 		m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera, &m_nDrawOption);

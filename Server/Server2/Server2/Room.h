@@ -52,5 +52,6 @@ public:
 	void SendAddMonster(int npc_id,int _id);
 	//void SendRemoveMonster(int npc_id);
 	void UpdateNpc();
+	void DeleteNpc();
 };
 

@@ -35,7 +35,7 @@ public:
 	bool can_see(int to, int from);
 	int get_new_client_id();
 	int get_new_room_id(unordered_map<int,Room>& rooms);
-	void MoveNightNpc(int r_id,int npcid,float elapsedtime,float speed);
+
 
 
 	void ReadyToStart(); // 로비 관찰 스레드 함수 

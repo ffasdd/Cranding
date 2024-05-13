@@ -45,9 +45,9 @@ void Room::UpdateNpc()
 		if (npc._is_alive == false)
 		{
 			npc.Remove();
-			continue;
 		}
-		npc.Move();
+		else
+			npc.Move();
 		sendMonsterupdatePacket._monster[idx]._id = idx;
 		sendMonsterupdatePacket._monster[idx]._pos = npc._pos;
 		idx++;
@@ -56,4 +56,17 @@ void Room::UpdateNpc()
 	{
 		pl->do_send(&sendMonsterupdatePacket);
 	}
+}
+
+void Room::DeleteNpc()
+{
+	NightMonsters sendMonsterDead;
+	sendMonsterDead.size = sizeof(NightMonsters);
+	sendMonsterDead.type = SC_MONSTER_UPDATE;
+	int idxx = 0;
+	for (auto& npc : NightMonster)
+	{
+
+	}
+
 }
