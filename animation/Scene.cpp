@@ -78,14 +78,14 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 			}
 		}
 	
-		else if( i == 1 || i == 2) 
-		{
-			/*if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
-			{
-				return(true);
-			}*/
-			return false;
-		}
+		//else if( i == 1 || i == 2) 
+		//{
+		//	/*if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
+		//	{
+		//		return(true);
+		//	}*/
+		//	return false;
+		//}
 	
 		else if (i > 2)
 		{
@@ -93,7 +93,6 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true && m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 	
-				cout << " Attack to Monster " << g_monsters[i-3].getId() << endl;
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
 	
 				return(true);
