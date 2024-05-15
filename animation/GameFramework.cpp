@@ -376,8 +376,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				isready = true;
 
 				gNetwork.SendLoginfo();
-				//// �α��� ���ú� ���� ������ ��� ������� 
-				WaitForSingleObject(loginevent, INFINITE); // �̺�Ʈ ��ü Ŀ��, ������� .
+				
+				WaitForSingleObject(loginevent, INFINITE); 
 
 				cl_id = gNetwork.Getmyid();
 				m_pPlayer->c_id = gNetwork.Getmyid();
@@ -391,15 +391,16 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case '2':
 			if (SceneNum == 0) break;
 			// spaceship map
+			SceneNum = 2;
 			isready = false;
 			// send ready packet  
 			gNetwork.SendIngameStart();
-
-			WaitForSingleObject(startevent, INFINITE);
-			// �׸��� ���� �������� 
-			SceneNum = 2;
-			ReleaseObjects();
-			BuildObjects(SceneNum);
+		
+			//WaitForSingleObject(startevent, INFINITE);
+			//// �׸��� ���� �������� 
+			//
+			//ReleaseObjects();
+			//BuildObjects(SceneNum);
 
 
 			break;

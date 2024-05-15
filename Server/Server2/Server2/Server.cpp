@@ -37,13 +37,14 @@ void Server::Stop()
 
 void Server::NetworkSet()
 {
-	listensocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	SOCKADDR_IN serverAddr;
 	memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_addr.S_un.S_addr = INADDR_ANY;
 	serverAddr.sin_port = htons(PORT_NUM);
 
+	listensocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
+	
 	if (SOCKET_ERROR == bind(listensocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr)))
 		cout << "Bind Error" << endl;
 
@@ -89,8 +90,16 @@ void Server::Iocp()
 	_IocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(listensocket), _IocpHandle, 9999, 0);
 
-	clientsocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+	clientsocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
+	LINGER option;
+	option.l_linger = 0;
+	option.l_onoff = 1;
+	setsockopt(clientsocket, SOL_SOCKET, SO_LINGER, (const char*)&option, sizeof(option));
 	_overlapped._comptype = COMP_TYPE::Accept;
+
+	// DELAY를 해야하는지 잘모르겠음 
+	// 결론은 ㄴㄴ CPU부담이 크고 비동기상황에서 X 
+
 
 	BOOL ret = AcceptEx(listensocket, clientsocket, _overlapped._sendbuf, 0, addr_size + 16, addr_size + 16, 0, &_overlapped._over);
 	if (FALSE == ret)
@@ -466,7 +475,6 @@ void Server::ProcessPacket(int id, char* packet)
 
 			TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
 			g_Timer.InitTimerQueue(ev1);
-			/*InitialziedMonster(r_id);*/
 		
 			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
@@ -642,6 +650,32 @@ void Server::ReadyToStart()
 			this_thread::sleep_for(1s);
 
 	}
+}
+
+SOCKET Server::CreateSocket()
+{
+	return ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
+}
+
+bool Server::SetLinger(SOCKET socket, UINT16 onoff, UINT16 linger)
+{
+	LINGER option;
+	option.l_linger = linger;
+	option.l_onoff = onoff;
+
+	return setsockopt(socket, SOL_SOCKET, SO_LINGER, (const char*)&option, sizeof(option));
+}
+
+bool Server::SetReuseAddress(SOCKET socket, bool flag)
+{
+	return false;
+}
+
+bool Server::SetTcpNoDelay(SOCKET _socket )
+{
+	// 서버에서 노딜레이를 해주는게 맞을까 속도보단 안전성
+	int DelayZeroOpt = 1;
+	return setsockopt(_socket, SOL_SOCKET, TCP_NODELAY, (const char*)&DelayZeroOpt, sizeof(DelayZeroOpt));
 }
 
 

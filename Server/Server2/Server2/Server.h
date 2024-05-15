@@ -41,6 +41,15 @@ public:
 	void ReadyToStart(); // 로비 관찰 스레드 함수 
 
 public:
+	//Socket Utils 
+	SOCKET CreateSocket();
+	bool SetLinger(SOCKET socket, UINT16 onoff, UINT16 linger);
+	bool SetReuseAddress(SOCKET socket, bool flag);
+	bool SetTcpNoDelay(SOCKET socket );
+
+
+
+public:
 	SOCKET listensocket; 
 	SOCKET clientsocket;
 
@@ -50,7 +59,6 @@ public:
 	thread lobbythread;
 	thread timer_thread;
 	vector<thread> worker_thread;
-
 
 
 	concurrency::concurrent_queue<Session*> matchingqueue;

@@ -12,6 +12,14 @@ Network::Network()
 		std::cout << "WSAStart Up Error " << endl;
 
 	clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	int DelayZeroOpt = 1;
+	setsockopt(clientsocket, SOL_SOCKET, TCP_NODELAY, (const char*)&DelayZeroOpt, sizeof(DelayZeroOpt)); // Nodelay  네이클 알고리즘 종료 
+
+	LINGER _linger;
+	_linger.l_linger = 0;
+	_linger.l_onoff = 1;
+	setsockopt(clientsocket, SOL_SOCKET, SO_LINGER, (const char*)& _linger, sizeof(_linger));
+	// Linger option
 
 	if (clientsocket == INVALID_SOCKET)
 	{
@@ -269,8 +277,10 @@ void Network::ProcessPacket(char* buf)
 	}
 	case SC_INGAME_STRAT: {
 		// Timer 쓰레드를 켜줘야함 
-		SetEvent(startevent);
+		//SetEvent(startevent);
 		//timerThread = std::thread([this]() {TimerThread(); });
+		gGameFramework.ReleaseObjects();
+		gGameFramework.BuildObjects(2);
 		break;
 	}
 	case SC_REMOVE_OBJECT: {
