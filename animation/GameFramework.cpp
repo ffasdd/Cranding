@@ -579,7 +579,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 		// �������� ���� ���� �ִϸ��̼� ��ȣ�� ���� �ִϸ��̼� ��ȣ�� �ٸ� ���(������ �ؾ��ϴ� ���)
 		if (prevAni != curAni)
 		{
-			// ���� �ִϸ��̼� ��ȣ, ���� �ִϸ��̼� ��ȣ ����
+			
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
@@ -660,7 +660,7 @@ void CGameFramework::OnDestroy()
 
 void CGameFramework::BuildObjects(int nScene)
 {
-	m_pUILayer = UILayer::Create(m_nSwapChainBuffers, 0, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+	//m_pUILayer = UILayer::Create(m_nSwapChainBuffers, 0, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 	switch (nScene)
@@ -784,7 +784,7 @@ void CGameFramework::ReleaseObjects()
 	/*  if (m_pUILayer) m_pUILayer->ReleaseResources();
 	  if (m_pUILayer) delete m_pUILayer;*/
 
-	if (m_pPlayer) m_pPlayer->Release();
+	if (m_pScene->m_pPlayer) m_pScene->m_pPlayer->Release();
 
 	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) {
@@ -997,8 +997,8 @@ void CGameFramework::FrameAdvance()
 
 	AnimateObjects();
 
-	if(SceneNum > 1)
-		UpdateUI();
+	//if(SceneNum > 1)
+	//	UpdateUI();
 
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
@@ -1043,10 +1043,10 @@ void CGameFramework::FrameAdvance()
 
 	WaitForGpuComplete();
 
-	if (m_pUILayer)
-	{
-		UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, SceneNum, isready, curDay, curMinute, curSecond);
-	}
+	//if (m_pUILayer)
+	//{
+	//	UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, SceneNum, isready, curDay, curMinute, curSecond);
+	//}
 
 
 

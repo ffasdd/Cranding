@@ -465,7 +465,7 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 
 
-		if (ingameroom[r_id].readycnt == 3)
+		if (ingameroom[r_id].readycnt == 2)
 		{
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{

@@ -3,10 +3,10 @@ constexpr int BUF_SIZE = 512;
 constexpr int NAME_SIZE = 20;
 constexpr int CHAT_SIZE = 100;
 
-constexpr int MAX_USER = 6;
-constexpr int MAX_ROOM = 3;
+constexpr int MAX_USER = 4;
+constexpr int MAX_ROOM = 2;
 
-constexpr int MAX_ROOM_USER = 3;
+constexpr int MAX_ROOM_USER = 2;
 
 constexpr char CS_LOGIN = 0;
 constexpr char CS_MOVE = 1;
