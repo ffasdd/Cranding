@@ -216,10 +216,5 @@ public:
 	void send_ingame_start();
 
 	void send_add_monster(int npc_id);
-	void send_move_monster(int npc_id);
-	void send_attack_monster(int npc_id);
-	void send_rotate_monster(int npc_id);
-	void send_monster_change_animation(int npc_id);
-
 };
 extern array<Session, MAX_USER> clients;

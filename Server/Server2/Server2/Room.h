@@ -1,10 +1,9 @@
 #pragma once
-#include "Session.h"
 #include "Monster.h"
+#include"Session.h"
 class Session;
-
+class Monster;
 enum class roomState : int { Free, Ingame };
-
 class Room
 {
 public:
@@ -39,12 +38,12 @@ public:
 
 	// Night Monster
 	array<Monster, 10> NightMonster;
-	// Fire Monster
-	array<Monster, 30> FireMonster;
-	// Ice Monster
-	array<Monster, 30> IceMonster;
-	// Nature Monster 
-	array<Monster, 30> NatureMonster;
+	//// Fire Monster
+	//array<Monster, 30> FireMonster;
+	//// Ice Monster
+	//array<Monster, 30> IceMonster;
+	//// Nature Monster 
+	//array<Monster, 30> NatureMonster;
 
 
 public:

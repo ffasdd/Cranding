@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Room.h"
+//#include"protocol.h"
 #include"Timer.h"
 extern HANDLE _IocpHandle;
 extern Timer g_Timer;
@@ -42,6 +43,7 @@ void Room::UpdateNpc()
 	// ÀüÃ¼ NPC UPDATE 
 	for (auto& npc : NightMonster)
 	{
+		npc.ingamePlayer = ingamePlayer;
 		if (npc._is_alive == false)
 		{
 			npc.Remove();
@@ -50,6 +52,9 @@ void Room::UpdateNpc()
 			npc.Move();
 		sendMonsterupdatePacket._monster[idx]._id = idx;
 		sendMonsterupdatePacket._monster[idx]._pos = npc._pos;
+		sendMonsterupdatePacket._monster[idx]._look = npc._look;
+		sendMonsterupdatePacket._monster[idx]._right = npc._right;
+
 		idx++;
 	}
 	for (auto& pl : ingamePlayer)

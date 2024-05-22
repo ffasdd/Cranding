@@ -55,7 +55,7 @@ public: // thread send
 	
 public: // utils
 	int getmyid(int _id);
-
+	bool IngameStart = false;
 	bool gamestart = false;
 public:
 	int prev_remain = 0;
@@ -79,8 +79,8 @@ private:
 	unsigned int curTimer = 0;
 	//CPlayer* PlayerInfo;
 
+	
 private:
-
 	bool ServerStart = false;
 
 };

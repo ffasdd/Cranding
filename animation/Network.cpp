@@ -278,8 +278,11 @@ void Network::ProcessPacket(char* buf)
 		// Timer 쓰레드를 켜줘야함 
 		//SetEvent(startevent);
 		//timerThread = std::thread([this]() {TimerThread(); });
-		gGameFramework.ReleaseObjects();
-		gGameFramework.BuildObjects(2);
+		//gamestart = false;
+		//gGameFramework.ReleaseObjects();
+		//gGameFramework.BuildObjects(2);
+		//gamestart = true;
+		IngameStart = true;
 		break;
 	}
 	case SC_REMOVE_OBJECT: {

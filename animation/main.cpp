@@ -66,6 +66,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
+			if (gNetwork.IngameStart)
+			{
+				gGameFramework.ReleaseObjects();
+				gGameFramework.BuildObjects(2);
+				gNetwork.IngameStart = false;
+			}
+
 			if (gGameFramework.m_pPlayer != NULL)
 			{
 				if (gNetwork.gamestart)
@@ -81,7 +88,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 					for (int i = 0; i < g_monsters.size(); ++i)
 					{
 						gGameFramework.myFunc_SetMonPosition(i, gGameFramework.SceneNum, g_monsters[i].getPos());
-
 					}
 
 				}

@@ -104,6 +104,8 @@ enum class animateState : int {
 struct NightMonster
 {
 	XMFLOAT3 _pos;
+	XMFLOAT3 _look;
+	XMFLOAT3 _right;
 	int _id;
 
 };

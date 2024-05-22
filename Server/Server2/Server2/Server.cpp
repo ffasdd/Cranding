@@ -97,10 +97,6 @@ void Server::Iocp()
 	setsockopt(clientsocket, SOL_SOCKET, SO_LINGER, (const char*)&option, sizeof(option));
 	_overlapped._comptype = COMP_TYPE::Accept;
 
-	// DELAY를 해야하는지 잘모르겠음 
-	// 결론은 ㄴㄴ CPU부담이 크고 비동기상황에서 X 
-
-
 	BOOL ret = AcceptEx(listensocket, clientsocket, _overlapped._sendbuf, 0, addr_size + 16, addr_size + 16, 0, &_overlapped._over);
 	if (FALSE == ret)
 	{
@@ -116,8 +112,6 @@ void Server::Iocp()
 		worker_thread.emplace_back(&Server::WorkerThread, this);
 	for (auto& th : worker_thread)
 		th.join();
-
-
 }
 
 void Server::WorkerThread()
@@ -239,8 +233,8 @@ void Server::InitialziedMonster(int room_Id)
 {
 	std::random_device rd;
 	std::default_random_engine dre;
-	std::uniform_real_distribution<float> xpos(-10, 370);
-	std::uniform_real_distribution<float> zpos(-600, -501);
+	std::uniform_real_distribution<float> xpos(50, 360);
+	std::uniform_real_distribution<float> zpos(-700, -350);
 
 	for (int i = 0; i < MAX_NPC; ++i)
 	{
@@ -327,9 +321,6 @@ void Server::ProcessPacket(int id, char* packet)
 			if (old_vlist.count(pl) == 0)
 				clients[id].send_add_info_packet(pl);
 		}
-
-
-
 	}
 				break;
 	case CS_ROTATE: {
