@@ -1,5 +1,5 @@
 // stdafx.cpp : 표준 포함 파일만 들어 있는 소스 파일입니다.
-// LabProject03-1.pch는 미리 컴파일된 헤더가 됩니다.
+// Cranding1.pch는 미리 컴파일된 헤더가 됩니다.
 // stdafx.obj에는 미리 컴파일된 형식 정보가 포함됩니다.
 
 #include "stdafx.h"
@@ -220,7 +220,7 @@ ID3D12Resource* CreateTextureResourceFromDDSFile(ID3D12Device* pd3dDevice, ID3D1
 	return(pd3dTexture);
 }
 
-ID3D12Resource* CreateTexture2DResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, UINT nWidth, UINT nHeight, UINT nElements, UINT nMipLevels, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS d3dResourceFlags, D3D12_RESOURCE_STATES d3dResourceStates, D3D12_CLEAR_VALUE* pd3dClearValue)
+ID3D12Resource* CreateTexture2DResource(ID3D12Device* pd3dDevice, UINT nWidth, UINT nHeight, UINT nElements, UINT nMipLevels, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS d3dResourceFlags, D3D12_RESOURCE_STATES d3dResourceStates, D3D12_CLEAR_VALUE* pd3dClearValue)
 {
 	ID3D12Resource* pd3dTexture = NULL;
 
@@ -250,7 +250,6 @@ ID3D12Resource* CreateTexture2DResource(ID3D12Device* pd3dDevice, ID3D12Graphics
 
 	return(pd3dTexture);
 }
-
 ID3D12Resource* CreateTextureResourceFromWICFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, ID3D12Resource** ppd3dUploadBuffer, D3D12_RESOURCE_STATES d3dResourceStates)
 {
 	ID3D12Resource* pd3dTexture = NULL;

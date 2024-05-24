@@ -9,6 +9,17 @@
 
 #include "Object.h"
 #include "Camera.h"
+#include"Session.h"
+class Network;
+extern Network gNetwork;
+
+struct CB_PLAYER_INFO
+{
+	XMFLOAT4X4					m_xmf4x4World;
+};
+
+extern unordered_map<int, Session> g_clients;
+extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 
 class CPlayer : public CGameObject
 {
@@ -36,8 +47,17 @@ protected:
 	CCamera						*m_pCamera = NULL;
 
 public:
+	int c_id = 0;
+public:
 	CPlayer();
 	virtual ~CPlayer();
+
+	// 충돌시 씬전환 변수들
+	bool isFireMap = false;
+	bool isGrassMap = false;
+	bool isIceMap = false;
+
+	XMFLOAT3					m_xmf3BeforeCollidedPosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
 	XMFLOAT3 GetPosition() { return(m_xmf3Position); }
 	XMFLOAT3 GetLookVector() { return(m_xmf3Look); }
@@ -54,6 +74,9 @@ public:
 	void SetScale(XMFLOAT3& xmf3Scale) { m_xmf3Scale = xmf3Scale; }
 
 	const XMFLOAT3& GetVelocity() const { return(m_xmf3Velocity); }
+	const XMFLOAT3& GetGravity()const { return(m_xmf3Gravity); }
+	float GetMaxVelocityXZ() { return m_fMaxVelocityXZ; }
+	float GetMaxVelocityY() { return m_fMaxVelocityY; }
 	float GetYaw() const { return(m_fYaw); }
 	float GetPitch() const { return(m_fPitch); }
 	float GetRoll() const { return(m_fRoll); }
@@ -83,24 +106,18 @@ public:
 	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed) { return(NULL); }
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
-};
 
-class CAirplanePlayer : public CPlayer
-{
-public:
-	CAirplanePlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext=NULL);
-	virtual ~CAirplanePlayer();
-
-	CGameObject					*m_pMainRotorFrame = NULL;
-	CGameObject					*m_pTailRotorFrame = NULL;
-
-private:
-	virtual void OnPrepareAnimate();
-	virtual void Animate(float fTimeElapsed);
 
 public:
-	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
-	virtual void OnPrepareRender();
+	void SetId(int id) { c_id = id; }
+	void SetLook(const XMFLOAT3& xmf3Look) { m_xmf3Look = xmf3Look; }
+	void SetRight(const XMFLOAT3& xmf3Right) { m_xmf3Right = xmf3Right; }
+	void SetUp(const XMFLOAT3& xmf3Up) { m_xmf3Up = xmf3Up; }
+	int m_hp;
+
+protected:
+	ID3D12Resource* m_pd3dcbPlayer = NULL;
+	CB_PLAYER_INFO* m_pcbMappedPlayer = NULL;
 };
 
 class CSoundCallbackHandler : public CAnimationCallbackHandler
@@ -116,7 +133,8 @@ public:
 class CTerrainPlayer : public CPlayer
 {
 public:
-	CTerrainPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext=NULL);
+	//CTerrainPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext=NULL);
+	CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext, int sNum = 2);
 	virtual ~CTerrainPlayer();
 
 public:
@@ -130,3 +148,15 @@ public:
 	virtual void Update(float fTimeElapsed);
 };
 
+class CLoginPlayer : public CPlayer
+{
+public:
+	CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext = NULL);
+	virtual ~CLoginPlayer();
+
+public:
+	virtual CCamera* ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
+
+	virtual void OnPlayerUpdateCallback(float fTimeElapsed);
+	virtual void OnCameraUpdateCallback(float fTimeElapsed);
+}; 

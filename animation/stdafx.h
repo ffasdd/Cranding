@@ -9,7 +9,9 @@
 // Windows 헤더 파일:
 #include <windows.h>
 
+
 // C의 런타임 헤더 파일입니다.
+#include<iostream>
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
@@ -22,16 +24,32 @@
 
 #include <fstream>
 #include <vector>
+#include <queue>
+#include <array>
+#include <time.h>
+
+#include <concurrent_priority_queue.h>
+#include <concurrent_queue.h>
+
+
+
 
 using namespace std;
 
+#include<unordered_map>
+
 #include <d3d12.h>
-#include <dxgi1_4.h>
+#include <dxgi1_6.h>
+#include <d2d1_3.h>
 #include <D3Dcompiler.h>
+#include <d3d11on12.h>
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
 #include <DirectXCollision.h>
+
+#include <dwrite.h>
+#include <d3d11on12.h>
 
 #include <Mmsystem.h>
 
@@ -55,7 +73,13 @@ extern HINSTANCE						ghAppInstance;
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dwrite.lib")
+
 #pragma comment(lib, "dxguid.lib")
+
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 
@@ -69,7 +93,7 @@ extern void ExecuteCommandList(ID3D12GraphicsCommandList* pd3dCommandList, ID3D1
 
 extern ID3D12Resource* CreateBufferResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pData, UINT nBytes, D3D12_HEAP_TYPE d3dHeapType = D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATES d3dResourceStates = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, ID3D12Resource** ppd3dUploadBuffer = NULL);
 extern ID3D12Resource* CreateTextureResourceFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, ID3D12Resource** ppd3dUploadBuffer, D3D12_RESOURCE_STATES d3dResourceStates = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-extern ID3D12Resource* CreateTexture2DResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, UINT nWidth, UINT nHeight, UINT nElements, UINT nMipLevels, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS d3dResourceFlags, D3D12_RESOURCE_STATES d3dResourceStates, D3D12_CLEAR_VALUE* pd3dClearValue);
+extern ID3D12Resource* CreateTexture2DResource(ID3D12Device* pd3dDevice, UINT nWidth, UINT nHeight, UINT nElements, UINT nMipLevels, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS d3dResourceFlags, D3D12_RESOURCE_STATES d3dResourceStates, D3D12_CLEAR_VALUE* pd3dClearValue);
 extern ID3D12Resource* CreateTextureResourceFromWICFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, ID3D12Resource** ppd3dUploadBuffer, D3D12_RESOURCE_STATES d3dResourceStates = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
 extern BYTE ReadStringFromFile(FILE *pInFile, char *pstrToken);
@@ -92,6 +116,14 @@ inline void Swap(float *pfS, float *pfT) { float fTemp = *pfS; *pfS = *pfT; *pfT
 #define ANIMATION_TYPE_PINGPONG			2
 
 #define ANIMATION_CALLBACK_EPSILON		0.00165f
+
+// 애니메이션 블랜딩이 될려면 이전에 실행되던 애니메이션이랑, 지금 실행되야하는 애니메이션 번호가 있어야 두개가 섞을수있다. 
+// 그리고 애니메이션블랜딩이 바뀔때 딱 한번만 , 
+// 비교해서 다를떄만 블랜딩되게
+// 보내야되는게 지금 애니메이션이랑 
+// prev 지금 서버에선 지금꺼만, 클라에서는 두칸짜리 배열을 만들어서 
+enum class SENDTYPE : INT { MOVE, ROTATE, ATTACK,CHANGE_ANIMATION,CHANGE_SCENE_LOBBY, CHANGE_SCENE_INGAME_READY,CHANGE_SCENE_INGAME_START,TIME_CHECK, ATTACK_COLLISION
+};
 
 namespace Vector3
 {
@@ -373,3 +405,18 @@ namespace Plane
 		return(xmf4Result);
 	}
 }
+
+template <typename T>
+void SafeDelete(T& ptr)
+{
+	if (ptr != nullptr)
+	{
+		delete ptr;
+		ptr = nullptr;
+	}
+}
+
+enum BRUSH_COLOR { WHITE, LIME_GREEN, BLACK, RED, BRUSH_COUNT };
+
+enum TEXT_SIZE { SIZE_15, SIZE_18, SIZE_25, SIZE_30, SIZE_50, SIZE_60, TEXT_COUNT };
+

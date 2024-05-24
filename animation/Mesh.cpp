@@ -49,7 +49,8 @@ void CMesh::ReleaseUploadBuffers()
 
 void CMesh::OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext)
 {
-	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_d3dPositionBufferView);
+	pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
+	pd3dCommandList->IASetVertexBuffers(m_nSlot, m_nVertexBufferViews, m_pd3dVertexBufferViews);
 }
 
 void CMesh::Render(ID3D12GraphicsCommandList *pd3dCommandList, int nSubSet)
@@ -438,8 +439,10 @@ void CStandardMesh::LoadMeshFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCom
 		::ReadStringFromFile(pInFile, pstrToken);
 		if (!strcmp(pstrToken, "<Bounds>:"))
 		{
-			nReads = (UINT)::fread(&m_xmf3AABBCenter, sizeof(XMFLOAT3), 1, pInFile);
-			nReads = (UINT)::fread(&m_xmf3AABBExtents, sizeof(XMFLOAT3), 1, pInFile);
+			// ** 여기 값은 잘 들어가는 듯 -> 근데 txt 내부 데이터보다 자릿수 더 크게 들어감
+			nReads = (UINT)::fread(&m_xmBoundingBox.Center, sizeof(float), 3, pInFile);
+			nReads = (UINT)::fread(&m_xmBoundingBox.Extents, sizeof(float), 3, pInFile);
+			m_xmBoundingBox.Orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 		else if (!strcmp(pstrToken, "<Positions>:"))
 		{
@@ -602,11 +605,29 @@ CSkinnedMesh::CSkinnedMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *
 
 CSkinnedMesh::~CSkinnedMesh()
 {
-	if (m_pxmn4BoneIndices) delete[] m_pxmn4BoneIndices;
-	if (m_pxmf4BoneWeights) delete[] m_pxmf4BoneWeights;
+	if (m_pxmn4BoneIndices)
+	{
+		delete[] m_pxmn4BoneIndices;
+		m_pxmn4BoneIndices = nullptr;
+	}
 
-	if (m_ppSkinningBoneFrameCaches) delete[] m_ppSkinningBoneFrameCaches;
-	if (m_ppstrSkinningBoneNames) delete[] m_ppstrSkinningBoneNames;
+	if (m_pxmf4BoneWeights)
+	{
+		delete[] m_pxmf4BoneWeights;
+		m_pxmf4BoneWeights = nullptr;
+	}
+	/*
+	if (m_ppSkinningBoneFrameCaches) 
+	{
+		delete[] m_ppSkinningBoneFrameCaches;
+		m_ppSkinningBoneFrameCaches = nullptr;
+	}
+	*/
+	if (m_ppstrSkinningBoneNames) 
+	{
+		delete[] m_ppstrSkinningBoneNames;
+		m_ppstrSkinningBoneNames = nullptr;
+	}
 
 	if (m_pxmf4x4BindPoseBoneOffsets) delete[] m_pxmf4x4BindPoseBoneOffsets;
 	if (m_pd3dcbBindPoseBoneOffsets) m_pd3dcbBindPoseBoneOffsets->Release();
@@ -626,13 +647,13 @@ void CSkinnedMesh::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandL
 	if (m_pd3dcbBindPoseBoneOffsets)
 	{
 		D3D12_GPU_VIRTUAL_ADDRESS d3dcbBoneOffsetsGpuVirtualAddress = m_pd3dcbBindPoseBoneOffsets->GetGPUVirtualAddress();
-		pd3dCommandList->SetGraphicsRootConstantBufferView(11, d3dcbBoneOffsetsGpuVirtualAddress); //Skinned Bone Offsets
+		pd3dCommandList->SetGraphicsRootConstantBufferView(9, d3dcbBoneOffsetsGpuVirtualAddress); //Skinned Bone Offsets
 	}
 
 	if (m_pd3dcbSkinningBoneTransforms)
 	{
 		D3D12_GPU_VIRTUAL_ADDRESS d3dcbBoneTransformsGpuVirtualAddress = m_pd3dcbSkinningBoneTransforms->GetGPUVirtualAddress();
-		pd3dCommandList->SetGraphicsRootConstantBufferView(12, d3dcbBoneTransformsGpuVirtualAddress); //Skinned Bone Transforms
+		pd3dCommandList->SetGraphicsRootConstantBufferView(10, d3dcbBoneTransformsGpuVirtualAddress); //Skinned Bone Transforms
 
 		for (int j = 0; j < m_nSkinningBones; j++)
 		{
@@ -680,8 +701,9 @@ void CSkinnedMesh::LoadSkinInfoFromFile(ID3D12Device *pd3dDevice, ID3D12Graphics
 		}
 		else if (!strcmp(pstrToken, "<Bounds>:"))
 		{
-			nReads = (UINT)::fread(&m_xmf3AABBCenter, sizeof(XMFLOAT3), 1, pInFile);
-			nReads = (UINT)::fread(&m_xmf3AABBExtents, sizeof(XMFLOAT3), 1, pInFile);
+			nReads = (UINT)::fread(&m_xmBoundingBox.Center, sizeof(XMFLOAT3), 1, pInFile);
+			nReads = (UINT)::fread(&m_xmBoundingBox.Extents, sizeof(XMFLOAT3), 1, pInFile);
+			m_xmBoundingBox.Orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 		else if (!strcmp(pstrToken, "<BoneNames>:"))
 		{
@@ -760,4 +782,80 @@ void CSkinnedMesh::OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void 
 {
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[7] = { m_d3dPositionBufferView, m_d3dTextureCoord0BufferView, m_d3dNormalBufferView, m_d3dTangentBufferView, m_d3dBiTangentBufferView, m_d3dBoneIndexBufferView, m_d3dBoneWeightBufferView };
 	pd3dCommandList->IASetVertexBuffers(m_nSlot, 7, pVertexBufferViews);
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//
+CBoundingBoxMesh::CBoundingBoxMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) : CMesh(pd3dDevice, pd3dCommandList)
+{
+	m_nVertices = 12 * 2;
+	m_nStride = sizeof(XMFLOAT3);
+	m_nOffset = 0;
+	m_nSlot = 0;
+	m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+
+	m_pd3dPositionBuffer = CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, m_nStride * m_nVertices, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	m_pd3dPositionBuffer->Map(0, NULL, (void**)&m_pcbMappedPositions);
+
+	m_nVertexBufferViews = 1;
+	m_pd3dVertexBufferViews = new D3D12_VERTEX_BUFFER_VIEW[m_nVertexBufferViews];
+
+	m_pd3dVertexBufferViews[0].BufferLocation = m_pd3dPositionBuffer->GetGPUVirtualAddress();
+	m_pd3dVertexBufferViews[0].StrideInBytes = sizeof(XMFLOAT3);
+	m_pd3dVertexBufferViews[0].SizeInBytes = sizeof(XMFLOAT3) * m_nVertices;
+}
+
+CBoundingBoxMesh::~CBoundingBoxMesh()
+{
+	if (m_pd3dPositionBuffer) m_pd3dPositionBuffer->Unmap(0, NULL);
+}
+
+void CBoundingBoxMesh::UpdateVertexPosition(BoundingOrientedBox* pxmBoundingBox)
+{
+	XMFLOAT3 xmf3Corners[8];
+	pxmBoundingBox->GetCorners(xmf3Corners);
+
+	int i = 0;
+
+	m_pcbMappedPositions[i++] = xmf3Corners[0];
+	m_pcbMappedPositions[i++] = xmf3Corners[1];
+
+	m_pcbMappedPositions[i++] = xmf3Corners[1];
+	m_pcbMappedPositions[i++] = xmf3Corners[2];
+
+	m_pcbMappedPositions[i++] = xmf3Corners[2];
+	m_pcbMappedPositions[i++] = xmf3Corners[3];
+
+	m_pcbMappedPositions[i++] = xmf3Corners[3];
+	m_pcbMappedPositions[i++] = xmf3Corners[0];
+
+	m_pcbMappedPositions[i++] = xmf3Corners[4];
+	m_pcbMappedPositions[i++] = xmf3Corners[5];
+
+	m_pcbMappedPositions[i++] = xmf3Corners[5];
+	m_pcbMappedPositions[i++] = xmf3Corners[6];
+
+	m_pcbMappedPositions[i++] = xmf3Corners[6];
+	m_pcbMappedPositions[i++] = xmf3Corners[7];
+
+	m_pcbMappedPositions[i++] = xmf3Corners[7];
+	m_pcbMappedPositions[i++] = xmf3Corners[4];
+
+	m_pcbMappedPositions[i++] = xmf3Corners[0];
+	m_pcbMappedPositions[i++] = xmf3Corners[4];
+
+	m_pcbMappedPositions[i++] = xmf3Corners[1];
+	m_pcbMappedPositions[i++] = xmf3Corners[5];
+
+	m_pcbMappedPositions[i++] = xmf3Corners[2];
+	m_pcbMappedPositions[i++] = xmf3Corners[6];
+
+	m_pcbMappedPositions[i++] = xmf3Corners[3];
+	m_pcbMappedPositions[i++] = xmf3Corners[7];
+}
+
+void CBoundingBoxMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	OnPreRender(pd3dCommandList, NULL);
+	pd3dCommandList->DrawInstanced(m_nVertices, 1, m_nOffset, 0);
 }

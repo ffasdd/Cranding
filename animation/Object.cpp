@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "Scene.h"
 
+extern Network gNetwork;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers, int nRootParameters)
@@ -57,7 +58,7 @@ void CTexture::SetRootParameterIndex(int nIndex, UINT nRootParameterIndex)
 
 void CTexture::SetGpuDescriptorHandle(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSrvGpuDescriptorHandle)
 {
-	m_pd3dSrvGpuDescriptorHandles[nIndex] = d3dSrvGpuDescriptorHandle;
+	m_pd3dSrvGpuDescriptorHandles[nIndex] = d3dSrvGpuDescriptorHandle; 
 }
 
 void CTexture::SetSampler(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSamplerGpuDescriptorHandle)
@@ -118,10 +119,10 @@ void CTexture::LoadBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* p
 	m_ppd3dTextures[nIndex] = ::CreateBufferResource(pd3dDevice, pd3dCommandList, pData, nElements * nStride, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_GENERIC_READ, &m_ppd3dTextureUploadBuffers[nIndex]);
 }
 
-ID3D12Resource* CTexture::CreateTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, UINT nIndex, UINT nResourceType, UINT nWidth, UINT nHeight, UINT nElements, UINT nMipLevels, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS d3dResourceFlags, D3D12_RESOURCE_STATES d3dResourceStates, D3D12_CLEAR_VALUE* pd3dClearValue)
+ID3D12Resource* CTexture::CreateTexture(ID3D12Device* pd3dDevice, UINT nWidth, UINT nHeight, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS d3dResourceFlags, D3D12_RESOURCE_STATES d3dResourceStates, D3D12_CLEAR_VALUE* pd3dClearValue, UINT nResourceType, UINT nIndex)
 {
 	m_pnResourceTypes[nIndex] = nResourceType;
-	m_ppd3dTextures[nIndex] = ::CreateTexture2DResource(pd3dDevice, pd3dCommandList, nWidth, nHeight, nElements, nMipLevels, dxgiFormat, d3dResourceFlags, d3dResourceStates, pd3dClearValue);
+	m_ppd3dTextures[nIndex] = ::CreateTexture2DResource(pd3dDevice, nWidth, nHeight, 1, 0, dxgiFormat, d3dResourceFlags, d3dResourceStates, pd3dClearValue);
 	return(m_ppd3dTextures[nIndex]);
 }
 
@@ -197,6 +198,7 @@ CMaterial::~CMaterial()
 
 		if (m_ppstrTextureNames) delete[] m_ppstrTextureNames;
 	}
+
 }
 
 void CMaterial::SetShader(CShader *pShader)
@@ -226,12 +228,14 @@ CShader *CMaterial::m_pStandardShader = NULL;
 
 void CMaterial::PrepareShaders(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature)
 {
+	//DXGI_FORMAT pdxgiRtvFormats[4] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R32_FLOAT  };
+
 	m_pStandardShader = new CStandardShader();
-	m_pStandardShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	m_pStandardShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature,1, NULL , DXGI_FORMAT_D32_FLOAT);
 	m_pStandardShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 	m_pSkinnedAnimationShader = new CSkinnedAnimationStandardShader();
-	m_pSkinnedAnimationShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	m_pSkinnedAnimationShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 1, NULL, DXGI_FORMAT_D32_FLOAT);
 	m_pSkinnedAnimationShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -247,7 +251,6 @@ void CMaterial::UpdateShaderVariable(ID3D12GraphicsCommandList *pd3dCommandList)
 	for (int i = 0; i < m_nTextures; i++)
 	{
 		if (m_ppTextures[i]) m_ppTextures[i]->UpdateShaderVariables(pd3dCommandList);
-		//		if (m_ppTextures[i]) m_ppTextures[i]->UpdateShaderVariable(pd3dCommandList, 0, 0);
 	}
 }
 
@@ -628,31 +631,140 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject *pRootGam
 	}
 } 
 //*/
-//*
+
+
 void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGameObject)
 {
 	m_fTime += fTimeElapsed;
+	// 애니메이션트랙은 애니메이션 컨트롤러에서 만들어줌
 	if (m_pAnimationTracks)
 	{
-		for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++) m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = Matrix4x4::Zero();
-
-		for (int k = 0; k < m_nAnimationTracks; k++)
+		// m_pAnimationSets = 애니메이션 set의 집합, animationset을 가리키는 이중 포인터
+		for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
 		{
-			if (m_pAnimationTracks[k].m_bEnable)
-			{
-				CAnimationSet* pAnimationSet = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[k].m_nAnimationSet];
-				float fPosition = m_pAnimationTracks[k].UpdatePosition(m_pAnimationTracks[k].m_fPosition, fTimeElapsed, pAnimationSet->m_fLength);
+			// 본프레임캐시 -> 애니메이션 행렬을 지피유로 보내기 위해 담는 곳
+			// 일단 0으로 초기화
+			m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = Matrix4x4::Zero();
+		}
+
+		// 블렌딩o인 경우
+		if ((m_bIsBlending == true || m_bIsLastBlending == true))
+		{
+				CAnimationSet* pAnimationSet1 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[m_nAnimationBefore].m_nAnimationSet];
+				CAnimationSet* pAnimationSet2 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[m_nAnimationAfter].m_nAnimationSet];
+
 				for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
 				{
 					XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
-					XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet->GetSRT(j, fPosition);
-					xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[k].m_fWeight));
+					XMFLOAT4X4 xmf4x4TrackTransform2 = pAnimationSet2->GetSRT(j, 0);
+
+				m_fBlendingTime += (fTimeElapsed / 5);
+
+					XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet1->GetSRT(j, m_pAnimationTracks[m_nAnimationBefore].m_fPosition);
+					XMFLOAT4X4 xmf4x4Transform2 = Matrix4x4::Interpolate(xmf4x4TrackTransform, xmf4x4TrackTransform2, m_fBlendingTime);
+
+					xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4Transform2, 1.0f));
 					m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
 				}
-				m_pAnimationTracks[k].HandleCallback();
+			// animationSets = 유니티에서 같이 뽑힌 애니메이션들의 번호(진짜 애니메이션의 번호)
+			// animationTrack = player가 가지고 있는 애니메이션들의 번호
+			if (m_fBlendingTime >= 0.0f && m_bIsBlending == true)
+			{
+				m_bIsBlending = false;
+				m_fBlendingTime = 0.0f;
+				m_pAnimationTracks[m_nAnimationBefore].SetPosition(0.0f);
+			}
+
+			if (m_fBlendingTime >= 1.0f && m_bIsLastBlending == true)
+			{
+				m_bIsLastBlending = false;
+				m_fBlendingTime = 0.0f;
+				m_pAnimationTracks[m_nAnimationBefore].SetPosition(0.0f);
 			}
 		}
 
+		// 애니메이션 블렌딩x일때
+		// 총쏘는 애니메이션 -> 7번
+		// 검 쓰는 애니메이션 -> 8, 9번
+		else {
+			for (int k = 0; k < m_nAnimationTracks; k++)
+			{
+				if (m_pAnimationTracks[k].m_bEnable)
+				{
+					// 상하체 분리 o일때
+					if (this->m_bIsAttack == true)
+					{
+						CAnimationSet* pAnimationSet = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[k].m_nAnimationSet];
+						CAnimationSet* pAnimationSet2 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[m_nAttackAniNum].m_nAnimationSet];
+					
+						// animationtrack의 m_fPosition을 업데이트
+						float fPosition = m_pAnimationTracks[k].UpdatePosition(m_pAnimationTracks[k].m_fPosition, fTimeElapsed, pAnimationSet->m_fLength);
+
+						float fPosition2 = m_pAnimationTracks[m_nAttackAniNum].UpdatePosition(m_pAnimationTracks[m_nAttackAniNum].m_fPosition, fTimeElapsed, pAnimationSet2->m_fLength);
+						for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
+						{
+							XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
+
+							if (m_pAnimationSets->m_ppBoneFrameCaches[j]->m_bUpperBody == true)
+							{
+								// 현재 플레이어의 뼈 변환 정보들
+								// Astronaut_0 - Gravity_Idle Astronaut_Run_01
+								if (m_pAnimationSets->m_nAnimationSets)
+									m_pAnimationSets->m_nAnimationSets;
+
+								XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet2->GetSRT(j, fPosition2);
+
+								xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[m_nAttackAniNum].m_fWeight));
+							}
+							// 현재 플레이어의 뼈 변환 정보들
+							else
+							{
+								XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet->GetSRT(j, fPosition);
+								xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[k].m_fWeight));
+							}
+							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
+						}
+						if (fPosition2 == 0)
+						{
+							if (m_nAttackAniNum == 8) m_nAttackAniNum = 9;
+							else m_nAttackAniNum = 8;
+							this->m_bIsAttack = false;
+							
+							gNetwork.SendAttack(false);
+						}
+					}
+
+					// 상하체 분리 x일때
+					else
+					{
+						//true인 애 계산하는 부분
+						//enable인 animationsets의 animationset을 pAnimationSet에 넣어줌
+						//현재 코드 상에서는 m_pAnimationTracks[k].m_nAnimationSet가 전부 0
+						CAnimationSet* pAnimationSet = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[k].m_nAnimationSet];
+
+						//animationtrack의 m_fPosition을 업데이트
+						float fPosition = m_pAnimationTracks[k].UpdatePosition(m_pAnimationTracks[k].m_fPosition, fTimeElapsed, pAnimationSet->m_fLength);
+
+						//애니메이션 본 프레임 : 애니메이션 계산할 때 프레임으로 계산하는 것(키프레임애니메이션)
+						for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
+						{
+							//현재 플레이어의 뼈 변환 정보들
+							XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
+
+							//getsrt  해당 프레임의 행렬 가져옴
+							//일반적으로 애니메이션에서 이전 프레임과 현재 프레임 사이의 움직임을 부드럽게 처리하기 위해 사용
+							//xmf4x4TrackTransform : 이전 프레임의 변환 행렬과 현재 프레임의 위치와 방향을 보간하여 새로운 변환 행렬을 반환
+							//fPosition은 다음 애니메이션의 position, j는 현재 boneframe번호
+							XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet->GetSRT(j, fPosition);
+
+							xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[k].m_fWeight));
+							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
+						}
+					}
+					m_pAnimationTracks[k].HandleCallback();
+				}
+			}
+		}
 		pRootGameObject->UpdateTransform(NULL);
 
 		OnRootMotion(pRootGameObject);
@@ -684,7 +796,7 @@ CGameObject::CGameObject()
 	m_xmf4x4World = Matrix4x4::Identity();
 }
 
-CGameObject::CGameObject(int nMaterials) : CGameObject()
+CGameObject::CGameObject(int nMaterials, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) : CGameObject()
 {
 	m_nMaterials = nMaterials;
 	if (m_nMaterials > 0)
@@ -692,22 +804,61 @@ CGameObject::CGameObject(int nMaterials) : CGameObject()
 		m_ppMaterials = new CMaterial*[m_nMaterials];
 		for(int i = 0; i < m_nMaterials; i++) m_ppMaterials[i] = NULL;
 	}
+
+	m_xmf4x4World = Matrix4x4::Identity();
+
+	CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
+	SetBoundingBoxMesh(pBoundingBoxMesh);
 }
 
 CGameObject::~CGameObject()
 {
 	if (m_pMesh) m_pMesh->Release();
 
+	if (m_pBoundingBoxMesh) m_pBoundingBoxMesh->Release();
+	m_pBoundingBoxMesh = NULL;
+
 	if (m_nMaterials > 0)
 	{
 		for (int i = 0; i < m_nMaterials; i++)
 		{
-			if (m_ppMaterials[i]) m_ppMaterials[i]->Release();
+			if (m_ppMaterials[i]) {
+				m_ppMaterials[i]->Release();
+				m_ppMaterials[i] = nullptr;
+			}
 		}
 	}
 	if (m_ppMaterials) delete[] m_ppMaterials;
 
 	if (m_pSkinnedAnimationController) delete m_pSkinnedAnimationController;
+
+	ReleaseShaderVariables();
+}
+
+void CGameObject::UpdateBoundingBox()
+{
+	OnPrepareRender();
+	if (m_pMesh)
+	{
+		m_pMesh->m_xmBoundingBox.Transform(m_xmBoundingBox, XMLoadFloat4x4(&m_xmf4x4World));
+		XMStoreFloat4(&m_xmBoundingBox.Orientation, XMQuaternionNormalize(XMLoadFloat4(&m_xmBoundingBox.Orientation)));
+	}
+}
+
+void CGameObject::RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	if (m_pBoundingBoxMesh)
+	{
+		m_pBoundingBoxMesh->UpdateVertexPosition(&m_xmBoundingBox);
+		m_pBoundingBoxMesh->Render(pd3dCommandList);
+	}
+}
+
+void CGameObject::SetBoundingBoxMesh(CBoundingBoxMesh* pMesh)
+{
+	if (m_pBoundingBoxMesh) m_pBoundingBoxMesh->Release();
+	m_pBoundingBoxMesh = pMesh;
+	if (pMesh) pMesh->AddRef();
 }
 
 void CGameObject::AddRef() 
@@ -832,10 +983,18 @@ void CGameObject::Animate(float fTimeElapsed)
 	//
 	OnPrepareRender();
 
+	UpdateBoundingBox();
+
 	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->AdvanceTime(fTimeElapsed, this);
 
 	if (m_pSibling) m_pSibling->Animate(fTimeElapsed);
 	if (m_pChild) m_pChild->Animate(fTimeElapsed);
+}
+
+void CGameObject::SetRootParameter(ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	pd3dCommandList->SetGraphicsRootDescriptorTable(2, m_d3dCbvGPUDescriptorHandle);
+
 }
 
 void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
@@ -846,6 +1005,9 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 	{
 		UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 
+		m_pMesh->OnPreRender(pd3dCommandList, NULL);
+
+		//SetRootParameter(pd3dCommandList);
 		if (m_nMaterials > 0)
 		{
 			for (int i = 0; i < m_nMaterials; i++)
@@ -855,7 +1017,6 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 					if (m_ppMaterials[i]->m_pShader) m_ppMaterials[i]->m_pShader->Render(pd3dCommandList, pCamera);
 					m_ppMaterials[i]->UpdateShaderVariable(pd3dCommandList);
 				}
-
 				m_pMesh->Render(pd3dCommandList, i);
 			}
 		}
@@ -930,6 +1091,39 @@ void CGameObject::SetScale(float x, float y, float z)
 	m_xmf4x4ToParent = Matrix4x4::Multiply(mtxScale, m_xmf4x4ToParent);
 
 	UpdateTransform(NULL);
+}
+
+void CGameObject::SetRight(float x, float y, float z)
+{
+	// 현재 위치와 상관 없이 주어진 look 벡터를 normalize하여 설정
+	XMFLOAT3 normalizedLook = Vector3::Normalize(XMFLOAT3(x, y, z));
+
+	// 행렬의 1번째 열을 설정
+	m_xmf4x4ToParent._11 = /*normalizedLook.*/x;
+	m_xmf4x4ToParent._12 = /*normalizedLook.*/y;
+	m_xmf4x4ToParent._13 = /*normalizedLook.*/z;
+}
+
+void CGameObject::SetUp(float x, float y, float z)
+{
+	// 현재 위치와 상관 없이 주어진 look 벡터를 normalize하여 설정
+	XMFLOAT3 normalizedLook = Vector3::Normalize(XMFLOAT3(x, y, z));
+
+	// 행렬의 1번째 열을 설정
+	m_xmf4x4ToParent._21 = /*normalizedLook.*/x;
+	m_xmf4x4ToParent._22 = /*normalizedLook.*/y;
+	m_xmf4x4ToParent._23 = /*normalizedLook.*/z;
+}
+
+void CGameObject::SetLook(float x, float y, float z)
+{
+	// 현재 위치와 상관 없이 주어진 look 벡터를 normalize하여 설정
+	XMFLOAT3 normalizedLook = Vector3::Normalize(XMFLOAT3(x, y, z));
+
+	// 행렬의 3번째 열을 설정
+	m_xmf4x4ToParent._31 = /*normalizedLook.*/x;
+	m_xmf4x4ToParent._32 = /*normalizedLook.*/y;
+	m_xmf4x4ToParent._33 = /*normalizedLook.*/z;
 }
 
 XMFLOAT3 CGameObject::GetPosition()
@@ -1195,20 +1389,30 @@ CGameObject *CGameObject::LoadFrameHierarchyFromFile(ID3D12Device *pd3dDevice, I
 		}
 		else if (!strcmp(pstrToken, "<Mesh>:"))
 		{
-			CStandardMesh *pMesh = new CStandardMesh(pd3dDevice, pd3dCommandList);
+			CStandardMesh* pMesh = new CStandardMesh(pd3dDevice, pd3dCommandList);
 			pMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
 			pGameObject->SetMesh(pMesh);
+
+			CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
+			// 애니메이션 x인 애들 바운딩 박스 셋
+			pGameObject->SetBoundingBoxMesh(pBoundingBoxMesh);
 		}
 		else if (!strcmp(pstrToken, "<SkinningInfo>:"))
 		{
 			if (pnSkinnedMeshes) (*pnSkinnedMeshes)++;
-
 			CSkinnedMesh *pSkinnedMesh = new CSkinnedMesh(pd3dDevice, pd3dCommandList);
-			pSkinnedMesh->LoadSkinInfoFromFile(pd3dDevice, pd3dCommandList, pInFile);
-			pSkinnedMesh->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+				pSkinnedMesh->LoadSkinInfoFromFile(pd3dDevice, pd3dCommandList, pInFile);
+				pSkinnedMesh->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 			::ReadStringFromFile(pInFile, pstrToken); //<Mesh>:
-			if (!strcmp(pstrToken, "<Mesh>:")) pSkinnedMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
+			if (!strcmp(pstrToken, "<Mesh>:"))
+				{
+				pSkinnedMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
+
+				CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
+				// 애니메이션 o인 애들 바운딩 박스 셋
+				pGameObject->SetBoundingBoxMesh(pBoundingBoxMesh);
+			}
 
 			pGameObject->SetMesh(pSkinnedMesh);
 		}
@@ -1218,10 +1422,11 @@ CGameObject *CGameObject::LoadFrameHierarchyFromFile(ID3D12Device *pd3dDevice, I
 		}
 		else if (!strcmp(pstrToken, "<Children>:"))
 		{
-			int nChilds = ::ReadIntegerFromFile(pInFile);
-			if (nChilds > 0)
+			pGameObject->nChilds = ::ReadIntegerFromFile(pInFile);
+			
+			if (pGameObject->nChilds > 0)
 			{
-				for (int i = 0; i < nChilds; i++)
+				for (int i = 0; i < pGameObject->nChilds; i++)
 				{
 					CGameObject *pChild = CGameObject::LoadFrameHierarchyFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, pGameObject, pInFile, pShader, pnSkinnedMeshes);
 					if (pChild) pGameObject->SetChild(pChild);
@@ -1276,6 +1481,14 @@ void CGameObject::LoadAnimationFromFile(FILE *pInFile, CLoadedModelInfo *pLoaded
 			{
 				::ReadStringFromFile(pInFile, pstrToken);
 				pLoadedModel->m_pAnimationSets->m_ppBoneFrameCaches[j] = pLoadedModel->m_pModelRootObject->FindFrame(pstrToken);
+
+				// 상하체 분리
+				// 상체 프레임은 상체라는 의미 표기하는 과정 (m_bUpperBody == true면 상체)
+				if (strcmp(pstrToken, "Spine_Joint1") == 0)
+					pLoadedModel->m_pAnimationSets->m_ppBoneFrameCaches[j]->m_bUpperBody = true;
+				else if (pLoadedModel->m_pAnimationSets->m_ppBoneFrameCaches[j]->GetParent() != NULL
+					&& pLoadedModel->m_pAnimationSets->m_ppBoneFrameCaches[j]->GetParent()->m_bUpperBody == true)
+					pLoadedModel->m_pAnimationSets->m_ppBoneFrameCaches[j]->m_bUpperBody = true;
 
 #ifdef _WITH_DEBUG_SKINNING_BONE
 				TCHAR pstrDebug[256] = { 0 };
@@ -1380,7 +1593,7 @@ CLoadedModelInfo *CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device *pd
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CHeightMapTerrain::CHeightMapTerrain(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, LPCTSTR pFileName, int nWidth, int nLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color) : CGameObject(1)
+CHeightMapTerrain::CHeightMapTerrain(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, LPCTSTR pFileName, int nWidth, int nLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color) : CGameObject(1, pd3dDevice, pd3dCommandList)
 {
 	m_nWidth = nWidth;
 	m_nLength = nLength;
@@ -1395,17 +1608,17 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device *pd3dDevice, ID3D12GraphicsCom
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 	CTexture* pTerrainBaseTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0, 1);
-	pTerrainBaseTexture->LoadTextureFromDDSFile(pd3dDevice, pd3dCommandList, L"Terrain/Base_Texture.dds", RESOURCE_TEXTURE2D, 0);
+	pTerrainBaseTexture->LoadTextureFromDDSFile(pd3dDevice, pd3dCommandList, L"Terrain/ice.dds", RESOURCE_TEXTURE2D, 0);
 
 	CTexture* pTerrainDetailTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0, 1);
-	pTerrainDetailTexture->LoadTextureFromDDSFile(pd3dDevice, pd3dCommandList, L"Terrain/Detail_Texture_7.dds", RESOURCE_TEXTURE2D, 0);
+	pTerrainDetailTexture->LoadTextureFromDDSFile(pd3dDevice, pd3dCommandList, L"Terrain/ice.dds", RESOURCE_TEXTURE2D, 0);
 
 	CTerrainShader *pTerrainShader = new CTerrainShader();
-	pTerrainShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	pTerrainShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 1, NULL, DXGI_FORMAT_D32_FLOAT);
 	pTerrainShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	CScene::CreateShaderResourceViews(pd3dDevice, pTerrainBaseTexture, 0, 13);
-	CScene::CreateShaderResourceViews(pd3dDevice, pTerrainDetailTexture, 0, 14);
+	CScene::CreateShaderResourceViews(pd3dDevice, pTerrainBaseTexture, 0, 11);
+	CScene::CreateShaderResourceViews(pd3dDevice, pTerrainDetailTexture, 0, 12);
 
 	CMaterial *pTerrainMaterial = new CMaterial(2);
 	pTerrainMaterial->SetTexture(pTerrainBaseTexture, 0);
@@ -1422,7 +1635,7 @@ CHeightMapTerrain::~CHeightMapTerrain(void)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
-CSkyBox::CSkyBox(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature) : CGameObject(1)
+CSkyBox::CSkyBox(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature) : CGameObject(1, pd3dDevice, pd3dCommandList)
 {
 	CSkyBoxMesh *pSkyBoxMesh = new CSkyBoxMesh(pd3dDevice, pd3dCommandList, 20.0f, 20.0f, 2.0f);
 	SetMesh(pSkyBoxMesh);
@@ -1433,10 +1646,10 @@ CSkyBox::CSkyBox(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dComman
 	pSkyBoxTexture->LoadTextureFromDDSFile(pd3dDevice, pd3dCommandList, L"SkyBox/SkyBox_0.dds", RESOURCE_TEXTURE_CUBE, 0);
 
 	CSkyBoxShader *pSkyBoxShader = new CSkyBoxShader();
-	pSkyBoxShader->CreateShader(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	pSkyBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 1, NULL, DXGI_FORMAT_D32_FLOAT);
 	pSkyBoxShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	CScene::CreateShaderResourceViews(pd3dDevice, pSkyBoxTexture, 0, 10);
+	CScene::CreateShaderResourceViews(pd3dDevice, pSkyBoxTexture, 0, 8);
 
 	CMaterial *pSkyBoxMaterial = new CMaterial(1);
 	pSkyBoxMaterial->SetTexture(pSkyBoxTexture);
@@ -1457,311 +1670,137 @@ void CSkyBox::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamer
 	CGameObject::Render(pd3dCommandList, pCamera);
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CSuperCobraObject::CSuperCobraObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature)
+CPlayerAnimationController::CPlayerAnimationController(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nAnimationTracks, CLoadedModelInfo* pModel) : CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pModel)
 {
 }
 
-CSuperCobraObject::~CSuperCobraObject()
+CPlayerAnimationController::~CPlayerAnimationController()
 {
 }
 
-void CSuperCobraObject::OnPrepareAnimate()
+void CPlayerAnimationController::OnRootMotion(CGameObject* pRootGameObject)
 {
-	m_pMainRotorFrame = FindFrame("MainRotor");
-	m_pTailRotorFrame = FindFrame("TailRotor");
-}
 
-void CSuperCobraObject::Animate(float fTimeElapsed)
-{
-	if (m_pMainRotorFrame)
-	{
-		XMMATRIX xmmtxRotate = XMMatrixRotationY(XMConvertToRadians(360.0f * 4.0f) * fTimeElapsed);
-		m_pMainRotorFrame->m_xmf4x4ToParent = Matrix4x4::Multiply(xmmtxRotate, m_pMainRotorFrame->m_xmf4x4ToParent);
-	}
-	if (m_pTailRotorFrame)
-	{
-		XMMATRIX xmmtxRotate = XMMatrixRotationX(XMConvertToRadians(360.0f * 4.0f) * fTimeElapsed);
-		m_pTailRotorFrame->m_xmf4x4ToParent = Matrix4x4::Multiply(xmmtxRotate, m_pTailRotorFrame->m_xmf4x4ToParent);
-	}
-
-	CGameObject::Animate(fTimeElapsed);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CGunshipObject::CGunshipObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature)
+// **이거 뭐임??? 없어도 될 것 같은데
+CPlayerObject::CPlayerObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks)
 {
+	CLoadedModelInfo *pPlayerModel = pModel;
+
+	if (!pPlayerModel) pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
+
+	SetChild(pPlayerModel->m_pModelRootObject, true);
+	m_pSkinnedAnimationController = new CPlayerAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pPlayerModel);
 }
 
-CGunshipObject::~CGunshipObject()
-{
-}
-
-void CGunshipObject::OnPrepareAnimate()
-{
-	m_pMainRotorFrame = FindFrame("Rotor");
-	m_pTailRotorFrame = FindFrame("Back_Rotor");
-}
-
-void CGunshipObject::Animate(float fTimeElapsed)
-{
-	if (m_pMainRotorFrame)
-	{
-		XMMATRIX xmmtxRotate = XMMatrixRotationY(XMConvertToRadians(360.0f * 2.0f) * fTimeElapsed);
-		m_pMainRotorFrame->m_xmf4x4ToParent = Matrix4x4::Multiply(xmmtxRotate, m_pMainRotorFrame->m_xmf4x4ToParent);
-	}
-	if (m_pTailRotorFrame)
-	{
-		XMMATRIX xmmtxRotate = XMMatrixRotationX(XMConvertToRadians(360.0f * 4.0f) * fTimeElapsed);
-		m_pTailRotorFrame->m_xmf4x4ToParent = Matrix4x4::Multiply(xmmtxRotate, m_pTailRotorFrame->m_xmf4x4ToParent);
-	}
-
-	CGameObject::Animate(fTimeElapsed);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CMi24Object::CMi24Object(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature)
-{
-}
-
-CMi24Object::~CMi24Object()
-{
-}
-
-void CMi24Object::OnPrepareAnimate()
-{
-	m_pMainRotorFrame = FindFrame("Top_Rotor");
-	m_pTailRotorFrame = FindFrame("Tail_Rotor");
-}
-
-void CMi24Object::Animate(float fTimeElapsed)
-{
-	if (m_pMainRotorFrame)
-	{
-		XMMATRIX xmmtxRotate = XMMatrixRotationY(XMConvertToRadians(360.0f * 2.0f) * fTimeElapsed);
-		m_pMainRotorFrame->m_xmf4x4ToParent = Matrix4x4::Multiply(xmmtxRotate, m_pMainRotorFrame->m_xmf4x4ToParent);
-	}
-	if (m_pTailRotorFrame)
-	{
-		XMMATRIX xmmtxRotate = XMMatrixRotationX(XMConvertToRadians(360.0f * 4.0f) * fTimeElapsed);
-		m_pTailRotorFrame->m_xmf4x4ToParent = Matrix4x4::Multiply(xmmtxRotate, m_pTailRotorFrame->m_xmf4x4ToParent);
-	}
-
-	CGameObject::Animate(fTimeElapsed);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CAngrybotAnimationController::CAngrybotAnimationController(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nAnimationTracks, CLoadedModelInfo* pModel) : CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pModel)
-{
-}
-
-CAngrybotAnimationController::~CAngrybotAnimationController()
-{
-}
-
-void CAngrybotAnimationController::OnRootMotion(CGameObject* pRootGameObject)
-{
-
-}
-
-CAngrybotObject::CAngrybotObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks)
-{
-	CLoadedModelInfo *pAngrybotModel = pModel;
-	if (!pAngrybotModel) pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Player.bin", NULL);
-
-	SetChild(pAngrybotModel->m_pModelRootObject, true);
-	m_pSkinnedAnimationController = new CAngrybotAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pAngrybotModel);
-}
-
-CAngrybotObject::~CAngrybotObject()
+CPlayerObject::~CPlayerObject()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CMonsterObject::CMonsterObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks)
+// 적 객체 클래스
+CFireEnemyObject::CFireEnemyObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks)
 {
-	CLoadedModelInfo *pMonsterModel = pModel;
-	if (!pMonsterModel) pMonsterModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Monster.bin", NULL);
+	CLoadedModelInfo* pPlayerModel = pModel;
 
-	SetChild(pMonsterModel->m_pModelRootObject, true);
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pMonsterModel);
+	if (!pPlayerModel) pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/shade.bin", NULL);
+
+	SetChild(pPlayerModel->m_pModelRootObject, true);
+	m_pSkinnedAnimationController = new CPlayerAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pPlayerModel);
 }
 
-CMonsterObject::~CMonsterObject()
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CHumanoidObject::CHumanoidObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks)
-{
-	CLoadedModelInfo *pHumanoidModel = pModel;
-	if (!pHumanoidModel) pHumanoidModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Humanoid.bin", NULL);
-
-	SetChild(pHumanoidModel->m_pModelRootObject, true);
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pHumanoidModel);
-}
-
-CHumanoidObject::~CHumanoidObject()
+CFireEnemyObject::~CFireEnemyObject()
 {
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CEthanAnimationController::CEthanAnimationController(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nAnimationTracks, CLoadedModelInfo* pModel) : CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pModel)
+void CFireEnemyObject::Animate(float fTimeElapsed)
 {
-}
+	//if()
+	//// 플레이어와 적 객체의 거리가 50 이하가 되면 적이 플레이어를 바라보고 쫓아온다
+	//for (int i = 0; i < m_nObjects; ++i) {
 
-CEthanAnimationController::~CEthanAnimationController()
-{
-}
+	//	XMFLOAT3 ePos = m_ppObjects[i]->GetPosition();
+	//	float eR = m_ppObjects[i]->radius;
+	//	XMFLOAT3 pPos = m_pPlayer->GetPosition();
+	//	float pR = m_pPlayer->radius;
 
-#define _WITH_DEBUG_ROOT_MOTION
+	//	// 적 & 적 충돌 체크
+	//	for (int j = 0; j < m_nObjects; ++j) {
+	//		XMFLOAT3 e2Pos = m_ppObjects[j]->GetPosition();
+	//		float e2R = m_ppObjects[j]->radius;
 
-void CRootMotionCallbackHandler::HandleCallback(void* pCallbackData, float fTrackPosition)
-{
-	float* pfData = (float *)pCallbackData;
-	TCHAR pstrDebug[256] = { 0 };
-	_stprintf_s(pstrDebug, 256, _T("Data: %.2f, Position: %.2f\n"), *pfData, fTrackPosition);
-	OutputDebugString(pstrDebug);
-}
+	//		if ((i != j) && IsCollisionSphereToSphere(ePos, eR, e2Pos, e2R) == true)
+	//		{
+	//			m_ppObjects[i]->MoveBehind(fTimeElapsed * 2);
+	//			m_ppObjects[j]->MoveBehind(fTimeElapsed * 10);
+	//		}
+	//	}
 
-void CEthanAnimationController::OnRootMotion(CGameObject* pRootGameObject)
-{
-	if (m_bRootMotion)
-	{
-		if (m_pAnimationTracks[0].m_fPosition == 0.0f)
-		{
-			m_xmf3FirstRootMotionPosition = m_pRootMotionObject->GetPosition();
-		}
-		else if (m_pAnimationTracks[0].m_fPosition < 0.0f)
-		{
-			XMFLOAT3 xmf3Position = m_pRootMotionObject->GetPosition();
+	//	// 적 & 총알 충돌체크
+	//	for (int b = 0; b < BULLETS; b++)
+	//	{
+	//		if (ppBullets[b]->m_bActive == true)
+	//		{
+	//			XMFLOAT3 bPos = ppBullets[b]->GetPosition();
+	//			float bR = ppBullets[b]->radius;
 
-			//		XMFLOAT3 xmf3RootPosition = m_pModelRootObject->GetPosition();
-			//		pRootGameObject->m_xmf4x4ToParent = m_pModelRootObject->m_xmf4x4World;
-			//		pRootGameObject->SetPosition(xmf3RootPosition);
-			XMFLOAT3 xmf3Offset = Vector3::Subtract(xmf3Position, m_xmf3FirstRootMotionPosition);
+	//			if (IsCollisionSphereToSphere(ePos, eR, bPos, bR) == true)
+	//			{
+	//				ppBullets[b]->SetPosition(99999.0, 88888.0, 88888.0);
+	//				ppBullets[b]->m_bActive = false;
+	//				m_ppObjects[i]->SetPosition(99999.0, 88888.0, 88888.0);
+	//			}
+	//		}
+	//	}
 
-//			xmf3Position = pRootGameObject->GetPosition();
-//			XMFLOAT3 xmf3Look = pRootGameObject->GetLook();
-//			xmf3Position = Vector3::Add(xmf3Position, xmf3Look, fabs(xmf3Offset.x));
+	//	if (GetDistance(m_pPlayer, m_ppObjects[i]) <= 50) {
+	//		// 적 & 플레이어의 거리가 50 이하면 플레이어에게 총 쏨
+	//		//m_ppObjects->FireBullet(((CAirplanePlayer*)m_pPlayer)->GetPosition(), ((CAirplanePlayer*)m_pPlayer)->GetLook());
 
-			pRootGameObject->m_xmf4x4ToParent._41 += xmf3Offset.x;
-			pRootGameObject->m_xmf4x4ToParent._42 += xmf3Offset.y;
-			pRootGameObject->m_xmf4x4ToParent._43 += xmf3Offset.z;
+	//		// CObjectsShader가 CShader의 자식인데 CShader에서 Player의 클래스 포인터를 public으로 갖고 있기 때문에 접근 가능
+	//		m_ppObjects[i]->LookTarget(pPos);
 
-//			pRootGameObject->MoveForward(fabs(xmf3Offset.x));
-//			pRootGameObject->SetPosition(xmf3Position);
-//			m_xmf3PreviousPosition = xmf3Position;
-#ifdef _WITH_DEBUG_ROOT_MOTION
-			TCHAR pstrDebug[256] = { 0 };
-			_stprintf_s(pstrDebug, 256, _T("Offset: (%.2f, %.2f, %.2f) (%.2f, %.2f, %.2f)\n"), xmf3Offset.x, xmf3Offset.y, xmf3Offset.z, pRootGameObject->m_xmf4x4ToParent._41, pRootGameObject->m_xmf4x4ToParent._42, pRootGameObject->m_xmf4x4ToParent._43);
-			OutputDebugString(pstrDebug);
-#endif
-		}
-	}
-}
+	//		// 적 & 플레이어 충돌 체크
+	//		if (IsCollisionSphereToSphere(pPos, pR, ePos, eR) == true)
+	//			m_ppObjects[i]->MoveBehind(fTimeElapsed * 10);
+	//		else
+	//			m_ppObjects[i]->MoveForward(fTimeElapsed * 10);
+	//	}
 
-CEthanObject::CEthanObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks)
-{
-	CLoadedModelInfo *pEthanModel = pModel;
-	if (!pEthanModel) pEthanModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Ethan.bin", NULL);
-
-	SetChild(pEthanModel->m_pModelRootObject, true);
-	m_pSkinnedAnimationController = new CEthanAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pEthanModel);
-
-	m_pSkinnedAnimationController->m_pRootMotionObject = pEthanModel->m_pModelRootObject->FindFrame("EthanHips");
-}
-
-CEthanObject::~CEthanObject()
-{
+	//	// 거리가 50 초과면 알아서 움직이게 됨
+	//	else {
+	//		if (m_ppObjects[i]->MoveNum >= 3000)
+	//		{
+	//			m_ppObjects[i]->Rotate(0.0f, 90.f, 0.0f);
+	//			m_ppObjects[i]->MoveForward(fTimeElapsed * 10);
+	//			m_ppObjects[i]->MoveNum = 0;
+	//		}
+	//		if (m_ppObjects[i]->MoveNum < 3000) {
+	//			m_ppObjects[i]->MoveForward(fTimeElapsed * 10);
+	//			m_ppObjects[i]->MoveNum++;
+	//		}
+	//	}
+	//}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CLionObject::CLionObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks)
+CMapObject::CMapObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks)
 {
-	CLoadedModelInfo *pLionModel = pModel;
-	if (!pLionModel) pLionModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Lion.bin", NULL);
+	CLoadedModelInfo *pMapModel = pModel;
+	if (!pMapModel) pMapModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/icemap.bin", NULL);
 
-	SetChild(pLionModel->m_pModelRootObject, true);
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pLionModel);
+	SetChild(pMapModel->m_pModelRootObject, true);
 }
 
-CLionObject::~CLionObject()
+CMapObject::~CMapObject()
 {
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CZebraObject::CZebraObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks)
-{
-	CLoadedModelInfo *pZebraModel = pModel;
-	if (!pZebraModel) pZebraModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Zebra.bin", NULL);
-
-	SetChild(pZebraModel->m_pModelRootObject, true);
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pZebraModel);
-}
-
-CZebraObject::~CZebraObject()
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CEagleAnimationController::CEagleAnimationController(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nAnimationTracks, CLoadedModelInfo* pModel) : CAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pModel)
-{
-}
-
-CEagleAnimationController::~CEagleAnimationController()
-{
-}
-
-void CEagleAnimationController::OnRootMotion(CGameObject* pRootGameObject)
-{
-	// 
-	if (m_bRootMotion)
-	{
-		pRootGameObject->MoveForward(0.55f);
-	}
-}
-
-CEagleObject::CEagleObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks)
-{
-	// 독수리 오브젝트. 
-	// 모델을 파일에서 읽어서
-	// 모델을 로드하고
-	// 이미 씬에서 로드했으면 씬 로드 모델 가져오고
-	// 로드 안했으면 지금 해주기
-	// SetChild 해주기
-	// CEagleAnimationController를 만들어주기
-	//
-	CLoadedModelInfo *pEagleModel = pModel;
-	if (!pEagleModel) pEagleModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Eagle.bin", NULL);
-
-	SetChild(pEagleModel->m_pModelRootObject, true);
-	m_pSkinnedAnimationController = new CEagleAnimationController(pd3dDevice, pd3dCommandList, nAnimationTracks, pEagleModel);
-}
-
-CEagleObject::~CEagleObject()
-{
-}
-
-void CEagleObject::SetPosition(float x, float y, float z)
-{
-	CGameObject::SetPosition(x, y, z);
-
-	XMFLOAT3 xmf3Position = XMFLOAT3(x, y, z);
-	if (Vector3::Distance(m_xmf3StartPosition, xmf3Position) > 150.0f)
-	{
-		Rotate(0.0f, 180.0f, 0.0f);
-		m_xmf3StartPosition = xmf3Position;
-	}
 }
 
