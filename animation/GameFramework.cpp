@@ -501,16 +501,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	}
 }
 
-void CGameFramework::myFunc_SetMonPosition(int n, int SCSceneNum, XMFLOAT3 position)
-{
-    if (SCSceneNum > 1)
-    {
-        m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
-        m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
-        m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
-        //m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
-    }
-}
+
 
 
 void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
@@ -541,6 +532,28 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(0, 1, 0);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetRight(Right.x, Right.y, Right.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetScale(20.0f, 20.0f, 20.0f);
+	}
+}
+
+void CGameFramework::myFunc_SetMonPosition(int n, int SCSceneNum, XMFLOAT3 position)
+{
+	if (SCSceneNum > 1)
+	{
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
+		//m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
+	}
+}
+
+void CGameFramework::myFunc_SetMonLookRight(int n, int SCSceneNum, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
+{
+	if (SCSceneNum > 1)
+	{
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetLook(Look.x, Look.y, Look.z);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetUp(0,1,0);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetRight(Right.x, Right.y, Right.z);
+		
 	}
 }
 
