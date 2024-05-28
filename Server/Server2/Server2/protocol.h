@@ -274,6 +274,8 @@ struct SC_MOVE_MONSTER_PACKET {
 	char type;
 	int id;
 	XMFLOAT3 pos;
+	XMFLOAT3 look;
+	XMFLOAT3 right;
 
 
 };

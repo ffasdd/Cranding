@@ -177,11 +177,11 @@ void CPlayer::Update(float fTimeElapsed)
 	if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
 
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
-	
-	XMFLOAT3 b = GetLookVector();
-	b = Vector3::ScalarProduct(b, 50,false);
 
-	if (nCurrentCameraMode == THIRD_PERSON_CAMERA || nCurrentCameraMode == INGAME_SCENE_CAMERA) m_pCamera->Update(Vector3::Add(m_xmf3Position,b), fTimeElapsed);
+	XMFLOAT3 b = GetLookVector();
+	b = Vector3::ScalarProduct(b, 50, false);
+
+	if (nCurrentCameraMode == THIRD_PERSON_CAMERA || nCurrentCameraMode == INGAME_SCENE_CAMERA) m_pCamera->Update(Vector3::Add(m_xmf3Position, b), fTimeElapsed);
 	if (m_pCameraUpdatedContext) OnCameraUpdateCallback(fTimeElapsed);
 	if (nCurrentCameraMode == THIRD_PERSON_CAMERA || nCurrentCameraMode == INGAME_SCENE_CAMERA) m_pCamera->SetLookAt(Vector3::Add(m_xmf3Position, b));
 	m_pCamera->RegenerateViewMatrix();
@@ -198,18 +198,18 @@ CCamera* CPlayer::OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode)
 	switch (nNewCameraMode)
 	{
 
-		case FIRST_PERSON_CAMERA:
-			pNewCamera = new CFirstPersonCamera(m_pCamera);
-			break;
-		case THIRD_PERSON_CAMERA:
-			pNewCamera = new CThirdPersonCamera(m_pCamera);
-			break;
-		case SPACESHIP_CAMERA:
-			pNewCamera = new CSpaceShipCamera(m_pCamera);
-			break;
-		case INGAME_SCENE_CAMERA:
-			pNewCamera = new CLoginSceneCamera(m_pCamera);
-			break;
+	case FIRST_PERSON_CAMERA:
+		pNewCamera = new CFirstPersonCamera(m_pCamera);
+		break;
+	case THIRD_PERSON_CAMERA:
+		pNewCamera = new CThirdPersonCamera(m_pCamera);
+		break;
+	case SPACESHIP_CAMERA:
+		pNewCamera = new CSpaceShipCamera(m_pCamera);
+		break;
+	case INGAME_SCENE_CAMERA:
+		pNewCamera = new CLoginSceneCamera(m_pCamera);
+		break;
 	}
 	if (nCurrentCameraMode == SPACESHIP_CAMERA)
 	{
@@ -278,15 +278,15 @@ void CSoundCallbackHandler::HandleCallback(void* pCallbackData, float fTrackPosi
 // 플레이어 애니메이션 생성
 CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext, int sNum)
 {
-	if(sNum == 1)
-		m_pCamera =	ChangeCamera(INGAME_SCENE_CAMERA, 0.0f);
+	if (sNum == 1)
+		m_pCamera = ChangeCamera(INGAME_SCENE_CAMERA, 0.0f);
 	else
-		m_pCamera =	ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
+		m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
 	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
-	 
+
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 11, pAngrybotModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
@@ -334,7 +334,7 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	SetPlayerUpdatedContext(pContext);
 	SetCameraUpdatedContext(pContext);
 
-	SetPosition(XMFLOAT3(100.0f,10.0f, 300.0f));
+	SetPosition(XMFLOAT3(100.0f, 10.0f, 300.0f));
 	SetScale(XMFLOAT3(20.0f, 20.0f, 20.0f));
 
 	m_hp = 100;
@@ -404,10 +404,10 @@ CCamera* CTerrainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		break;
 	}
 	m_pCamera->SetPosition(Vector3::Add(m_xmf3Position, m_pCamera->GetOffset()));
-	if(nNewCameraMode==INGAME_SCENE_CAMERA)
-		m_pCamera->SetPosition(XMFLOAT3(m_xmf3Position.x+0000, m_xmf3Position.y+7000.0f,m_xmf3Position.z+0000));
-	else	
-		m_pCamera->SetPosition(XMFLOAT3(m_xmf3Position.x+0000, m_xmf3Position.y,m_xmf3Position.z+0000));
+	if (nNewCameraMode == INGAME_SCENE_CAMERA)
+		m_pCamera->SetPosition(XMFLOAT3(m_xmf3Position.x + 0000, m_xmf3Position.y + 7000.0f, m_xmf3Position.z + 0000));
+	else
+		m_pCamera->SetPosition(XMFLOAT3(m_xmf3Position.x + 0000, m_xmf3Position.y, m_xmf3Position.z + 0000));
 
 
 	Update(fTimeElapsed);
@@ -534,8 +534,35 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 void CTerrainPlayer::Update(float fTimeElapsed)
 {
 	CPlayer::Update(fTimeElapsed);
+	//if (m_pSkinnedAnimationController->m_bIsAttack == true)
+	//{
+
+	//
+	//}
+
 	if (m_pSkinnedAnimationController)
 	{
+		if (m_pSkinnedAnimationController->m_bIsAttack)
+		{
+			if (g_clients[c_id].getCharacterType() == 0)
+					{
+						if (g_clients[c_id].getAnimation() != (int)animateState::SWORD_IDLE)
+						{
+							g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
+							g_clients[c_id].setAnimation((int)animateState::SWORD_IDLE);
+						}
+					}
+					else if (g_clients[c_id].getCharacterType() == 1)
+					{
+						if (g_clients[c_id].getAnimation() != (int)animateState::GUN_IDLE)
+						{
+							g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
+							g_clients[c_id].setAnimation((int)animateState::GUN_IDLE);
+						}
+					}
+					gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
+		}
+
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
 		if (::IsZero(fLength)) // 이동을 멈춘 경우 or 가만있는 경우 
 		{
@@ -549,23 +576,7 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				m_pSkinnedAnimationController->m_nAnimationAfter = 1;
 				m_pSkinnedAnimationController->m_bIsLastBlending = true;
 
-				if (g_clients[c_id].getCharacterType() == 0)
-				{
-					if (g_clients[c_id].getAnimation() !=(int)animateState::SWORD_IDLE)
-					{
-						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
-						g_clients[c_id].setAnimation((int)animateState::SWORD_IDLE);
-					}
-				}
-				else if (g_clients[c_id].getCharacterType() == 1)
-				{
-					if (g_clients[c_id].getAnimation() != (int)animateState::GUN_IDLE)
-					{
-						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
-						g_clients[c_id].setAnimation((int)animateState::GUN_IDLE);
-					}
-				}
-				gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
+
 
 				//g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
 			}

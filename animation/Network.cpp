@@ -303,6 +303,8 @@ void Network::ProcessPacket(char* buf)
 		SC_MOVE_MONSTER_PACKET* p = reinterpret_cast<SC_MOVE_MONSTER_PACKET*>(buf);
 		int npc_id = p->id;
 		g_monsters[npc_id].setPos(p->pos);
+		g_monsters[npc_id].setLook(p->look);
+		g_monsters[npc_id].setRight(p->right);
 		break;
 	}
 	case SC_MONSTER_UPDATE: {
