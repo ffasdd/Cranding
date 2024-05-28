@@ -287,7 +287,7 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
 	 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 11, pAngrybotModel);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 12, pAngrybotModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
@@ -299,6 +299,8 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(11, 11);
+
 
 	m_pSkinnedAnimationController->SetTrackEnable(0, false);
 	m_pSkinnedAnimationController->SetTrackEnable(2, false);
@@ -310,6 +312,7 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkinnedAnimationController->SetTrackEnable(8, false);
 	m_pSkinnedAnimationController->SetTrackEnable(9, false);
 	m_pSkinnedAnimationController->SetTrackEnable(10, false);
+	m_pSkinnedAnimationController->SetTrackEnable(11, false);
 
 	//m_pSkinnedAnimationController->SetCallbackKeys(1, 2);
 #ifdef _WITH_SOUND_RESOURCE
@@ -463,24 +466,34 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 	// 방향키 눌린 경우
 	if (dwDirection)
 	{
-		// 총 사용하는 플레이어일 경우
+		// 총 사용하는 플레이어일 경우 idle, run
 		// m_nAnimationBefore = 0, m_nAnimationAfter = 2
-		// 검 사용하는 플레이어일 경우
+		// 검 사용하는 플레이어일 경우 idle, run
 		// m_nAnimationBefore = 1, m_nAnimationAfter = 3
+		m_pSkinnedAnimationController->m_bIsMove = true;
 
-		// 돌아다니면서 치료 불가
-		//m_pSkinnedAnimationController->m_bIsHeal = false;
-		//if(m_pSkinnedAnimationController->m_bIsHeal == false)
+		// 상호작용 중이 아닐 때
 		if (m_pSkinnedAnimationController->m_bIsHeal == false
-			&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
+			&& m_pSkinnedAnimationController->m_bIsMove == true)
 		{
-			m_pSkinnedAnimationController->m_bIsMove = true;
-
-			if (m_pSkinnedAnimationController->m_bIsBlending == false
-				&& m_pSkinnedAnimationController->m_nMoveCnt == 0)
+			// 공격 애니 시작
+			if (m_pSkinnedAnimationController->m_bIsAttack == true
+				&& m_pSkinnedAnimationController->m_nAnimationBefore != 11)
 			{
+				m_pSkinnedAnimationController->m_nAnimationAfter = 11;
 				m_pSkinnedAnimationController->m_bIsBlending = true;
-				m_pSkinnedAnimationController->m_nAnimationAfter = 3;
+				m_pSkinnedAnimationController->SetTrackEnable(11, true);
+				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
+			}
+
+			// idle -> run
+			else if (m_pSkinnedAnimationController->m_bIsAttack == false
+				&&m_pSkinnedAnimationController->m_nAnimationBefore != 2)
+			{
+				m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+				m_pSkinnedAnimationController->m_bIsBlending = true;
+				m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 
 				if (g_clients[c_id].getCharacterType() == 0)
 				{
@@ -489,7 +502,6 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation()); // 이전 애니메이션이 담김 
 						g_clients[c_id].setAnimation((int)animateState::SWORD_MOVE);
 					}
-
 				}
 				else if (g_clients[c_id].getCharacterType() == 1)
 				{
@@ -499,34 +511,49 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 						g_clients[c_id].setAnimation((int)animateState::GUN_MOVE);
 					}
 				}
-
-				//g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
-				// Move 애니메이션 시작부분 
 			}
-
-			/*if (g_clients[c_id].getAnimation() == animateState::GUN_IDLE || g_clients[c_id].getAnimation() == animateState::SWORD_IDLE) {
-				if (g_clients[c_id].getCharacterType() == 0)
-				{
-					g_clients[c_id].setAnimation(animateState::SWORD_MOVE);
-					g_clients[c_id].setprevAnimation(animateState::SWORD_IDLE);
-
-				}
-				else if (g_clients[c_id].getCharacterType() == 1)
-				{
-					g_clients[c_id].setAnimation(animateState::GUN_MOVE);
-					g_clients[c_id].setprevAnimation(animateState::GUN_IDLE);
-				}*/
 			gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
-			//g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
-//}
-
-			m_pSkinnedAnimationController->m_nMoveCnt++;
-			m_pSkinnedAnimationController->SetTrackEnable(1, false);
-			m_pSkinnedAnimationController->SetTrackEnable(3, true);
-
 		}
 	}
 
+
+
+		//if (m_pSkinnedAnimationController->m_bIsHeal == false
+		//	&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
+		//{
+		//	m_pSkinnedAnimationController->m_bIsMove = true;
+
+		//	if (m_pSkinnedAnimationController->m_bIsBlending == false
+		//		&& m_pSkinnedAnimationController->m_nMoveCnt == 0)
+		//	{
+		//		m_pSkinnedAnimationController->m_bIsBlending = true;
+		//		m_pSkinnedAnimationController->m_nAnimationAfter = 3;
+
+		//		if (g_clients[c_id].getCharacterType() == 0)
+		//		{
+		//			if (g_clients[c_id].getAnimation() != (int)animateState::SWORD_MOVE)
+		//			{
+		//				g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation()); // 이전 애니메이션이 담김 
+		//				g_clients[c_id].setAnimation((int)animateState::SWORD_MOVE);
+		//			}
+
+		//		}
+		//		else if (g_clients[c_id].getCharacterType() == 1)
+		//		{
+		//			if (g_clients[c_id].getAnimation() != (int)animateState::GUN_MOVE)
+		//			{
+		//				g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation()); // 이전 애니메이션이 담김 
+		//				g_clients[c_id].setAnimation((int)animateState::GUN_MOVE);
+		//			}
+		//		}
+		//	}
+		//	gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
+
+		//	m_pSkinnedAnimationController->m_nMoveCnt++;
+		//	m_pSkinnedAnimationController->SetTrackEnable(1, false);
+		//	m_pSkinnedAnimationController->SetTrackEnable(3, true);
+
+		//}
 	CPlayer::Move(dwDirection, fDistance, bUpdateVelocity);
 }
 
@@ -537,18 +564,21 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 	if (m_pSkinnedAnimationController)
 	{
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
-		if (::IsZero(fLength)) // 이동을 멈춘 경우 or 가만있는 경우 
+
+		// 이동하는 거리가 0인 경우
+		if (::IsZero(fLength))
 		{
 			m_pSkinnedAnimationController->m_bIsMove = false;
 
-			if (m_pSkinnedAnimationController->m_bIsLastBlending == false
-				&& m_pSkinnedAnimationController->m_nMoveCnt > 0
-				&& m_pSkinnedAnimationController->m_bisRotate == false)
+			// 뭐 하다가 idle 된 경우 -> 블렌딩 해야하는 경우
+			if (m_pSkinnedAnimationController->m_nAnimationBefore != 0)
 			{
-				m_pSkinnedAnimationController->m_nAnimationBefore = 3;
-				m_pSkinnedAnimationController->m_nAnimationAfter = 1;
-				m_pSkinnedAnimationController->m_bIsLastBlending = true;
+				m_pSkinnedAnimationController->m_nAnimationAfter = 0;
+				m_pSkinnedAnimationController->m_bIsBlending = true;
+				m_pSkinnedAnimationController->SetTrackEnable(0, true);
+				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 
+				// 플레이어 무기가 칼이라면 칼 idle
 				if (g_clients[c_id].getCharacterType() == 0)
 				{
 					if (g_clients[c_id].getAnimation() !=(int)animateState::SWORD_IDLE)
@@ -557,6 +587,8 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 						g_clients[c_id].setAnimation((int)animateState::SWORD_IDLE);
 					}
 				}
+
+				// 플레이어 무기가 총이라면 총idle
 				else if (g_clients[c_id].getCharacterType() == 1)
 				{
 					if (g_clients[c_id].getAnimation() != (int)animateState::GUN_IDLE)
@@ -565,73 +597,122 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 						g_clients[c_id].setAnimation((int)animateState::GUN_IDLE);
 					}
 				}
+
+				// 서버에게 앞으로 실행될 애니num, 이전 애니 num send
 				gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
-
-				//g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
 			}
-			if (m_pSkinnedAnimationController->m_bIsHeal == false
-				&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
-			{
-				m_pSkinnedAnimationController->m_nMoveCnt = 0;
-				m_pSkinnedAnimationController->SetTrackEnable(1, true); //다시 idle 애니메이션 활성화
-				m_pSkinnedAnimationController->SetTrackEnable(3, false);
-				m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f); // 애니메이션트렉위치 변경 함수, 달리는 애니메이션 트렉의 가장 첫 부분으로 다시 옮김 ->달리다가 멈춘 후 다시 달릴 때, 달리는 애니메이션이 멈췄던 지점이 아닌 애니메이션의 첫 부분부터 다시 실행되도록 설정한 것
-			}
-		}
 
-		// 기절 부분
-		if (m_pSkinnedAnimationController->m_bIsDead == true)
-		{
-			//if (m_pSkinnedAnimationController->m_nAnimationBefore == 0)
-			//	m_pSkinnedAnimationController->m_nAnimationBefore = 1;
-			//else
-			m_pSkinnedAnimationController->m_nAnimationBefore = m_pSkinnedAnimationController->m_nAnimationAfter;
-			m_pSkinnedAnimationController->m_nAnimationAfter = 5;
+		//	if (m_pSkinnedAnimationController->m_bIsLastBlending == false
+		//		&& m_pSkinnedAnimationController->m_nMoveCnt > 0
+		//		&& m_pSkinnedAnimationController->m_bisRotate == false)
+		//	{
+		//		m_pSkinnedAnimationController->m_nAnimationBefore = 3;
+		//		m_pSkinnedAnimationController->m_nAnimationAfter = 1;
+		//		m_pSkinnedAnimationController->m_bIsLastBlending = true;
 
-			// 기절 상태에서는 공격, 치료 x
-			m_pSkinnedAnimationController->m_bIsAttack = false;
-			m_pSkinnedAnimationController->m_bIsHeal = false;
+		//		// 플레이어 무기가 칼이라면 칼 idle
+		//		if (g_clients[c_id].getCharacterType() == 0)
+		//		{
+		//			if (g_clients[c_id].getAnimation() !=(int)animateState::SWORD_IDLE)
+		//			{
+		//				g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
+		//				g_clients[c_id].setAnimation((int)animateState::SWORD_IDLE);
+		//			}
+		//		}
 
-			m_pSkinnedAnimationController->SetTrackEnable(5, true);
-			m_pSkinnedAnimationController->SetTrackEnable(1, false);
-			m_pSkinnedAnimationController->SetTrackEnable(3, false);
-			m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
-			m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
-		}
+		//		// 플레이어 무기가 총이라면 총idle
+		//		else if (g_clients[c_id].getCharacterType() == 1)
+		//		{
+		//			if (g_clients[c_id].getAnimation() != (int)animateState::GUN_IDLE)
+		//			{
+		//				g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
+		//				g_clients[c_id].setAnimation((int)animateState::GUN_IDLE);
+		//			}
+		//		}
 
-		// 부활 부분
-		else if (m_pSkinnedAnimationController->m_nAnimationAfter == 5
-			&& m_pSkinnedAnimationController->m_bIsDead == false)
-		{
-			m_pSkinnedAnimationController->m_nAnimationBefore = 5;
-			m_pSkinnedAnimationController->m_nAnimationAfter = 1;
-			m_pSkinnedAnimationController->SetTrackEnable(5, false);
-			m_pSkinnedAnimationController->SetTrackPosition(5, 0.0f);
-		}
+		//		// 서버에게 앞으로 실행될 애니num, 이전 애니 num send
+		//		gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 
-		// 치료 부분
-		else if (m_pSkinnedAnimationController->m_bIsHeal == true
-			&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
-		{
-			m_pSkinnedAnimationController->m_bIsBlending = true;
-			m_pSkinnedAnimationController->m_nAnimationBefore = m_pSkinnedAnimationController->m_nAnimationAfter;
-			m_pSkinnedAnimationController->m_nAnimationAfter = 10;
+		//		//g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
+		//	}
 
-			m_pSkinnedAnimationController->SetTrackEnable(1, false);
-			m_pSkinnedAnimationController->SetTrackEnable(3, false);
-			m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
-			m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
-			m_pSkinnedAnimationController->SetTrackEnable(10, true);
-		}
-		else if (m_pSkinnedAnimationController->m_bIsHeal == false
-			&& m_pSkinnedAnimationController->m_nAnimationAfter == 10)
-		{
-			if (m_pSkinnedAnimationController->m_bIsBlending == false)
-				m_pSkinnedAnimationController->m_bIsLastBlending = true;
-			m_pSkinnedAnimationController->m_nAnimationBefore = 10;
-			m_pSkinnedAnimationController->m_nAnimationAfter = 1;
-			m_pSkinnedAnimationController->SetTrackEnable(10, false);
-			m_pSkinnedAnimationController->SetTrackPosition(10, 0.0f);
+		//	// 상호작용 하는 중이 아니라면 idle 애니 활성화 + run 애니 비활성화
+		//	if (m_pSkinnedAnimationController->m_bIsHeal == false
+		//		&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
+		//	{
+		//		m_pSkinnedAnimationController->m_nMoveCnt = 0;
+		//		m_pSkinnedAnimationController->SetTrackEnable(1, true); //다시 idle 애니메이션 활성화
+		//		m_pSkinnedAnimationController->SetTrackEnable(3, false);
+		//		m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f); // 애니메이션트렉위치 변경 함수, 달리는 애니메이션 트렉의 가장 첫 부분으로 다시 옮김 ->달리다가 멈춘 후 다시 달릴 때, 달리는 애니메이션이 멈췄던 지점이 아닌 애니메이션의 첫 부분부터 다시 실행되도록 설정한 것
+		//	}
+		//}
+
+		//if (m_pSkinnedAnimationController->m_bIsMove == false
+		//	&& m_pSkinnedAnimationController->m_bIsAttack == true)
+		//{
+		//	if(m_pSkinnedAnimationController->m_bIsBlending == false)
+		//	m_pSkinnedAnimationController->m_nAnimationBefore = 3;
+		//	m_pSkinnedAnimationController->m_nAnimationAfter = 1;
+		//	m_pSkinnedAnimationController->m_bIsLastBlending = true;
+		//}
+
+		//// 기절 부분
+		//if (m_pSkinnedAnimationController->m_bIsDead == true)
+		//{
+		//	//if (m_pSkinnedAnimationController->m_nAnimationBefore == 0)
+		//	//	m_pSkinnedAnimationController->m_nAnimationBefore = 1;
+		//	//else
+		//	m_pSkinnedAnimationController->m_nAnimationBefore = m_pSkinnedAnimationController->m_nAnimationAfter;
+		//	m_pSkinnedAnimationController->m_nAnimationAfter = 5;
+
+		//	// 기절 상태에서는 공격, 치료 x
+		//	m_pSkinnedAnimationController->m_bIsAttack = false;
+		//	m_pSkinnedAnimationController->m_bIsHeal = false;
+
+		//	m_pSkinnedAnimationController->SetTrackEnable(5, true);
+		//	m_pSkinnedAnimationController->SetTrackEnable(1, false);
+		//	m_pSkinnedAnimationController->SetTrackEnable(3, false);
+		//	m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
+		//	m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+		//}
+
+		//// 부활 부분
+		//else if (m_pSkinnedAnimationController->m_nAnimationAfter == 5
+		//	&& m_pSkinnedAnimationController->m_bIsDead == false)
+		//{
+		//	m_pSkinnedAnimationController->m_nAnimationBefore = 5;
+		//	m_pSkinnedAnimationController->m_nAnimationAfter = 1;
+		//	m_pSkinnedAnimationController->SetTrackEnable(5, false);
+		//	m_pSkinnedAnimationController->SetTrackPosition(5, 0.0f);
+		//}
+
+		//// 상호작용 부분
+		//else if (m_pSkinnedAnimationController->m_bIsHeal == true
+		//	&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
+		//{
+		//	m_pSkinnedAnimationController->m_bIsBlending = true;
+		//	m_pSkinnedAnimationController->m_nAnimationBefore = m_pSkinnedAnimationController->m_nAnimationAfter;
+		//	m_pSkinnedAnimationController->m_nAnimationAfter = 10;
+
+		//	m_pSkinnedAnimationController->SetTrackEnable(1, false);
+		//	m_pSkinnedAnimationController->SetTrackEnable(3, false);
+		//	m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
+		//	m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+		//	m_pSkinnedAnimationController->SetTrackEnable(10, true);
+		//}
+
+		// 상호작용 x 고, 공격 마무리 -ing
+		//else if (m_pSkinnedAnimationController->m_bIsHeal == false
+		//	&& m_pSkinnedAnimationController->m_nAnimationAfter == 10)
+		//{
+		//	// 처음 블렌딩이 종료된 상태(공격이 끝날 상태라면)라면 마지막 블렌딩 실행
+		//	if (m_pSkinnedAnimationController->m_bIsBlending == false)
+		//		m_pSkinnedAnimationController->m_bIsLastBlending = true;
+
+		//	m_pSkinnedAnimationController->m_nAnimationBefore = 10;
+		//	m_pSkinnedAnimationController->m_nAnimationAfter = 1;
+		//	m_pSkinnedAnimationController->SetTrackEnable(10, false);
+		//	m_pSkinnedAnimationController->SetTrackPosition(10, 0.0f);
 		}
 	}
 }

@@ -342,17 +342,21 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case VK_ESCAPE:
 			::PostQuitMessage(0);
 			break;
+
 		case VK_RETURN:
 			break;
+
 		case VK_F1:
 		case VK_F2:
 		case VK_F3:
 		case VK_F4:
 			m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
 			break;
+
 		case VK_F9:
 			ChangeSwapChainState();
 			break;
+
 		case 'P': // scene
 		case 'O': // texture
 		case 'Z': // depth
@@ -361,6 +365,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			m_nDrawOption = (int)wParam;
 			break;
 		}
+
 		case '0':
 			// ������ȭ��
 			SceneNum = 0;
@@ -375,35 +380,35 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 1;
 				isready = true;
 
-				gNetwork.SendLoginfo();
+				//gNetwork.SendLoginfo();
 				
-				WaitForSingleObject(loginevent, INFINITE); 
+				//WaitForSingleObject(loginevent, INFINITE); 
 
-				cl_id = gNetwork.Getmyid();
-				m_pPlayer->c_id = gNetwork.Getmyid();
+				//cl_id = gNetwork.Getmyid();
+				//m_pPlayer->c_id = gNetwork.Getmyid();
 
 				ReleaseObjects();
 				BuildObjects(SceneNum);
-				gNetwork.SendChangeScene(SceneNum);
+				//gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
 			else break;
+
 		case '2':
 			if (SceneNum == 0) break;
 			// spaceship map
 			SceneNum = 2;
 			isready = false;
 			// send ready packet  
-			gNetwork.SendIngameStart();
+			//gNetwork.SendIngameStart();
 		
 			//WaitForSingleObject(startevent, INFINITE);
 			//// �׸��� ���� �������� 
 			//
-			//ReleaseObjects();
-			//BuildObjects(SceneNum);
-
-
+			ReleaseObjects();
+			BuildObjects(SceneNum);
 			break;
+
 		case '3':
 			if (SceneNum == 1 || SceneNum == 0) break;
 			// ice map
@@ -412,6 +417,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			break;
+
 		case '4':
 			if (SceneNum == 1 || SceneNum == 0) break;
 			// fire map
@@ -419,6 +425,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			break;
+
 		case '5':
 			if (SceneNum == 1 || SceneNum == 0) break;
 			// grass map
@@ -426,16 +433,20 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			break;
+
 		case VK_SPACE:
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
 			break;
+
 		case '9':
 			m_pPlayer->m_hp -= 5.0f;
 			isready = true;
 			break;
+
 		case 'B':
 			m_bRenderBoundingBox = !m_bRenderBoundingBox;
 			break;
+
 		default:
 			break;
 		}
@@ -848,10 +859,9 @@ void CGameFramework::ProcessInput()
 		if ((pKeysBuffer[VK_SPACE] & 0xF0) && m_pPlayer->m_pSkinnedAnimationController->m_bIsMove == false)
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = true;
 
-		// ���� Ű
+		// 공격키
 		if (pKeysBuffer[VK_LBUTTON] & 0xF0)
 		{
-
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
 		}
 
@@ -869,6 +879,7 @@ void CGameFramework::ProcessInput()
 			}
 			if (dwDirection)
 			{
+				//m_pPlayer->m_pSkinnedAnimationController->m_bIsMove = true;
 				m_pPlayer->Move(dwDirection, 12.25f, true);
 				XMFLOAT3 exveloctiy = m_pPlayer->GetVelocity();
 				XMFLOAT3 exGravity = m_pPlayer->GetGravity();
