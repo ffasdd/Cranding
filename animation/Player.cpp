@@ -475,8 +475,7 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 			&& m_pSkinnedAnimationController->m_bIsMove == true)
 		{
 			// idle -> run
-			if (m_pSkinnedAnimationController->m_bIsAttack == false
-				&&m_pSkinnedAnimationController->m_nAnimationBefore != 2)
+			if (m_pSkinnedAnimationController->m_nAnimationBefore != 2)
 			{
 				m_pSkinnedAnimationController->m_nAnimationAfter = 2;
 				m_pSkinnedAnimationController->m_bIsBlending = true;
@@ -581,8 +580,8 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 		else if (m_pSkinnedAnimationController->m_bIsHeal == true
 			&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
 		{
-			m_pSkinnedAnimationController->m_bIsBlending = true;
 			m_pSkinnedAnimationController->m_nAnimationAfter = 10;
+			m_pSkinnedAnimationController->m_bIsBlending = true;
 
 			m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 			m_pSkinnedAnimationController->SetTrackEnable(10, true);
