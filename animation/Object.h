@@ -306,7 +306,7 @@ public:
 
 	// 상하체 분리 변수
 	bool							m_bIsAttack = false;
-	//int								m_nAttackAniNum = 8;
+	int								m_nAttackAniNum = 8;
 
 	// 애니메이션 블렌딩 변수
 	// m_nAnimationBefore, after -> 칼 쓰는애 : 1, 총 쓰는 애 : 0
