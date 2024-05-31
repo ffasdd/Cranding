@@ -338,7 +338,6 @@ public:
 	ID3D12Resource					**m_ppd3dcbSkinningBoneTransforms = NULL; //[SkinnedMeshes]
 	XMFLOAT4X4						**m_ppcbxmf4x4MappedSkinningBoneTransforms = NULL; //[SkinnedMeshes]
 
-	//
 	
 public:
 	void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);

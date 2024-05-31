@@ -301,6 +301,7 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
+		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
 		if (g_clients[cl_id].getCharacterType() == 0)
 		{
 			g_clients[cl_id].setAttack(true);
@@ -346,12 +347,12 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case VK_RETURN:
 			break;
 
-		case VK_F1:
-		case VK_F2:
-		case VK_F3:
-		case VK_F4:
-			m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
-			break;
+		//case VK_F1:
+		//case VK_F2:
+		//case VK_F3:
+		//case VK_F4:
+		//	m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
+			//break;
 
 		case VK_F9:
 			ChangeSwapChainState();
@@ -830,8 +831,6 @@ void CGameFramework::ProcessInput()
 		}
 
 		DWORD dwDirection = 0;
-		// ���� Ű�� �����ִ��� Ȯ���ϴ� ��Ʈ ����
-		// ���� Ű�� ���������� dwDirection�� dwDirection�� DIR_FORWARD�� ��Ʈ |(or) ���� �� �Ҵ� ����(=)�� ����
 
 		if (pKeysBuffer[KEY_W] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			dwDirection |= DIR_FORWARD;
@@ -842,8 +841,6 @@ void CGameFramework::ProcessInput()
 		if (pKeysBuffer[KEY_D] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			dwDirection |= DIR_RIGHT;
 
-
-		// f1 ������ ����, f2 ������ ��Ȱ
 		if (pKeysBuffer[VK_F1] & 0xF0)
 		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
@@ -855,12 +852,12 @@ void CGameFramework::ProcessInput()
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsLastBlending = true;
 		}
 
-		// spacebar ������ ġ��
-		if ((pKeysBuffer[VK_SPACE] & 0xF0) && m_pPlayer->m_pSkinnedAnimationController->m_bIsMove == false)
+		if (pKeysBuffer[VK_SPACE] & 0xF0)
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = true;
 
 		// 공격키
-		if (pKeysBuffer[VK_LBUTTON] & 0xF0)
+		if (pKeysBuffer[VK_LBUTTON] & 0xF0
+			&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false)
 		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
 		}
@@ -877,9 +874,10 @@ void CGameFramework::ProcessInput()
 					g_sendqueue.push(SENDTYPE::ROTATE);
 				}
 			}
-			if (dwDirection)
+
+			if (dwDirection && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			{
-				//m_pPlayer->m_pSkinnedAnimationController->m_bIsMove = true;
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsMove = true;
 				m_pPlayer->Move(dwDirection, 12.25f, true);
 				XMFLOAT3 exveloctiy = m_pPlayer->GetVelocity();
 				XMFLOAT3 exGravity = m_pPlayer->GetGravity();

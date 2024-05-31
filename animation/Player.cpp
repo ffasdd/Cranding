@@ -468,14 +468,13 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 		// m_nAnimationBefore = 0, m_nAnimationAfter = 2
 		// 검 사용하는 플레이어일 경우 idle, run
 		// m_nAnimationBefore = 1, m_nAnimationAfter = 3
-		m_pSkinnedAnimationController->m_bIsMove = true;
 
 		// 상호작용 중이 아닐 때
-		if (m_pSkinnedAnimationController->m_bIsHeal == false
-			&& m_pSkinnedAnimationController->m_bIsMove == true)
-		{
-			// idle -> run
-			if (m_pSkinnedAnimationController->m_nAnimationBefore != 2)
+		if (m_pSkinnedAnimationController->m_bIsMove == true)
+		{                                                                    
+			// run으로 변화
+			if (m_pSkinnedAnimationController->m_nAnimationBefore != 2
+				&& m_pSkinnedAnimationController->m_bIsDead == false)
 			{
 				m_pSkinnedAnimationController->m_nAnimationAfter = 2;
 				m_pSkinnedAnimationController->m_bIsBlending = true;
@@ -511,6 +510,7 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 	CPlayer::Update(fTimeElapsed);
 	if (m_pSkinnedAnimationController)
 	{
+		//if(m_pSkinnedAnimationController->m_bIsHeal == false && ) 
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
 
 		// 이동하는 거리가 0인 경우
@@ -519,7 +519,9 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 			m_pSkinnedAnimationController->m_bIsMove = false;
 
 			// 뭐 하다가 idle 된 경우 -> 블렌딩 해야하는 경우
-			if (m_pSkinnedAnimationController->m_nAnimationBefore != 0)
+			if (m_pSkinnedAnimationController->m_nAnimationBefore != 0
+				&& m_pSkinnedAnimationController->m_bIsHeal == false
+				&& m_pSkinnedAnimationController->m_bIsDead == false)
 			{
 				m_pSkinnedAnimationController->m_nAnimationAfter = 0;
 				m_pSkinnedAnimationController->m_bIsBlending = true;
@@ -552,7 +554,8 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 		}
 
 		// 기절 부분
-		if (m_pSkinnedAnimationController->m_bIsDead == true)
+		if (m_pSkinnedAnimationController->m_bIsDead == true
+			&& m_pSkinnedAnimationController->m_nAnimationBefore != 5)
 		{
 			m_pSkinnedAnimationController->m_nAnimationAfter = 5;
 			m_pSkinnedAnimationController->m_bIsBlending = true;
@@ -565,27 +568,39 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 			m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 		}
 
-		// 부활 부분
-		else if (m_pSkinnedAnimationController->m_nAnimationAfter == 5
-			&& m_pSkinnedAnimationController->m_bIsDead == false)
-		{
-			m_pSkinnedAnimationController->m_nAnimationAfter = 1;
-			m_pSkinnedAnimationController->m_bIsBlending = true;
+		//// 부활 부분
+		//else if (m_pSkinnedAnimationController->m_nAnimationAfter == 5
+		//	&& m_pSkinnedAnimationController->m_bIsDead == false)
+		//{
+		//	m_pSkinnedAnimationController->m_nAnimationAfter = 1;
+		//	m_pSkinnedAnimationController->m_bIsBlending = true;
 
-			m_pSkinnedAnimationController->SetTrackEnable(1, true);
-			m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
-		}
+		//	m_pSkinnedAnimationController->SetTrackEnable(1, true);
+		//	m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
+		//}
 
 		// 상호작용 시작
 		else if (m_pSkinnedAnimationController->m_bIsHeal == true
 			&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
 		{
-			m_pSkinnedAnimationController->m_nAnimationAfter = 10;
+ 			m_pSkinnedAnimationController->m_nAnimationAfter = 10;
 			m_pSkinnedAnimationController->m_bIsBlending = true;
 
 			m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 			m_pSkinnedAnimationController->SetTrackEnable(10, true);
 		}
+
+		//// 상호작용 끝 + 동시에 run 실행되는 경우
+		//if (m_pSkinnedAnimationController->m_bIsHeal == false
+		//	&& m_pSkinnedAnimationController->m_nAnimationBefore == 10
+		//	&& m_pSkinnedAnimationController->m_bIsMove == true)
+		//{
+		//	m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+		//	m_pSkinnedAnimationController->m_bIsBlending = true;
+
+		//	m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
+		//	m_pSkinnedAnimationController->SetTrackEnable(2, true);
+		//}
 	}
 }
 
