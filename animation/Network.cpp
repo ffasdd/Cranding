@@ -12,13 +12,13 @@ Network::Network()
 		std::cout << "WSAStart Up Error " << endl;
 
 	clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	int DelayZeroOpt = 1;
-	setsockopt(clientsocket, SOL_SOCKET, TCP_NODELAY, (const char*)&DelayZeroOpt, sizeof(DelayZeroOpt)); // Nodelay  네이클 알고리즘 종료 
+	//int DelayZeroOpt = 1;
+	//setsockopt(clientsocket, SOL_SOCKET, TCP_NODELAY, (const char*)&DelayZeroOpt, sizeof(DelayZeroOpt)); // Nodelay  네이클 알고리즘 종료 
 
-	LINGER _linger;
-	_linger.l_linger = 0;
-	_linger.l_onoff = 1;
-	setsockopt(clientsocket, SOL_SOCKET, SO_LINGER, (const char*)& _linger, sizeof(_linger));
+	//LINGER _linger;
+	//_linger.l_linger = 0;
+	//_linger.l_onoff = 1;
+	//setsockopt(clientsocket, SOL_SOCKET, SO_LINGER, (const char*)& _linger, sizeof(_linger));
 	// Linger option
 
 	if (clientsocket == INVALID_SOCKET)
@@ -37,8 +37,8 @@ bool Network::ReadytoConnect()
 {
 	sockaddr_in sockaddrIn;
 	sockaddrIn.sin_family = AF_INET;
-	sockaddrIn.sin_port = htons(PORT_NUM);  
-	
+	sockaddrIn.sin_port = htons(PORT_NUM);
+
 	// 사용자로부터 IP 주소 입력 받기
 	string ipAddress = { "127.0.0.1" };
 
@@ -157,7 +157,9 @@ void Network::ProcessData(size_t _size)
 	char* ptr = _buf;
 	static size_t in_packet_size = 0;
 	static size_t saved_packet_size = 0;
-	static char packet_buffer[BUF_SIZE];
+	static  char packet_buffer[BUF_SIZE];
+
+	ZeroMemory(packet_buffer, BUF_SIZE);
 
 	while (0 != _size) {
 		if (0 == in_packet_size) in_packet_size = (unsigned char)ptr[0];
@@ -275,13 +277,6 @@ void Network::ProcessPacket(char* buf)
 		break;
 	}
 	case SC_INGAME_STRAT: {
-		// Timer 쓰레드를 켜줘야함 
-		//SetEvent(startevent);
-		//timerThread = std::thread([this]() {TimerThread(); });
-		//gamestart = false;
-		//gGameFramework.ReleaseObjects();
-		//gGameFramework.BuildObjects(2);
-		//gamestart = true;
 		IngameStart = true;
 		break;
 	}
@@ -291,29 +286,68 @@ void Network::ProcessPacket(char* buf)
 		g_clients.erase(ob_id);
 		break;
 	}
-	case SC_ADD_MONSTER: {
-		SC_ADD_MONSTER_PACKET* p = reinterpret_cast<SC_ADD_MONSTER_PACKET*>(buf);
-		int npc_id = p->id;
-		g_monsters[npc_id].setPos(p->pos);
-		break;
-		// 클라에도 몬스터를 담는 어레이나 벡터가 필요 
 
-	}
-	case SC_MOVE_MONSTER: {
-		SC_MOVE_MONSTER_PACKET* p = reinterpret_cast<SC_MOVE_MONSTER_PACKET*>(buf);
-		int npc_id = p->id;
-		g_monsters[npc_id].setPos(p->pos);
-		g_monsters[npc_id].setLook(p->look);
-		g_monsters[npc_id].setRight(p->right);
+	case SC_MONSTER_UPDATE_POS: {
+
+		// 10 개로 받아줘야한다. 
+		NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
+		int npc_id = p->_monster._id;
+		g_monsters[npc_id].setId(npc_id);
+		g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
+		g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
+		g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
+
+		g_monsters[npc_id].setUp({ 0.f,1.f,0.f });
+
+		// p [10] 
+
+		//cout << int(p->size) << endl;
+
+		//int npc_id = p->_monster._id;
+
+		//g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
+		//g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
+		//g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
+
+
 		break;
 	}
-	case SC_MONSTER_UPDATE: {
-		NightMonsters* p = reinterpret_cast<NightMonsters*>(buf);
+	case SC_MONSTER_UPDATE_LOOK: {
+		NightMonstersLook* p = reinterpret_cast<NightMonstersLook*>(buf);
+
 		for (int i = 0; i < 10; ++i)
 		{
 			g_monsters[i].setId(i);
-			g_monsters[i].setPos(p->_monster[i]._pos);
+			g_monsters[i].setLook(p->_monster[i]._look);
+			g_monsters[i].setUp({ 0.f,1.f,0.f });
 		}
+		break;
+	}
+	case SC_MONSTER_UPDATE_RIGHT: {
+		NightMonstersRight* p = reinterpret_cast<NightMonstersRight*>(buf);
+
+		for (int i = 0; i < 10; ++i)
+		{
+			g_monsters[i].setId(i);
+			g_monsters[i].setLook(p->_monster[i]._right);
+			g_monsters[i].setUp({ 0.f,1.f,0.f });
+		}
+		break;
+	}
+	case SC_DAYTIME:
+	{
+		SC_DAYTIME_PACKET* p = reinterpret_cast<SC_DAYTIME_PACKET*>(buf);
+		gGameFramework.DayTime = true;
+		gGameFramework.Night = false;
+		cout << " Day Time " << endl;
+		break;
+	}
+	case SC_NIGHT:
+	{
+		SC_NIGHT_PACKET* p = reinterpret_cast<SC_NIGHT_PACKET*>(buf);
+		gGameFramework.DayTime = false;
+		gGameFramework.Night = true;
+		cout << " Night " << endl;
 		break;
 	}
 	}
@@ -442,7 +476,7 @@ int Network::getmyid(int _id)
 			return 2;
 		else
 			return 1;
-		
+
 	}
 	else
 		return _id;

@@ -12,6 +12,9 @@ public:
 	XMFLOAT3 _up;
 	XMFLOAT3 _look;
 	XMFLOAT3 _velocity;
+
+	XMFLOAT3 spaceshippos = { 250.0f,10.0f,750.0f };
+
 	float _speed = 1.0f;
 	float _viewRange = 150.0f;
 	int _hp;

@@ -95,6 +95,10 @@ public:
 	int curDay = 0;
 	int curMinute = 0;
 	int curSecond = 0;
+	
+	bool DayTime = false;
+	bool Night = false;
+
 
 private:
 	HINSTANCE					m_hInstance;

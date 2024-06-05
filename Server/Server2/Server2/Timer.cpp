@@ -52,6 +52,20 @@ void Timer::TimerThread()
 					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
 				}
+
+				case EVENT_TYPE::EV_DAYTIME: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::DAYTIME_TIMER;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+				}
+				case EVENT_TYPE::EV_NIGHT: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::NIGHT_TIMER;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+				}
+
 				}
 			}
 			continue;

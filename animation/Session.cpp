@@ -100,14 +100,36 @@ void Session::setHp(int hp)
 	m_hp = hp;
 }
 
+void Session::setPos(float x, float y, float z)
+{
+	m_pos.x = x;
+	m_pos.y = y;
+	m_pos.z = z;
+
+}
+
 void Session::setPos(XMFLOAT3 pos)
 {
 	m_pos = pos;
 }
 
+void Session::setLook(float lx, float ly, float lz)
+{
+	m_look.x = lx;
+	m_look.y = ly;
+	m_look.z = lz;
+}
+
 void Session::setLook(XMFLOAT3 look)
 {
 	m_look = look;
+}
+
+void Session::setRight(float rx,float ry,float rz)
+{
+	m_right.x = rx;
+	m_right.y = ry;
+	m_right.z = rz;
 }
 
 void Session::setRight(XMFLOAT3 right)

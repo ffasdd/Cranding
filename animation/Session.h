@@ -25,8 +25,11 @@ public:
 	void setrId(int roomid);
 	void setName(char* name);
 	void setHp(int hp);
+	void setPos(float x, float y, float z);
 	void setPos(XMFLOAT3 pos);
+	void setLook(float lx, float ly, float lz);
 	void setLook(XMFLOAT3 look);
+	void setRight(float rx, float ry, float rz);
 	void setRight(XMFLOAT3 right);
 	void setUp(XMFLOAT3 up);
 	void setAnimation(int ani);

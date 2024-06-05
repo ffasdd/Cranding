@@ -32,7 +32,7 @@ public:
 	void NetThreadFunc();
 	void TimerThread();
 	void ProcessData(size_t _size);
-	void ProcessPacket(char* buf);
+	void ProcessPacket( char* buf);
 
 	SOCKET GetSocket() { return clientsocket; }
 	int Getmyid() { return my_id; }
@@ -65,7 +65,7 @@ public:
 	
 private:
 	SOCKET clientsocket;
-	char _buf[BUF_SIZE];
+	 char _buf[BUF_SIZE];
 
 	thread netThread;
 	thread sendThread;

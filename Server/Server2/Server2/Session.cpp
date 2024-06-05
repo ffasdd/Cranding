@@ -30,6 +30,7 @@ Session::Session()
 	_hp = _maxhp;
 	room_id = -1;
 	_stage = 0;
+	_view_list.clear();
 }
 
 void Session::send_login_info_packet()

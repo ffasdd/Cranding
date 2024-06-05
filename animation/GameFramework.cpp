@@ -376,8 +376,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				isready = true;
 
 				gNetwork.SendLoginfo();
-				
-				WaitForSingleObject(loginevent, INFINITE); 
+
+				WaitForSingleObject(loginevent, INFINITE);
 
 				cl_id = gNetwork.Getmyid();
 				m_pPlayer->c_id = gNetwork.Getmyid();
@@ -395,7 +395,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isready = false;
 			// send ready packet  
 			gNetwork.SendIngameStart();
-		
+
 			//WaitForSingleObject(startevent, INFINITE);
 			//// �׸��� ���� �������� 
 			//
@@ -551,9 +551,10 @@ void CGameFramework::myFunc_SetMonLookRight(int n, int SCSceneNum, XMFLOAT3 Look
 	if (SCSceneNum > 1)
 	{
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetLook(Look.x, Look.y, Look.z);
-		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetUp(0,1,0);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetUp(0, 1, 0);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetRight(Right.x, Right.y, Right.z);
-		
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
+
 	}
 }
 
@@ -592,7 +593,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 		// �������� ���� ���� �ִϸ��̼� ��ȣ�� ���� �ִϸ��̼� ��ȣ�� �ٸ� ���(������ �ؾ��ϴ� ���)
 		if (prevAni != curAni)
 		{
-			
+
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
@@ -936,7 +937,7 @@ void CGameFramework::AnimateObjects()
 		//	// ����ȯ
 		//}
 		//else
-			m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
+		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
 }
 
@@ -1031,7 +1032,7 @@ void CGameFramework::FrameAdvance()
 		m_pScene->Render(m_pd3dCommandList, m_pCamera);
 
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
-		
+
 		if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 
 		m_pPostProcessingShader->OnPostRenderTarget(m_pd3dCommandList);

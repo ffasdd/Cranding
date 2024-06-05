@@ -37,13 +37,16 @@ void Server::Stop()
 
 void Server::NetworkSet()
 {
+
+	listensocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+
 	SOCKADDR_IN serverAddr;
 	memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_addr.S_un.S_addr = INADDR_ANY;
 	serverAddr.sin_port = htons(PORT_NUM);
 
-	listensocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
+
 	
 	if (SOCKET_ERROR == bind(listensocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr)))
 		cout << "Bind Error" << endl;
@@ -90,7 +93,7 @@ void Server::Iocp()
 	_IocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(listensocket), _IocpHandle, 9999, 0);
 
-	clientsocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
+	clientsocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	LINGER option;
 	option.l_linger = 0;
 	option.l_onoff = 1;
@@ -222,6 +225,22 @@ void Server::WorkerThread()
 			delete ex_over;
 			break;
 		}
+		case COMP_TYPE::NIGHT_TIMER: {
+			int r_id = static_cast<int>(key);
+			ingameroom[r_id].NightSend();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(60s),r_id,EVENT_TYPE::EV_NIGHT };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+		}
+		case COMP_TYPE::DAYTIME_TIMER: {
+			int r_id = static_cast<int>(key);
+			ingameroom[r_id].DayTimeSend();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(30s),r_id,EVENT_TYPE::EV_DAYTIME };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+		}
 		default:
 			break;
 		}
@@ -238,6 +257,8 @@ void Server::InitialziedMonster(int room_Id)
 
 	for (int i = 0; i < MAX_NPC; ++i)
 	{
+		if (ingameroom[room_Id].NightMonster[i]._is_alive == false)
+		{
 		ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		ingameroom[room_Id].NightMonster[i]._att = 10;
 		ingameroom[room_Id].NightMonster[i]._hp = 50;
@@ -245,6 +266,7 @@ void Server::InitialziedMonster(int room_Id)
 		ingameroom[room_Id].NightMonster[i]._right = XMFLOAT3(1.0f, 0.f, 0.0f);
 		ingameroom[room_Id].NightMonster[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
 		ingameroom[room_Id].NightMonster[i]._is_alive = true;
+		}
 	}
 
 }
@@ -464,11 +486,19 @@ void Server::ProcessPacket(int id, char* packet)
 			}
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
+			
 			TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
 			g_Timer.InitTimerQueue(ev1);
 		
 			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
+
+			TIMER_EVENT ev2{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NIGHT};
+			g_Timer.InitTimerQueue(ev2);
+
+			TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_DAYTIME };
+			g_Timer.InitTimerQueue(ev3);
+
 
 		}
 
@@ -476,23 +506,7 @@ void Server::ProcessPacket(int id, char* packet)
 						break;
 	case CS_TIME_CHECK: {
 
-		//CS_TIME_CHECK_PACKET* p = reinterpret_cast<CS_TIME_CHECK_PACKET*>(packet);
-		//cout << p->roomid << " 번 방 " << p->time << " 분 경과 " << endl;
-		//int r_id = p->roomid;
-
-		//if (p->time % 2 == 0)
-		//{
-		//	cout << " 몬스터 생성  " << endl;
-		//	// 모든 클라이언트들 한테 밤에나오는 NPC들 정보들을 모두 보내줘야 함 
-		//	InitialziedMonster(r_id);
-		//	for (auto& pl : ingameroom[r_id].ingamePlayer)
-		//	{
-		//		for (int i = 0; i < ingameroom[r_id].NightMonster.max_size(); ++i) //
-		//		{
-
-		//		}
-		//	}
-		//}
+		
 		break;
 	};
 	
