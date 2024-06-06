@@ -301,6 +301,7 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
+		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
 		if (g_clients[cl_id].getCharacterType() == 0)
 		{
 			g_clients[cl_id].setAttack(true);
@@ -342,17 +343,21 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case VK_ESCAPE:
 			::PostQuitMessage(0);
 			break;
+
 		case VK_RETURN:
 			break;
-		case VK_F1:
-		case VK_F2:
-		case VK_F3:
-		case VK_F4:
-			m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
-			break;
+
+		//case VK_F1:
+		//case VK_F2:
+		//case VK_F3:
+		//case VK_F4:
+		//	m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
+			//break;
+
 		case VK_F9:
 			ChangeSwapChainState();
 			break;
+
 		case 'P': // scene
 		case 'O': // texture
 		case 'Z': // depth
@@ -361,6 +366,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			m_nDrawOption = (int)wParam;
 			break;
 		}
+
 		case '0':
 			// ������ȭ��
 			SceneNum = 0;
@@ -379,15 +385,16 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 				WaitForSingleObject(loginevent, INFINITE);
 
-				cl_id = gNetwork.Getmyid();
-				m_pPlayer->c_id = gNetwork.Getmyid();
+				//cl_id = gNetwork.Getmyid();
+				//m_pPlayer->c_id = gNetwork.Getmyid();
 
 				ReleaseObjects();
 				BuildObjects(SceneNum);
-				gNetwork.SendChangeScene(SceneNum);
+				//gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
 			else break;
+
 		case '2':
 			if (SceneNum == 0) break;
 			// spaceship map
@@ -399,11 +406,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			//WaitForSingleObject(startevent, INFINITE);
 			//// �׸��� ���� �������� 
 			//
-			//ReleaseObjects();
-			//BuildObjects(SceneNum);
-
-
+			ReleaseObjects();
+			BuildObjects(SceneNum);
 			break;
+
 		case '3':
 			if (SceneNum == 1 || SceneNum == 0) break;
 			// ice map
@@ -412,6 +418,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			break;
+
 		case '4':
 			if (SceneNum == 1 || SceneNum == 0) break;
 			// fire map
@@ -419,6 +426,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			break;
+
 		case '5':
 			if (SceneNum == 1 || SceneNum == 0) break;
 			// grass map
@@ -426,16 +434,20 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			break;
+
 		case VK_SPACE:
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
 			break;
+
 		case '9':
 			m_pPlayer->m_hp -= 5.0f;
 			isready = true;
 			break;
+
 		case 'B':
 			m_bRenderBoundingBox = !m_bRenderBoundingBox;
 			break;
+
 		default:
 			break;
 		}
@@ -833,8 +845,6 @@ void CGameFramework::ProcessInput()
 		}
 
 		DWORD dwDirection = 0;
-		// ���� Ű�� �����ִ��� Ȯ���ϴ� ��Ʈ ����
-		// ���� Ű�� ���������� dwDirection�� dwDirection�� DIR_FORWARD�� ��Ʈ |(or) ���� �� �Ҵ� ����(=)�� ����
 
 		if (pKeysBuffer[KEY_W] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			dwDirection |= DIR_FORWARD;
@@ -845,8 +855,6 @@ void CGameFramework::ProcessInput()
 		if (pKeysBuffer[KEY_D] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			dwDirection |= DIR_RIGHT;
 
-
-		// f1 ������ ����, f2 ������ ��Ȱ
 		if (pKeysBuffer[VK_F1] & 0xF0)
 		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
@@ -858,14 +866,13 @@ void CGameFramework::ProcessInput()
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsLastBlending = true;
 		}
 
-		// spacebar ������ ġ��
-		if ((pKeysBuffer[VK_SPACE] & 0xF0) && m_pPlayer->m_pSkinnedAnimationController->m_bIsMove == false)
+		if (pKeysBuffer[VK_SPACE] & 0xF0)
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = true;
 
-		// ���� Ű
-		if (pKeysBuffer[VK_LBUTTON] & 0xF0)
+		// 공격키
+		if (pKeysBuffer[VK_LBUTTON] & 0xF0
+			&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false)
 		{
-
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
 		}
 
@@ -881,8 +888,10 @@ void CGameFramework::ProcessInput()
 					g_sendqueue.push(SENDTYPE::ROTATE);
 				}
 			}
-			if (dwDirection)
+
+			if (dwDirection && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			{
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsMove = true;
 				m_pPlayer->Move(dwDirection, 12.25f, true);
 				XMFLOAT3 exveloctiy = m_pPlayer->GetVelocity();
 				XMFLOAT3 exGravity = m_pPlayer->GetGravity();

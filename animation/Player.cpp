@@ -47,7 +47,7 @@ void CPlayer::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsComm
 	if (m_pCamera) m_pCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 
-	UINT ncbElementBytes = ((sizeof(CB_PLAYER_INFO) + 255) & ~255); //256ÀÇ ¹è¼ö
+	UINT ncbElementBytes = ((sizeof(CB_PLAYER_INFO) + 255) & ~255); //256ï¿½ï¿½ ï¿½ï¿½ï¿½
 	m_pd3dcbPlayer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 
 	m_pd3dcbPlayer->Map(0, NULL, (void**)&m_pcbMappedPlayer);
@@ -275,7 +275,7 @@ void CSoundCallbackHandler::HandleCallback(void* pCallbackData, float fTrackPosi
 #endif
 }
 
-// ÇÃ·¹ÀÌ¾î ¾Ö´Ï¸ÞÀÌ¼Ç »ý¼º
+// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
 CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext, int sNum)
 {
 	if (sNum == 1)
@@ -299,6 +299,7 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
+
 
 	m_pSkinnedAnimationController->SetTrackEnable(0, false);
 	m_pSkinnedAnimationController->SetTrackEnable(2, false);
@@ -326,7 +327,7 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	UINT ncbElementBytes = ((sizeof(CB_PLAYER_INFO) + 255) & ~255); //256ÀÇ ¹è¼ö
+	UINT ncbElementBytes = ((sizeof(CB_PLAYER_INFO) + 255) & ~255); //256ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 	D3D12_GPU_DESCRIPTOR_HANDLE d3dCbvGPUDescriptorHandle = CScene::CreateConstantBufferView(pd3dDevice, m_pd3dcbPlayer, ncbElementBytes);
 	SetCbvGPUDescriptorHandle(d3dCbvGPUDescriptorHandle);
@@ -457,80 +458,53 @@ void CTerrainPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 	}
 }
 
-// ÇÃ·¹ÀÌ¾î°¡ ¿òÁ÷ÀÌ¸é ¾Ö´Ï¸ÞÀÌ¼Ç ¹Ù²ãÁÖ´Â ºÎºÐ
+// ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½Ù²ï¿½ï¿½Ö´ï¿½ ï¿½Îºï¿½
 void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 {
-	// ¹æÇâÅ° ´­¸° °æ¿ì
+	// ï¿½ï¿½ï¿½ï¿½Å° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 	if (dwDirection)
 	{
-		// ÃÑ »ç¿ëÇÏ´Â ÇÃ·¹ÀÌ¾îÀÏ °æ¿ì
+		// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ idle, run
 		// m_nAnimationBefore = 0, m_nAnimationAfter = 2
-		// °Ë »ç¿ëÇÏ´Â ÇÃ·¹ÀÌ¾îÀÏ °æ¿ì
+		// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ idle, run
 		// m_nAnimationBefore = 1, m_nAnimationAfter = 3
 
-		// µ¹¾Æ´Ù´Ï¸é¼­ Ä¡·á ºÒ°¡
-		//m_pSkinnedAnimationController->m_bIsHeal = false;
-		//if(m_pSkinnedAnimationController->m_bIsHeal == false)
-		if (m_pSkinnedAnimationController->m_bIsHeal == false
-			&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
-		{
-			m_pSkinnedAnimationController->m_bIsMove = true;
-
-			if (m_pSkinnedAnimationController->m_bIsBlending == false
-				&& m_pSkinnedAnimationController->m_nMoveCnt == 0)
+		// ï¿½ï¿½È£ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½ï¿½
+		if (m_pSkinnedAnimationController->m_bIsMove == true)
+		{                                                                    
+			// runï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È­
+			if (m_pSkinnedAnimationController->m_nAnimationBefore != 2
+				&& m_pSkinnedAnimationController->m_bIsDead == false)
 			{
+				m_pSkinnedAnimationController->m_nAnimationAfter = 2;
 				m_pSkinnedAnimationController->m_bIsBlending = true;
-				m_pSkinnedAnimationController->m_nAnimationAfter = 3;
+				m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 
 				if (g_clients[c_id].getCharacterType() == 0)
 				{
 					if (g_clients[c_id].getAnimation() != (int)animateState::SWORD_MOVE)
 					{
-						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation()); // ÀÌÀü ¾Ö´Ï¸ÞÀÌ¼ÇÀÌ ´ã±è 
+						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation()); // ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ 
 						g_clients[c_id].setAnimation((int)animateState::SWORD_MOVE);
 					}
-
 				}
 				else if (g_clients[c_id].getCharacterType() == 1)
 				{
 					if (g_clients[c_id].getAnimation() != (int)animateState::GUN_MOVE)
 					{
-						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation()); // ÀÌÀü ¾Ö´Ï¸ÞÀÌ¼ÇÀÌ ´ã±è 
+						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation()); // ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ 
 						g_clients[c_id].setAnimation((int)animateState::GUN_MOVE);
 					}
 				}
-
-				//g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
-				// Move ¾Ö´Ï¸ÞÀÌ¼Ç ½ÃÀÛºÎºÐ 
 			}
-
-			/*if (g_clients[c_id].getAnimation() == animateState::GUN_IDLE || g_clients[c_id].getAnimation() == animateState::SWORD_IDLE) {
-				if (g_clients[c_id].getCharacterType() == 0)
-				{
-					g_clients[c_id].setAnimation(animateState::SWORD_MOVE);
-					g_clients[c_id].setprevAnimation(animateState::SWORD_IDLE);
-
-				}
-				else if (g_clients[c_id].getCharacterType() == 1)
-				{
-					g_clients[c_id].setAnimation(animateState::GUN_MOVE);
-					g_clients[c_id].setprevAnimation(animateState::GUN_IDLE);
-				}*/
 			gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
-			//g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
-//}
-
-			m_pSkinnedAnimationController->m_nMoveCnt++;
-			m_pSkinnedAnimationController->SetTrackEnable(1, false);
-			m_pSkinnedAnimationController->SetTrackEnable(3, true);
-
 		}
 	}
-
 	CPlayer::Move(dwDirection, fDistance, bUpdateVelocity);
 }
 
-// move ´ÙÀ½À¸·Î ºÒ¸®´Â ÇÔ¼ö  
+// move ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò¸ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½  
 void CTerrainPlayer::Update(float fTimeElapsed)
 {
 	CPlayer::Update(fTimeElapsed);
@@ -542,108 +516,97 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 
 	if (m_pSkinnedAnimationController)
 	{
-		if (m_pSkinnedAnimationController->m_bIsAttack)
-		{
-			if (g_clients[c_id].getCharacterType() == 0)
-					{
-						if (g_clients[c_id].getAnimation() != (int)animateState::SWORD_IDLE)
-						{
-							g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
-							g_clients[c_id].setAnimation((int)animateState::SWORD_IDLE);
-						}
-					}
-					else if (g_clients[c_id].getCharacterType() == 1)
-					{
-						if (g_clients[c_id].getAnimation() != (int)animateState::GUN_IDLE)
-						{
-							g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
-							g_clients[c_id].setAnimation((int)animateState::GUN_IDLE);
-						}
-					}
-					gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
-		}
-
+		//if(m_pSkinnedAnimationController->m_bIsHeal == false && ) 
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
-		if (::IsZero(fLength)) // ÀÌµ¿À» ¸ØÃá °æ¿ì or °¡¸¸ÀÖ´Â °æ¿ì 
+
+		// ï¿½Ìµï¿½ï¿½Ï´ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ 0ï¿½ï¿½ ï¿½ï¿½ï¿½
+		if (::IsZero(fLength))
 		{
 			m_pSkinnedAnimationController->m_bIsMove = false;
 
-			if (m_pSkinnedAnimationController->m_bIsLastBlending == false
-				&& m_pSkinnedAnimationController->m_nMoveCnt > 0
-				&& m_pSkinnedAnimationController->m_bisRotate == false)
+			// ï¿½ï¿½ ï¿½Ï´Ù°ï¿½ idle ï¿½ï¿½ ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¾ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½
+			if (m_pSkinnedAnimationController->m_nAnimationBefore != 0
+				&& m_pSkinnedAnimationController->m_bIsHeal == false
+				&& m_pSkinnedAnimationController->m_bIsDead == false)
 			{
-				m_pSkinnedAnimationController->m_nAnimationBefore = 3;
-				m_pSkinnedAnimationController->m_nAnimationAfter = 1;
-				m_pSkinnedAnimationController->m_bIsLastBlending = true;
+				m_pSkinnedAnimationController->m_nAnimationAfter = 0;
+				m_pSkinnedAnimationController->m_bIsBlending = true;
+				m_pSkinnedAnimationController->SetTrackEnable(0, true);
+				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 
+				// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½â°¡ Ä®ï¿½Ì¶ï¿½ï¿½ Ä® idle
+				if (g_clients[c_id].getCharacterType() == 0)
+				{
+					if (g_clients[c_id].getAnimation() != (int)animateState::SWORD_IDLE)
+					{
+						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
+						g_clients[c_id].setAnimation((int)animateState::SWORD_IDLE);
+					}
+				}
 
+				// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½â°¡ ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ ï¿½ï¿½idle
+				else if (g_clients[c_id].getCharacterType() == 1)
+				{
+					if (g_clients[c_id].getAnimation() != (int)animateState::GUN_IDLE)
+					{
+						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
+						g_clients[c_id].setAnimation((int)animateState::GUN_IDLE);
+					}
+				}
 
-				//g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
-			}
-			if (m_pSkinnedAnimationController->m_bIsHeal == false
-				&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
-			{
-				m_pSkinnedAnimationController->m_nMoveCnt = 0;
-				m_pSkinnedAnimationController->SetTrackEnable(1, true); //´Ù½Ã idle ¾Ö´Ï¸ÞÀÌ¼Ç È°¼ºÈ­
-				m_pSkinnedAnimationController->SetTrackEnable(3, false);
-				m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f); // ¾Ö´Ï¸ÞÀÌ¼ÇÆ®·ºÀ§Ä¡ º¯°æ ÇÔ¼ö, ´Þ¸®´Â ¾Ö´Ï¸ÞÀÌ¼Ç Æ®·ºÀÇ °¡Àå Ã¹ ºÎºÐÀ¸·Î ´Ù½Ã ¿Å±è ->´Þ¸®´Ù°¡ ¸ØÃá ÈÄ ´Ù½Ã ´Þ¸± ¶§, ´Þ¸®´Â ¾Ö´Ï¸ÞÀÌ¼ÇÀÌ ¸ØÃè´ø ÁöÁ¡ÀÌ ¾Æ´Ñ ¾Ö´Ï¸ÞÀÌ¼ÇÀÇ Ã¹ ºÎºÐºÎÅÍ ´Ù½Ã ½ÇÇàµÇµµ·Ï ¼³Á¤ÇÑ °Í
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½num, ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ num send
+				gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 			}
 		}
 
-		// ±âÀý ºÎºÐ
-		if (m_pSkinnedAnimationController->m_bIsDead == true)
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½
+		if (m_pSkinnedAnimationController->m_bIsDead == true
+			&& m_pSkinnedAnimationController->m_nAnimationBefore != 5)
 		{
-			//if (m_pSkinnedAnimationController->m_nAnimationBefore == 0)
-			//	m_pSkinnedAnimationController->m_nAnimationBefore = 1;
-			//else
-			m_pSkinnedAnimationController->m_nAnimationBefore = m_pSkinnedAnimationController->m_nAnimationAfter;
 			m_pSkinnedAnimationController->m_nAnimationAfter = 5;
+			m_pSkinnedAnimationController->m_bIsBlending = true;
 
-			// ±âÀý »óÅÂ¿¡¼­´Â °ø°Ý, Ä¡·á x
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½È£ï¿½Û¿ï¿½ x
 			m_pSkinnedAnimationController->m_bIsAttack = false;
 			m_pSkinnedAnimationController->m_bIsHeal = false;
 
 			m_pSkinnedAnimationController->SetTrackEnable(5, true);
-			m_pSkinnedAnimationController->SetTrackEnable(1, false);
-			m_pSkinnedAnimationController->SetTrackEnable(3, false);
-			m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
-			m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+			m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 		}
 
-		// ºÎÈ° ºÎºÐ
-		else if (m_pSkinnedAnimationController->m_nAnimationAfter == 5
-			&& m_pSkinnedAnimationController->m_bIsDead == false)
-		{
-			m_pSkinnedAnimationController->m_nAnimationBefore = 5;
-			m_pSkinnedAnimationController->m_nAnimationAfter = 1;
-			m_pSkinnedAnimationController->SetTrackEnable(5, false);
-			m_pSkinnedAnimationController->SetTrackPosition(5, 0.0f);
-		}
+		//// ï¿½ï¿½È° ï¿½Îºï¿½
+		//else if (m_pSkinnedAnimationController->m_nAnimationAfter == 5
+		//	&& m_pSkinnedAnimationController->m_bIsDead == false)
+		//{
+		//	m_pSkinnedAnimationController->m_nAnimationAfter = 1;
+		//	m_pSkinnedAnimationController->m_bIsBlending = true;
 
-		// Ä¡·á ºÎºÐ
+		//	m_pSkinnedAnimationController->SetTrackEnable(1, true);
+		//	m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
+		//}
+
+		// ï¿½ï¿½È£ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 		else if (m_pSkinnedAnimationController->m_bIsHeal == true
 			&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
 		{
+ 			m_pSkinnedAnimationController->m_nAnimationAfter = 10;
 			m_pSkinnedAnimationController->m_bIsBlending = true;
-			m_pSkinnedAnimationController->m_nAnimationBefore = m_pSkinnedAnimationController->m_nAnimationAfter;
-			m_pSkinnedAnimationController->m_nAnimationAfter = 10;
 
-			m_pSkinnedAnimationController->SetTrackEnable(1, false);
-			m_pSkinnedAnimationController->SetTrackEnable(3, false);
-			m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
-			m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+			m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 			m_pSkinnedAnimationController->SetTrackEnable(10, true);
 		}
-		else if (m_pSkinnedAnimationController->m_bIsHeal == false
-			&& m_pSkinnedAnimationController->m_nAnimationAfter == 10)
-		{
-			if (m_pSkinnedAnimationController->m_bIsBlending == false)
-				m_pSkinnedAnimationController->m_bIsLastBlending = true;
-			m_pSkinnedAnimationController->m_nAnimationBefore = 10;
-			m_pSkinnedAnimationController->m_nAnimationAfter = 1;
-			m_pSkinnedAnimationController->SetTrackEnable(10, false);
-			m_pSkinnedAnimationController->SetTrackPosition(10, 0.0f);
-		}
+
+		//// ï¿½ï¿½È£ï¿½Û¿ï¿½ ï¿½ï¿½ + ï¿½ï¿½ï¿½Ã¿ï¿½ run ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½
+		//if (m_pSkinnedAnimationController->m_bIsHeal == false
+		//	&& m_pSkinnedAnimationController->m_nAnimationBefore == 10
+		//	&& m_pSkinnedAnimationController->m_bIsMove == true)
+		//{
+		//	m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+		//	m_pSkinnedAnimationController->m_bIsBlending = true;
+
+		//	m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
+		//	m_pSkinnedAnimationController->SetTrackEnable(2, true);
+		//}
 	}
 }
 
@@ -668,7 +631,7 @@ CLoginPlayer::CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	UINT ncbElementBytes = ((sizeof(CB_PLAYER_INFO) + 255) & ~255); //256ÀÇ ¹è¼ö
+	UINT ncbElementBytes = ((sizeof(CB_PLAYER_INFO) + 255) & ~255); //256ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 	D3D12_GPU_DESCRIPTOR_HANDLE d3dCbvGPUDescriptorHandle = CScene::CreateConstantBufferView(pd3dDevice, m_pd3dcbPlayer, ncbElementBytes);
 	SetCbvGPUDescriptorHandle(d3dCbvGPUDescriptorHandle);
