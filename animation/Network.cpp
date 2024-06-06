@@ -312,28 +312,6 @@ void Network::ProcessPacket(char* buf)
 
 		break;
 	}
-	case SC_MONSTER_UPDATE_LOOK: {
-		NightMonstersLook* p = reinterpret_cast<NightMonstersLook*>(buf);
-
-		for (int i = 0; i < 10; ++i)
-		{
-			g_monsters[i].setId(i);
-			g_monsters[i].setLook(p->_monster[i]._look);
-			g_monsters[i].setUp({ 0.f,1.f,0.f });
-		}
-		break;
-	}
-	case SC_MONSTER_UPDATE_RIGHT: {
-		NightMonstersRight* p = reinterpret_cast<NightMonstersRight*>(buf);
-
-		for (int i = 0; i < 10; ++i)
-		{
-			g_monsters[i].setId(i);
-			g_monsters[i].setLook(p->_monster[i]._right);
-			g_monsters[i].setUp({ 0.f,1.f,0.f });
-		}
-		break;
-	}
 	case SC_DAYTIME:
 	{
 		SC_DAYTIME_PACKET* p = reinterpret_cast<SC_DAYTIME_PACKET*>(buf);

@@ -11,8 +11,26 @@ void Monster::Move()
 	// 사정거리를 벗어나면 다시 우주선 방향으로 이동 
 	//float checkPlayerPos = Vector3::Distance(pos);
 	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
+
 	for (auto& cl : ingamePlayer)
 	{
+
+		XMVECTOR posVec = XMLoadFloat3(&_pos);
+		XMVECTOR spaceshipVec = XMLoadFloat3(&spaceshippos);
+		XMVECTOR dirToSpaceship = XMVector3Normalize(spaceshipVec - posVec);
+
+		XMFLOAT3 directionToSpaceshipFloat3;
+		XMStoreFloat3(&directionToSpaceshipFloat3, dirToSpaceship);
+
+		_look = directionToSpaceshipFloat3;
+
+		XMVECTOR upVect = XMLoadFloat3(&up);
+		XMVECTOR rightVec = XMVector3Cross(upVect, dirToSpaceship);
+		XMFLOAT3 rightFloat3;
+		XMStoreFloat3(&rightFloat3, rightVec);
+
+		_right = rightFloat3;
+
 		float checkPlayerDistance = Vector3::Distance(_pos, cl->_pos);
 
 		if (_viewRange >= checkPlayerDistance) // 거리안에 들어왔다. 
@@ -41,23 +59,6 @@ void Monster::Move()
 		}
 		else
 		{
-	
-			XMVECTOR posVec = XMLoadFloat3(&_pos);
-			XMVECTOR spaceshipVec = XMLoadFloat3(&spaceshippos);
-			XMVECTOR dirToSpaceship = XMVector3Normalize(spaceshipVec - posVec);
-
-			XMFLOAT3 directionToSpaceshipFloat3;
-			XMStoreFloat3(&directionToSpaceshipFloat3, dirToSpaceship);
-
-			_look = directionToSpaceshipFloat3;
-
-			XMVECTOR upVect = XMLoadFloat3(&up);
-			XMVECTOR rightVec = XMVector3Cross(upVect, dirToSpaceship);
-			XMFLOAT3 rightFloat3;
-			XMStoreFloat3(&rightFloat3, rightVec);
-
-			_right = rightFloat3;
-
 			_pos = Vector3::Add(_pos, directionToSpaceshipFloat3, _speed);
 			
 		}
