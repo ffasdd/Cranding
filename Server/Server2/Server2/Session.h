@@ -34,6 +34,7 @@ public:
 	animateState prevanimationstate;
 
 	mutex _v_lock;
+	
 	unordered_set<int> _view_list;
 
 	BoundingOrientedBox _OBB = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f),XMFLOAT3(0.1f,0.1f,0.1f),XMFLOAT4(0.0f,0.0f,0.0f,1.0f));
@@ -171,6 +172,16 @@ public:
 			other._view_list.clear();
 		}
 		return *this;
+	}
+	/*
+		friend bool operator == (const Cents &c1, const Cents &c2)
+	{
+		return c1.m_cents == c2.m_cents;
+	}
+	*/
+	friend bool operator==(const Session& s1, const Session& s2)
+	{
+		return s1 == s2;
 	}
 
 	~Session() { closesocket(_socket); }

@@ -259,21 +259,52 @@ void Network::ProcessPacket(char* buf)
 		SC_ATTACK_PACKET* p = reinterpret_cast<SC_ATTACK_PACKET*>(buf);
 		int ob_id = p->id;
 		g_clients[ob_id].setAttack(p->isAttack);
+
 		break;
 	}
+
 	case SC_CHANGE_SCENE: {
 		SC_CHANGE_SCENE_PACKET* p = reinterpret_cast<SC_CHANGE_SCENE_PACKET*>(buf);
 		int ob_id = p->id;
 		g_clients[ob_id].scene_num = p->stage;
-		if (g_clients[ob_id].scene_num == 2)
+		stage_num = p->stage;
+		cout << ob_id << endl;
+ 		switch (g_clients[ob_id].scene_num)
 		{
-			ingamecnt++;
-			if (ingamecnt == 2)
-			{
-				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-				ingamecnt = 0;
-			}
+		case 1: {
+			break;
 		}
+		case 2: {
+
+			if (IngameScene == false)
+			{
+				IngameScene = true;
+				ingamecnt++;
+				if (ingamecnt == 2)
+				{
+					g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+					ingamecnt = 0;
+				}
+			}
+			else
+				SpaceshipScene = true;
+			break;
+		}
+		case 3: {
+			g_monsters.clear();
+			break;
+		}
+		case 4: {
+			g_monsters.clear();
+			break;
+		}
+		case 5: {
+			g_monsters.clear();
+			break;
+		}
+		}
+
+
 		break;
 	}
 	case SC_INGAME_STRAT: {
@@ -289,16 +320,20 @@ void Network::ProcessPacket(char* buf)
 
 	case SC_MONSTER_UPDATE_POS: {
 
-		// 10 개로 받아줘야한다. 
-		NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
-		int npc_id = p->_monster._id;
-		g_monsters[npc_id].setId(npc_id);
-		g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
-		g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
-		g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
+		if (stage_num == 2)
+		{
 
-		g_monsters[npc_id].setUp({ 0.f,1.f,0.f });
+			// 10 개로 받아줘야한다. 
+			NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
+			int npc_id = p->_monster._id;
+			g_monsters[npc_id].setId(npc_id);
+			g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
+			g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
+			g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
 
+			g_monsters[npc_id].setUp({ 0.f,1.f,0.f });
+
+		}
 		// p [10] 
 
 		//cout << int(p->size) << endl;

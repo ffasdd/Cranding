@@ -38,19 +38,6 @@ void Room::UpdateNpc()
 {
 
 	NightMonstersUpdate sendmonsterupdatePacket[10];
-
-	/*NightMonstersUpdate sendMonsterupdatePacket;
-	sendMonsterupdatePacket.size = sizeof(NightMonstersUpdate);
-	sendMonsterupdatePacket.type = SC_MONSTER_UPDATE_POS;
-	*/
-	//NightMonstersLook sendMonsterupdateLookPacket;
-	//sendMonsterupdateLookPacket.size = sizeof(NightMonstersLook);
-	//sendMonsterupdateLookPacket.type = SC_MONSTER_UPDATE_LOOK;
-
-	//NightMonstersRight sendMonsterupdateRightPacket;
-	//sendMonsterupdateRightPacket.size = sizeof(NightMonstersRight);
-	//sendMonsterupdateRightPacket.type = SC_MONSTER_UPDATE_RIGHT;
-
 	int idx = 0;
 
 	// 전체 NPC UPDATE 
@@ -80,39 +67,9 @@ void Room::UpdateNpc()
 		sendmonsterupdatePacket[idx]._monster._ry = npc._right.y;
 		sendmonsterupdatePacket[idx]._monster._rz = npc._right.z;
 
-		//sendMonsterupdateLookPacket._monster[idx]._id = idx;
-		//sendMonsterupdateLookPacket._monster[idx]._look = npc._look;
-
-		//sendMonsterupdateRightPacket._monster[idx]._id = idx;
-		//sendMonsterupdateRightPacket._monster[idx]._right = npc._right;
 
 		idx++;
 	}
-
-	//for (int i = 0; i < 10; ++i)
-	//{
-	//	sendmonsterupdatePacket[i].size = sizeof(NightMonstersUpdate);
-	//	sendmonsterupdatePacket[i].type = SC_MONSTER_UPDATE_POS;
-	//	sendmonsterupdatePacket[i]._monster._id = i;
-
-	//	sendmonsterupdatePacket[i]._monster._x = NightMonster[i]._pos.x;
-	//	sendmonsterupdatePacket[i]._monster._y = NightMonster[i]._pos.y;
-	//	sendmonsterupdatePacket[i]._monster._z = NightMonster[i]._pos.z;
-
-	//	sendmonsterupdatePacket[i]._monster._lx = NightMonster[i]._look .x;
-	//	sendmonsterupdatePacket[i]._monster._ly = NightMonster[i]._look.y;
-	//	sendmonsterupdatePacket[i]._monster._lz = NightMonster[i]._look.z;
-
-	//	sendmonsterupdatePacket[i]._monster._rx = NightMonster[i]._right.x;
-	//	sendmonsterupdatePacket[i]._monster._ry = NightMonster[i]._right.y;
-	//	sendmonsterupdatePacket[i]._monster._rz = NightMonster[i]._right.z;
-	//}
-	// 2 
-	// pl을 담을 변수가 필요하다? 
-	// 2 
-	// 0 , 1 
-	// 0 번한테 몬스터 10마리정보를 넘겨줘야함 
-	// 10개를 한번에보내라고? 
 
 
 	for (auto& pl : ingamePlayer)
@@ -120,7 +77,8 @@ void Room::UpdateNpc()
 		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
 		for (auto& packet : sendmonsterupdatePacket)
 		{
-			pl->do_send(&packet);
+			if(pl->_stage == 2) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+				pl->do_send(&packet);
 		}
 	}
 }

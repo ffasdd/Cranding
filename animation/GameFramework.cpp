@@ -385,12 +385,12 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 				WaitForSingleObject(loginevent, INFINITE);
 
-				//cl_id = gNetwork.Getmyid();
-				//m_pPlayer->c_id = gNetwork.Getmyid();
+				cl_id = gNetwork.Getmyid();
+				m_pPlayer->c_id = gNetwork.Getmyid();
 
 				ReleaseObjects();
 				BuildObjects(SceneNum);
-				//gNetwork.SendChangeScene(SceneNum);
+				gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
 			else break;
@@ -402,12 +402,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isready = false;
 			// send ready packet  
 			gNetwork.SendIngameStart();
-
+			gNetwork.SendChangeScene(SceneNum);
 			//WaitForSingleObject(startevent, INFINITE);
 			//// �׸��� ���� �������� 
 			//
-			ReleaseObjects();
-			BuildObjects(SceneNum);
 			break;
 
 		case '3':
@@ -417,6 +415,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isready = false;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
+			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '4':
@@ -425,6 +424,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 4;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
+			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '5':
@@ -433,6 +433,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 5;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
+			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case VK_SPACE:
@@ -731,6 +732,7 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pCamera = m_pPlayer->GetCamera();
 
 
+
 		break;
 	}
 	case 3:
@@ -745,6 +747,7 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
 
+		break;
 
 	}
 	case 4:
@@ -759,6 +762,8 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
 
+
+		break;
 	}
 
 	case 5:

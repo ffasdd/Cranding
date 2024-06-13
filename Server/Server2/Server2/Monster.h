@@ -25,6 +25,7 @@ public:
 	bool _is_alive = false;
 
 	BoundingOrientedBox _ob;
+
 public:
 	vector<Session*> ingamePlayer;
 

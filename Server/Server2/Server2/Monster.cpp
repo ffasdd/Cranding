@@ -14,7 +14,7 @@ void Monster::Move()
 
 	for (auto& cl : ingamePlayer)
 	{
-
+		
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
 		XMVECTOR spaceshipVec = XMLoadFloat3(&spaceshippos);
 		XMVECTOR dirToSpaceship = XMVector3Normalize(spaceshipVec - posVec);
@@ -35,7 +35,12 @@ void Monster::Move()
 
 		if (_viewRange >= checkPlayerDistance) // 거리안에 들어왔다. 
 		{
-			//cout << cl->_id << " 번 클라이언트 접근 " << endl;
+			//if (cl->_stage != 2)
+			//{
+			//	// 같은 스테이지가 아닐때 따라가지 못하게 막아놔야함 
+			//	_pos = Vector3::Add(_pos, directionToSpaceshipFloat3, _speed);
+
+			//}//cout << cl->_id << " 번 클라이언트 접근 " << endl;
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
 			XMVECTOR playerVec = XMLoadFloat3(&cl->_pos);
 			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);

@@ -436,11 +436,16 @@ void Server::ProcessPacket(int id, char* packet)
 	}
 							break;
 	case CS_CHANGE_SCENE: {
-		cout << " Change scenen" << endl;
+
+	cout << " Change scenen" << endl;
 		CS_CHANGE_SCENE_PACKET* p = reinterpret_cast<CS_CHANGE_SCENE_PACKET*>(packet);
 		int scenenum = p->scenenum;
 		int r_id = p->roomid;
-		clients[id]._stage = scenenum;
+		{
+			lock_guard<mutex>ll{ clients[id]._s_lock };
+			clients[id]._stage = scenenum;
+		}
+
 		clients[id].send_change_scene(id, scenenum);
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
@@ -448,20 +453,53 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == id)continue;
 			pl->send_change_scene(id, clients[id]._stage);
 		}
+		if (p->scenenum == 2)
+		{
+			// 몬스터정보를 다시보내야하나?  ㄴㄴㄴ 몬스터한테 다시 플레이어정보를 넘김 
+			for (auto& n_m : ingameroom[r_id].NightMonster)
+			{
+				if(find(n_m.ingamePlayer.begin(),n_m.ingamePlayer.end(),clients[id]) == n_m.ingamePlayer.end())
+				{
+					lock_guard<mutex>ll{ clients[id]._s_lock };
+					n_m.ingamePlayer.emplace_back(clients[id]);
+				}
+			}
+		}
 		// 3번 맵 얼음
 		if (p->scenenum == 3)
 		{
+			for (auto& n_m : ingameroom[r_id].NightMonster)
+			{
+				{
+				lock_guard<mutex>ll{ clients[id]._s_lock };
+				n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+				}
+			}
 			 // 얼음몬스터 뿌려줘야함 
 		}
 		// 4번 맵 불 
 		else if (p->scenenum == 4)
 		{
 			// 불몬스터 뿌려줘야함 
+			for (auto& n_m : ingameroom[r_id].NightMonster)
+			{
+				{
+					lock_guard<mutex>ll{ clients[id]._s_lock };
+					n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+				}
+			}
 		}
 		// 5번 맵 자연 
 		else if (p->scenenum == 5)
 		{
 			// 자연몬스터 뿌려줘야함 
+			for (auto& n_m : ingameroom[r_id].NightMonster)
+			{
+				{
+					lock_guard<mutex>ll{ clients[id]._s_lock };
+					n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+				}
+			}
 		}
 
 	}
@@ -470,14 +508,11 @@ void Server::ProcessPacket(int id, char* packet)
 
 		CS_INGAME_START_PACKET* p = reinterpret_cast<CS_INGAME_START_PACKET*>(packet);
 		int r_id = p->roomid;
-
 		{
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Start;
 			ingameroom[r_id].readycnt++;
 		}
-
-
 		if (ingameroom[r_id].readycnt == 2)
 		{
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
@@ -637,10 +672,6 @@ void Server::ReadyToStart()
 
 				}
 			}
-
-			/*	readySession.emplace_back(_session);*/
-			//size_t readySessionSize = ingameroom[room_id].ingamePlayer.size();
-			// 방안에 있는 애들한테 다 add를 보내줘야함 
 
 			for (auto& ingameplayer : ingameroom[room_id].ingamePlayer)
 			{

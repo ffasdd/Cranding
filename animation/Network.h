@@ -55,12 +55,15 @@ public: // thread send
 	
 public: // utils
 	int getmyid(int _id);
+	bool IngameScene = false;
 	bool IngameStart = false;
 	bool gamestart = false;
+	bool SpaceshipScene = false;
 public:
 	int prev_remain = 0;
 	int my_id = 0;
 	int my_roomid = -1;
+	int stage_num = -1;
 	bool isNight = false;
 	
 private:
