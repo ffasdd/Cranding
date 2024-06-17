@@ -70,6 +70,11 @@ int Session::getCharacterType()
 	return characterType;
 }
 
+STATE Session::getState()
+{
+	return m_state;
+}
+
 bool Session::getAttack()
 {
 	return m_isattack;
@@ -156,4 +161,9 @@ void Session::setprevAnimation(int ani)
 void Session::setAttack(bool att)
 {
 	m_isattack = att;
+}
+
+void Session::setState(STATE state)
+{
+	m_state = state;
 }

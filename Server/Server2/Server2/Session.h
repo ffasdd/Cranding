@@ -179,11 +179,25 @@ public:
 		return c1.m_cents == c2.m_cents;
 	}
 	*/
-	friend bool operator==(const Session& s1, const Session& s2)
-	{
-		return s1 == s2;
+	friend bool operator==(const Session& lhs, const Session& rhs) {
+		return lhs.characterType == rhs.characterType &&
+			lhs.isReady == rhs.isReady &&
+			lhs._state == rhs._state &&
+			lhs._is_active == rhs._is_active &&
+			lhs._id == rhs._id &&
+			lhs._hp == rhs._hp &&
+			lhs._maxhp == rhs._maxhp &&
+			lhs._socket == rhs._socket &&
+			lhs._pos.x == rhs._pos.x && lhs._pos.y == rhs._pos.y && lhs._pos.z == rhs._pos.z &&
+			lhs._look.x == rhs._look.x && lhs._look.y == rhs._look.y && lhs._look.z == rhs._look.z &&
+			lhs._right.x == rhs._right.x && lhs._right.y == rhs._right.y && lhs._right.z == rhs._right.z &&
+			lhs._up.x == rhs._up.x && lhs._up.y == rhs._up.y && lhs._up.z == rhs._up.z &&
+			strncmp(lhs._name, rhs._name, sizeof(lhs._name)) == 0 &&
+			lhs._prevremain == rhs._prevremain &&
+			lhs.animationstate == rhs.animationstate &&
+			lhs.prevanimationstate == rhs.prevanimationstate &&
+			lhs._view_list == rhs._view_list;
 	}
-
 	~Session() { closesocket(_socket); }
 
 

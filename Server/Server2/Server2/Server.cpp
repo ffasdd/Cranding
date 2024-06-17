@@ -158,7 +158,7 @@ void Server::WorkerThread()
 					clients[c_id]._pos = { 240.0f,10.0f,730.0f };
 				else if (c_id == 1)
 					clients[c_id]._pos = { 220.0f,10.0f,760.0f };
-				else
+				else if ( c_id % 2== 0)
 					clients[c_id]._pos = { 210.0f, 10.0f,710.0f };
 
 				clients[c_id]._id = c_id;
@@ -458,10 +458,12 @@ void Server::ProcessPacket(int id, char* packet)
 			// 몬스터정보를 다시보내야하나?  ㄴㄴㄴ 몬스터한테 다시 플레이어정보를 넘김 
 			for (auto& n_m : ingameroom[r_id].NightMonster)
 			{
-				if(find(n_m.ingamePlayer.begin(),n_m.ingamePlayer.end(),clients[id]) == n_m.ingamePlayer.end())
+				if(find(n_m.ingamePlayer.begin(),n_m.ingamePlayer.end(),&clients[id]) == n_m.ingamePlayer.end())
 				{
-					lock_guard<mutex>ll{ clients[id]._s_lock };
-					n_m.ingamePlayer.emplace_back(clients[id]);
+					clients[id]._s_lock.lock();
+					//lock_guard<mutex>ll{ clients[id]._s_lock };
+					n_m.ingamePlayer.emplace_back(&clients[id]);
+					clients[id]._s_lock.unlock();
 				}
 			}
 		}
@@ -522,11 +524,12 @@ void Server::ProcessPacket(int id, char* packet)
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
 			
-			TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
-			g_Timer.InitTimerQueue(ev1);
 		
 			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
+
+			TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
+			g_Timer.InitTimerQueue(ev1);
 
 			TIMER_EVENT ev2{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NIGHT};
 			g_Timer.InitTimerQueue(ev2);

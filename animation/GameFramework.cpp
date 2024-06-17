@@ -401,11 +401,15 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 2;
 			isready = false;
 			// send ready packet  
+			//if(처음 시작할 때에만 IngameStart() ) {}
+			// bool 을 두면 간단 하지만? bool보단 그냥 클라마다 상태체크하는게 좋을거같긴함 Ingame상태이거나 게임중인 상태에는 보낼 필요가 없으니까? 
+			// bool로 일단 해보자 
+			if (gNetwork.ClientState == false)
+			{
 			gNetwork.SendIngameStart();
+			}
 			gNetwork.SendChangeScene(SceneNum);
-			//WaitForSingleObject(startevent, INFINITE);
-			//// �׸��� ���� �������� 
-			//
+
 			break;
 
 		case '3':

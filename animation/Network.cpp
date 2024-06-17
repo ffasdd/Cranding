@@ -190,6 +190,7 @@ void Network::ProcessPacket(char* buf)
 		//my_id = getmyid(p->id);
 		my_id = (p->id);
 		my_roomid = p->room_id;
+		g_clients[my_id].setState(STATE::Ingame);
 		g_clients[my_id].setId(my_id);
 		g_clients[my_id].setHp(p->hp);
 		g_clients[my_id].setPos(p->pos);
@@ -210,6 +211,7 @@ void Network::ProcessPacket(char* buf)
 		SC_ADD_OBJECT_PACKET* p = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		//int ob_id = getmyid(p->id);
 		int ob_id = (p->id);
+		g_clients[ob_id].setState(STATE::Ingame);
 		g_clients[ob_id].setId(ob_id);
 		g_clients[ob_id].setHp(p->hp);
 		g_clients[ob_id].setPos(p->pos);
@@ -266,42 +268,54 @@ void Network::ProcessPacket(char* buf)
 	case SC_CHANGE_SCENE: {
 		SC_CHANGE_SCENE_PACKET* p = reinterpret_cast<SC_CHANGE_SCENE_PACKET*>(buf);
 		int ob_id = p->id;
-		g_clients[ob_id].scene_num = p->stage;
-		stage_num = p->stage;
-		cout << ob_id << endl;
- 		switch (g_clients[ob_id].scene_num)
-		{
-		case 1: {
-			break;
-		}
-		case 2: {
 
-			if (IngameScene == false)
+		g_clients[ob_id].scene_num = p->stage;
+
+		if (ob_id == my_id)
+		{
+			stage_num = p->stage;
+			switch (stage_num)
 			{
-				IngameScene = true;
-				ingamecnt++;
-				if (ingamecnt == 2)
+			case 1:
+				// ·Îºñ¾À.  ¾Æ¹«°Íµµ¾ÈÇØµµµÊ 
+				break;
+			case 2:
+				// ¿ìÁÖ¼± ¾À ,
+				if (IngameScene == false)
 				{
-					g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-					ingamecnt = 0;
+					IngameScene = true;
+					ClientState = true;
+					ingamecnt++;
+					if (ingamecnt == 2)
+					{
+						g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+						ingamecnt = 0;
+					}
 				}
+				else
+					SpaceshipScene = true;
+				break;
+
+			case 3:
+			{
+				g_monsters.clear();
 			}
-			else
-				SpaceshipScene = true;
-			break;
+				break;
+			case 4 :
+			{
+				g_monsters.clear();
+			}
+				break;
+			case 5:
+			{
+				g_monsters.clear();
+			}
+				break;
+			}
 		}
-		case 3: {
-			g_monsters.clear();
-			break;
-		}
-		case 4: {
-			g_monsters.clear();
-			break;
-		}
-		case 5: {
-			g_monsters.clear();
-			break;
-		}
+		else
+		{
+			g_clients.erase(ob_id);
 		}
 
 
@@ -314,6 +328,7 @@ void Network::ProcessPacket(char* buf)
 	case SC_REMOVE_OBJECT: {
 		SC_REMOVE_OBJECT_PACKET* p = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(buf);
 		int ob_id = p->id;
+		g_clients[ob_id].setState(STATE::Free);
 		g_clients.erase(ob_id);
 		break;
 	}
@@ -334,17 +349,7 @@ void Network::ProcessPacket(char* buf)
 			g_monsters[npc_id].setUp({ 0.f,1.f,0.f });
 
 		}
-		// p [10] 
-
-		//cout << int(p->size) << endl;
-
-		//int npc_id = p->_monster._id;
-
-		//g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
-		//g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
-		//g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
-
-
+	
 		break;
 	}
 	case SC_DAYTIME:
