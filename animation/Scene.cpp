@@ -1413,7 +1413,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	if (pPlayerModel) delete pPlayerModel;
 
 	// ���⼭���� �� ��ü �׸���
-	CLoadedModelInfo* pIceEnemyModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	CLoadedModelInfo* pIceEnemyModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Icicle.bin", NULL);
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -1649,7 +1649,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	if (pPlayerModel) delete pPlayerModel;
 
 	// ���⼭���� �� ��ü �׸���
-	CLoadedModelInfo* pIceEnemyModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	CLoadedModelInfo* pIceEnemyModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Cube.bin", NULL);
 
 	for (int i = 0; i < 10; i++)
 	{

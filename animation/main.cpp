@@ -89,7 +89,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 					for (int i = 0; i < g_monsters.size(); ++i)
 					{
-						if (gNetwork.stage_num != 2)continue;
+						//if (gNetwork.stage_num != 2)continue;
 						gGameFramework.myFunc_SetMonPosition(i, gGameFramework.SceneNum, g_monsters[i].getPos());
 						gGameFramework.myFunc_SetMonLookRight(i, gGameFramework.SceneNum, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
 					}
