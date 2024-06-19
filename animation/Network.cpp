@@ -298,16 +298,35 @@ void Network::ProcessPacket(char* buf)
 
 			case 3:
 			{
+				if (stage_num == p->stage)
+				{
+					// 클라 정보 추가 
+				}
+				else
+					g_clients.erase(ob_id);
+
 				g_monsters.clear();
 			}
 				break;
 			case 4 :
 			{
+				if (stage_num == p->stage)
+				{
+					// 클라 정보 추가 
+				}
+				else
+					g_clients.erase(ob_id);
 				g_monsters.clear();
 			}
 				break;
 			case 5:
 			{
+				if (stage_num == p->stage)
+				{
+					// 클라 정보 추가 
+				}
+				else
+					g_clients.erase(ob_id);
 				g_monsters.clear();
 			}
 				break;

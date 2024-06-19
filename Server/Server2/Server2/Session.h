@@ -173,12 +173,7 @@ public:
 		}
 		return *this;
 	}
-	/*
-		friend bool operator == (const Cents &c1, const Cents &c2)
-	{
-		return c1.m_cents == c2.m_cents;
-	}
-	*/
+
 	friend bool operator==(const Session& lhs, const Session& rhs) {
 		return lhs.characterType == rhs.characterType &&
 			lhs.isReady == rhs.isReady &&
