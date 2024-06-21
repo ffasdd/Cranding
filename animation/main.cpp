@@ -14,7 +14,11 @@ CGameFramework					gGameFramework;
 Network							gNetwork;
 
 unordered_map<int, Session> g_clients;
-unordered_map<int, Session> g_monsters;
+unordered_map<int, Session> g_monsters; //
+unordered_map<int, Session> g_ice_monsters;
+unordered_map<int, Session> g_fire_monsters;
+unordered_map<int, Session> g_nature_monsters;
+
 
 
 concurrency::concurrent_queue<SENDTYPE> g_sendqueue;

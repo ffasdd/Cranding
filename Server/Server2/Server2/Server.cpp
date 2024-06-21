@@ -478,6 +478,10 @@ void Server::ProcessPacket(int id, char* packet)
 				}
 			}
 			 // æÛ¿Ω∏ÛΩ∫≈Õ ª—∑¡¡‡æﬂ«‘ 
+			for (int i = 0; i < ingameroom[r_id].IceMonster.max_size(); ++i)
+			{
+				
+			}
 		}
 		// 4π¯ ∏  ∫“ 
 		else if (p->scenenum == 4)
@@ -517,10 +521,16 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		if (ingameroom[r_id].readycnt == 2)
 		{
+			ingameroom[r_id].IceNpcInitialized();
+			ingameroom[r_id].FireNpcInitialized();
+			ingameroom[r_id].NatureNpcInitialized();
+
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
 				pl->send_ingame_start();
 			}
+			ingameroom[r_id].IceUpdateNpc();
+
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
 			
@@ -536,6 +546,7 @@ void Server::ProcessPacket(int id, char* packet)
 
 			TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_DAYTIME };
 			g_Timer.InitTimerQueue(ev3);
+
 
 
 		}
