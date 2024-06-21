@@ -12,13 +12,13 @@ Network::Network()
 		std::cout << "WSAStart Up Error " << endl;
 
 	clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	//int DelayZeroOpt = 1;
-	//setsockopt(clientsocket, SOL_SOCKET, TCP_NODELAY, (const char*)&DelayZeroOpt, sizeof(DelayZeroOpt)); // Nodelay  네이클 알고리즘 종료 
+	int DelayZeroOpt = 1;
+	setsockopt(clientsocket, SOL_SOCKET, TCP_NODELAY, (const char*)&DelayZeroOpt, sizeof(DelayZeroOpt)); // Nodelay  네이클 알고리즘 종료 
 
-	//LINGER _linger;
-	//_linger.l_linger = 0;
-	//_linger.l_onoff = 1;
-	//setsockopt(clientsocket, SOL_SOCKET, SO_LINGER, (const char*)& _linger, sizeof(_linger));
+	LINGER _linger;
+	_linger.l_linger = 0;
+	_linger.l_onoff = 1;
+	setsockopt(clientsocket, SOL_SOCKET, SO_LINGER, (const char*)& _linger, sizeof(_linger));
 	// Linger option
 
 	if (clientsocket == INVALID_SOCKET)
@@ -298,16 +298,35 @@ void Network::ProcessPacket(char* buf)
 
 			case 3:
 			{
+				if (stage_num == p->stage)
+				{
+					// 클라 정보 추가 
+				}
+				else
+					g_clients.erase(ob_id);
+
 				g_monsters.clear();
 			}
 				break;
 			case 4 :
 			{
+				if (stage_num == p->stage)
+				{
+					// 클라 정보 추가 
+				}
+				else
+					g_clients.erase(ob_id);
 				g_monsters.clear();
 			}
 				break;
 			case 5:
 			{
+				if (stage_num == p->stage)
+				{
+					// 클라 정보 추가 
+				}
+				else
+					g_clients.erase(ob_id);
 				g_monsters.clear();
 			}
 				break;
@@ -368,6 +387,20 @@ void Network::ProcessPacket(char* buf)
 		cout << " Night " << endl;
 		break;
 	}
+	case SC_ICE_MONSTER_UPDATE :
+	{
+		IceMonstersUpdate* p = reinterpret_cast<IceMonstersUpdate*>(buf);
+		int npc_id = p->_monster._id;
+
+		g_ice_monsters[npc_id].setId(npc_id);
+		g_ice_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
+		g_ice_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
+		g_ice_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
+
+		g_ice_monsters[npc_id].setUp({ 0.f,1.f,0.f });
+	}
+	
+
 	}
 }
 

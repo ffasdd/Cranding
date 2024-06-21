@@ -23,6 +23,8 @@ constexpr char CS_INGAME_START = 11;
 constexpr char CS_TIME_CHECK = 12;
 constexpr char CS_MOVE_MONSTER = 13;
 constexpr char CS_ATTACK_COLLISION = 14;
+constexpr char CS_ICE_MONSTER_UPDATE = 15;
+
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -47,6 +49,7 @@ constexpr char SC_NIGHT = 24;
 constexpr char SC_MONSTER_UPDATE_POS = 25;
 constexpr char SC_MONSTER_UPDATE_LOOK = 26;
 constexpr char SC_MONSTER_UPDATE_RIGHT = 27;
+constexpr char SC_ICE_MONSTER_UPDATE = 28;
 
 
 
@@ -111,6 +114,77 @@ struct NightMonstersUpdate
 	// 메모리잡는방식. 
 	// 
 	// 402  보내는건 142  
+};
+struct IceMonster
+{
+	float _x;
+	float _y;
+	float _z;
+
+	float _lx;
+	float _ly;
+	float _lz;
+
+	float _rx;
+	float _ry;
+	float _rz;
+
+	int  _id;
+};
+
+struct IceMonstersUpdate
+{
+	unsigned char size;
+	char type;
+	IceMonster _monster;
+};
+
+struct Firemonster
+{
+	float _x;
+	float _y;
+	float _z;
+
+	float _lx;
+	float _ly;
+	float _lz;
+
+	float _rx;
+	float _ry;
+	float _rz;
+
+	int  _id;
+};
+
+struct FireMonsterUpdate
+{
+	unsigned char size;
+	char type;
+	Firemonster _monster;
+};
+
+struct NatureMonster
+{
+	float _x;
+	float _y;
+	float _z;
+
+	float _lx;
+	float _ly;
+	float _lz;
+
+	float _rx;
+	float _ry;
+	float _rz;
+
+	int  _id;
+};
+
+struct NatureMonsterUpdate
+{
+	unsigned char size;
+	char type;
+	NatureMonster _monster;
 };
 
 struct NightMonsterLook

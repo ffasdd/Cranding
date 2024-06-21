@@ -10,6 +10,9 @@
 #define SERVER_IP "121.170.72.178"
 extern unordered_map<int, Session> g_clients;
 extern unordered_map<int, Session> g_monsters;
+extern unordered_map<int, Session> g_ice_monsters;
+extern unordered_map<int, Session> g_fire_monsters;
+extern unordered_map<int, Session> g_nature_monsters;
 
 extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 extern HANDLE loginevent;
