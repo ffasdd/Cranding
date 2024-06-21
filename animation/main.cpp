@@ -87,12 +87,56 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());
 					}
 
-					for (int i = 0; i < g_monsters.size(); ++i)
+					switch (gGameFramework.SceneNum)
 					{
-						//if (gNetwork.stage_num != 2)continue;
-						gGameFramework.myFunc_SetMonPosition(i, gGameFramework.SceneNum, g_monsters[i].getPos());
-						gGameFramework.myFunc_SetMonLookRight(i, gGameFramework.SceneNum, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
+					case 2:
+					{
+						for (int i = 0; i < g_monsters.size(); ++i)
+						{
+							//if (gNetwork.stage_num != 2)continue;
+							gGameFramework.myFunc_SetMonPosition(i, gGameFramework.SceneNum, g_monsters[i].getPos());
+							gGameFramework.myFunc_SetMonLookRight(i, gGameFramework.SceneNum, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
+						}
+						break;
 					}
+					case 3:
+					{
+						// ice map
+						for (int i = 0; i < g_monsters.size(); ++i)
+						{
+							//if (gNetwork.stage_num != 2)continue;
+							gGameFramework.myFunc_SetMonPosition(i, gGameFramework.SceneNum, g_monsters[i].getPos());
+							gGameFramework.myFunc_SetMonLookRight(i, gGameFramework.SceneNum, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
+						}
+						break;
+					}
+					case 4: 
+					{
+						// fire map
+						for (int i = 0; i < g_monsters.size(); ++i)
+						{
+							//if (gNetwork.stage_num != 2)continue;
+							gGameFramework.myFunc_SetMonPosition(i, gGameFramework.SceneNum, g_monsters[i].getPos());
+							gGameFramework.myFunc_SetMonLookRight(i, gGameFramework.SceneNum, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
+						}
+						break;
+					}
+					case 5:
+					{
+						// fire map
+						for (int i = 0; i < g_monsters.size(); ++i)
+						{
+							//if (gNetwork.stage_num != 2)continue;
+							gGameFramework.myFunc_SetMonPosition(i, gGameFramework.SceneNum, g_monsters[i].getPos());
+							gGameFramework.myFunc_SetMonLookRight(i, gGameFramework.SceneNum, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
+						}
+						break;
+					}
+
+					default:
+						break;
+					}
+					
 
 				}
 			}
