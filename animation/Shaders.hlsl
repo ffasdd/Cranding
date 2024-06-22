@@ -34,6 +34,9 @@ cbuffer cbGameObjectInfo : register(b2)
 #define MATERIAL_DETAIL_ALBEDO_MAP	0x20
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
 
+#define FRAME_BUFFER_WIDTH				640
+#define FRAME_BUFFER_HEIGHT				480
+
 Texture2D gtxtAlbedoTexture : register(t6);
 Texture2D gtxtSpecularTexture : register(t7);
 Texture2D gtxtNormalTexture : register(t8);
@@ -43,6 +46,28 @@ Texture2D gtxtDetailAlbedoTexture : register(t11);
 Texture2D gtxtDetailNormalTexture : register(t12);
 
 SamplerState gssWrap : register(s0);
+
+// Sobel Outline Compute
+float4 Sobel(Texture2D tex, float2 uv, SamplerState sam)
+{
+    float2 texelSize = 1.0f / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+
+    float4 tl = tex.Sample(sam, uv + float2(-texelSize.x, -texelSize.y));
+    float4 tc = tex.Sample(sam, uv + float2(0, -texelSize.y));
+    float4 tr = tex.Sample(sam, uv + float2(texelSize.x, -texelSize.y));
+    float4 cl = tex.Sample(sam, uv + float2(-texelSize.x, 0));
+    float4 cr = tex.Sample(sam, uv + float2(texelSize.x, 0));
+    float4 bl = tex.Sample(sam, uv + float2(-texelSize.x, texelSize.y));
+    float4 bc = tex.Sample(sam, uv + float2(0, texelSize.y));
+    float4 br = tex.Sample(sam, uv + float2(texelSize.x, texelSize.y));
+
+    float4 gx = -1 * tl + -2 * cl + -1 * bl + 1 * tr + 2 * cr + 1 * br;
+    float4 gy = -1 * tl + -2 * tc + -1 * tr + 1 * bl + 2 * bc + 1 * br;
+
+    float4 g = sqrt(gx * gx + gy * gy);
+
+    return g;
+}
 
 struct VS_STANDARD_INPUT
 {
@@ -535,7 +560,11 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
                 break;
             }
     }
+    
+    float4 cSobel = Sobel(gtxtTextureTexture, input.uv, gssWrap);
 	
+    cColor.rgb *= (1.0f - cSobel.r+0.3);
+    
     return (cColor);
 }
 
