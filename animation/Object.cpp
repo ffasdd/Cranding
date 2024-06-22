@@ -246,6 +246,7 @@ void CMaterial::UpdateShaderVariable(ID3D12GraphicsCommandList *pd3dCommandList)
 	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &m_xmf4SpecularColor, 24);
 	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &m_xmf4EmissiveColor, 28);
 
+	// gnTexturesMask
 	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 1, &m_nType, 32);
 
 	for (int i = 0; i < m_nTextures; i++)
@@ -998,7 +999,9 @@ void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList *pd3dCommandLis
 {
 	XMFLOAT4X4 xmf4x4World;
 	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
+	// gmtxGameObject
 	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 16, &xmf4x4World, 0);
+	//pd3dCommandList->SetGraphicsRoot32BitConstants(1, 1, &m_nObjectID, 33);
 }
 
 void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList *pd3dCommandList, CMaterial *pMaterial)

@@ -166,109 +166,8 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 
 	CMaterial::PrepareShaders(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	//m_pBoundingBoxShader = new CBoundingBoxShader();
-	//m_pBoundingBoxShader->CreateShader(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
-
 	BuildDefaultLightsAndMaterials();
 
-	/*
-	XMFLOAT3 xmf3Scale(8.0f, 2.0f, 8.0f);
-	XMFLOAT4 xmf4Color(0.0f, 0.3f, 0.0f, 0.0f);
-	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("Terrain/HeightMap.raw"), 257, 257, xmf3Scale, xmf4Color);
-
-	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
-
-	m_nHierarchicalGameObjects = 3;
-	m_ppHierarchicalGameObjects = new CGameObject*[m_nHierarchicalGameObjects];
-
-	CLoadedModelInfo *pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
-
-	m_ppHierarchicalGameObjects[0] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
-
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5f);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5f);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5f);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5f);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5f);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5f);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5f);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5f);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5f);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5f);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackSpeed(11, 0.5f);
-
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(7, 7);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
-
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackEnable(7, false);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackEnable(8, false);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
-	m_ppHierarchicalGameObjects[0]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
-
-	m_ppHierarchicalGameObjects[0]->SetPosition(410.0f, 0.0f, 735.0f);
-	m_ppHierarchicalGameObjects[0]->SetScale(10.0f, 10.0f, 10.0f);
-
-	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
-
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5f);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5f);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5f);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5f);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5f);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5f);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5f);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5f);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5f);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5f);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(11, 0.5f);
-
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(7, 7);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
-
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(7, false);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(8, false);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
-
-	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 0.0f, 735.0f);
-	m_ppHierarchicalGameObjects[1]->SetScale(10.0f, 10.0f, 10.0f);
-
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/ice_Mage.bin", NULL);
-	m_ppHierarchicalGameObjects[2] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
-	m_ppHierarchicalGameObjects[2]->SetPosition(280.0f, 0.0f, 620.0f);
-	m_ppHierarchicalGameObjects[2]->SetScale(5.0f, 5.0f, 5.0f);
-	if (map) delete map;
-	*/
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -387,18 +286,18 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	D3D12_ROOT_PARAMETER pd3dRootParameters[16];
 
 	pd3dRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	pd3dRootParameters[0].Descriptor.ShaderRegister = 1; //Camera
+	pd3dRootParameters[0].Descriptor.ShaderRegister = 1; //Camera (b1)
 	pd3dRootParameters[0].Descriptor.RegisterSpace = 0;
 	pd3dRootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	pd3dRootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
 	pd3dRootParameters[1].Constants.Num32BitValues = 33;
-	pd3dRootParameters[1].Constants.ShaderRegister = 2; //GameObject
+	pd3dRootParameters[1].Constants.ShaderRegister = 2; //GameObject (b2)
 	pd3dRootParameters[1].Constants.RegisterSpace = 0;
 	pd3dRootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	pd3dRootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	pd3dRootParameters[2].Descriptor.ShaderRegister = 4; //Lights
+	pd3dRootParameters[2].Descriptor.ShaderRegister = 4; //Lights (b4)
 	pd3dRootParameters[2].Descriptor.RegisterSpace = 0;
 	pd3dRootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
@@ -512,6 +411,40 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	if (pd3dErrorBlob) pd3dErrorBlob->Release();
 
 	return(pd3dGraphicsRootSignature);
+}
+
+ID3D12RootSignature* CScene::CreateComputeRootSignature(ID3D12Device* pd3dDevice)
+{
+	D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[2];
+
+	pd3dDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dDescriptorRanges[0].NumDescriptors = 1;
+	pd3dDescriptorRanges[0].BaseShaderRegister = 0; //t0: Texture2D
+	pd3dDescriptorRanges[0].RegisterSpace = 0;
+	pd3dDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
+
+	pd3dDescriptorRanges[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
+	pd3dDescriptorRanges[1].NumDescriptors = 1;
+	pd3dDescriptorRanges[1].BaseShaderRegister = 0; //u0: RWTexture2D
+	pd3dDescriptorRanges[1].RegisterSpace = 0;
+	pd3dDescriptorRanges[1].OffsetInDescriptorsFromTableStart = 0;
+
+	D3D12_ROOT_PARAMETER pd3dRootParameters[2];
+
+	pd3dRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[0].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[0].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[0]; //Texture2D
+	pd3dRootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	pd3dRootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[1].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[1].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[1]; //RWTexture2D
+	pd3dRootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
+	ID3D12RootSignature* pd3dComputeRootSignature = CreateRootSignature(pd3dDevice, d3dRootSignatureFlags, _countof(pd3dRootParameters), pd3dRootParameters, 0, NULL);
+
+	return(pd3dComputeRootSignature);
 }
 
 void CScene::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
@@ -740,6 +673,28 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 		break;
 	}
 	return(false);
+}
+
+ID3D12RootSignature* CScene::CreateRootSignature(ID3D12Device* pd3dDevice, D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags, UINT nRootParameters, D3D12_ROOT_PARAMETER* pd3dRootParameters, UINT nStaticSamplerDescs, D3D12_STATIC_SAMPLER_DESC* pd3dStaticSamplerDescs)
+{
+	D3D12_ROOT_SIGNATURE_DESC d3dRootSignatureDesc;
+	::ZeroMemory(&d3dRootSignatureDesc, sizeof(D3D12_ROOT_SIGNATURE_DESC));
+	d3dRootSignatureDesc.NumParameters = nRootParameters;
+	d3dRootSignatureDesc.pParameters = pd3dRootParameters;
+	d3dRootSignatureDesc.NumStaticSamplers = nStaticSamplerDescs;
+	d3dRootSignatureDesc.pStaticSamplers = pd3dStaticSamplerDescs;
+	d3dRootSignatureDesc.Flags = d3dRootSignatureFlags;
+
+	ID3D12RootSignature* pd3dRootSignature = NULL;
+
+	ID3DBlob* pd3dSignatureBlob = NULL;
+	ID3DBlob* pd3dErrorBlob = NULL;
+	D3D12SerializeRootSignature(&d3dRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pd3dSignatureBlob, &pd3dErrorBlob);
+	pd3dDevice->CreateRootSignature(0, pd3dSignatureBlob->GetBufferPointer(), pd3dSignatureBlob->GetBufferSize(), __uuidof(ID3D12RootSignature), (void**)&pd3dRootSignature);
+	if (pd3dSignatureBlob) pd3dSignatureBlob->Release();
+	if (pd3dErrorBlob) pd3dErrorBlob->Release();
+
+	return(pd3dRootSignature);
 }
 
 bool CScene::ProcessInput(UCHAR *pKeysBuffer)

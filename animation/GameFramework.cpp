@@ -629,6 +629,9 @@ void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
 			break;
 		}
 
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
+
 		if (isAttack == true)
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsAttack = true;
 	}
@@ -772,7 +775,13 @@ void CGameFramework::BuildObjects(int nScene)
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
 
-	DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+	DXGI_FORMAT pdxgiResourceFormats[5] = 
+	{ DXGI_FORMAT_R8G8B8A8_UNORM, 
+		DXGI_FORMAT_R8G8B8A8_UNORM, 
+		DXGI_FORMAT_R8G8B8A8_UNORM, 
+		DXGI_FORMAT_R8G8B8A8_UNORM, 
+		DXGI_FORMAT_R8G8B8A8_UNORM };
+
 	m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
 
 	// ���� SRV ��¼��..

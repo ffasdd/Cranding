@@ -17,7 +17,8 @@ cbuffer cbGameObjectInfo : register(b2)
 {
 	matrix					gmtxGameObject : packoffset(c0);
 	MATERIAL				gMaterial : packoffset(c4);
-	uint					gnTexturesMask : packoffset(c8);
+	uint					   gnTexturesMask : packoffset(c8);
+    uint                      gnObjectID : packoffset(c8.y);
 };
 
 #include "Light.hlsl"
@@ -33,6 +34,8 @@ cbuffer cbGameObjectInfo : register(b2)
 #define MATERIAL_EMISSION_MAP		0x10
 #define MATERIAL_DETAIL_ALBEDO_MAP	0x20
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
+#define FRAME_BUFFER_WIDTH 640
+#define FRAME_BUFFER_HEIGHT 480
 
 Texture2D gtxtAlbedoTexture : register(t6);
 Texture2D gtxtSpecularTexture : register(t7);
@@ -41,6 +44,9 @@ Texture2D gtxtMetallicTexture : register(t9);
 Texture2D gtxtEmissionTexture : register(t10);
 Texture2D gtxtDetailAlbedoTexture : register(t11);
 Texture2D gtxtDetailNormalTexture : register(t12);
+
+// 뭐임??
+//Texture2D gtxtInputTextures[6] : register(t18); //To Defferd Rendering
 
 SamplerState gssWrap : register(s0);
 
@@ -71,6 +77,9 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
     float4 diffuse : SV_TARGET2;
     float4 normal : SV_TARGET3;
     float4 zDepth : SV_TARGET4;
+    
+    float4 f4Position : SV_TARGET5;
+    float4 f4ObjectInfo : SV_TARGET6;
 };
 
 Texture2DArray gtxtTextureArray : register(t19);
@@ -116,7 +125,12 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     output.normal = float4(input.normalW, 0.0);
     
     output.zDepth = float4(input.position.z, 0.0f, input.position.z, 1.0);
+    
+    output.f4Position = float4(input.positionW, 0);
 	
+    float depth = 1.0f - input.position.z;
+    output.f4ObjectInfo = float4(gnObjectID / 100.0, depth, 0.0f, 1.0f);
+    
 	return(output);
 }
 
@@ -561,4 +575,80 @@ VS_BOUNDINGBOX_OUTPUT VSBoundingBox(VS_BOUNDINGBOX_INPUT input)
 float4 PSBoundingBox(VS_BOUNDINGBOX_OUTPUT input) : SV_TARGET
 {
     return (float4(1.0f, 0.0f, 0.0f, 1.0f));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+static float gfGaussianBlurMask2D[5][5] =
+{
+    { 1.0f / 273.0f, 4.0f / 273.0f, 7.0f / 273.0f, 4.0f / 273.0f, 1.0f / 273.0f },
+    { 4.0f / 273.0f, 16.0f / 273.0f, 26.0f / 273.0f, 16.0f / 273.0f, 4.0f / 273.0f },
+    { 7.0f / 273.0f, 26.0f / 273.0f, 41.0f / 273.0f, 26.0f / 273.0f, 7.0f / 273.0f },
+    { 4.0f / 273.0f, 16.0f / 273.0f, 26.0f / 273.0f, 16.0f / 273.0f, 4.0f / 273.0f },
+    { 1.0f / 273.0f, 4.0f / 273.0f, 7.0f / 273.0f, 4.0f / 273.0f, 1.0f / 273.0f }
+};
+
+float4 GaussianBlur(float2 texCoord, float blurStrength)
+{
+    const int maxBlurRadius = 10;
+    int blurRadius = int(blurStrength * maxBlurRadius);; // Radius of the blur kernel
+    blurRadius = clamp(blurRadius, 0, maxBlurRadius);
+	
+	// Accumulate the weighted sum of colors
+    float4 blurredColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    float totalWeight = 0.0f;
+    float2 textureSize = float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT); // Dimensions of the input texture
+    float2 pixelSize = 1.0 / textureSize;
+
+	// Sample the input texture multiple times within the blur radius
+    for (int x = -blurRadius; x <= blurRadius; x++)
+    {
+        for (int y = -blurRadius; y <= blurRadius; y++)
+        {
+            float2 offset = float2(x, y) * pixelSize;
+            float2 uv = texCoord + offset;
+
+            float4 color = gtxtAlbedoTexture.Sample(gssWrap, uv);
+
+			// Calculate the Gaussian weight based on the distance from the center pixel
+            float distance = length(offset);
+            float weight = exp(-(distance * distance) / (2 * blurRadius * blurRadius));
+
+            blurredColor += color * weight;
+            totalWeight += weight;
+        }
+    }
+
+	// Normalize the accumulated color by the total weight
+    blurredColor /= totalWeight;
+
+    return blurredColor;
+}
+
+float4 PSBlur(float4 position : SV_POSITION) : SV_Target
+{
+     // 주어진 화면 좌표에서 알베도 텍스처의 색상을 가져옴
+    float4 cColor = gtxtAlbedoTexture[int2(position.xy)];
+	 // 화면 공간의 위치를 텍스처 좌표로 변환 (uv)
+    float2 texCoord = position.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+
+    // gtxtInputTextures[3]에서 텍스처 좌표에 해당하는 샘플을 가져옴
+    float4 objInfo = gtxtInputTextures[3].Sample(gssWrap, texCoord);
+    // objInfo의 두 번째 요소(g)를 깊이 값으로 사용
+    float depth = objInfo.g;
+    // 현재 픽셀의 밝기를 계산
+    float brightness = dot(cColor.rgb, float3(0.299, 0.587, 0.114));
+    
+    float blurStrength = 0.2;
+    if (brightness > 0.7f && depth >= 0.01f)
+    {
+        cColor = GaussianBlur(texCoord, blurStrength);
+    }
+    else if (depth >= 0.00000001 && depth <= 0.01)
+    {
+        blurStrength = 0.3f;
+        cColor = GaussianBlur(texCoord, blurStrength);
+    }
+
+    return (cColor);
 }
