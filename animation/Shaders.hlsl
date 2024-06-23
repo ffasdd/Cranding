@@ -590,9 +590,9 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
             }
     }
     
-    //float4 cSobel = Sobel(gtxtTextureTexture, input.uv, gssWrap);
+    float4 cSobel = Sobel(gtxtTextureTexture, input.uv, gssWrap);
 	
-    //cColor.rgb *= (1.0f - cSobel.r);
+    cColor.rgb *= (1.0f - cSobel.r + 0.3);
     
     //float4 la = Laplacian(gtxtdrNormalTexture, input.uv, gssWrap);
     //cColor.rgb *= (1.0f - la.r*4.0f + 0.3);

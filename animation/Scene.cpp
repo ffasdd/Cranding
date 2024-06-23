@@ -840,7 +840,7 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_nHierarchicalGameObjects = 4;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/plane.bin", NULL);
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/plane.bin", NULL);
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[0]->SetPosition(400.0f, -20.0f, 400.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(8.0f, 8.0f, 8.0f);
@@ -893,7 +893,7 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_nHierarchicalGameObjects = 3;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/robbymap.bin", NULL);
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/robbymap.bin", NULL);
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 0.0f, 620.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
@@ -990,7 +990,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_nHierarchicalGameObjects = 3 + 10;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/spaceshipmap.bin", NULL);
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/spaceshipmap.bin", NULL);
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, -50.0f, 620.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
@@ -1346,7 +1346,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/icemap.bin", NULL);
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/icemap.bin", NULL);
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 0.0f, 620.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
@@ -1465,7 +1465,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_nHierarchicalGameObjects = 3 + 10;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/firemap.bin", NULL);
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/firemap.bin", NULL);
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 00.0f, 620.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
@@ -1582,7 +1582,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_nHierarchicalGameObjects = 3 + 10;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/grassmap.bin", NULL);
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/grassmap.bin", NULL);
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 00.0f, 620.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
