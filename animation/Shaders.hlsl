@@ -65,9 +65,38 @@ float4 Sobel(Texture2D tex, float2 uv, SamplerState sam)
     float4 gy = -1 * tl + -2 * tc + -1 * tr + 1 * bl + 2 * bc + 1 * br;
 
     float4 g = sqrt(gx * gx + gy * gy);
-
+    
+    
     return g;
 }
+
+// Laplacian Outline Compute
+float4 Laplacian(Texture2D tex, float2 uv, SamplerState sam)
+{
+    float2 texelSize = 1.0f / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+
+    float4 tl = tex.Sample(sam, uv + float2(-texelSize.x, -texelSize.y));
+    float4 tc = tex.Sample(sam, uv + float2(0, -texelSize.y));
+    float4 tr = tex.Sample(sam, uv + float2(texelSize.x, -texelSize.y));
+    float4 cl = tex.Sample(sam, uv + float2(-texelSize.x, 0));
+    float4 cc = tex.Sample(sam, uv + float2(0, 0)); // Center pixel
+    float4 cr = tex.Sample(sam, uv + float2(texelSize.x, 0));
+    float4 bl = tex.Sample(sam, uv + float2(-texelSize.x, texelSize.y));
+    float4 bc = tex.Sample(sam, uv + float2(0, texelSize.y));
+    float4 br = tex.Sample(sam, uv + float2(texelSize.x, texelSize.y));
+
+    // Laplacian kernel
+    // [ 0,  1, 0]
+    // [ 1, -4, 1]
+    // [ 0,  1, 0]
+    float4 laplacian = 1 * tc + 1 * cl + -4 * cc + 1 * cr + 1 * bc;
+    
+   // float strength = 2.0f;
+    //laplacian *= strength;
+
+    return laplacian;
+}
+
 
 struct VS_STANDARD_INPUT
 {
@@ -561,9 +590,24 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
             }
     }
     
-    float4 cSobel = Sobel(gtxtTextureTexture, input.uv, gssWrap);
+    //float4 cSobel = Sobel(gtxtTextureTexture, input.uv, gssWrap);
 	
-    cColor.rgb *= (1.0f - cSobel.r+0.3);
+    //cColor.rgb *= (1.0f - cSobel.r);
+    
+    //float4 la = Laplacian(gtxtdrNormalTexture, input.uv, gssWrap);
+    //cColor.rgb *= (1.0f - la.r*4.0f + 0.3);
+    //cColor.rgb *= la.r;
+    
+    //float outlineStrength = saturate(1.0f - la.r + 0.3f); // Ensure the value is clamped between 0 and 1
+    //cColor.rgb = lerp(cColor.rgb, float3(0, 0, 0), outlineStrength); // Blend with black based on edge strength
+    
+     // Create an edge mask
+    //float edgeThreshold = 0.1f; // Adjust this threshold as needed
+   // float edgeMask = step(edgeThreshold, la.r);
+
+    // Combine the original color with the edge overlay
+   // float4 edgeColor = float4(0, 0, 0, 1); // Red color for the edge
+    //float4 result = lerp(cColor, edgeColor, edgeMask);
     
     return (cColor);
 }
