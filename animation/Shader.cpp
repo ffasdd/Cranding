@@ -827,17 +827,19 @@ void CPostProcessingShader::OnPrepareRenderTarget(ID3D12GraphicsCommandList* pd3
 
 	for (int i = 0; i < nRenderTargets; i++)
 	{
+	    // ClearRenderTargetView 함수는 지정된 렌더 타겟의 컬러를 지정된 값으로 클리어합니다.
 		pd3dAllRtvCPUHandles[i] = pd3dRtvCPUHandles[i];
-		pd3dCommandList->ClearRenderTargetView(pd3dRtvCPUHandles[i], Colors::White, 0, NULL);
+		pd3dCommandList->ClearRenderTargetView(pd3dRtvCPUHandles[i], Colors::Red, 0, NULL);
 	}
 
 	for (int i = 0; i < nResources; i++)
 	{
 		::SynchronizeResourceTransition(pd3dCommandList, GetTextureResource(i), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
+		// 각 리소스의 렌더 타겟 뷰를 얻어 클리어합니다.
 		D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = GetRtvCPUDescriptorHandle(i);
 		FLOAT pfClearColor[4] = { 0.0f, 0.0f, 1.0f, 1.0f };
-		pd3dCommandList->ClearRenderTargetView(d3dRtvCPUDescriptorHandle, Colors::White, 0, NULL);
+		pd3dCommandList->ClearRenderTargetView(d3dRtvCPUDescriptorHandle, pfClearColor, 0, NULL);
 		pd3dAllRtvCPUHandles[nRenderTargets + i] = d3dRtvCPUDescriptorHandle;
 	}
 	pd3dCommandList->OMSetRenderTargets(nRenderTargets + nResources, pd3dAllRtvCPUHandles, FALSE, pd3dDsvCPUHandle);

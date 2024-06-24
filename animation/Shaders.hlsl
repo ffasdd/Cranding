@@ -148,20 +148,25 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
     
 	// °´Ã¼ ·»´õ¸µ
-	float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-	if (gnTexturesMask & MATERIAL_ALBEDO_MAP) cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
+    float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
+        cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
 	
-	float4 cSpecularColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-	if (gnTexturesMask & MATERIAL_SPECULAR_MAP) cSpecularColor = gtxtSpecularTexture.Sample(gssWrap, input.uv);
+    float4 cSpecularColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_SPECULAR_MAP)
+        cSpecularColor = gtxtSpecularTexture.Sample(gssWrap, input.uv);
 	
-	float4 cNormalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-	if (gnTexturesMask & MATERIAL_NORMAL_MAP) cNormalColor = gtxtNormalTexture.Sample(gssWrap, input.uv);
+    float4 cNormalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_NORMAL_MAP)
+        cNormalColor = gtxtNormalTexture.Sample(gssWrap, input.uv);
 	
-	float4 cMetallicColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-	if (gnTexturesMask & MATERIAL_METALLIC_MAP) cMetallicColor = gtxtMetallicTexture.Sample(gssWrap, input.uv);
+    float4 cMetallicColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_METALLIC_MAP)
+        cMetallicColor = gtxtMetallicTexture.Sample(gssWrap, input.uv);
 	
-	float4 cEmissionColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-	if (gnTexturesMask & MATERIAL_EMISSION_MAP) cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
+    float4 cEmissionColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_EMISSION_MAP)
+        cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
 	
     output.cTexture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
 	
@@ -170,6 +175,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     output.normal = float4(input.normalW, 0.0);
     
     output.zDepth = float4(input.position.z, 0.0f, input.position.z, 1.0);
+  
 	
 	return(output);
 }
@@ -291,7 +297,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
 	
     output.cTexture = lerp(output.cTexture, cIllumination, 0.5f);
     cIllumination = gMaterial.m_cDiffuse;
-    
+   
     return (output);
 }
 
@@ -358,16 +364,24 @@ VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)
 	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);
 	output.positionL = input.position;
 
+    
 	return(output);
 }
 
 TextureCube gtxtSkyCubeTexture : register(t13);
 SamplerState gssClamp : register(s1);
 
+Texture2D<float4> gtxtTextureTexture : register(t14);
+Texture2D<float4> gtxtIlluminationTexture : register(t15);
+Texture2D<float4> gtxtdrNormalTexture : register(t16);
+
+Texture2D<float> gtxtzDepthTexture : register(t17);
+Texture2D<float> gtxtDepthTexture : register(t18);
+
 float4 PSSkyBox(VS_SKYBOX_CUBEMAP_OUTPUT input) : SV_TARGET
 {
-	float4 cColor = gtxtSkyCubeTexture.Sample(gssClamp, input.positionL);
-    
+    float4 cColor = gtxtSkyCubeTexture.Sample(gssClamp, input.positionL);
+    cColor = float4(1.0,0.7, 0.9, 1.0);
     return (cColor);
 }
 
@@ -405,12 +419,7 @@ struct VS_SCREEN_RECT_TEXTURED_OUTPUT
     float2 uv : TEXCOORD;
 };
 
-Texture2D<float4> gtxtTextureTexture : register(t14);
-Texture2D<float4> gtxtIlluminationTexture : register(t15);
-Texture2D<float4> gtxtdrNormalTexture : register(t16);
 
-Texture2D<float> gtxtzDepthTexture : register(t17);
-Texture2D<float> gtxtDepthTexture : register(t18);
 
 
 VS_SCREEN_RECT_TEXTURED_OUTPUT VSScreenRectSamplingTextured(uint nVertexID : SV_VertexID)
@@ -563,9 +572,13 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     float4 ambient = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 diffuse = gMaterial.m_cDiffuse;
     float4 tex = gtxtTextureTexture.Sample(gssWrap, input.uv);
-	
+
     float4 cColor = DeferredLighting(pos, normal, specular, diffuse, ambient, tex);
     
+    float4 cc = tex;
+    if (cc.b >= 0.3f && cc.r <= 0.1f && cc.g <= 0.1f)
+        discard;
+  
     switch (gvDrawOptions.x)
     {
         case 79: //'O'
@@ -592,7 +605,7 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     
     float4 cSobel = Sobel(gtxtTextureTexture, input.uv, gssWrap);
 	
-    cColor.rgb *= (1.0f - cSobel.r + 0.3);
+    //cColor.rgb *= (1.0f - cSobel.r + 0.3);
     
     //float4 la = Laplacian(gtxtdrNormalTexture, input.uv, gssWrap);
     //cColor.rgb *= (1.0f - la.r*4.0f + 0.3);
@@ -603,10 +616,10 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     
      // Create an edge mask
     //float edgeThreshold = 0.1f; // Adjust this threshold as needed
-   // float edgeMask = step(edgeThreshold, la.r);
+    //float edgeMask = step(edgeThreshold, la.r);
 
     // Combine the original color with the edge overlay
-   // float4 edgeColor = float4(0, 0, 0, 1); // Red color for the edge
+    //float4 edgeColor = float4(0, 0, 0, 1); // Red color for the edge
     //float4 result = lerp(cColor, edgeColor, edgeMask);
     
     return (cColor);
