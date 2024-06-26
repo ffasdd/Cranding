@@ -176,7 +176,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     
     output.zDepth = float4(input.position.z, 0.0f, input.position.z, 1.0);
   
-	
+    output.scene = output.cTexture + gMaterial.m_cEmissive;
+    
 	return(output);
 }
 
@@ -298,6 +299,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
     output.cTexture = lerp(output.cTexture, cIllumination, 0.5f);
     cIllumination = gMaterial.m_cDiffuse;
    
+    output.scene = output.cTexture + gMaterial.m_cEmissive;
+    
     return (output);
 }
 
@@ -357,6 +360,16 @@ struct VS_SKYBOX_CUBEMAP_OUTPUT
 	float4	position : SV_POSITION;
 };
 
+TextureCube gtxtSkyCubeTexture : register(t13);
+SamplerState gssClamp : register(s1);
+
+Texture2D<float4> gtxtTextureTexture : register(t14);
+Texture2D<float4> gtxtIlluminationTexture : register(t15);
+Texture2D<float4> gtxtdrNormalTexture : register(t16);
+
+Texture2D<float> gtxtzDepthTexture : register(t17);
+Texture2D<float> gtxtDepthTexture : register(t18);
+
 VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)
 {
 	VS_SKYBOX_CUBEMAP_OUTPUT output;
@@ -368,20 +381,10 @@ VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)
 	return(output);
 }
 
-TextureCube gtxtSkyCubeTexture : register(t13);
-SamplerState gssClamp : register(s1);
-
-Texture2D<float4> gtxtTextureTexture : register(t14);
-Texture2D<float4> gtxtIlluminationTexture : register(t15);
-Texture2D<float4> gtxtdrNormalTexture : register(t16);
-
-Texture2D<float> gtxtzDepthTexture : register(t17);
-Texture2D<float> gtxtDepthTexture : register(t18);
-
 float4 PSSkyBox(VS_SKYBOX_CUBEMAP_OUTPUT input) : SV_TARGET
 {
     float4 cColor = gtxtSkyCubeTexture.Sample(gssClamp, input.positionL);
-    cColor = float4(1.0,0.7, 0.9, 1.0);
+
     return (cColor);
 }
 
@@ -525,9 +528,6 @@ float4 DeferredDirectionalLight(int nIndex, float3 vNormal, float3 vToCamera, fl
 
     // Sample the texture
     float4 textureSample = textureColor;
-    
-    // Set the output texture color
-  //  textureColor = textureSample;
 
     // Combine the lighting color with the texture color
     float4 finalColor = lightingColor * textureSample;
@@ -559,13 +559,15 @@ float4 DeferredLighting(float3 vPosition, float3 vNormal, float4 vSpecular, floa
 	
     cColor += (gcGlobalAmbientLight * vAmbient);
     cColor.a = vDiffuse.a;
-	//cColor.a = 1.0f;
+	cColor.a = 1.0f;
 
     return (cColor);
 }
 
 float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_Target
 {
+    VS_SKYBOX_CUBEMAP_OUTPUT inputa;
+    
     float3 pos = input.position;
     float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
     float4 specular = float4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -575,10 +577,12 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
 
     float4 cColor = DeferredLighting(pos, normal, specular, diffuse, ambient, tex);
     
+    
     float4 cc = tex;
     if (cc.b >= 0.3f && cc.r <= 0.1f && cc.g <= 0.1f)
         discard;
-  
+    cColor.a = 0.0;
+    
     switch (gvDrawOptions.x)
     {
         case 79: //'O'
@@ -622,7 +626,8 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     //float4 edgeColor = float4(0, 0, 0, 1); // Red color for the edge
     //float4 result = lerp(cColor, edgeColor, edgeMask);
     
-    return (cColor);
+    
+    return cColor;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
