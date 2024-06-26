@@ -39,6 +39,8 @@ public:
 	void setAttack(bool att);
 	void setState(STATE state);
 
+	mutex _sessionlock;
+	bool m_blind = false;
 	int scene_num = -1;
 private:
 	int m_id  = -1;
@@ -56,6 +58,8 @@ private:
 
 	int m_animationstate = 0;
 	int m_prevanimationstate = 0;
+
+	
 
 };
 

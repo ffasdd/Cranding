@@ -312,7 +312,7 @@ void Server::ProcessPacket(int id, char* packet)
 		unordered_set<int> old_vlist = clients[id]._view_list;
 
 		clients[id]._v_lock.unlock();
-
+		
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
 			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
@@ -446,13 +446,16 @@ void Server::ProcessPacket(int id, char* packet)
 			clients[id]._stage = scenenum;
 		}
 
-		clients[id].send_change_scene(id, scenenum);
+		clients[id].send_change_scene(id, scenenum); // 나한테 나의 씬넘버를 보냄 
 
-		for (auto& pl : ingameroom[r_id].ingamePlayer)
+		for (auto& pl : ingameroom[r_id].ingamePlayer) // 나의 씬번호를 다른 플레이어들한테 보냄 
 		{
 			if (pl->_id == id)continue;
 			pl->send_change_scene(id, clients[id]._stage);
 		}
+
+		// 몬스터가 다시 플레이어를 따라가야 하니까 플레이어 정보를 몬스터에게 넘긴다. 
+
 		if (p->scenenum == 2)
 		{
 			// 몬스터정보를 다시보내야하나?  ㄴㄴㄴ 몬스터한테 다시 플레이어정보를 넘김 
@@ -546,8 +549,6 @@ void Server::ProcessPacket(int id, char* packet)
 
 			TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_DAYTIME };
 			g_Timer.InitTimerQueue(ev3);
-
-
 
 		}
 

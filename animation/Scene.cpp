@@ -1035,7 +1035,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
 	//m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
 
-	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 
 	CLoadedModelInfo* pPlayerModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
@@ -1077,7 +1077,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
 	//m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
 
-	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
 
 	if (pPlayerModel1) delete pPlayerModel1;
@@ -1379,7 +1379,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
 
-	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 
 	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
@@ -1407,7 +1407,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
 
-	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
 
 	if (pPlayerModel) delete pPlayerModel;
@@ -1498,7 +1498,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
 
-	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 
 	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
@@ -1526,7 +1526,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
 
-	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
 
 	if (pPlayerModel) delete pPlayerModel;
@@ -1615,7 +1615,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
 
-	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, -20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 
 	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
@@ -1643,7 +1643,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(9, false);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(10, false);
 
-	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
+	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, -20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
 
 	if (pPlayerModel) delete pPlayerModel;

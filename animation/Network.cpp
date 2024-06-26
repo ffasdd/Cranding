@@ -274,6 +274,7 @@ void Network::ProcessPacket(char* buf)
 		if (ob_id == my_id)
 		{
 			stage_num = p->stage;
+
 			switch (stage_num)
 			{
 			case 1:
@@ -293,40 +294,39 @@ void Network::ProcessPacket(char* buf)
 					}
 				}
 				else
+				{
 					SpaceshipScene = true;
+					for (int i = 0; i < g_clients.size(); ++i)
+					{
+						if (g_clients[i].getId() == my_id)continue;
+						if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+							gGameFramework.myFunc_SetBlind(i, ob_id, false);
+						else
+							gGameFramework.myFunc_SetBlind(i, ob_id, true);
+					}
+				}
 				break;
 
 			case 3:
 			{
-				if (stage_num == p->stage)
+				for (int i = 0; i < g_clients.size(); ++i)
 				{
-					// 클라 정보 추가 
+					if (g_clients[i].getId() == my_id)continue;
+					if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+						gGameFramework.myFunc_SetBlind(i, ob_id, false);
+					else
+						gGameFramework.myFunc_SetBlind(i, ob_id, true);
 				}
-				else
-					g_clients.erase(ob_id);
-
 				g_monsters.clear();
 			}
 				break;
 			case 4 :
 			{
-				if (stage_num == p->stage)
-				{
-					// 클라 정보 추가 
-				}
-				else
-					g_clients.erase(ob_id);
 				g_monsters.clear();
 			}
 				break;
 			case 5:
 			{
-				if (stage_num == p->stage)
-				{
-					// 클라 정보 추가 
-				}
-				else
-					g_clients.erase(ob_id);
 				g_monsters.clear();
 			}
 				break;
@@ -334,9 +334,16 @@ void Network::ProcessPacket(char* buf)
 		}
 		else
 		{
-			g_clients.erase(ob_id);
+			for (int i = 0; i < g_clients.size(); ++i)
+			{
+				if (g_clients[i].getId() == my_id)continue;
+				if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+					gGameFramework.myFunc_SetBlind(i, ob_id, false);
+				else
+					gGameFramework.myFunc_SetBlind(i, ob_id, true);
+			}
 		}
-
+		// Id가 하나만 ㅁ거음 
 
 		break;
 	}

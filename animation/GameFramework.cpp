@@ -347,12 +347,12 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case VK_RETURN:
 			break;
 
-		//case VK_F1:
-		//case VK_F2:
-		//case VK_F3:
-		//case VK_F4:
-		//	m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
-			//break;
+			//case VK_F1:
+			//case VK_F2:
+			//case VK_F3:
+			//case VK_F4:
+			//	m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
+				//break;
 
 		case VK_F9:
 			ChangeSwapChainState();
@@ -404,9 +404,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			//if(처음 시작할 때에만 IngameStart() ) {}
 			// bool 을 두면 간단 하지만? bool보단 그냥 클라마다 상태체크하는게 좋을거같긴함 Ingame상태이거나 게임중인 상태에는 보낼 필요가 없으니까? 
 			// bool로 일단 해보자 
-			if (gNetwork.ClientState == false)
+			if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
 			{
-			gNetwork.SendIngameStart();
+				gNetwork.SendIngameStart();
 			}
 			gNetwork.SendChangeScene(SceneNum);
 
@@ -554,19 +554,19 @@ void CGameFramework::myFunc_SetLookRightUp(int n, int id, XMFLOAT3 Look, XMFLOAT
 
 void CGameFramework::myFunc_SetMonPosition(int n, XMFLOAT3 position)
 {
-		m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
-		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
-		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
-		//m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
+	//m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
 }
 
 void CGameFramework::myFunc_SetMonLookRightUp(int n, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
 {
-		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetLook(Look.x, Look.y, Look.z);
-		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetUp(0, 1, 0);
-		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetRight(Right.x, Right.y, Right.z);
-		m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
-		
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetLook(Look.x, Look.y, Look.z);
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetUp(0, 1, 0);
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetRight(Right.x, Right.y, Right.z);
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
+
 }
 
 void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
@@ -649,6 +649,36 @@ void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsAttack = true;
 	}
 }
+
+void CGameFramework::myFunc_SetBlind(int n, int id, bool _isblind)
+{
+	if (cl_id == n)
+	{
+		m_pPlayer->SetId(cl_id);
+		// ���� �Ǵ��� �ȵǴ��� �𸣰���
+		//m_pPlayer->SetPosition(position);
+	}
+	else
+	{
+		int others_id = -1;
+		switch (cl_id) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->isdraw = _isblind;
+	}
+
+}
+
+
 
 void CGameFramework::OnDestroy()
 {
