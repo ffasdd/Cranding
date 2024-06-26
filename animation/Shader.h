@@ -123,15 +123,15 @@ public:
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader();
 
 protected:
-	DXGI_FORMAT pdxgiResourceFormats[DEFERREDNUM + 1] =
-	{ DXGI_FORMAT_R8G8B8A8_UNORM,
-		DXGI_FORMAT_R8G8B8A8_UNORM,
-		DXGI_FORMAT_R8G8B8A8_UNORM,
-		DXGI_FORMAT_R8G8B8A8_UNORM,
-		DXGI_FORMAT_R8G8B8A8_UNORM,
+	DXGI_FORMAT pdxgiResourceFormats[DEFERREDNUM] =
+	{
+		DXGI_FORMAT_R8G8B8A8_UNORM,  // scene
 
-		DXGI_FORMAT_R32G32B32A32_FLOAT,
-		DXGI_FORMAT_R8G8B8A8_UNORM };
+		DXGI_FORMAT_R8G8B8A8_UNORM,  // cTexture
+		DXGI_FORMAT_R8G8B8A8_UNORM,  // diffuse
+		DXGI_FORMAT_R8G8B8A8_UNORM,  // normal
+		DXGI_FORMAT_R8G8B8A8_UNORM  // zDepth
+	};
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

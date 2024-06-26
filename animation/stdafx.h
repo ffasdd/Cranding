@@ -69,7 +69,7 @@ extern HINSTANCE						ghAppInstance;
 #define FRAME_BUFFER_WIDTH				640
 #define FRAME_BUFFER_HEIGHT				480
 
-constexpr int DEFERREDNUM = 6;
+constexpr int DEFERREDNUM = 5;
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "d3d12.lib")

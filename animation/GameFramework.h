@@ -72,6 +72,10 @@ public:
 
 	// 서버로부터 받은 좌표 렌더링
 public:
+	unique_ptr<CBlurShader> m_BlurShader = NULL;
+	ID3D12Resource* m_pBlurBuffer = NULL;
+	bool isBlurRender = true;
+
 	CPlayer* m_pPlayer = NULL;
 	int cl_id;
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
