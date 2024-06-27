@@ -44,8 +44,6 @@ public:
 	UINT							m_nStride = 0;
 
 protected:
-	UINT							m_nVertexBufferViews = 0;
-	D3D12_VERTEX_BUFFER_VIEW* m_pd3dVertexBufferViews = NULL;
 
 	UINT							m_nType = 0x00;
 

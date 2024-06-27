@@ -597,7 +597,7 @@ void CScene::CreateConstantBufferViews(ID3D12Device* pd3dDevice, int nConstantBu
 		m_d3dCbvGPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
 	}
 }
-
+/*
 D3D12_GPU_DESCRIPTOR_HANDLE CScene::CreateConstantBufferView(ID3D12Device* pd3dDevice, ID3D12Resource* pd3dConstantBuffer, UINT nStride)
 {
 	D3D12_CONSTANT_BUFFER_VIEW_DESC d3dCBVDesc;
@@ -642,7 +642,7 @@ D3D12_GPU_DESCRIPTOR_HANDLE CScene::CreateShaderResourceView(ID3D12Device* pd3dD
 
 	return(d3dSrvGPUDescriptorHandle);
 }
-
+*/
 void CScene::CreateShaderResourceView(ID3D12Device* pd3dDevice, CTexture* pTexture, int nIndex, UINT nRootParameterStartIndex)
 {
 	ID3D12Resource* pShaderResource = pTexture->GetResource(nIndex);

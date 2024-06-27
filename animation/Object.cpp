@@ -199,6 +199,10 @@ CMaterial::~CMaterial()
 		if (m_ppstrTextureNames) delete[] m_ppstrTextureNames;
 	}
 
+	if (m_pd3dcbMaterial) {
+		m_pd3dcbMaterial->Unmap(0, NULL);
+		m_pd3dcbMaterial->Release();
+	}
 }
 
 void CMaterial::SetShader(CShader *pShader)
@@ -237,6 +241,13 @@ void CMaterial::PrepareShaders(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkinnedAnimationShader = new CSkinnedAnimationStandardShader();
 	m_pSkinnedAnimationShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 1, NULL, DXGI_FORMAT_D32_FLOAT);
 	m_pSkinnedAnimationShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+}
+
+void CMaterial::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	UINT ncbElementBytes = ((sizeof(LIGHTS) + 255) & ~255); //256의 배수
+	m_pd3dcbMaterial = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+
 }
 
 void CMaterial::UpdateShaderVariable(ID3D12GraphicsCommandList *pd3dCommandList)
@@ -988,6 +999,41 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 
 void CGameObject::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
 {
+	UINT ncbElementBytes = ((sizeof(LIGHTS) + 255) & ~255); //256의 배수
+	//m_pd3dcbDissolve = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+
+	//m_pd3dcbDissolve->Map(0, NULL, (void**)&m_pObjectState);
+
+	//m_pd3dcbObject = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+
+	//m_pd3dcbObject->Map(0, NULL, (void**)&m_pcbMappedObjects);
+
+	ID3D12Resource* m_pd3dcbObject = NULL;
+	//OBJECT_INFO* m_pcbMappedObjects = NULL;
+
+	m_pd3dcbObject = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+
+	//m_pd3dcbObject->Map(0, NULL, (void**)&m_pcbMappedObjects);
+
+	//m_pd3dcbVecObject.push_back(m_pd3dcbObject);
+	//m_pcbMappedVecObjects.push_back(m_pcbMappedObjects);
+
+
+	if (m_ppMaterials)
+	{
+		for (int i = 0; i < m_nMaterials; ++i)
+		{
+			m_ppMaterials[i]->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+		}
+	}
+}
+
+void CGameObject::AllCreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	if (m_pSibling) m_pSibling->AllCreateShaderVariables(pd3dDevice, pd3dCommandList);
+	if (m_pChild) m_pChild->AllCreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
 void CGameObject::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList)
@@ -1600,14 +1646,14 @@ CSkyBox::CSkyBox(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dComman
 	CSkyBoxMesh *pSkyBoxMesh = new CSkyBoxMesh(pd3dDevice, pd3dCommandList, 20.0f, 20.0f, 2.0f);
 	SetMesh(pSkyBoxMesh);
 
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 	CTexture* pSkyBoxTexture = new CTexture(1, RESOURCE_TEXTURE_CUBE, 0, 1);
-	pSkyBoxTexture->LoadTextureFromDDSFile(pd3dDevice, pd3dCommandList, L"SkyBox/SkyBox_1.dds", RESOURCE_TEXTURE_CUBE, 0);
+	pSkyBoxTexture->LoadTextureFromDDSFile(pd3dDevice, pd3dCommandList, L"SkyBox/SkyBox_0.dds", RESOURCE_TEXTURE_CUBE, 0);
 
 	CSkyBoxShader *pSkyBoxShader = new CSkyBoxShader();
 	pSkyBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 1, NULL, DXGI_FORMAT_D32_FLOAT);
-	pSkyBoxShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//pSkyBoxShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 	CScene::CreateShaderResourceViews(pd3dDevice, pSkyBoxTexture, 0, 8);
 
@@ -1616,6 +1662,8 @@ CSkyBox::CSkyBox(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dComman
 	pSkyBoxMaterial->SetShader(pSkyBoxShader);
 
 	SetMaterial(0, pSkyBoxMaterial);
+
+	AllCreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
 CSkyBox::~CSkyBox()
