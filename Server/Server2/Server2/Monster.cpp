@@ -74,3 +74,14 @@ void Monster::Remove()
 {
 	_pos = { 0.f,-30.f,0.f };
 }
+
+void Monster::RemovePlayer(int client_id)
+{
+	Session* removeplayer;
+	auto it = find_if(ingamePlayer.begin(), ingamePlayer.end(), [client_id](Session* s) {return s->_id == client_id; });
+	//오토에는 클라이언트 아이디가 들어가있음
+	if (ingamePlayer.end() != it)
+	{
+		ingamePlayer.erase(it);
+	}
+}

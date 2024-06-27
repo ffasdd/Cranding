@@ -25,13 +25,16 @@ public:
 	bool _is_alive = false;
 
 	BoundingOrientedBox _ob;
+	mutex ingamePlayerlock;
 
 public:
+	//array<Seesion*, 3> ing 
 	vector<Session*> ingamePlayer;
 
 public:
 
 	void Move();
 	void Remove();
+	void RemovePlayer(int client_id);
 };
 extern array<Monster, MAX_NPC> Monsters;

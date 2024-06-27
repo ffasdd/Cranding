@@ -463,10 +463,10 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				if(find(n_m.ingamePlayer.begin(),n_m.ingamePlayer.end(),&clients[id]) == n_m.ingamePlayer.end())
 				{
-					clients[id]._s_lock.lock();
+					clients[id]._p_lock.lock();
 					//lock_guard<mutex>ll{ clients[id]._s_lock };
 					n_m.ingamePlayer.emplace_back(&clients[id]);
-					clients[id]._s_lock.unlock();
+					clients[id]._p_lock.unlock();
 				}
 			}
 		}
@@ -476,8 +476,10 @@ void Server::ProcessPacket(int id, char* packet)
 			for (auto& n_m : ingameroom[r_id].NightMonster)
 			{
 				{
-				lock_guard<mutex>ll{ clients[id]._s_lock };
-				n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+				lock_guard<mutex>ll{ n_m.ingamePlayerlock};
+				//cout << n_m.ingamePlayer.begin() + id << endl;
+				//n_m.ingamePlayer.erase(&clients[id]);
+				n_m.RemovePlayer(id);
 				}
 			}
 			 // ¾óÀ½¸ó½ºÅÍ »Ñ·ÁÁà¾ßÇÔ 
@@ -493,7 +495,7 @@ void Server::ProcessPacket(int id, char* packet)
 			for (auto& n_m : ingameroom[r_id].NightMonster)
 			{
 				{
-					lock_guard<mutex>ll{ clients[id]._s_lock };
+					lock_guard<mutex>ll{ clients[id]._p_lock };
 					n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
 				}
 			}
@@ -505,7 +507,7 @@ void Server::ProcessPacket(int id, char* packet)
 			for (auto& n_m : ingameroom[r_id].NightMonster)
 			{
 				{
-					lock_guard<mutex>ll{ clients[id]._s_lock };
+					lock_guard<mutex>ll{ clients[id]._p_lock };
 					n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
 				}
 			}
