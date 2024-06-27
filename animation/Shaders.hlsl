@@ -119,7 +119,7 @@ struct VS_STANDARD_OUTPUT
 
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
-    float4 scene : SV_Target0;
+    float4 scene : SV_TARGET0;
 	
     float4 cTexture : SV_TARGET1;
     float4 diffuse : SV_TARGET2;
@@ -143,8 +143,10 @@ VS_STANDARD_OUTPUT VSStandard(VS_STANDARD_INPUT input)
 	return(output);
 }
 
-PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTPUT input) : SV_TARGET
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTPUT input)
 {
+    // 이건 그냥 애들
+    
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
     
 	// 객체 렌더링
@@ -250,11 +252,9 @@ VS_STANDARD_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT input)
 	return(output);
 }
 
-
-
-
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OUTPUT input)
 {
+    // 이건 움직이는 애들
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 	
     //output.cTexture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
@@ -284,11 +284,11 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
     output.cTexture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
 	
 	output.normal = float4(input.normalW.xyz * 0.5f + 0.5f, 1.0f);
-    //output.normal = float4(0.0,0.0,0.0, 1.0f);
+    output.normal = float4(0.0,0.0,0.0, 1.0f);
 
     input.normalW = normalize(input.normalW);
 
-   // output.zDepth = input.position.z;
+    // output.zDepth = input.position.z;
     output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
 	
     output.diffuse = gMaterial.m_cDiffuse;
@@ -409,12 +409,6 @@ float4 VSPostProcessing(uint nVertexID : SV_VertexID) : SV_POSITION
     return (float4(1.0, 1.0, 1.0, 1.0));
 }
 
-float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
-{
-	
-	
-    return (float4(1.0f, 1.0f, 1.0f, 1.0f));
-}
 
 struct VS_SCREEN_RECT_TEXTURED_OUTPUT
 {
@@ -535,7 +529,6 @@ float4 DeferredDirectionalLight(int nIndex, float3 vNormal, float3 vToCamera, fl
     return finalColor;
 }
 
-
 float4 DeferredLighting(float3 vPosition, float3 vNormal, float4 vSpecular, float4 vDiffuse, float4 vAmbient, float4 tex)
 {
     float3 vCameraPosition = float3(gvCameraPosition.x, gvCameraPosition.y, gvCameraPosition.z);
@@ -566,14 +559,20 @@ float4 DeferredLighting(float3 vPosition, float3 vNormal, float4 vSpecular, floa
 
 float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_Target
 {
-    VS_SKYBOX_CUBEMAP_OUTPUT inputa;
+    float2 textureSize = float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+    float2 texelCoord = input.uv * textureSize;
+    uint3 texCoord = uint3(texelCoord, 0);
     
-    float3 pos = input.position;
-    float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
+    //float3 pos = input.position;
+    float3 pos = gtxtIlluminationTexture.Load(texCoord);
+    //float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
+    float3 normal = gtxtdrNormalTexture.Load(texCoord).rgb; // good
     float4 specular = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 ambient = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 diffuse = gMaterial.m_cDiffuse;
-    float4 tex = gtxtTextureTexture.Sample(gssWrap, input.uv);
+    //float4 diffuse = gtxtDepthTexture.Load(texCoord);
+    //float4 tex = gtxtTextureTexture.Sample(gssWrap, input.uv);
+    float4 tex = gtxtTextureTexture.Load(texCoord);
 
     float4 cColor = DeferredLighting(pos, normal, specular, diffuse, ambient, tex);
     
