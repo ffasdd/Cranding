@@ -270,7 +270,7 @@ void Network::ProcessPacket(char* buf)
 		int ob_id = p->id;
 
 		g_clients[ob_id].scene_num = p->stage;
-
+		g_clients[ob_id].setPos(p->pos);
 		if (ob_id == my_id)
 		{
 			stage_num = p->stage;
@@ -406,7 +406,7 @@ void Network::ProcessPacket(char* buf)
 
 		g_ice_monsters[npc_id].setUp({ 0.f,1.f,0.f });
 	}
-	
+	break;
 
 	}
 }

@@ -166,6 +166,7 @@ void Session::send_change_scene(int client_id, int stagenum)
 	p.type = SC_CHANGE_SCENE;
 	p.stage = stagenum;
 	p.id = client_id;
+	p.pos = clients[client_id]._pos;
 	do_send(&p);
 }
 

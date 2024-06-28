@@ -85,3 +85,58 @@ void Monster::RemovePlayer(int client_id)
 		ingamePlayer.erase(it);
 	}
 }
+
+void Monster::IceMove()
+{
+	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
+
+	for (auto& cl : ingamePlayer)
+	{
+		XMVECTOR posVec = XMLoadFloat3(&_pos);
+		XMVECTOR spaceshipVec = XMLoadFloat3(&spaceshippos);
+		XMVECTOR dirToSpaceship = XMVector3Normalize(spaceshipVec - posVec);
+
+		XMFLOAT3 directionToSpaceshipFloat3;
+		XMStoreFloat3(&directionToSpaceshipFloat3, dirToSpaceship);
+
+		_look = directionToSpaceshipFloat3;
+
+		XMVECTOR upVect = XMLoadFloat3(&up);
+		XMVECTOR rightVec = XMVector3Cross(upVect, dirToSpaceship);
+		XMFLOAT3 rightFloat3;
+		XMStoreFloat3(&rightFloat3, rightVec);
+
+		_right = rightFloat3;
+
+		float checkPlayerDistance = Vector3::Distance(_pos, cl->_pos);
+
+		if (_viewRange >= checkPlayerDistance) // 거리안에 들어왔다. 
+		{
+			XMVECTOR posVec = XMLoadFloat3(&_pos);
+			XMVECTOR playerVec = XMLoadFloat3(&cl->_pos);
+			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
+
+			XMFLOAT3 directionToPlayerFloat3;
+			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+			_look = directionToPlayerFloat3;
+
+			// right 벡터 계산 (look과 up 벡터의 외적)
+			XMVECTOR upVec = XMLoadFloat3(&up);
+			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+			XMFLOAT3 rightFloat3;
+			XMStoreFloat3(&rightFloat3, rightVec);
+
+			// right 벡터를 업데이트
+			_right = rightFloat3;
+
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed);
+
+		}
+		else
+		{
+			// 다시 초기화 위치로? 아니면 멈춤? 
+
+		}
+	}
+}

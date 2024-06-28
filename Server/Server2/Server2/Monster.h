@@ -36,5 +36,7 @@ public:
 	void Move();
 	void Remove();
 	void RemovePlayer(int client_id);
+
+	void IceMove();
 };
 extern array<Monster, MAX_NPC> Monsters;

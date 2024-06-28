@@ -103,6 +103,13 @@ void Room::IceUpdateNpc()
 
 	for (auto& npc : IceMonster)
 	{
+		if (npc._is_alive == false)
+		{
+			npc.Remove();
+		}
+		else
+			npc.IceMove();
+
 		sendIceMonsterUpdatePacket[idx].size = sizeof(IceMonstersUpdate);
 		sendIceMonsterUpdatePacket[idx].type = SC_ICE_MONSTER_UPDATE;
 		sendIceMonsterUpdatePacket[idx]._monster._id = idx;
@@ -127,7 +134,7 @@ void Room::IceUpdateNpc()
 		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
 		for (auto& packet : sendIceMonsterUpdatePacket)
 		{
-			//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+			if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
 				pl->do_send(&packet);
 		}
 	}
@@ -180,6 +187,41 @@ void Room::IceNpcInitialized()
 		IceMonster[i]._att = 10;
 		IceMonster[i]._hp = 50;
 		IceMonster[i]._is_alive = true;
+	}
+
+	IceMonstersUpdate sendIceMonsterUpdatePacket[10];
+	int idx = 0;
+
+	for (auto& npc : IceMonster)
+	{
+		sendIceMonsterUpdatePacket[idx].size = sizeof(IceMonstersUpdate);
+		sendIceMonsterUpdatePacket[idx].type = SC_ICE_MONSTER_UPDATE;
+		sendIceMonsterUpdatePacket[idx]._monster._id = idx;
+
+		sendIceMonsterUpdatePacket[idx]._monster._x = npc._pos.x;
+		sendIceMonsterUpdatePacket[idx]._monster._y = npc._pos.y;
+		sendIceMonsterUpdatePacket[idx]._monster._z = npc._pos.z;
+
+		sendIceMonsterUpdatePacket[idx]._monster._lx = npc._look.x;
+		sendIceMonsterUpdatePacket[idx]._monster._ly = npc._look.y;
+		sendIceMonsterUpdatePacket[idx]._monster._lz = npc._look.z;
+
+		sendIceMonsterUpdatePacket[idx]._monster._rx = npc._right.x;
+		sendIceMonsterUpdatePacket[idx]._monster._ry = npc._right.y;
+		sendIceMonsterUpdatePacket[idx]._monster._rz = npc._right.z;
+
+
+		idx++;
+	}
+
+	for (auto& pl : ingamePlayer)
+	{
+		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
+		for (auto& packet : sendIceMonsterUpdatePacket)
+		{
+			//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+				pl->do_send(&packet);
+		}
 	}
 }
 

@@ -241,6 +241,15 @@ void Server::WorkerThread()
 			delete ex_over;
 			break;
 		}
+		case COMP_TYPE::ICE_NPC_UPDATE: {
+			int r_id = static_cast<int>(key);
+			ingameroom[r_id].IceUpdateNpc();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms), r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+				//TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
+		}
 		default:
 			break;
 		}
@@ -295,6 +304,7 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			cout << "Matching" << endl;
 			//로그인을 해놓고 룸매칭을 하게 해야
+			// 추후에 매칭 방법을 수정해야 할듯 
 		}
 
 		clients[id].send_login_info_packet();
@@ -437,7 +447,9 @@ void Server::ProcessPacket(int id, char* packet)
 							break;
 	case CS_CHANGE_SCENE: {
 
-	cout << " Change scenen" << endl;
+		std::random_device rd;
+		std::default_random_engine dre;
+
 		CS_CHANGE_SCENE_PACKET* p = reinterpret_cast<CS_CHANGE_SCENE_PACKET*>(packet);
 		int scenenum = p->scenenum;
 		int r_id = p->roomid;
@@ -445,7 +457,32 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._stage = scenenum;
 		}
-
+		switch (scenenum)
+		{
+		case 2: {
+			std::uniform_real_distribution<float> xpos(210, 240);
+			std::uniform_real_distribution<float> zpos(710, 760);
+			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+		}
+			break;
+		case 3:{
+			std::uniform_real_distribution<float> xpos(-500, -400);
+			std::uniform_real_distribution<float> zpos(1120, 1200);
+			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+		}
+			break;
+		case 4:{
+			std::uniform_real_distribution<float> xpos(-732, -570);
+			std::uniform_real_distribution<float> zpos(531, 580);
+			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+		}
+			break;
+		case 5:{
+	/*		std::uniform_real_distribution<float> xpos(-450, 700);
+			std::uniform_real_distribution<float> zpos(206, 658);*/
+		}
+			break;
+		}
 		clients[id].send_change_scene(id, scenenum); // 나한테 나의 씬넘버를 보냄 
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer) // 나의 씬번호를 다른 플레이어들한테 보냄 
@@ -477,16 +514,21 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				{
 				lock_guard<mutex>ll{ n_m.ingamePlayerlock};
-				//cout << n_m.ingamePlayer.begin() + id << endl;
-				//n_m.ingamePlayer.erase(&clients[id]);
 				n_m.RemovePlayer(id);
 				}
 			}
 			 // 얼음몬스터 뿌려줘야함 
-			for (int i = 0; i < ingameroom[r_id].IceMonster.max_size(); ++i)
+			// 얼음 몬스터는 이미 있음, 얼음 몬스터 들에게 3번스테이지에 들어간 플레이어들의 정보를 입력해줘야 추적 
+			for (auto& i_m : ingameroom[r_id].IceMonster)
 			{
-				
+				if (find(i_m.ingamePlayer.begin(), i_m.ingamePlayer.end(), &clients[id]) == i_m.ingamePlayer.end())
+				{
+					clients[id]._p_lock.lock();
+					i_m.ingamePlayer.emplace_back(&clients[id]);
+					clients[id]._p_lock.unlock();
+				}
 			}
+
 		}
 		// 4번 맵 불 
 		else if (p->scenenum == 4)
@@ -526,15 +568,15 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		if (ingameroom[r_id].readycnt == 2)
 		{
-			ingameroom[r_id].IceNpcInitialized();
-			ingameroom[r_id].FireNpcInitialized();
-			ingameroom[r_id].NatureNpcInitialized();
-
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
 				pl->send_ingame_start();
 			}
-			ingameroom[r_id].IceUpdateNpc();
+
+			ingameroom[r_id].IceNpcInitialized();
+			ingameroom[r_id].FireNpcInitialized();
+			ingameroom[r_id].NatureNpcInitialized();
+			//ingameroom[r_id].IceUpdateNpc();
 
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
@@ -552,6 +594,8 @@ void Server::ProcessPacket(int id, char* packet)
 			TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_DAYTIME };
 			g_Timer.InitTimerQueue(ev3);
 
+			TIMER_EVENT ev4{ ingameroom[r_id].start_time ,r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
+			g_Timer.InitTimerQueue(ev4);
 		}
 
 	}
