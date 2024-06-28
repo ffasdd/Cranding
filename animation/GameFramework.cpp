@@ -838,30 +838,22 @@ void CGameFramework::BuildObjects(int nScene)
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
 
-	DXGI_FORMAT pdxgiResourceFormats[DEFERREDNUM] =
-	{
-		DXGI_FORMAT_R8G8B8A8_UNORM,  // scene
-
-		DXGI_FORMAT_R8G8B8A8_UNORM,  // cTexture
-		DXGI_FORMAT_R8G8B8A8_UNORM,  // diffuse
-		DXGI_FORMAT_R8G8B8A8_UNORM,  // normal
-		DXGI_FORMAT_R8G8B8A8_UNORM  // zDepth
-	};
-
-	m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, DEFERREDNUM, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
+	DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+	m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle, 6); //SRV to (Render Targets) + (Depth Buffer)
 
 	// ���� SRV ��¼��..
 	//D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
 
 	DXGI_FORMAT pdxgiDepthSrvFormats[1] = { DXGI_FORMAT_R32_FLOAT };
 	m_pPostProcessingShader->CreateShaderResourceViews(m_pd3dDevice, 1, &m_pd3dDepthStencilBuffer, pdxgiDepthSrvFormats);
-	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0, 1);
+
+	/*CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0, 1);
 	m_pBlurBuffer = pTexture->CreateTexture(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_COMMON, NULL, RESOURCE_TEXTURE2D, 0, 1);
 	m_pBlurBuffer->AddRef();
 
 	m_BlurShader = make_unique<CBlurShader>();
 	m_BlurShader->CreateShader(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
-	m_BlurShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), NULL, pTexture);
+	m_BlurShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), NULL, pTexture);*/
 
 	m_pd3dCommandList->Close();
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
@@ -1098,30 +1090,30 @@ void CGameFramework::FrameAdvance()
 
 	//m_pScene->Render(m_pd3dCommandList, m_pCamera);
 
-	if (isBlurRender)
-	{
-		// Render Target Resource Copy to BlurBuffer(For Blur Process)
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_pBlurBuffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+	//if (isBlurRender)
+	//{
+	//	// Render Target Resource Copy to BlurBuffer(For Blur Process)
+	//	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
+	//	::SynchronizeResourceTransition(m_pd3dCommandList, m_pBlurBuffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
 
-		m_pd3dCommandList->CopyResource(m_pBlurBuffer, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex]);
+	//	m_pd3dCommandList->CopyResource(m_pBlurBuffer, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex]);
 
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_pBlurBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON);
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	//	::SynchronizeResourceTransition(m_pd3dCommandList, m_pBlurBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON);
+	//	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-		m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDescriptorCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
-		m_pd3dCommandList->ClearRenderTargetView(m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], Colors::Azure, 0, NULL);
-		m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], TRUE, &m_d3dDsvDescriptorCPUHandle);
+	//	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDescriptorCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
+	//	m_pd3dCommandList->ClearRenderTargetView(m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], Colors::Azure, 0, NULL);
+	//	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], TRUE, &m_d3dDsvDescriptorCPUHandle);
 
-		m_BlurShader->Render(m_pd3dCommandList, m_pCamera);
+	//	m_BlurShader->Render(m_pd3dCommandList, m_pCamera);
 
 
-		//if (m_pScene)
-		//{
-		//	ID3D12DescriptorHeap* heaps[] = { m_pScene->GetDescriptorHeap() };
-		//	m_pd3dCommandList->SetDescriptorHeaps(1, heaps); // 배열의 주소를 전달
-		//}
-	}
+	//	//if (m_pScene)
+	//	//{
+	//	//	ID3D12DescriptorHeap* heaps[] = { m_pScene->GetDescriptorHeap() };
+	//	//	m_pd3dCommandList->SetDescriptorHeaps(1, heaps); // 배열의 주소를 전달
+	//	//}
+	//}
 
 	//else
 	//{

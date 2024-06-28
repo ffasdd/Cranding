@@ -127,7 +127,7 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
     float4 diffuse : SV_TARGET2;
     float4 normal : SV_TARGET3;
     float4 Position : SV_TARGET4;
-    float4 zDepth : SV_TARGET4;
+    //float4 zDepth : SV_TARGET4;
     
     //float4 f4Position : SV_TARGET5;
     //float4 f4ObjectInfo : SV_TARGET6;
@@ -679,28 +679,28 @@ float4 GaussianBlur(float2 texCoord, float blurStrength)
     return blurredColor;
 }
 
-float4 PSBlur(float4 position : SV_POSITION) : SV_Target
-{
-     // �־��� ȭ�� ��ǥ���� �˺��� �ؽ�ó�� ������ ������
-    float4 cColor = gtxtAlbedoTexture[int2(position.xy)];
-	 // ȭ�� ������ ��ġ�� �ؽ�ó ��ǥ�� ��ȯ (uv)
-    float2 texCoord = position.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+//float4 PSBlur(float4 position : SV_POSITION) : SV_Target
+//{
+//     // �־��� ȭ�� ��ǥ���� �˺��� �ؽ�ó�� ������ ������
+//    float4 cColor = gtxtAlbedoTexture[int2(position.xy)];
+//	 // ȭ�� ������ ��ġ�� �ؽ�ó ��ǥ�� ��ȯ (uv)
+//    float2 texCoord = position.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
     
-    // gtxtzDepthTexture���� �ؽ�ó ��ǥ�� �ش��ϴ� ������ ������
-    float4 objInfo = gtxtzDepthTexture.Sample(gssWrap, texCoord);
+//    // gtxtzDepthTexture���� �ؽ�ó ��ǥ�� �ش��ϴ� ������ ������
+//    float4 objInfo = gtxtzDepthTexture.Sample(gssWrap, texCoord);
     
-    float depth = objInfo.r;
-    float brightness = dot(cColor.rgb, float3(0.299, 0.587, 0.114));
-    float blurStrength = 0.5;
-    if (brightness > 0.7f && depth >= 0.01f)
-    {
-        cColor = GaussianBlur(texCoord, blurStrength);
-    }
-    else if (depth >= 0.00000001 && depth <= 0.01)
-    {
-        blurStrength = 0.5f;
-        cColor = GaussianBlur(texCoord, blurStrength);
-    }
+//    float depth = objInfo.r;
+//    float brightness = dot(cColor.rgb, float3(0.299, 0.587, 0.114));
+//    float blurStrength = 0.5;
+//    if (brightness > 0.7f && depth >= 0.01f)
+//    {
+//        cColor = GaussianBlur(texCoord, blurStrength);
+//    }
+//    else if (depth >= 0.00000001 && depth <= 0.01)
+//    {
+//        blurStrength = 0.5f;
+//        cColor = GaussianBlur(texCoord, blurStrength);
+//    }
 
-    return (cColor);
-}
+//    return (cColor);
+//}
