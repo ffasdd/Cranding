@@ -15,9 +15,9 @@ cbuffer cbCameraInfo : register(b1)
 
 cbuffer cbGameObjectInfo : register(b2)
 {
-    matrix gmtxGameObject : packoffset(c0);
-    MATERIAL gMaterial : packoffset(c4);
-    uint gnTexturesMask : packoffset(c8);
+	matrix					gmtxGameObject : packoffset(c0);
+	MATERIAL				gMaterial : packoffset(c4);
+	uint					   gnTexturesMask : packoffset(c8);
 };
 
 #include "Light.hlsl"
@@ -33,6 +33,8 @@ cbuffer cbGameObjectInfo : register(b2)
 #define MATERIAL_EMISSION_MAP		0x10
 #define MATERIAL_DETAIL_ALBEDO_MAP	0x20
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
+#define FRAME_BUFFER_WIDTH 640
+#define FRAME_BUFFER_HEIGHT 480
 
 #define FRAME_BUFFER_WIDTH				640
 #define FRAME_BUFFER_HEIGHT				480
@@ -125,6 +127,10 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
     float4 diffuse : SV_TARGET2;
     float4 normal : SV_TARGET3;
     float4 Position : SV_TARGET4;
+    float4 zDepth : SV_TARGET4;
+    
+    //float4 f4Position : SV_TARGET5;
+    //float4 f4ObjectInfo : SV_TARGET6;
 };
 
 Texture2DArray gtxtTextureArray : register(t19);
@@ -145,11 +151,11 @@ VS_STANDARD_OUTPUT VSStandard(VS_STANDARD_INPUT input)
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTPUT input)
 {
-    // ÀÌ°Ç ±×³É ¾Öµé
+    // ï¿½Ì°ï¿½ ï¿½×³ï¿½ ï¿½Öµï¿½
     
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
     
-	// °´Ã¼ ·»´õ¸µ
+	// ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
         cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
@@ -190,15 +196,15 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// Á¤Á¡ ÇÏ³ª¿¡ ¿µÇâÀ» ÁÙ ¼ö ÀÕ´Â »ÀÀÇ °³¼ö´Â 4°³
+// ï¿½ï¿½ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Õ´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 4ï¿½ï¿½
 #define MAX_VERTEX_INFLUENCES			4
-// °èÃþ±¸Á¶¿¡ ÀÖ´Â ¾Ö´Ï¸ÞÀÌ¼ÇÀ» ÇÒ ¼ö ÀÖ´Â »ÀÀÇ ¼ö´Â 256°³
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 256ï¿½ï¿½
 #define SKINNED_ANIMATION_BONES			256
 
 cbuffer cbBoneOffsets : register(b7)
 {
-	// ÀÇ¹Ì: ¸ðµ¨ÁÂÇ¥°è¿¡ ÀÖ´Â ¾î¶² Á¤Á¡À» ¾î¶°ÇÑ »À¿¡ ´ëÇÑ Á¤º¸·Î º¯°æ
-	// °¢ »À¿¡´ëÇÑ Á¤º¸
+	// ï¿½Ç¹ï¿½: ï¿½ï¿½ï¿½ï¿½Ç¥ï¿½è¿¡ ï¿½Ö´ï¿½ ï¿½î¶² ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½î¶°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     float4x4 gpmtxBoneOffsets[SKINNED_ANIMATION_BONES];
 };
 
@@ -223,7 +229,7 @@ VS_STANDARD_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT input)
 {
     VS_STANDARD_OUTPUT output;
 
-	// ÁÖ¼® ºÎºÐÀÌ³ª ¾Æ·¡ ÄÚµå³ª °°¾Æ¿ä
+	// ï¿½Ö¼ï¿½ ï¿½Îºï¿½ï¿½Ì³ï¿½ ï¿½Æ·ï¿½ ï¿½Úµå³ª ï¿½ï¿½ï¿½Æ¿ï¿½
 	//output.positionW = float3(0.0f, 0.0f, 0.0f);
 	//output.normalW = float3(0.0f, 0.0f, 0.0f);
 	//output.tangentW = float3(0.0f, 0.0f, 0.0f);
@@ -240,7 +246,7 @@ VS_STANDARD_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT input)
     float4x4 mtxVertexToBoneWorld = (float4x4) 0.0f;
     for (int i = 0; i < MAX_VERTEX_INFLUENCES; i++)
     {
-		// ÇÏ³ªÀÇ Á¤Á¡¿¡ ¿µÇâÀ» ÁÖ´Â »ÀµéÀÌ 4°³, ÀÌ 4°³¿¡ ´ëÇØ Ã³¸®ÇØÁÖ´Â ºÎºÐ. 4°³ÀÇ »À¿¡ ÇØ´çÇÏ´Â ÀÎµ¦½º¿¡ ÇØ´çÇÏ´Â º»¿ÀÇÁ¼ÂÇÏ°í º»Æ®·£½ºÆû Çà·ÄÇÏ°í °öÇØ¼­ °¢ Çà·ÄµéÀÇ weight¸¦ °öÇØ¼­... 
+		// ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 4ï¿½ï¿½, ï¿½ï¿½ 4ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Îºï¿½. 4ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ ï¿½ï¿½Äµï¿½ï¿½ï¿½ weightï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½... 
 //		mtxVertexToBoneWorld += input.weights[i] * gpmtxBoneTransforms[input.indices[i]];
         mtxVertexToBoneWorld += input.weights[i] * mul(gpmtxBoneOffsets[input.indices[i]], gpmtxBoneTransforms[input.indices[i]]);
     }
@@ -259,7 +265,7 @@ VS_STANDARD_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT input)
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OUTPUT input)
 {
-    // ÀÌ°Ç ¿òÁ÷ÀÌ´Â ¾Öµé
+    // ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Öµï¿½
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 	
     //output.cTexture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
@@ -558,14 +564,14 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     {
         case 79: //'O'
 		{
-			// ³¡
+			// ï¿½ï¿½
                 cColor = gtxtTextureTexture.Sample(gssWrap, input.uv);
                 //cColor = (1.0f, 0.0f, 0.0f, 1.0f);
                 break;
             }
         case 78: //'N'
 		{
-			// ³¡
+			// ï¿½ï¿½
                 cColor = gtxtdrNormalTexture.Sample(gssWrap, input.uv);
                 //cColor = gtxtIlluminationTexture.Sample(gssWrap, input.uv);
                 break;
@@ -623,4 +629,78 @@ VS_BOUNDINGBOX_OUTPUT VSBoundingBox(VS_BOUNDINGBOX_INPUT input)
 float4 PSBoundingBox(VS_BOUNDINGBOX_OUTPUT input) : SV_TARGET
 {
     return (float4(1.0f, 0.0f, 0.0f, 1.0f));
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+static float gfGaussianBlurMask2D[5][5] =
+{
+    { 1.0f / 273.0f, 4.0f / 273.0f, 7.0f / 273.0f, 4.0f / 273.0f, 1.0f / 273.0f },
+    { 4.0f / 273.0f, 16.0f / 273.0f, 26.0f / 273.0f, 16.0f / 273.0f, 4.0f / 273.0f },
+    { 7.0f / 273.0f, 26.0f / 273.0f, 41.0f / 273.0f, 26.0f / 273.0f, 7.0f / 273.0f },
+    { 4.0f / 273.0f, 16.0f / 273.0f, 26.0f / 273.0f, 16.0f / 273.0f, 4.0f / 273.0f },
+    { 1.0f / 273.0f, 4.0f / 273.0f, 7.0f / 273.0f, 4.0f / 273.0f, 1.0f / 273.0f }
+};
+
+float4 GaussianBlur(float2 texCoord, float blurStrength)
+{
+    const int maxBlurRadius = 10;
+    int blurRadius = int(blurStrength * maxBlurRadius);; // Radius of the blur kernel
+    blurRadius = clamp(blurRadius, 0, maxBlurRadius);
+	
+	// Accumulate the weighted sum of colors
+    float4 blurredColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    float totalWeight = 0.0f;
+    float2 textureSize = float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT); // Dimensions of the input texture
+    float2 pixelSize = 1.0 / textureSize;
+
+	// Sample the input texture multiple times within the blur radius
+    for (int x = -blurRadius; x <= blurRadius; x++)
+    {
+        for (int y = -blurRadius; y <= blurRadius; y++)
+        {
+            float2 offset = float2(x, y) * pixelSize;
+            float2 uv = texCoord + offset;
+
+            float4 color = gtxtAlbedoTexture.Sample(gssWrap, uv);
+
+			// Calculate the Gaussian weight based on the distance from the center pixel
+            float distance = length(offset);
+            float weight = exp(-(distance * distance) / (2 * blurRadius * blurRadius));
+
+            blurredColor += color * weight;
+            totalWeight += weight;
+        }
+    }
+
+	// Normalize the accumulated color by the total weight
+    blurredColor /= totalWeight;
+
+    return blurredColor;
+}
+
+float4 PSBlur(float4 position : SV_POSITION) : SV_Target
+{
+     // ï¿½Ö¾ï¿½ï¿½ï¿½ È­ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½Ëºï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    float4 cColor = gtxtAlbedoTexture[int2(position.xy)];
+	 // È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½È¯ (uv)
+    float2 texCoord = position.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+    
+    // gtxtzDepthTextureï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    float4 objInfo = gtxtzDepthTexture.Sample(gssWrap, texCoord);
+    
+    float depth = objInfo.r;
+    float brightness = dot(cColor.rgb, float3(0.299, 0.587, 0.114));
+    float blurStrength = 0.5;
+    if (brightness > 0.7f && depth >= 0.01f)
+    {
+        cColor = GaussianBlur(texCoord, blurStrength);
+    }
+    else if (depth >= 0.00000001 && depth <= 0.01)
+    {
+        blurStrength = 0.5f;
+        cColor = GaussianBlur(texCoord, blurStrength);
+    }
+
+    return (cColor);
 }
