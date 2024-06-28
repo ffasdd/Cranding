@@ -15,9 +15,9 @@ cbuffer cbCameraInfo : register(b1)
 
 cbuffer cbGameObjectInfo : register(b2)
 {
-	matrix					gmtxGameObject : packoffset(c0);
-	MATERIAL				gMaterial : packoffset(c4);
-	uint					   gnTexturesMask : packoffset(c8);
+    matrix gmtxGameObject : packoffset(c0);
+    MATERIAL gMaterial : packoffset(c4);
+    uint gnTexturesMask : packoffset(c8);
 };
 
 #include "Light.hlsl"
@@ -33,8 +33,6 @@ cbuffer cbGameObjectInfo : register(b2)
 #define MATERIAL_EMISSION_MAP		0x10
 #define MATERIAL_DETAIL_ALBEDO_MAP	0x20
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
-#define FRAME_BUFFER_WIDTH 640
-#define FRAME_BUFFER_HEIGHT 480
 
 #define FRAME_BUFFER_WIDTH				640
 #define FRAME_BUFFER_HEIGHT				480
@@ -126,11 +124,7 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
     float4 cTexture : SV_TARGET1;
     float4 diffuse : SV_TARGET2;
     float4 normal : SV_TARGET3;
-    //float4 Position : SV_TARGET4;
     float4 zDepth : SV_TARGET4;
-    
-    //float4 f4Position : SV_TARGET5;
-    //float4 f4ObjectInfo : SV_TARGET6;
 };
 
 Texture2DArray gtxtTextureArray : register(t19);
@@ -151,11 +145,11 @@ VS_STANDARD_OUTPUT VSStandard(VS_STANDARD_INPUT input)
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTPUT input)
 {
-    // �̰� �׳� �ֵ�
+    // 이건 그냥 애들
     
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
     
-	// ��ü ������
+	// 객체 렌더링
     float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
     if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
         cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
@@ -196,15 +190,15 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// ���� �ϳ��� ������ �� �� �մ� ���� ������ 4��
+// 정점 하나에 영향을 줄 수 잇는 뼈의 개수는 4개
 #define MAX_VERTEX_INFLUENCES			4
-// ���������� �ִ� �ִϸ��̼��� �� �� �ִ� ���� ���� 256��
+// 계층구조에 있는 애니메이션을 할 수 있는 뼈의 수는 256개
 #define SKINNED_ANIMATION_BONES			256
 
 cbuffer cbBoneOffsets : register(b7)
 {
-	// �ǹ�: ����ǥ�迡 �ִ� � ������ ��� ���� ���� ������ ����
-	// �� �������� ����
+	// 의미: 모델좌표계에 있는 어떤 정점을 어떠한 뼈에 대한 정보로 변경
+	// 각 뼈에대한 정보
     float4x4 gpmtxBoneOffsets[SKINNED_ANIMATION_BONES];
 };
 
@@ -229,7 +223,7 @@ VS_STANDARD_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT input)
 {
     VS_STANDARD_OUTPUT output;
 
-	// �ּ� �κ��̳� �Ʒ� �ڵ峪 ���ƿ�
+	// 주석 부분이나 아래 코드나 같아요
 	//output.positionW = float3(0.0f, 0.0f, 0.0f);
 	//output.normalW = float3(0.0f, 0.0f, 0.0f);
 	//output.tangentW = float3(0.0f, 0.0f, 0.0f);
@@ -246,7 +240,7 @@ VS_STANDARD_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT input)
     float4x4 mtxVertexToBoneWorld = (float4x4) 0.0f;
     for (int i = 0; i < MAX_VERTEX_INFLUENCES; i++)
     {
-		// �ϳ��� ������ ������ �ִ� ������ 4��, �� 4���� ���� ó�����ִ� �κ�. 4���� ���� �ش��ϴ� �ε����� �ش��ϴ� ���������ϰ� ��Ʈ������ ����ϰ� ���ؼ� �� ��ĵ��� weight�� ���ؼ�... 
+		// 하나의 정점에 영향을 주는 뼈들이 4개, 이 4개에 대해 처리해주는 부분. 4개의 뼈에 해당하는 인덱스에 해당하는 본오프셋하고 본트랜스폼 행렬하고 곱해서 각 행렬들의 weight를 곱해서... 
 //		mtxVertexToBoneWorld += input.weights[i] * gpmtxBoneTransforms[input.indices[i]];
         mtxVertexToBoneWorld += input.weights[i] * mul(gpmtxBoneOffsets[input.indices[i]], gpmtxBoneTransforms[input.indices[i]]);
     }
@@ -265,7 +259,7 @@ VS_STANDARD_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT input)
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OUTPUT input)
 {
-    // �̰� �����̴� �ֵ�
+    // 이건 움직이는 애들
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 	
     //output.cTexture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
@@ -302,7 +296,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
     output.normal = float4(input.normalW, 0);
     output.zDepth = input.position.z;
     output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
-    //output.Position = float4(input.positionW, 0);
+   // output.Position = float4(input.positionW, 0);
 
     output.diffuse = gMaterial.m_cDiffuse;
     //output.diffuse = float4(1.0, 1.0, 1.0, 1.0);
@@ -540,7 +534,7 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     uint3 texCoord = uint3(texelCoord, 0);
     
     float3 pos = input.position;
-   // float4 position = gtxtzDepthTexture.Load(texCoord);
+    //float4 position = gtxtzDepthTexture.Load(texCoord);
     //float3 pos = position.xyz;
     //float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
     float3 normal = gtxtdrNormalTexture.Load(texCoord).rgb; // good
@@ -564,14 +558,14 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     {
         case 79: //'O'
 		{
-			// ��
+			// 끝
                 cColor = gtxtTextureTexture.Sample(gssWrap, input.uv);
                 //cColor = (1.0f, 0.0f, 0.0f, 1.0f);
                 break;
             }
         case 78: //'N'
 		{
-			// ��
+			// 끝
                 cColor = gtxtdrNormalTexture.Sample(gssWrap, input.uv);
                 //cColor = gtxtIlluminationTexture.Sample(gssWrap, input.uv);
                 break;
@@ -630,8 +624,7 @@ float4 PSBoundingBox(VS_BOUNDINGBOX_OUTPUT input) : SV_TARGET
 {
     return (float4(1.0f, 0.0f, 0.0f, 1.0f));
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 //
 static float gfGaussianBlurMask2D[5][5] =
 {
@@ -647,14 +640,14 @@ float4 GaussianBlur(float2 texCoord, float blurStrength)
     const int maxBlurRadius = 10;
     int blurRadius = int(blurStrength * maxBlurRadius);; // Radius of the blur kernel
     blurRadius = clamp(blurRadius, 0, maxBlurRadius);
-	
-	// Accumulate the weighted sum of colors
+   
+   // Accumulate the weighted sum of colors
     float4 blurredColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float totalWeight = 0.0f;
     float2 textureSize = float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT); // Dimensions of the input texture
     float2 pixelSize = 1.0 / textureSize;
 
-	// Sample the input texture multiple times within the blur radius
+   // Sample the input texture multiple times within the blur radius
     for (int x = -blurRadius; x <= blurRadius; x++)
     {
         for (int y = -blurRadius; y <= blurRadius; y++)
@@ -664,7 +657,7 @@ float4 GaussianBlur(float2 texCoord, float blurStrength)
 
             float4 color = gtxtAlbedoTexture.Sample(gssWrap, uv);
 
-			// Calculate the Gaussian weight based on the distance from the center pixel
+         // Calculate the Gaussian weight based on the distance from the center pixel
             float distance = length(offset);
             float weight = exp(-(distance * distance) / (2 * blurRadius * blurRadius));
 
@@ -673,7 +666,7 @@ float4 GaussianBlur(float2 texCoord, float blurStrength)
         }
     }
 
-	// Normalize the accumulated color by the total weight
+   // Normalize the accumulated color by the total weight
     blurredColor /= totalWeight;
 
     return blurredColor;
@@ -681,24 +674,33 @@ float4 GaussianBlur(float2 texCoord, float blurStrength)
 
 float4 PSBlur(float4 position : SV_POSITION) : SV_Target
 {
-     // �־��� ȭ�� ��ǥ���� �˺��� �ؽ�ó�� ������ ������
+     // 주어진 화면 좌표에서 알베도 텍스처의 색상을 가져옴
     float4 cColor = gtxtAlbedoTexture[int2(position.xy)];
-	 // ȭ�� ������ ��ġ�� �ؽ�ó ��ǥ�� ��ȯ (uv)
+    // 화면 공간의 위치를 텍스처 좌표로 변환 (uv)
     float2 texCoord = position.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
     
-    // gtxtzDepthTexture���� �ؽ�ó ��ǥ�� �ش��ϴ� ������ ������
-    float4 objInfo = gtxtzDepthTexture.Sample(gssWrap, texCoord);
+    // gtxtzDepthTexture에서 텍스처 좌표에 해당하는 샘플을 가져옴
+    //float4 objInfo = gtxtzDepthTexture.Sample(gssWrap, texCoord);
     
-    float depth = objInfo.r;
-    
-    depth =0.2f;
+    //float depth = gtxtzDepthTexture.Load(uint3((uint) position.x, (uint) position.y, 0));;
+    //float brightness = dot(cColor.rgb, float3(0.299, 0.587, 0.114));
+    //float blurStrength = 0.5;
+    //if (brightness > 0.7f && depth >= 0.01f)
+    //{
+    //    cColor = GaussianBlur(texCoord, blurStrength);
+    //}
+    //else if (depth >= 0.00000001 && depth <= 0.01)
+    //{
+    //    blurStrength = 0.5f;
+    //    cColor = GaussianBlur(texCoord, blurStrength);
+    //}
     float brightness = dot(cColor.rgb, float3(0.299, 0.587, 0.114));
     float blurStrength = 0.5;
-    if (brightness > 0.7f && depth >= 0.01f)
+    if (brightness > 0.7f)
     {
         cColor = GaussianBlur(texCoord, blurStrength);
     }
-    else if (depth >= 0.00000001 && depth <= 0.01)
+    else
     {
         blurStrength = 0.5f;
         cColor = GaussianBlur(texCoord, blurStrength);
