@@ -37,8 +37,8 @@ bool Network::ReadytoConnect()
 {
 	sockaddr_in sockaddrIn;
 	sockaddrIn.sin_family = AF_INET;
-	sockaddrIn.sin_port = htons(PORT_NUM);  
-	
+	sockaddrIn.sin_port = htons(PORT_NUM);
+
 	// 사용자로부터 IP 주소 입력 받기
 	string ipAddress = { "127.0.0.1" };
 
@@ -157,7 +157,9 @@ void Network::ProcessData(size_t _size)
 	char* ptr = _buf;
 	static size_t in_packet_size = 0;
 	static size_t saved_packet_size = 0;
-	static char packet_buffer[BUF_SIZE];
+	static  char packet_buffer[BUF_SIZE];
+
+	ZeroMemory(packet_buffer, BUF_SIZE);
 
 	while (0 != _size) {
 		if (0 == in_packet_size) in_packet_size = (unsigned char)ptr[0];
@@ -188,6 +190,7 @@ void Network::ProcessPacket(char* buf)
 		//my_id = getmyid(p->id);
 		my_id = (p->id);
 		my_roomid = p->room_id;
+		g_clients[my_id].setState(STATE::Ingame);
 		g_clients[my_id].setId(my_id);
 		g_clients[my_id].setHp(p->hp);
 		g_clients[my_id].setPos(p->pos);
@@ -208,6 +211,7 @@ void Network::ProcessPacket(char* buf)
 		SC_ADD_OBJECT_PACKET* p = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		//int ob_id = getmyid(p->id);
 		int ob_id = (p->id);
+		g_clients[ob_id].setState(STATE::Ingame);
 		g_clients[ob_id].setId(ob_id);
 		g_clients[ob_id].setHp(p->hp);
 		g_clients[ob_id].setPos(p->pos);
@@ -257,63 +261,153 @@ void Network::ProcessPacket(char* buf)
 		SC_ATTACK_PACKET* p = reinterpret_cast<SC_ATTACK_PACKET*>(buf);
 		int ob_id = p->id;
 		g_clients[ob_id].setAttack(p->isAttack);
+
 		break;
 	}
+
 	case SC_CHANGE_SCENE: {
 		SC_CHANGE_SCENE_PACKET* p = reinterpret_cast<SC_CHANGE_SCENE_PACKET*>(buf);
 		int ob_id = p->id;
+
 		g_clients[ob_id].scene_num = p->stage;
-		if (g_clients[ob_id].scene_num == 2)
+		g_clients[ob_id].setPos(p->pos);
+		if (ob_id == my_id)
 		{
-			ingamecnt++;
-			if (ingamecnt == 2)
+			stage_num = p->stage;
+
+			switch (stage_num)
 			{
-				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-				ingamecnt = 0;
+			case 1:
+				// 로비씬.  아무것도안해도됨 
+				break;
+			case 2:
+				// 우주선 씬 ,
+				if (IngameScene == false)
+				{
+					IngameScene = true;
+					ClientState = true;
+					ingamecnt++;
+					if (ingamecnt == 2)
+					{
+						g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+						ingamecnt = 0;
+					}
+				}
+				else
+				{
+					SpaceshipScene = true;
+					for (int i = 0; i < g_clients.size(); ++i)
+					{
+						if (g_clients[i].getId() == my_id)continue;
+						if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+							gGameFramework.myFunc_SetBlind(i, ob_id, false);
+						else
+							gGameFramework.myFunc_SetBlind(i, ob_id, true);
+					}
+				}
+				break;
+
+			case 3:
+			{
+				for (int i = 0; i < g_clients.size(); ++i)
+				{
+					if (g_clients[i].getId() == my_id)continue;
+					if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+						gGameFramework.myFunc_SetBlind(i, ob_id, false);
+					else
+						gGameFramework.myFunc_SetBlind(i, ob_id, true);
+				}
+				g_monsters.clear();
+			}
+				break;
+			case 4 :
+			{
+				g_monsters.clear();
+			}
+				break;
+			case 5:
+			{
+				g_monsters.clear();
+			}
+				break;
 			}
 		}
+		else
+		{
+			for (int i = 0; i < g_clients.size(); ++i)
+			{
+				if (g_clients[i].getId() == my_id)continue;
+				if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+					gGameFramework.myFunc_SetBlind(i, ob_id, false);
+				else
+					gGameFramework.myFunc_SetBlind(i, ob_id, true);
+			}
+		}
+		// Id가 하나만 ㅁ거음 
+
 		break;
 	}
 	case SC_INGAME_STRAT: {
-		// Timer 쓰레드를 켜줘야함 
-		//SetEvent(startevent);
-		//timerThread = std::thread([this]() {TimerThread(); });
-		//gamestart = false;
-		//gGameFramework.ReleaseObjects();
-		//gGameFramework.BuildObjects(2);
-		//gamestart = true;
 		IngameStart = true;
 		break;
 	}
 	case SC_REMOVE_OBJECT: {
 		SC_REMOVE_OBJECT_PACKET* p = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(buf);
 		int ob_id = p->id;
+		g_clients[ob_id].setState(STATE::Free);
 		g_clients.erase(ob_id);
 		break;
 	}
-	case SC_ADD_MONSTER: {
-		SC_ADD_MONSTER_PACKET* p = reinterpret_cast<SC_ADD_MONSTER_PACKET*>(buf);
-		int npc_id = p->id;
-		g_monsters[npc_id].setPos(p->pos);
-		break;
-		// 클라에도 몬스터를 담는 어레이나 벡터가 필요 
 
-	}
-	case SC_MOVE_MONSTER: {
-		SC_MOVE_MONSTER_PACKET* p = reinterpret_cast<SC_MOVE_MONSTER_PACKET*>(buf);
-		int npc_id = p->id;
-		g_monsters[npc_id].setPos(p->pos);
-		break;
-	}
-	case SC_MONSTER_UPDATE: {
-		NightMonsters* p = reinterpret_cast<NightMonsters*>(buf);
-		for (int i = 0; i < 10; ++i)
+	case SC_MONSTER_UPDATE_POS: {
+
+		if (stage_num == 2)
 		{
-			g_monsters[i].setId(i);
-			g_monsters[i].setPos(p->_monster[i]._pos);
+
+			// 10 개로 받아줘야한다. 
+			NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
+			int npc_id = p->_monster._id;
+			g_monsters[npc_id].setId(npc_id);
+			g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
+			g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
+			g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
+
+			g_monsters[npc_id].setUp({ 0.f,1.f,0.f });
+
 		}
+	
 		break;
 	}
+	case SC_DAYTIME:
+	{
+		SC_DAYTIME_PACKET* p = reinterpret_cast<SC_DAYTIME_PACKET*>(buf);
+		gGameFramework.DayTime = true;
+		gGameFramework.Night = false;
+		cout << " Day Time " << endl;
+		break;
+	}
+	case SC_NIGHT:
+	{
+		SC_NIGHT_PACKET* p = reinterpret_cast<SC_NIGHT_PACKET*>(buf);
+		gGameFramework.DayTime = false;
+		gGameFramework.Night = true;
+		cout << " Night " << endl;
+		break;
+	}
+	case SC_ICE_MONSTER_UPDATE :
+	{
+		IceMonstersUpdate* p = reinterpret_cast<IceMonstersUpdate*>(buf);
+		int npc_id = p->_monster._id;
+
+		g_ice_monsters[npc_id].setId(npc_id);
+		g_ice_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
+		g_ice_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
+		g_ice_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
+
+		g_ice_monsters[npc_id].setUp({ 0.f,1.f,0.f });
+	}
+	break;
+
 	}
 }
 
@@ -440,7 +534,7 @@ int Network::getmyid(int _id)
 			return 2;
 		else
 			return 1;
-		
+
 	}
 	else
 		return _id;

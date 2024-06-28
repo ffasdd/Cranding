@@ -13,6 +13,7 @@
 #include<thread>
 #include<atomic>
 #include<chrono>
+#include<algorithm>
 
 using namespace std;
 
@@ -24,7 +25,10 @@ enum class EVENT_TYPE : char {
 	EV_WAKE_UP,
 	EV_NPC_UPDATE,
 	EV_NPC_DEAD,
-	EV_NPC_INITIALIZE
+	EV_NPC_INITIALIZE,
+	EV_DAYTIME,
+	EV_NIGHT,
+	EV_ICE_NPC_UPDATE
 };
 
 struct TIMER_EVENT

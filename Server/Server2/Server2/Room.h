@@ -34,10 +34,16 @@ public:
 	int _id = -1;
 	int readycnt = 0;
 	std::chrono::system_clock::time_point start_time;
-	
+
+
+	//array < Monster*, 10 >_NightMonsters; // 이렇게 바꿔야하나? 
 
 	// Night Monster
 	array<Monster, 10> NightMonster;
+
+	array<Monster, 10> IceMonster;
+	array<Monster, 10> FireMonster;
+	array<Monster, 10 > NatureMonster;
 	//// Fire Monster
 	//array<Monster, 30> FireMonster;
 	//// Ice Monster
@@ -48,9 +54,20 @@ public:
 
 public:
 	void SendMoveNightMonster(int npc_id);
-	void SendAddMonster(int npc_id,int _id);
+	void SendAddMonster(int npc_id, int _id);
 	//void SendRemoveMonster(int npc_id);
 	void UpdateNpc();
 	void DeleteNpc();
+
+	void IceUpdateNpc();
+	void FireUpdateNpc();
+	void NatureUpdateNpc();
+
+	void DayTimeSend();
+	void NightSend();
+
+	void IceNpcInitialized();
+	void FireNpcInitialized();
+	void NatureNpcInitialized();
 };
 

@@ -10,6 +10,9 @@
 #define SERVER_IP "121.170.72.178"
 extern unordered_map<int, Session> g_clients;
 extern unordered_map<int, Session> g_monsters;
+extern unordered_map<int, Session> g_ice_monsters;
+extern unordered_map<int, Session> g_fire_monsters;
+extern unordered_map<int, Session> g_nature_monsters;
 
 extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 extern HANDLE loginevent;
@@ -32,7 +35,7 @@ public:
 	void NetThreadFunc();
 	void TimerThread();
 	void ProcessData(size_t _size);
-	void ProcessPacket(char* buf);
+	void ProcessPacket( char* buf);
 
 	SOCKET GetSocket() { return clientsocket; }
 	int Getmyid() { return my_id; }
@@ -55,17 +58,22 @@ public: // thread send
 	
 public: // utils
 	int getmyid(int _id);
+	bool IngameScene = false;
 	bool IngameStart = false;
 	bool gamestart = false;
+	bool SpaceshipScene = false;
+	bool ClientState = false;
 public:
 	int prev_remain = 0;
 	int my_id = 0;
 	int my_roomid = -1;
+	int stage_num = -1;
 	bool isNight = false;
+
 	
 private:
 	SOCKET clientsocket;
-	char _buf[BUF_SIZE];
+	 char _buf[BUF_SIZE];
 
 	thread netThread;
 	thread sendThread;

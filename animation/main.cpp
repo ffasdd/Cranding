@@ -14,7 +14,11 @@ CGameFramework					gGameFramework;
 Network							gNetwork;
 
 unordered_map<int, Session> g_clients;
-unordered_map<int, Session> g_monsters;
+unordered_map<int, Session> g_monsters; //
+unordered_map<int, Session> g_ice_monsters;
+unordered_map<int, Session> g_fire_monsters;
+unordered_map<int, Session> g_nature_monsters;
+
 
 
 concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
@@ -39,11 +43,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	MyRegisterClass(hInstance);
 
 
-	//while (!gNetwork.ReadytoConnect());
+	while (!gNetwork.ReadytoConnect());
 
 
 	//// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
-	//gNetwork.StartServer();
+	gNetwork.StartServer();
 
 	// 로그인 완료 
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
@@ -66,29 +70,74 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
-			if (gNetwork.IngameStart)
+			if (gNetwork.IngameStart || gNetwork.SpaceshipScene == true)
 			{
 				gGameFramework.ReleaseObjects();
 				gGameFramework.BuildObjects(2);
 				gNetwork.IngameStart = false;
+				gNetwork.SpaceshipScene = false;
 			}
 
 			if (gGameFramework.m_pPlayer != NULL)
 			{
 				if (gNetwork.gamestart)
-				{
-					for (int i = 0; i < g_clients.size(); ++i)
-					{
+				{ 
+				for (int i = 0; i < g_clients.size(); ++i)  
+					{ 
 						gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
-						gGameFramework.myFunc_SetLookRight(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
+						gGameFramework.myFunc_SetLookRightUp(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
 						gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
 						gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());
+										
 					}
 
-					for (int i = 0; i < g_monsters.size(); ++i)
+					switch (gGameFramework.SceneNum)
 					{
-						gGameFramework.myFunc_SetMonPosition(i, gGameFramework.SceneNum, g_monsters[i].getPos());
+					case 2:
+					{
+						// spaceship map
+						for (int i = 0; i < g_monsters.size(); ++i)
+						{
+							gGameFramework.myFunc_SetMonPosition(i, g_monsters[i].getPos());
+							gGameFramework.myFunc_SetMonLookRightUp(i, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
+						}
+						break;
 					}
+					case 3:
+					{
+						// ice map
+						for (int i = 0; i < g_ice_monsters.size(); ++i)
+						{
+							gGameFramework.myFunc_SetMonPosition(i, g_ice_monsters[i].getPos());
+							gGameFramework.myFunc_SetMonLookRightUp(i, g_ice_monsters[i].getLook(), g_ice_monsters[i].getUp(), g_ice_monsters[i].getRight());
+						}
+						break;
+					}
+					case 4: 
+					{
+						// fire map
+						for (int i = 0; i < g_fire_monsters.size(); ++i)
+						{
+							gGameFramework.myFunc_SetMonPosition(i, g_fire_monsters[i].getPos());
+							gGameFramework.myFunc_SetMonLookRightUp(i, g_fire_monsters[i].getLook(), g_fire_monsters[i].getUp(), g_fire_monsters[i].getRight());
+						}
+						break;
+					}
+					case 5:
+					{
+						// fire map
+						for (int i = 0; i < g_nature_monsters.size(); ++i)
+						{
+							gGameFramework.myFunc_SetMonPosition(i, g_nature_monsters[i].getPos());
+							gGameFramework.myFunc_SetMonLookRightUp(i, g_nature_monsters[i].getLook(), g_nature_monsters[i].getUp(), g_nature_monsters[i].getRight());
+						}
+						break;
+					}
+
+					default:
+						break;
+					}
+					
 
 				}
 			}

@@ -1,6 +1,7 @@
 #pragma once
 // 클라이언트 들의 정보 , 여기서 dosend do recv? 필요한가? '
 enum class animateState;
+enum class STATE : unsigned int { Free, Alloc, Ingame, Start };
 class Session
 {
 public:
@@ -18,6 +19,7 @@ public:
 	int getAnimation();
 	int getprevAnimation();
 	int getCharacterType();
+	STATE getState();
 	bool getAttack();
 
 	void setCharacterType(int type);
@@ -25,15 +27,20 @@ public:
 	void setrId(int roomid);
 	void setName(char* name);
 	void setHp(int hp);
+	void setPos(float x, float y, float z);
 	void setPos(XMFLOAT3 pos);
+	void setLook(float lx, float ly, float lz);
 	void setLook(XMFLOAT3 look);
+	void setRight(float rx, float ry, float rz);
 	void setRight(XMFLOAT3 right);
 	void setUp(XMFLOAT3 up);
 	void setAnimation(int ani);
 	void setprevAnimation(int ani);
 	void setAttack(bool att);
+	void setState(STATE state);
 
-
+	mutex _sessionlock;
+	bool m_blind = false;
 	int scene_num = -1;
 private:
 	int m_id  = -1;
@@ -47,9 +54,12 @@ private:
 	XMFLOAT3 m_pos;
 	bool m_isattack = false;
 	// state 
+	STATE m_state = STATE::Free;
 
 	int m_animationstate = 0;
 	int m_prevanimationstate = 0;
+
+	
 
 };
 

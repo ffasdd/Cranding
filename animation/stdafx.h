@@ -27,6 +27,7 @@
 #include <queue>
 #include <array>
 #include <time.h>
+#include <mutex>
 
 #include <concurrent_priority_queue.h>
 #include <concurrent_queue.h>

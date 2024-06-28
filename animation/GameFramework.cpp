@@ -169,7 +169,7 @@ void CGameFramework::CreateDirect3DDevice()
 
 	::gnRtvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	::gnCbvSrvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	//::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 	if (pd3dAdapter) pd3dAdapter->Release();
 }
@@ -200,12 +200,12 @@ void CGameFramework::CreateRtvAndDsvDescriptorHeaps()
 	d3dDescriptorHeapDesc.NodeMask = 0;
 	HRESULT hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dRtvDescriptorHeap);
 	// **
-	//::gnRtvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	::gnRtvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
-	d3dDescriptorHeapDesc.NumDescriptors = 1;
+	d3dDescriptorHeapDesc.NumDescriptors = 2;
 	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dDsvDescriptorHeap);
-	//::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 }
 
 void CGameFramework::CreateSwapChainRenderTargetViews()
@@ -258,8 +258,14 @@ void CGameFramework::CreateDepthStencilView()
 
 	m_pd3dDevice->CreateCommittedResource(&d3dHeapProperties, D3D12_HEAP_FLAG_NONE, &d3dResourceDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &d3dClearValue, __uuidof(ID3D12Resource), (void**)&m_pd3dDepthStencilBuffer);
 
-	m_d3dDsvDescriptorCPUHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencilBuffer, NULL, m_d3dDsvDescriptorCPUHandle);
+	D3D12_DEPTH_STENCIL_VIEW_DESC d3dDepthStencilViewDesc;
+	::ZeroMemory(&d3dDepthStencilViewDesc, sizeof(D3D12_DEPTH_STENCIL_VIEW_DESC));
+	d3dDepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	d3dDepthStencilViewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	d3dDepthStencilViewDesc.Flags = D3D12_DSV_FLAG_NONE;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE m_DSVDescriptorCPUHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencilBuffer, &d3dDepthStencilViewDesc, m_DSVDescriptorCPUHandle);
 }
 
 void CGameFramework::ChangeSwapChainState()
@@ -383,16 +389,16 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 1;
 				isready = true;
 
-				//gNetwork.SendLoginfo();
+				gNetwork.SendLoginfo();
 
-				//WaitForSingleObject(loginevent, INFINITE); 
+				WaitForSingleObject(loginevent, INFINITE);
 
-				//cl_id = gNetwork.Getmyid();
-				//m_pPlayer->c_id = gNetwork.Getmyid();
+				cl_id = gNetwork.Getmyid();
+				m_pPlayer->c_id = gNetwork.Getmyid();
 
 				ReleaseObjects();
 				BuildObjects(SceneNum);
-				//gNetwork.SendChangeScene(SceneNum);
+				gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
 			else break;
@@ -403,13 +409,14 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 2;
 			isready = false;
 			// send ready packet  
-			//gNetwork.SendIngameStart();
-
-			//WaitForSingleObject(startevent, INFINITE);
-			//// �׸��� ���� �������� 
-			//
-			ReleaseObjects();
-			BuildObjects(SceneNum);
+			//if(처음 시작할 때에만 IngameStart() ) {}
+			// bool 을 두면 간단 하지만? bool보단 그냥 클라마다 상태체크하는게 좋을거같긴함 Ingame상태이거나 게임중인 상태에는 보낼 필요가 없으니까? 
+			// bool로 일단 해보자 
+			if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
+			{
+				gNetwork.SendIngameStart();
+			}
+			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '3':
@@ -419,6 +426,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isready = false;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
+			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '4':
@@ -427,6 +435,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 4;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
+			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '5':
@@ -435,6 +444,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 5;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
+			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case VK_SPACE:
@@ -525,19 +535,10 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	}
 }
 
-void CGameFramework::myFunc_SetMonPosition(int n, int SCSceneNum, XMFLOAT3 position)
-{
-    if (SCSceneNum > 1)
-    {
-        m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
-        m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
-        m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
-        //m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
-    }
-}
 
 
-void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
+
+void CGameFramework::myFunc_SetLookRightUp(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
 {
 	if (cl_id == n)
 	{
@@ -566,6 +567,23 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetRight(Right.x, Right.y, Right.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetScale(20.0f, 20.0f, 20.0f);
 	}
+}
+
+void CGameFramework::myFunc_SetMonPosition(int n, XMFLOAT3 position)
+{
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
+	//m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
+}
+
+void CGameFramework::myFunc_SetMonLookRightUp(int n, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
+{
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetLook(Look.x, Look.y, Look.z);
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetUp(0, 1, 0);
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetRight(Right.x, Right.y, Right.z);
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
+
 }
 
 void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
@@ -603,7 +621,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 		// �������� ���� ���� �ִϸ��̼� ��ȣ�� ���� �ִϸ��̼� ��ȣ�� �ٸ� ���(������ �ؾ��ϴ� ���)
 		if (prevAni != curAni)
 		{
-			
+
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
@@ -648,6 +666,34 @@ void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsAttack = true;
 	}
 }
+
+void CGameFramework::myFunc_SetBlind(int n, int id, bool _isblind)
+{
+	if (cl_id == n)
+	{
+		m_pPlayer->SetId(cl_id);
+	}
+	else
+	{
+		int others_id = -1;
+		switch (cl_id) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->isdraw = _isblind;
+	}
+
+}
+
+
 
 void CGameFramework::OnDestroy()
 {
@@ -732,6 +778,7 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pCamera = m_pPlayer->GetCamera();
 
 
+
 		break;
 	}
 	case 3:
@@ -746,6 +793,7 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
 
+		break;
 
 	}
 	case 4:
@@ -760,6 +808,8 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
 
+
+		break;
 	}
 
 	case 5:
@@ -786,21 +836,13 @@ void CGameFramework::BuildObjects(int nScene)
 
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
+	
+	DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+	m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle, 6); //SRV to (Render Targets) + (Depth Buffer)
 
-	DXGI_FORMAT pdxgiResourceFormats[DEFERREDNUM] =
-	{
-		DXGI_FORMAT_R8G8B8A8_UNORM,  // scene
 
-		DXGI_FORMAT_R8G8B8A8_UNORM,  // cTexture
-		DXGI_FORMAT_R8G8B8A8_UNORM,  // diffuse
-		DXGI_FORMAT_R8G8B8A8_UNORM,  // normal
-		DXGI_FORMAT_R8G8B8A8_UNORM  // zDepth
-	};
-
-	m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, DEFERREDNUM, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle); //SRV to (Render Targets) + (Depth Buffer)
-
-	// ���� SRV ��¼��..
-	D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
+	DXGI_FORMAT pdxgiDepthSrvFormats[1] = { DXGI_FORMAT_R32_FLOAT };
+	m_pPostProcessingShader->CreateShaderResourceViews(m_pd3dDevice, 1, &m_pd3dDepthStencilBuffer, pdxgiDepthSrvFormats);
 
 	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0, 1);
 	m_pBlurBuffer = pTexture->CreateTexture(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_COMMON, NULL, RESOURCE_TEXTURE2D, 0, 1);
@@ -963,7 +1005,7 @@ void CGameFramework::AnimateObjects()
 		//	// ����ȯ
 		//}
 		//else
-			m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
+		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
 }
 
@@ -1023,26 +1065,26 @@ void CGameFramework::FrameAdvance()
 
 	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera);
 
-	{
+	
 
-		m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDescriptorCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
+	D3D12_CPU_DESCRIPTOR_HANDLE d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
-		m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], &m_d3dDsvDescriptorCPUHandle);
+	m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH , 1.0f, 0, 0, NULL);
 
-		m_pScene->Render(m_pd3dCommandList, m_pCamera);
+	m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], d3dDsvCPUDescriptorHandle);
 
+	m_pScene->Render(m_pd3dCommandList, m_pCamera);
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		
 		//if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 
 		m_pPostProcessingShader->OnPostRenderTarget(m_pd3dCommandList);
-	}
 
-	{
-		m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], TRUE, NULL);
+		//m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], TRUE, NULL);
+		m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], TRUE, &d3dDsvCPUDescriptorHandle);
+		m_pd3dCommandList->SetDescriptorHeaps(1, &m_pPostProcessingShader->m_pd3dCbvSrvDescriptorHeap);
+	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera, &m_nDrawOption);
 
-		m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera, &m_nDrawOption);
-	}
 
 	if (isBlurRender)
 	{

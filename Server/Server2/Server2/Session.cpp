@@ -30,6 +30,7 @@ Session::Session()
 	_hp = _maxhp;
 	room_id = -1;
 	_stage = 0;
+	_view_list.clear();
 }
 
 void Session::send_login_info_packet()
@@ -105,7 +106,6 @@ void Session::send_move_packet(int client_id)
 	p.size = sizeof(SC_MOVE_OBJECT_PACKET);
 	p.type = SC_MOVE_OBJECT;
 	p.pos = clients[client_id]._pos;
-	//p.pos =_pos; // 여기서 클라이언트 포스를 보내고 있기 때문에 이동 확인 X  
 	do_send(&p);
 }
 
@@ -166,6 +166,7 @@ void Session::send_change_scene(int client_id, int stagenum)
 	p.type = SC_CHANGE_SCENE;
 	p.stage = stagenum;
 	p.id = client_id;
+	p.pos = clients[client_id]._pos;
 	do_send(&p);
 }
 

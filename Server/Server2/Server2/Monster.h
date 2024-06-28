@@ -12,6 +12,9 @@ public:
 	XMFLOAT3 _up;
 	XMFLOAT3 _look;
 	XMFLOAT3 _velocity;
+
+	XMFLOAT3 spaceshippos = { 250.0f,10.0f,750.0f };
+
 	float _speed = 1.0f;
 	float _viewRange = 150.0f;
 	int _hp;
@@ -22,6 +25,8 @@ public:
 	bool _is_alive = false;
 
 	BoundingOrientedBox _ob;
+	mutex ingamePlayerlock;
+
 public:
 	vector<Session*> ingamePlayer;
 
@@ -29,5 +34,8 @@ public:
 
 	void Move();
 	void Remove();
+	void RemovePlayer(int client_id);
+
+	void IceMove();
 };
 extern array<Monster, MAX_NPC> Monsters;

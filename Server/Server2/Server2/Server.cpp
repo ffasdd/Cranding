@@ -37,13 +37,16 @@ void Server::Stop()
 
 void Server::NetworkSet()
 {
+
+	listensocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+
 	SOCKADDR_IN serverAddr;
 	memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_addr.S_un.S_addr = INADDR_ANY;
 	serverAddr.sin_port = htons(PORT_NUM);
 
-	listensocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
+
 	
 	if (SOCKET_ERROR == bind(listensocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr)))
 		cout << "Bind Error" << endl;
@@ -90,7 +93,7 @@ void Server::Iocp()
 	_IocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, 0, 0, 0);
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(listensocket), _IocpHandle, 9999, 0);
 
-	clientsocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
+	clientsocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	LINGER option;
 	option.l_linger = 0;
 	option.l_onoff = 1;
@@ -155,7 +158,7 @@ void Server::WorkerThread()
 					clients[c_id]._pos = { 240.0f,10.0f,730.0f };
 				else if (c_id == 1)
 					clients[c_id]._pos = { 220.0f,10.0f,760.0f };
-				else
+				else if ( c_id % 2== 0)
 					clients[c_id]._pos = { 210.0f, 10.0f,710.0f };
 
 				clients[c_id]._id = c_id;
@@ -222,6 +225,31 @@ void Server::WorkerThread()
 			delete ex_over;
 			break;
 		}
+		case COMP_TYPE::NIGHT_TIMER: {
+			int r_id = static_cast<int>(key);
+			ingameroom[r_id].NightSend();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(60s),r_id,EVENT_TYPE::EV_NIGHT };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+		}
+		case COMP_TYPE::DAYTIME_TIMER: {
+			int r_id = static_cast<int>(key);
+			ingameroom[r_id].DayTimeSend();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(30s),r_id,EVENT_TYPE::EV_DAYTIME };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+		}
+		case COMP_TYPE::ICE_NPC_UPDATE: {
+			int r_id = static_cast<int>(key);
+			ingameroom[r_id].IceUpdateNpc();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms), r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+				//TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
+		}
 		default:
 			break;
 		}
@@ -238,6 +266,8 @@ void Server::InitialziedMonster(int room_Id)
 
 	for (int i = 0; i < MAX_NPC; ++i)
 	{
+		if (ingameroom[room_Id].NightMonster[i]._is_alive == false)
+		{
 		ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		ingameroom[room_Id].NightMonster[i]._att = 10;
 		ingameroom[room_Id].NightMonster[i]._hp = 50;
@@ -245,6 +275,7 @@ void Server::InitialziedMonster(int room_Id)
 		ingameroom[room_Id].NightMonster[i]._right = XMFLOAT3(1.0f, 0.f, 0.0f);
 		ingameroom[room_Id].NightMonster[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
 		ingameroom[room_Id].NightMonster[i]._is_alive = true;
+		}
 	}
 
 }
@@ -273,6 +304,7 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			cout << "Matching" << endl;
 			//로그인을 해놓고 룸매칭을 하게 해야
+			// 추후에 매칭 방법을 수정해야 할듯 
 		}
 
 		clients[id].send_login_info_packet();
@@ -290,7 +322,7 @@ void Server::ProcessPacket(int id, char* packet)
 		unordered_set<int> old_vlist = clients[id]._view_list;
 
 		clients[id]._v_lock.unlock();
-
+		
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
 			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
@@ -414,32 +446,136 @@ void Server::ProcessPacket(int id, char* packet)
 	}
 							break;
 	case CS_CHANGE_SCENE: {
-		cout << " Change scenen" << endl;
+
+		std::random_device rd;
+		std::default_random_engine dre;
+
 		CS_CHANGE_SCENE_PACKET* p = reinterpret_cast<CS_CHANGE_SCENE_PACKET*>(packet);
 		int scenenum = p->scenenum;
 		int r_id = p->roomid;
-		clients[id]._stage = scenenum;
-		clients[id].send_change_scene(id, scenenum);
+		{
+			lock_guard<mutex>ll{ clients[id]._s_lock };
+			clients[id]._stage = scenenum;
+		}
 
-		for (auto& pl : ingameroom[r_id].ingamePlayer)
+		switch (scenenum)
+		{
+		case 2: {
+			std::uniform_real_distribution<float> xpos(210, 240);
+			std::uniform_real_distribution<float> zpos(710, 760);
+			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+		}
+			break;
+		case 3:{
+			std::uniform_real_distribution<float> xpos(-500, -400);
+			std::uniform_real_distribution<float> zpos(1120, 1200);
+			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+		}
+			break;
+		case 4:{
+			std::uniform_real_distribution<float> xpos(-732, -570);
+			std::uniform_real_distribution<float> zpos(531, 580);
+			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+		}
+			break;
+		case 5:{
+	/*		std::uniform_real_distribution<float> xpos(-450, 700);
+			std::uniform_real_distribution<float> zpos(206, 658);*/
+		}
+			break;
+		}
+		clients[id].send_change_scene(id, scenenum); // 나한테 나의 씬넘버를 보냄 
+
+		for (auto& pl : ingameroom[r_id].ingamePlayer) // 나의 씬번호를 다른 플레이어들한테 보냄 
 		{
 			if (pl->_id == id)continue;
 			pl->send_change_scene(id, clients[id]._stage);
 		}
+
+		// 몬스터가 다시 플레이어를 따라가야 하니까 플레이어 정보를 몬스터에게 넘긴다. 
+
+		if (p->scenenum == 2)
+		{
+			// 몬스터정보를 다시보내야하나?  ㄴㄴㄴ 몬스터한테 다시 플레이어정보를 넘김 
+			for (auto& n_m : ingameroom[r_id].NightMonster)
+			{
+				if(find(n_m.ingamePlayer.begin(),n_m.ingamePlayer.end(),&clients[id]) == n_m.ingamePlayer.end())
+				{
+					clients[id]._p_lock.lock();
+					n_m.ingamePlayer.emplace_back(&clients[id]);
+					clients[id]._p_lock.unlock();
+				}
+			}
+			for (auto& i_m : ingameroom[r_id].IceMonster)
+			{
+				{
+					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
+					i_m.RemovePlayer(id);
+				}
+			}
+		}
 		// 3번 맵 얼음
 		if (p->scenenum == 3)
 		{
+			for (auto& n_m : ingameroom[r_id].NightMonster)
+			{
+				{
+				lock_guard<mutex>ll{ n_m.ingamePlayerlock};
+				n_m.RemovePlayer(id);
+				}
+			}
 			 // 얼음몬스터 뿌려줘야함 
+			// 얼음 몬스터는 이미 있음, 얼음 몬스터 들에게 3번스테이지에 들어간 플레이어들의 정보를 입력해줘야 추적 
+			for (auto& i_m : ingameroom[r_id].IceMonster)
+			{
+				if (find(i_m.ingamePlayer.begin(), i_m.ingamePlayer.end(), &clients[id]) == i_m.ingamePlayer.end())
+				{
+					clients[id]._p_lock.lock();
+					i_m.ingamePlayer.emplace_back(&clients[id]);
+					clients[id]._p_lock.unlock();
+				}
+			}
+
 		}
 		// 4번 맵 불 
 		else if (p->scenenum == 4)
 		{
 			// 불몬스터 뿌려줘야함 
+			for (auto& n_m : ingameroom[r_id].NightMonster)
+			{
+				{
+					lock_guard<mutex>ll{ clients[id]._p_lock };
+					n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+				}
+			}
+
+			for (auto& i_m : ingameroom[r_id].IceMonster)
+			{
+				{
+					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
+					i_m.RemovePlayer(id);
+				}
+			}
 		}
 		// 5번 맵 자연 
 		else if (p->scenenum == 5)
 		{
 			// 자연몬스터 뿌려줘야함 
+			for (auto& n_m : ingameroom[r_id].NightMonster)
+			{
+				{
+					lock_guard<mutex>ll{ clients[id]._p_lock };
+					n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+				}
+			}
+
+			for (auto& i_m : ingameroom[r_id].IceMonster)
+			{
+				{
+					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
+					i_m.RemovePlayer(id);
+				}
+			}
 		}
 
 	}
@@ -448,54 +584,45 @@ void Server::ProcessPacket(int id, char* packet)
 
 		CS_INGAME_START_PACKET* p = reinterpret_cast<CS_INGAME_START_PACKET*>(packet);
 		int r_id = p->roomid;
-
 		{
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Start;
 			ingameroom[r_id].readycnt++;
 		}
-
-
 		if (ingameroom[r_id].readycnt == 2)
 		{
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
 				pl->send_ingame_start();
 			}
+
+			ingameroom[r_id].IceNpcInitialized();
+			ingameroom[r_id].FireNpcInitialized();
+			ingameroom[r_id].NatureNpcInitialized();
+			//ingameroom[r_id].IceUpdateNpc();
+
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
-			TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
-			g_Timer.InitTimerQueue(ev1);
+			
 		
 			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
 
+			TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
+			g_Timer.InitTimerQueue(ev1);
+
+			TIMER_EVENT ev2{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NIGHT};
+			g_Timer.InitTimerQueue(ev2);
+
+			TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_DAYTIME };
+			g_Timer.InitTimerQueue(ev3);
+
+			TIMER_EVENT ev4{ ingameroom[r_id].start_time ,r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
+			g_Timer.InitTimerQueue(ev4);
 		}
 
 	}
 						break;
-	case CS_TIME_CHECK: {
-
-		//CS_TIME_CHECK_PACKET* p = reinterpret_cast<CS_TIME_CHECK_PACKET*>(packet);
-		//cout << p->roomid << " 번 방 " << p->time << " 분 경과 " << endl;
-		//int r_id = p->roomid;
-
-		//if (p->time % 2 == 0)
-		//{
-		//	cout << " 몬스터 생성  " << endl;
-		//	// 모든 클라이언트들 한테 밤에나오는 NPC들 정보들을 모두 보내줘야 함 
-		//	InitialziedMonster(r_id);
-		//	for (auto& pl : ingameroom[r_id].ingamePlayer)
-		//	{
-		//		for (int i = 0; i < ingameroom[r_id].NightMonster.max_size(); ++i) //
-		//		{
-
-		//		}
-		//	}
-		//}
-		break;
-	};
-	
 	case CS_ATTACK: {
 		CS_ATTACK_PACKET* p = reinterpret_cast<CS_ATTACK_PACKET*>(packet);
 		int r_id = p->roomid;
@@ -623,10 +750,6 @@ void Server::ReadyToStart()
 
 				}
 			}
-
-			/*	readySession.emplace_back(_session);*/
-			//size_t readySessionSize = ingameroom[room_id].ingamePlayer.size();
-			// 방안에 있는 애들한테 다 add를 보내줘야함 
 
 			for (auto& ingameplayer : ingameroom[room_id].ingamePlayer)
 			{

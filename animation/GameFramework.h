@@ -79,14 +79,17 @@ public:
 	CPlayer* m_pPlayer = NULL;
 	int cl_id;
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
-	void myFunc_SetMonPosition(int n, int id, XMFLOAT3 position);
+	void myFunc_SetMonPosition(int n, XMFLOAT3 position);
 	// **함수명 LookRightUp으로 바꿔야 될 듯
-	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right);
+	void myFunc_SetLookRightUp(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right);
+	void myFunc_SetMonLookRightUp(int n, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right);
 
 	// 다른 클라들 애니메이션 변경해주는 함수
 	void myFunc_SetAnimation(int n, int id, int prevAni, int curAni);
 	// 다른 클라들 공격 설정해주는 함수
 	void myFunc_SetAttack(int n, int id, bool isAttack);
+
+	void myFunc_SetBlind(int n, int id, bool _isblind);
 
 	CScene* m_pScene = NULL;
 
@@ -98,6 +101,10 @@ public:
 	int curDay = 0;
 	int curMinute = 0;
 	int curSecond = 0;
+	
+	bool DayTime = false;
+	bool Night = false;
+
 
 private:
 	HINSTANCE					m_hInstance;

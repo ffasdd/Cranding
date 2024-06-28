@@ -5,7 +5,7 @@ Session::Session()
 {
 	m_name[0] = 0;
 	m_hp = 0;
-	m_pos = { 0.0f,0.0f,0.0f };
+	m_pos = { 0.0f,-100.0f,0.0f };
 	m_right = { 1.0f,0.0f,0.0f };
 	m_up = { 0.0f,1.0f,0.0f };
 	m_look = { 0.0f,0.0f,1.0f };
@@ -70,6 +70,11 @@ int Session::getCharacterType()
 	return characterType;
 }
 
+STATE Session::getState()
+{
+	return m_state;
+}
+
 bool Session::getAttack()
 {
 	return m_isattack;
@@ -100,14 +105,36 @@ void Session::setHp(int hp)
 	m_hp = hp;
 }
 
+void Session::setPos(float x, float y, float z)
+{
+	m_pos.x = x;
+	m_pos.y = y;
+	m_pos.z = z;
+
+}
+
 void Session::setPos(XMFLOAT3 pos)
 {
 	m_pos = pos;
 }
 
+void Session::setLook(float lx, float ly, float lz)
+{
+	m_look.x = lx;
+	m_look.y = ly;
+	m_look.z = lz;
+}
+
 void Session::setLook(XMFLOAT3 look)
 {
 	m_look = look;
+}
+
+void Session::setRight(float rx,float ry,float rz)
+{
+	m_right.x = rx;
+	m_right.y = ry;
+	m_right.z = rz;
 }
 
 void Session::setRight(XMFLOAT3 right)
@@ -134,4 +161,9 @@ void Session::setprevAnimation(int ani)
 void Session::setAttack(bool att)
 {
 	m_isattack = att;
+}
+
+void Session::setState(STATE state)
+{
+	m_state = state;
 }
