@@ -126,8 +126,8 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
     float4 cTexture : SV_TARGET1;
     float4 diffuse : SV_TARGET2;
     float4 normal : SV_TARGET3;
-    float4 Position : SV_TARGET4;
-    //float4 zDepth : SV_TARGET4;
+    //float4 Position : SV_TARGET4;
+    float4 zDepth : SV_TARGET4;
     
     //float4 f4Position : SV_TARGET5;
     //float4 f4ObjectInfo : SV_TARGET6;
@@ -187,8 +187,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     input.normalW = normalize(input.normalW);
     output.normal = float4(input.normalW, 0);
     
-    //output.zDepth = float4(input.position.z, 0.0f, input.position.z, 1.0);
-    output.Position = float4(input.positionW, 0);
+    output.zDepth = float4(input.position.z, 0.0f, input.position.z, 1.0);
+    //output.Position = float4(input.positionW, 0);
     
     output.scene = output.cTexture + gMaterial.m_cEmissive;
     return (output);
@@ -300,9 +300,9 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
 	//output.normal = float4(input.normalW.xyz * 0.5f + 0.5f, 1.0f);
     input.normalW = normalize(input.normalW);
     output.normal = float4(input.normalW, 0);
-    // output.zDepth = input.position.z;
-    //output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
-    output.Position = float4(input.positionW, 0);
+    output.zDepth = input.position.z;
+    output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
+    //output.Position = float4(input.positionW, 0);
 
     output.diffuse = gMaterial.m_cDiffuse;
     //output.diffuse = float4(1.0, 1.0, 1.0, 1.0);
@@ -539,9 +539,9 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     float2 texelCoord = input.uv * textureSize;
     uint3 texCoord = uint3(texelCoord, 0);
     
-    //float3 pos = input.position;
-    float4 position = gtxtzDepthTexture.Load(texCoord);
-    float3 pos = position.xyz;
+    float3 pos = input.position;
+   // float4 position = gtxtzDepthTexture.Load(texCoord);
+    //float3 pos = position.xyz;
     //float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
     float3 normal = gtxtdrNormalTexture.Load(texCoord).rgb; // good
     float4 specular = float4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -679,28 +679,30 @@ float4 GaussianBlur(float2 texCoord, float blurStrength)
     return blurredColor;
 }
 
-//float4 PSBlur(float4 position : SV_POSITION) : SV_Target
-//{
-//     // �־��� ȭ�� ��ǥ���� �˺��� �ؽ�ó�� ������ ������
-//    float4 cColor = gtxtAlbedoTexture[int2(position.xy)];
-//	 // ȭ�� ������ ��ġ�� �ؽ�ó ��ǥ�� ��ȯ (uv)
-//    float2 texCoord = position.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+float4 PSBlur(float4 position : SV_POSITION) : SV_Target
+{
+     // �־��� ȭ�� ��ǥ���� �˺��� �ؽ�ó�� ������ ������
+    float4 cColor = gtxtAlbedoTexture[int2(position.xy)];
+	 // ȭ�� ������ ��ġ�� �ؽ�ó ��ǥ�� ��ȯ (uv)
+    float2 texCoord = position.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
     
-//    // gtxtzDepthTexture���� �ؽ�ó ��ǥ�� �ش��ϴ� ������ ������
-//    float4 objInfo = gtxtzDepthTexture.Sample(gssWrap, texCoord);
+    // gtxtzDepthTexture���� �ؽ�ó ��ǥ�� �ش��ϴ� ������ ������
+    float4 objInfo = gtxtzDepthTexture.Sample(gssWrap, texCoord);
     
-//    float depth = objInfo.r;
-//    float brightness = dot(cColor.rgb, float3(0.299, 0.587, 0.114));
-//    float blurStrength = 0.5;
-//    if (brightness > 0.7f && depth >= 0.01f)
-//    {
-//        cColor = GaussianBlur(texCoord, blurStrength);
-//    }
-//    else if (depth >= 0.00000001 && depth <= 0.01)
-//    {
-//        blurStrength = 0.5f;
-//        cColor = GaussianBlur(texCoord, blurStrength);
-//    }
+    float depth = objInfo.r;
+    
+    depth =0.2f;
+    float brightness = dot(cColor.rgb, float3(0.299, 0.587, 0.114));
+    float blurStrength = 0.5;
+    if (brightness > 0.7f && depth >= 0.01f)
+    {
+        cColor = GaussianBlur(texCoord, blurStrength);
+    }
+    else if (depth >= 0.00000001 && depth <= 0.01)
+    {
+        blurStrength = 0.5f;
+        cColor = GaussianBlur(texCoord, blurStrength);
+    }
 
-//    return (cColor);
-//}
+    return (cColor);
+}
