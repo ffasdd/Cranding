@@ -86,6 +86,8 @@ void Monster::RemovePlayer(int client_id)
 	}
 }
 
+
+
 void Monster::IceMove()
 {
 	XMFLOAT3 up(0.0f, 1.0f, 0.0f);

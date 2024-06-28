@@ -457,6 +457,7 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._stage = scenenum;
 		}
+
 		switch (scenenum)
 		{
 		case 2: {
@@ -501,9 +502,15 @@ void Server::ProcessPacket(int id, char* packet)
 				if(find(n_m.ingamePlayer.begin(),n_m.ingamePlayer.end(),&clients[id]) == n_m.ingamePlayer.end())
 				{
 					clients[id]._p_lock.lock();
-					//lock_guard<mutex>ll{ clients[id]._s_lock };
 					n_m.ingamePlayer.emplace_back(&clients[id]);
 					clients[id]._p_lock.unlock();
+				}
+			}
+			for (auto& i_m : ingameroom[r_id].IceMonster)
+			{
+				{
+					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
+					i_m.RemovePlayer(id);
 				}
 			}
 		}
@@ -541,6 +548,14 @@ void Server::ProcessPacket(int id, char* packet)
 					n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
 				}
 			}
+
+			for (auto& i_m : ingameroom[r_id].IceMonster)
+			{
+				{
+					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
+					i_m.RemovePlayer(id);
+				}
+			}
 		}
 		// 5¹ø ¸Ê ÀÚ¿¬ 
 		else if (p->scenenum == 5)
@@ -551,6 +566,14 @@ void Server::ProcessPacket(int id, char* packet)
 				{
 					lock_guard<mutex>ll{ clients[id]._p_lock };
 					n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+				}
+			}
+
+			for (auto& i_m : ingameroom[r_id].IceMonster)
+			{
+				{
+					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
+					i_m.RemovePlayer(id);
 				}
 			}
 		}
@@ -600,12 +623,6 @@ void Server::ProcessPacket(int id, char* packet)
 
 	}
 						break;
-	case CS_TIME_CHECK: {
-
-		
-		break;
-	};
-	
 	case CS_ATTACK: {
 		CS_ATTACK_PACKET* p = reinterpret_cast<CS_ATTACK_PACKET*>(packet);
 		int r_id = p->roomid;

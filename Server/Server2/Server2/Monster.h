@@ -28,7 +28,6 @@ public:
 	mutex ingamePlayerlock;
 
 public:
-	//array<Seesion*, 3> ing 
 	vector<Session*> ingamePlayer;
 
 public:

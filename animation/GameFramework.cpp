@@ -655,8 +655,6 @@ void CGameFramework::myFunc_SetBlind(int n, int id, bool _isblind)
 	if (cl_id == n)
 	{
 		m_pPlayer->SetId(cl_id);
-		// ���� �Ǵ��� �ȵǴ��� �𸣰���
-		//m_pPlayer->SetPosition(position);
 	}
 	else
 	{
