@@ -336,9 +336,9 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 
 	D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[10];
 
-	pd3dDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dDescriptorRanges[0].NumDescriptors = 1;
-	pd3dDescriptorRanges[0].BaseShaderRegister = 6; //t6: gtxtAlbedoTexture
+	pd3dDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; 
+	pd3dDescriptorRanges[0].NumDescriptors = 1;  
+	pd3dDescriptorRanges[0].BaseShaderRegister = 6; //t6: gtxtAlbedoTexture 
 	pd3dDescriptorRanges[0].RegisterSpace = 0;
 	pd3dDescriptorRanges[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
@@ -368,7 +368,7 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 
 	pd3dDescriptorRanges[5].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dDescriptorRanges[5].NumDescriptors = 1;
-	pd3dDescriptorRanges[5].BaseShaderRegister = 13; //t13: gtxtSkyBoxTexture
+	pd3dDescriptorRanges[5].BaseShaderRegister = 13; //t13: gtxtSkyBoxTextureDay
 	pd3dDescriptorRanges[5].RegisterSpace = 0;
 	pd3dDescriptorRanges[5].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
