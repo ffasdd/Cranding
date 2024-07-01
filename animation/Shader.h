@@ -253,6 +253,7 @@ struct PS_CB_DRAW_OPTIONS
 	XMINT4							m_xmn4DrawOptions;
 };
 
+
 class CTextureToFullScreenShader : public CPostProcessingShader
 {
 public:

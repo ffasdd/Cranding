@@ -925,14 +925,14 @@ void CTextureToFullScreenShader::CreateShaderVariables(ID3D12Device* pd3dDevice,
 
 void CTextureToFullScreenShader::ReleaseShaderVariables()
 {
-	 //if (m_pd3dcbDrawOptions) m_pd3dcbDrawOptions->Release();
+	 if (m_pd3dcbDrawOptions) m_pd3dcbDrawOptions->Release();
 }
 
 void CTextureToFullScreenShader::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
 	m_pcbMappedDrawOptions->m_xmn4DrawOptions.x = *((int*)pContext);
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbDrawOptions->GetGPUVirtualAddress();
-	pd3dCommandList->SetGraphicsRootConstantBufferView(14, d3dGpuVirtualAddress);/*dd*/
+	pd3dCommandList->SetGraphicsRootConstantBufferView(14, d3dGpuVirtualAddress);/*draw option*/
 
 	CPostProcessingShader::UpdateShaderVariables(pd3dCommandList, pContext);
 }

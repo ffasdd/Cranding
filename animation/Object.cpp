@@ -1626,12 +1626,12 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device *pd3dDevice, ID3D12GraphicsCom
 	//pTerrainShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 1, NULL, DXGI_FORMAT_D32_FLOAT);
 	//pTerrainShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	CScene::CreateShaderResourceViews(pd3dDevice, pTerrainBaseTexture, 0, 11);
+	//CScene::CreateShaderResourceViews(pd3dDevice, pTerrainBaseTexture, 0, 11);
 	CScene::CreateShaderResourceViews(pd3dDevice, pTerrainDetailTexture, 0, 12);
 
-	CMaterial *pTerrainMaterial = new CMaterial(2);
-	pTerrainMaterial->SetTexture(pTerrainBaseTexture, 0);
-	pTerrainMaterial->SetTexture(pTerrainDetailTexture, 1);
+	CMaterial *pTerrainMaterial = new CMaterial(1);
+	//pTerrainMaterial->SetTexture(pTerrainBaseTexture, 0);
+	pTerrainMaterial->SetTexture(pTerrainDetailTexture, 0);
 	//pTerrainMaterial->SetShader(pTerrainShader);
 
 	SetMaterial(0, pTerrainMaterial);
@@ -1651,17 +1651,24 @@ CSkyBox::CSkyBox(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dComman
 
 	//CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	CTexture* pSkyBoxTexture = new CTexture(1, RESOURCE_TEXTURE_CUBE, 0, 1);
-	pSkyBoxTexture->LoadTextureFromDDSFile(pd3dDevice, pd3dCommandList, L"SkyBox/SkyBox_day.dds", RESOURCE_TEXTURE_CUBE, 0);
+	CTexture* pSkyBoxTextureDay = new CTexture(1, RESOURCE_TEXTURE_CUBE, 0, 1);
+	pSkyBoxTextureDay->LoadTextureFromDDSFile(pd3dDevice, pd3dCommandList, L"SkyBox/SkyBox_day.dds", RESOURCE_TEXTURE_CUBE, 0);
+
+	CTexture* pSkyBoxTextureNight = new CTexture(1, RESOURCE_TEXTURE_CUBE, 0, 1);
+	pSkyBoxTextureNight->LoadTextureFromDDSFile(pd3dDevice, pd3dCommandList, L"SkyBox/SkyBox_night.dds", RESOURCE_TEXTURE_CUBE, 0);
 
 	CSkyBoxShader *pSkyBoxShader = new CSkyBoxShader();
 	pSkyBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 1, NULL, DXGI_FORMAT_D32_FLOAT);
 	//pSkyBoxShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	CScene::CreateShaderResourceViews(pd3dDevice, pSkyBoxTexture, 0, 8);
+	CScene::CreateShaderResourceViews(pd3dDevice, pSkyBoxTextureDay, 0, 8);
+	CScene::CreateShaderResourceViews(pd3dDevice, pSkyBoxTextureNight, 0, 11);
 
-	CMaterial *pSkyBoxMaterial = new CMaterial(1);
-	pSkyBoxMaterial->SetTexture(pSkyBoxTexture);
+
+
+	CMaterial *pSkyBoxMaterial = new CMaterial(2);
+	pSkyBoxMaterial->SetTexture(pSkyBoxTextureDay, 0);
+	pSkyBoxMaterial->SetTexture(pSkyBoxTextureNight, 1);
 	pSkyBoxMaterial->SetShader(pSkyBoxShader);
 
 	SetMaterial(0, pSkyBoxMaterial);

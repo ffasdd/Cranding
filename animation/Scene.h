@@ -67,6 +67,12 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUSrvDescriptorStartHandle() { return(m_d3dSrvGPUDescriptorStartHandle); }
 };
 */
+
+struct PS_CB_Blend_Factor
+{
+	XMINT4							m_xmn4BlendFactor;
+};
+
 class CScene
 {
 public:
@@ -83,7 +89,7 @@ public:
 	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
 	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
-	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, void* pContext = NULL);
 	virtual void ReleaseShaderVariables();
 
 	void BuildDefaultLightsAndMaterials();
@@ -100,7 +106,7 @@ public:
 	bool ProcessInput(UCHAR *pKeysBuffer);
     void AnimateObjects(float fTimeElapsed);
 
-	void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+	void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, void* pContext=NULL);
     void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
 
 	void ReleaseUploadBuffers();
@@ -126,6 +132,8 @@ protected:
 	static D3D12_CPU_DESCRIPTOR_HANDLE	m_d3dSrvCPUDescriptorNextHandle;
 	static D3D12_GPU_DESCRIPTOR_HANDLE	m_d3dSrvGPUDescriptorNextHandle;
 
+	/*ID3D12Resource* m_pd3dcbBlendFactor = NULL;
+	PS_CB_Blend_Factor* m_pcbMappedBlendFactor = NULL;*/
 public:
 	//static CDescriptorHeap* m_pDescriptorHeap;
 

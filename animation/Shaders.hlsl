@@ -315,7 +315,6 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-Texture2D gtxtTerrainBaseTexture : register(t1);
 Texture2D gtxtTerrainDetailTexture : register(t2);
 
 
@@ -334,6 +333,8 @@ struct VS_SKYBOX_CUBEMAP_OUTPUT
 };
 
 TextureCube gtxtSkyBoxTextureDay : register(t13);
+TextureCube gtxtSkyBoxTextureNight : register(t1);
+
 
 SamplerState gssClamp : register(s1);
 
@@ -343,6 +344,13 @@ Texture2D<float4> gtxtdrNormalTexture : register(t16);
 
 Texture2D<float> gtxtzDepthTexture : register(t17);
 Texture2D<float> gtxtDepthTexture : register(t18);
+
+
+cbuffer cbBlendFactor : register(b10)
+{
+    float g_fMin;
+    float g_fSec;
+};
 
 VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)
 {
@@ -354,12 +362,33 @@ VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)
     
     return (output);
 }
+float4 BlendSkyTextures(float3 direction)
+{
+    float4 dayColor = gtxtSkyBoxTextureDay.Sample(gssWrap, direction);
+    float4 nightColor = gtxtSkyBoxTextureNight.Sample(gssWrap, direction);
+    
+    // Total time in seconds within the 5-minute cycle
+    float totalSeconds = g_fMin * 60.0 + g_fSec;
+    
+    // Calculate the blend factor based on the total time
+    float blendFactor = 0.0f;
+    if (totalSeconds <= 180.0) // First 3 minutes
+    {
+        blendFactor = totalSeconds / 180.0; // Blend from 0 to 1
+    }
+    else // Last 2 minutes
+    {
+        blendFactor = (300.0 - totalSeconds) / 120.0; // Blend from 1 to 0
+    }
+
+    return lerp(dayColor, nightColor, blendFactor);
+}
 
 float4 PSSkyBox(VS_SKYBOX_CUBEMAP_OUTPUT input) : SV_TARGET
 {
-    float4 cColor = gtxtSkyBoxTextureDay.Sample(gssClamp, input.positionL);
-    //cColor = float4(.0, .0, 1.0, 0.0);
-    return (cColor);
+    float3 direction = input.positionL;
+    float4 color = BlendSkyTextures(direction);
+    return color;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

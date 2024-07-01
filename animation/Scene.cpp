@@ -38,6 +38,7 @@ CScene::CScene()
 }
 CScene::~CScene()
 {
+
 }
 
 
@@ -188,6 +189,7 @@ void CScene::ReleaseObjects()
 	//if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
 	if (m_pd3dCbvSrvDescriptorHeap) m_pd3dCbvSrvDescriptorHeap->Release();
 	//if (m_pDescriptorHeap) delete m_pDescriptorHeap;
+	//if (m_pd3dcbBlendFactor) m_pd3dcbBlendFactor->Release();
 
 	if (m_ppGameObjects)
 	{
@@ -295,7 +297,7 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	pd3dDescriptorRanges[9].RegisterSpace = 0;
 	pd3dDescriptorRanges[9].OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[16];
+	D3D12_ROOT_PARAMETER pd3dRootParameters[17];
 
 	pd3dRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pd3dRootParameters[0].Descriptor.ShaderRegister = 1; //Camera (b1)
@@ -377,6 +379,11 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	pd3dRootParameters[15].DescriptorTable.NumDescriptorRanges = 1;
 	pd3dRootParameters[15].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[9]; //Texture2DArray
 	pd3dRootParameters[15].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	pd3dRootParameters[16].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pd3dRootParameters[16].Descriptor.ShaderRegister = 10; //blendFactor
+	pd3dRootParameters[16].Descriptor.RegisterSpace = 0;
+	pd3dRootParameters[16].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_STATIC_SAMPLER_DESC pd3dSamplerDescs[2];
 
@@ -463,15 +470,36 @@ void CScene::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 {
 	UINT ncbElementBytes = ((sizeof(LIGHTS) + 255) & ~255); //256�� ���
 	m_pd3dcbLights = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
-
 	m_pd3dcbLights->Map(0, NULL, (void **)&m_pcbMappedLights);
+
+	//UINT ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES) + 255) & ~255); //256의 배수
+	//m_pd3dcbBindPoseBoneOffsets = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	//m_pd3dcbBindPoseBoneOffsets->Map(0, NULL, (void**)&m_pcbxmf4x4MappedBindPoseBoneOffsets);
+
+	//UINT ncbElementByte = ((sizeof(PS_CB_Blend_Factor) + 255) & ~255); //256의 배수
+	//m_pd3dcbBlendFactor = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementByte, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	//m_pd3dcbBlendFactor->Map(0, NULL, (void**)&m_pcbMappedBlendFactor);
 }
 
-void CScene::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList)
+void CScene::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, void* pContext)
 {
 	::memcpy(m_pcbMappedLights->m_pLights, m_pLights, sizeof(LIGHT) * m_nLights);
 	::memcpy(&m_pcbMappedLights->m_xmf4GlobalAmbient, &m_xmf4GlobalAmbient, sizeof(XMFLOAT4));
 	::memcpy(&m_pcbMappedLights->m_nLights, &m_nLights, sizeof(int));
+
+	//m_pcbMappedBlendFactor->m_xmn4BlendFactor.x = *((int*)pContext);
+	//D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbBlendFactor->GetGPUVirtualAddress();
+	//pd3dCommandList->SetGraphicsRootConstantBufferView(15, d3dGpuVirtualAddress);/*BlendFactor*/
+
+	//float* pMappedData;
+	//CD3DX12_RANGE readRange(0, 0);
+	//g_pTimeBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pMappedData));
+	//memcpy(pMappedData, &g_fTime, sizeof(float));
+
+	//// Set the constant buffer
+
+	//D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbBlendFactor->GetGPUVirtualAddress();
+	//pd3dCommandList->SetGraphicsRootConstantBufferView(15, d3dGpuVirtualAddress);
 }
 
 void CScene::ReleaseShaderVariables()
@@ -748,7 +776,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 }
 
-void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, void* pContext)
 {
 	if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 	if (m_pd3dCbvSrvDescriptorHeap) pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
@@ -756,7 +784,7 @@ void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	pCamera->UpdateShaderVariables(pd3dCommandList);
 
-	UpdateShaderVariables(pd3dCommandList);
+	UpdateShaderVariables(pd3dCommandList, pContext);// 여기 blendfactor
 
 	//D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
 	//pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT, d3dcbLightsGpuVirtualAddress); //Lights
