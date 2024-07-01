@@ -187,6 +187,7 @@ void Room::IceNpcInitialized()
 		IceMonster[i]._att = 10;
 		IceMonster[i]._hp = 50;
 		IceMonster[i]._is_alive = true;
+		IceMonster[i]._stagenum = 3;
 	}
 
 	IceMonstersUpdate sendIceMonsterUpdatePacket[10];

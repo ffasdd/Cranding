@@ -111,8 +111,10 @@ void Server::Iocp()
 	lobbythread = thread([this]() {ReadyToStart(); });
 
 	int num_thread = std::thread::hardware_concurrency();
+
 	for (int i = 0; i < num_thread; ++i)
 		worker_thread.emplace_back(&Server::WorkerThread, this);
+
 	for (auto& th : worker_thread)
 		th.join();
 }
@@ -275,6 +277,7 @@ void Server::InitialziedMonster(int room_Id)
 		ingameroom[room_Id].NightMonster[i]._right = XMFLOAT3(1.0f, 0.f, 0.0f);
 		ingameroom[room_Id].NightMonster[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
 		ingameroom[room_Id].NightMonster[i]._is_alive = true;
+		ingameroom[room_Id].NightMonster[i]._stagenum = 2;
 		}
 	}
 
@@ -298,11 +301,14 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Ingame;
 		}
+
 		matchingqueue.push(&clients[id]);
 
 		while (clients[id].room_id == -1)
 		{
 			cout << "Matching" << endl;
+			// matching 말고 락으로? 
+			
 			//로그인을 해놓고 룸매칭을 하게 해야
 			// 추후에 매칭 방법을 수정해야 할듯 
 		}
@@ -732,6 +738,11 @@ void Server::ReadyToStart()
 	{
 		if (!matchingqueue.empty())
 		{
+			// 각 쓰레드 생성? 
+			// 아니면 여기서 workerthread처럼 ? 
+			// 아예 workerthread에서?  낭비아닌가 
+
+
 			Session* _session = nullptr;
 			bool sessionok = matchingqueue.try_pop(_session);
 

@@ -14,7 +14,7 @@ void Monster::Move()
 
 	for (auto& cl : ingamePlayer)
 	{
-		
+		if (cl->_stage != _stagenum)continue;
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
 		XMVECTOR spaceshipVec = XMLoadFloat3(&spaceshippos);
 		XMVECTOR dirToSpaceship = XMVector3Normalize(spaceshipVec - posVec);
@@ -35,6 +35,7 @@ void Monster::Move()
 
 		if (_viewRange >= checkPlayerDistance) // 거리안에 들어왔다. 
 		{
+			
 			//if (cl->_stage != 2)
 			//{
 			//	// 같은 스테이지가 아닐때 따라가지 못하게 막아놔야함 
