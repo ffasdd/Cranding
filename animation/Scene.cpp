@@ -186,15 +186,27 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 
 void CScene::ReleaseObjects()
 {
-	//if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
-	if (m_pd3dCbvSrvDescriptorHeap) m_pd3dCbvSrvDescriptorHeap->Release();
-	//if (m_pDescriptorHeap) delete m_pDescriptorHeap;
-	//if (m_pd3dcbBlendFactor) m_pd3dcbBlendFactor->Release();
+	if (m_pd3dCbvSrvDescriptorHeap) {
+		int ref = m_pd3dCbvSrvDescriptorHeap->Release();
+		if (ref) {
+			cout << "Scene, m_pd3dCbvSrvDescriptorHeap Ref: " << ref << endl;
+		}
+		else
+			m_pd3dCbvSrvDescriptorHeap = nullptr;
+	}
+	if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
 
 	if (m_ppGameObjects)
 	{
-		for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Release();
+		for (int i = 0; i < m_nGameObjects; i++) {
+			m_ppGameObjects[i]->ReleaseShaderVariables();
+			m_ppGameObjects[i]->Release();
+			m_ppGameObjects[i]->ReleaseUploadBuffers();
+			m_ppGameObjects[i] = nullptr;
+		}
+
 		delete[] m_ppGameObjects;
+		m_ppGameObjects = nullptr;
 	}
 
 	if (m_ppShaders)
@@ -216,9 +228,21 @@ void CScene::ReleaseObjects()
 		m_pSkyBox = nullptr;
 	}
 
+	if (m_pTerrain) {
+		delete m_pTerrain;
+		m_pTerrain = nullptr;
+	}
+
 	if (m_ppHierarchicalGameObjects)
 	{
-		for (int i = 0; i < m_nHierarchicalGameObjects; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Release();
+		for (int i = 0; i < m_nHierarchicalGameObjects; i++)
+		{
+			if (m_ppHierarchicalGameObjects[i])
+			{
+				m_ppHierarchicalGameObjects[i]->Release();
+			}
+		}
+
 		delete[] m_ppHierarchicalGameObjects;
 	}
 
@@ -228,7 +252,6 @@ void CScene::ReleaseObjects()
 		delete[] m_pLights;
 		m_pLights = nullptr;
 	}
-	
 }
 
 ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevice)
@@ -472,13 +495,7 @@ void CScene::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 	m_pd3dcbLights = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 	m_pd3dcbLights->Map(0, NULL, (void **)&m_pcbMappedLights);
 
-	//UINT ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES) + 255) & ~255); //256의 배수
-	//m_pd3dcbBindPoseBoneOffsets = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
-	//m_pd3dcbBindPoseBoneOffsets->Map(0, NULL, (void**)&m_pcbxmf4x4MappedBindPoseBoneOffsets);
-
-	//UINT ncbElementByte = ((sizeof(PS_CB_Blend_Factor) + 255) & ~255); //256의 배수
-	//m_pd3dcbBlendFactor = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementByte, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
-	//m_pd3dcbBlendFactor->Map(0, NULL, (void**)&m_pcbMappedBlendFactor);
+	
 }
 
 void CScene::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, void* pContext)
@@ -486,20 +503,6 @@ void CScene::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, v
 	::memcpy(m_pcbMappedLights->m_pLights, m_pLights, sizeof(LIGHT) * m_nLights);
 	::memcpy(&m_pcbMappedLights->m_xmf4GlobalAmbient, &m_xmf4GlobalAmbient, sizeof(XMFLOAT4));
 	::memcpy(&m_pcbMappedLights->m_nLights, &m_nLights, sizeof(int));
-
-	//m_pcbMappedBlendFactor->m_xmn4BlendFactor.x = *((int*)pContext);
-	//D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbBlendFactor->GetGPUVirtualAddress();
-	//pd3dCommandList->SetGraphicsRootConstantBufferView(15, d3dGpuVirtualAddress);/*BlendFactor*/
-
-	//float* pMappedData;
-	//CD3DX12_RANGE readRange(0, 0);
-	//g_pTimeBuffer->Map(0, &readRange, reinterpret_cast<void**>(&pMappedData));
-	//memcpy(pMappedData, &g_fTime, sizeof(float));
-
-	//// Set the constant buffer
-
-	//D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbBlendFactor->GetGPUVirtualAddress();
-	//pd3dCommandList->SetGraphicsRootConstantBufferView(15, d3dGpuVirtualAddress);
 }
 
 void CScene::ReleaseShaderVariables()
@@ -527,8 +530,12 @@ void CScene::CreateCbvSrvDescriptorHeaps(ID3D12Device *pd3dDevice, int nConstant
 	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	d3dDescriptorHeapDesc.NodeMask = 0;
-	pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void **)&m_pd3dCbvSrvDescriptorHeap);
-
+	
+	HRESULT hResult = pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void **)&m_pd3dCbvSrvDescriptorHeap);
+	if (SUCCEEDED(hResult))
+	{
+		m_pd3dCbvSrvDescriptorHeap->SetName(L"CScene::CreateCbvSrvDescriptorHeaps");
+	}
 
 	m_d3dCbvCPUDescriptorNextHandle = m_d3dCbvCPUDescriptorStartHandle = m_pd3dCbvSrvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	m_d3dCbvGPUDescriptorNextHandle = m_d3dCbvGPUDescriptorStartHandle = m_pd3dCbvSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();

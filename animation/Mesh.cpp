@@ -396,6 +396,7 @@ CStandardMesh::CStandardMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList
 CStandardMesh::~CStandardMesh()
 {
 	if (m_pd3dTextureCoord0Buffer) m_pd3dTextureCoord0Buffer->Release();
+	if (m_pd3dTextureCoord1Buffer) m_pd3dTextureCoord1Buffer->Release();
 	if (m_pd3dNormalBuffer) m_pd3dNormalBuffer->Release();
 	if (m_pd3dTangentBuffer) m_pd3dTangentBuffer->Release();
 	if (m_pd3dBiTangentBuffer) m_pd3dBiTangentBuffer->Release();
@@ -406,6 +407,7 @@ CStandardMesh::~CStandardMesh()
 	if (m_pxmf3BiTangents) delete[] m_pxmf3BiTangents;
 	if (m_pxmf2TextureCoords0) delete[] m_pxmf2TextureCoords0;
 	if (m_pxmf2TextureCoords1) delete[] m_pxmf2TextureCoords1;
+
 }
 
 void CStandardMesh::ReleaseUploadBuffers()
@@ -803,7 +805,7 @@ CBoundingBoxMesh::CBoundingBoxMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 CBoundingBoxMesh::~CBoundingBoxMesh()
 {
-	if (m_pd3dPositionBuffer) m_pd3dPositionBuffer->Unmap(0, NULL);
+	//if (m_pd3dPositionBuffer) m_pd3dPositionBuffer->Unmap(0, NULL);
 }
 
 void CBoundingBoxMesh::UpdateVertexPosition(BoundingOrientedBox* pxmBoundingBox)

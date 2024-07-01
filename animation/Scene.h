@@ -132,8 +132,6 @@ protected:
 	static D3D12_CPU_DESCRIPTOR_HANDLE	m_d3dSrvCPUDescriptorNextHandle;
 	static D3D12_GPU_DESCRIPTOR_HANDLE	m_d3dSrvGPUDescriptorNextHandle;
 
-	/*ID3D12Resource* m_pd3dcbBlendFactor = NULL;
-	PS_CB_Blend_Factor* m_pcbMappedBlendFactor = NULL;*/
 public:
 	//static CDescriptorHeap* m_pDescriptorHeap;
 

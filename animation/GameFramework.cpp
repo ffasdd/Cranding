@@ -199,12 +199,20 @@ void CGameFramework::CreateRtvAndDsvDescriptorHeaps()
 	d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	d3dDescriptorHeapDesc.NodeMask = 0;
 	HRESULT hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dRtvDescriptorHeap);
+	if (SUCCEEDED(hResult))
+	{
+		m_pd3dRtvDescriptorHeap->SetName(L"CGameFramework::CreateRtvAndDsvDescriptorHeaps 1");
+	}
 	// **
 	::gnRtvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	d3dDescriptorHeapDesc.NumDescriptors = 2;
 	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dDsvDescriptorHeap);
+	if (SUCCEEDED(hResult))
+	{
+		m_pd3dDsvDescriptorHeap->SetName(L"CGameFramework::CreateRtvAndDsvDescriptorHeaps 2");
+	}
 	::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 }
 
@@ -536,9 +544,6 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	}
 }
 
-
-
-
 void CGameFramework::myFunc_SetLookRightUp(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
 {
 	if (cl_id == n)
@@ -546,7 +551,6 @@ void CGameFramework::myFunc_SetLookRightUp(int n, int id, XMFLOAT3 Look, XMFLOAT
 		m_pPlayer->SetLook(Look);
 		m_pPlayer->SetUp(Up);
 		m_pPlayer->SetRight(Right);
-
 	}
 	else
 	{
@@ -722,7 +726,17 @@ void CGameFramework::OnDestroy()
 	if (m_pd3dDevice) m_pd3dDevice->Release();
 	if (m_pdxgiFactory) m_pdxgiFactory->Release();
 
-	if (m_pBlurBuffer)m_pBlurBuffer->Release();
+	if (m_pBlurBuffer){
+
+		//m_pBlurBuffer->Unmap(0, NULL);
+		m_pBlurBuffer->Release();
+	}
+
+	if (m_pd3dcbTime)
+	{
+		m_pd3dcbTime->Unmap(0, NULL);
+		m_pd3dcbTime->Release();
+	}
 
 #if defined(_DEBUG)
 	IDXGIDebug1* pdxgiDebug = NULL;
@@ -803,7 +817,6 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene = new CFireScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-
 		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
@@ -872,16 +885,19 @@ void CGameFramework::BuildObjects(int nScene)
 
 void CGameFramework::ReleaseObjects()
 {
-	/*  if (m_pUILayer) m_pUILayer->ReleaseResources();
-	  if (m_pUILayer) delete m_pUILayer;*/
+#ifdef _FULLSCRREN
+	if (m_pUILayer) m_pUILayer->ReleaseResources();
+	if (m_pUILayer) delete m_pUILayer;
 
-	if (m_pScene->m_pPlayer) m_pScene->m_pPlayer->Release();
+#endif // _FULLSCRREN
 
-	if (m_pScene) m_pScene->ReleaseObjects();
+
+	if (m_pScene) m_pScene->ReleaseObjects(); // 4
 	if (m_pScene) {
 		delete m_pScene;
 		m_pScene = nullptr;
 	}
+	if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseObjects();
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseShaderVariables();
@@ -1110,7 +1126,7 @@ void CGameFramework::FrameAdvance()
 
 	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], TRUE, &d3dDsvCPUDescriptorHandle);
 
-	m_pd3dCommandList->SetDescriptorHeaps(1, &m_pPostProcessingShader->m_pd3dCbvSrvDescriptorHeap);
+	m_pd3dCommandList->SetDescriptorHeaps(1, &m_pPostProcessingShader->m_pd3dPostProcessingCbvSrvDescriptorHeap);
 
 
 	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera, &m_nDrawOption);
@@ -1134,20 +1150,7 @@ void CGameFramework::FrameAdvance()
 
 		m_pd3dCommandList->SetDescriptorHeaps(1, &m_BlurShader->m_pd3dCbvSrvDescriptorHeap);
 		m_BlurShader->Render(m_pd3dCommandList, m_pCamera);
-
-
-	//	//if (m_pScene)
-	//	//{
-	//	//	ID3D12DescriptorHeap* heaps[] = { m_pScene->GetDescriptorHeap() };
-	//	//	m_pd3dCommandList->SetDescriptorHeaps(1, heaps); // 배열의 주소를 전달
-	//	//}
 	}
-
-	//else
-	//{
-	//	ID3D12DescriptorHeap* heaps[] = { m_pScene->GetDescriptorHeap() };
-	//	m_pd3dCommandList->SetDescriptorHeaps(1, heaps); // 배열의 주소를 전달
-	//}
 
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
@@ -1157,6 +1160,31 @@ void CGameFramework::FrameAdvance()
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 
 	WaitForGpuComplete();
+#ifdef _FULLSCREEN
+	// 명령 리스트 기록 시작
+	hResult = m_pd3dCommandAllocator->Reset();
+	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
+
+	// 렌더 타겟으로 전환
+	SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	if (m_pUILayer)
+		UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, SceneNum, isready, curDay, curMinute, curSecond);
+
+	// 상태를 PRESENT로 전환
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+
+	hResult = m_pd3dCommandList->Close();
+
+	// 명령 목록 실행
+	ID3D12CommandList* pd3dCommandLists[] = { m_pd3dCommandList };
+	m_pd3dCommandQueue->ExecuteCommandLists(1, pd3dCommandLists);
+
+	// GPU가 명령을 처리할 때까지 기다림
+	WaitForGpuComplete();
+
+#endif // _FULLSCREEN
+
 
 #ifdef _WITH_PRESENT_PARAMETERS
 	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;

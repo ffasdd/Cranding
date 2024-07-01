@@ -381,7 +381,7 @@ private:
 
 public:
 	void AddRef();
-	void Release();
+	int Release();
 
 public:
 	CGameObject();

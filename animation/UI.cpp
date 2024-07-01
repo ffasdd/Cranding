@@ -209,6 +209,7 @@ void UILayer::UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2
 
 void UILayer::Render(UINT nFrame, int scenenum,bool isready, int curDay, int curMinute, int curSecond)
 {
+
     ID3D11Resource* ppResources[] = { m_ppd3d11WrappedRenderTargets[nFrame] };
 
     m_pd2dDeviceContext->SetTarget(m_ppd2dRenderTargets[nFrame]);
@@ -263,10 +264,6 @@ void UILayer::Render(UINT nFrame, int scenenum,bool isready, int curDay, int cur
         m_pd2dDeviceContext->EndDraw();
         break;
     }
-
-
-
-
 
 
     m_pd3d11On12Device->ReleaseWrappedResources(ppResources, _countof(ppResources));

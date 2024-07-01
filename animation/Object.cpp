@@ -73,6 +73,7 @@ void CTexture::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 		for (int i = 0; i < m_nRootParameters; i++)
 		{
 			pd3dCommandList->SetGraphicsRootDescriptorTable(m_pnRootParameterIndices[i], m_pd3dSrvGpuDescriptorHandles[i]);
+			
 		}
 	}
 	else
@@ -200,7 +201,7 @@ CMaterial::~CMaterial()
 	}
 
 	if (m_pd3dcbMaterial) {
-		m_pd3dcbMaterial->Unmap(0, NULL);
+		//m_pd3dcbMaterial->Unmap(0, NULL);
 		m_pd3dcbMaterial->Release();
 	}
 }
@@ -841,12 +842,18 @@ void CGameObject::AddRef()
 	if (m_pChild) m_pChild->AddRef();
 }
 
-void CGameObject::Release() 
+int CGameObject::Release() 
 { 
 	if (m_pChild) m_pChild->Release();
 	if (m_pSibling) m_pSibling->Release();
 
-	if (--m_nReferences <= 0) delete this; 
+	if (--m_nReferences <= 0) {
+		delete this;
+		return 0;
+	}
+	else {
+		return m_nReferences;
+	}
 }
 
 void CGameObject::SetChild(CGameObject *pChild, bool bReferenceUpdate)
