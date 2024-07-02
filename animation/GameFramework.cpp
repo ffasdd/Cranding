@@ -575,6 +575,8 @@ void CGameFramework::myFunc_SetMonPosition(int n, XMFLOAT3 position)
 	m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
 	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
 	m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
+
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_xmf3BeforeCollidedPosition = position;
 	//m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
 }
 
@@ -1010,7 +1012,7 @@ void CGameFramework::AnimateObjects()
 		//else
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
-	if (SceneNum > 0 && m_pScene->CheckMonsterByMonsterCollisions());
+	 m_pScene->CheckMonsterByMonsterCollisions();
 }
 
 void CGameFramework::WaitForGpuComplete()

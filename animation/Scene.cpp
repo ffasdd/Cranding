@@ -21,22 +21,22 @@ D3D12_GPU_DESCRIPTOR_HANDLE	CScene::m_d3dSrvGPUDescriptorNextHandle;
 CScene::CScene()
 {
 }
+
 CScene::~CScene()
 {
 }
 
-int CScene::CheckMonsterByMonsterCollisions()
+void CScene::CheckMonsterByMonsterCollisions()
 {
 	for (int i = 3; i < m_nHierarchicalGameObjects-1; i++)
 	{
 		// monster with monster
 		if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i + 1]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 		{
-			return i;
-			//gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
+			m_ppHierarchicalGameObjects[i]->SetPosition(m_ppHierarchicalGameObjects[i]->m_xmf3BeforeCollidedPosition);
+			m_ppHierarchicalGameObjects[i + 1]->SetPosition(m_ppHierarchicalGameObjects[i + 1]->m_xmf3BeforeCollidedPosition);
 		}
 	}
-	return 0;
 }
 
 
