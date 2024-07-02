@@ -73,7 +73,7 @@ public:
 	void CreateShaderVariables();
 
 
-	void UpdateUI();
+	void UpdateTime();
 
 	void UpdateShaderVariables();
 

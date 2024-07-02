@@ -718,17 +718,12 @@ void CGameFramework::OnDestroy()
 
 	if (m_pd3dFence) m_pd3dFence->Release();
 
-	//if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
-	//if (m_pPipelineState) m_pPipelineState->Release();
-
 	m_pdxgiSwapChain->SetFullscreenState(FALSE, NULL);
 	if (m_pdxgiSwapChain) m_pdxgiSwapChain->Release();
 	if (m_pd3dDevice) m_pd3dDevice->Release();
 	if (m_pdxgiFactory) m_pdxgiFactory->Release();
 
 	if (m_pBlurBuffer){
-
-		//m_pBlurBuffer->Unmap(0, NULL);
 		m_pBlurBuffer->Release();
 	}
 

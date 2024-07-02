@@ -243,9 +243,9 @@ void CShader::OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, int nP
 	//if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 }
 
-void CShader::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, void* pContext)
+void CShader::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, int m_nPipelineStates)
 {
-	OnPrepareRender(pd3dCommandList);
+	if (m_nPipelineStates != -1)OnPrepareRender(pd3dCommandList, m_nPipelineStates);
 	//UpdateShaderVariables(pd3dCommandList, pContext);
 }
 
@@ -542,7 +542,7 @@ void CStandardObjectsShader::ReleaseUploadBuffers()
 
 void CStandardObjectsShader::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, void* pContext)
 {
-	CStandardShader::Render(pd3dCommandList, pCamera, pContext);
+	CStandardShader::Render(pd3dCommandList, pCamera);
 
 	for (int j = 0; j < m_nObjects; j++)
 	{
@@ -781,7 +781,7 @@ void CPostProcessingShader::OnPostRenderTarget(ID3D12GraphicsCommandList* pd3dCo
 void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, void* pContext)
 {
 	// CShader::Render function call
-	CShader::Render(pd3dCommandList, pCamera, pContext);
+	CShader::Render(pd3dCommandList, pCamera);
 
 	pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
 
