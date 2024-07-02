@@ -18,21 +18,6 @@ D3D12_GPU_DESCRIPTOR_HANDLE	CScene::m_d3dCbvGPUDescriptorNextHandle;
 D3D12_CPU_DESCRIPTOR_HANDLE	CScene::m_d3dSrvCPUDescriptorNextHandle;
 D3D12_GPU_DESCRIPTOR_HANDLE	CScene::m_d3dSrvGPUDescriptorNextHandle;
 
-/*
-CDescriptorHeap* CScene::m_pDescriptorHeap = NULL;
-
-CDescriptorHeap::CDescriptorHeap()
-{
-	m_d3dSrvCPUDescriptorStartHandle.ptr = NULL;
-	m_d3dSrvGPUDescriptorStartHandle.ptr = NULL;
-}
-
-CDescriptorHeap::~CDescriptorHeap()
-{
-	if (m_pd3dCbvSrvDescriptorHeap) m_pd3dCbvSrvDescriptorHeap->Release();
-}
-*/
-
 CScene::CScene()
 {
 }
@@ -40,45 +25,59 @@ CScene::~CScene()
 {
 }
 
+int CScene::CheckMonsterByMonsterCollisions()
+{
+	for (int i = 3; i < m_nHierarchicalGameObjects-1; i++)
+	{
+		// monster with monster
+		if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i + 1]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+		{
+			return i;
+			//gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
+		}
+	}
+	return 0;
+}
+
 
 bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 {
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
-		// �ʰ� �浹�� ���
 		if (i == 0) 
 		{
 			CGameObject* pMapObject = m_ppHierarchicalGameObjects[0]->m_pChild->m_pChild;
 
+			// colliison check with map
 			for (int j = 0; j < m_ppHierarchicalGameObjects[0]->m_pChild->nChilds; j++)
 			{
 				const char* str = pMapObject->m_pstrFrameName;
 
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 				{
-					// grassmap ���� �ٸ��� �浹
+					// grassmap bridge
 					if (!strcmp(str, "bbgrassmap"))
 					{
 						m_pPlayer->isGrassMap = true;
 						return(true);
 					}
 
-					// firemap ���� �ٸ��� �浹
+					// firemap bridge
 					else if (!strcmp(str, "bbfiremap"))
 					{
 						m_pPlayer->isFireMap = true;
 						return(true);
 					}
 
-					// icemap ���� �ٸ��� �浹
+					// icemap bridge
 					else if (!strcmp(str, "bbicemap"))
 					{
 						m_pPlayer->isIceMap = true;
 						return(true);
 					}
 
-					// �ٴ��� �浹 üũ �ȵǵ���
-					/*else */if (!strcmp(str, "Plane"))
+					// except plane
+					if (!strcmp(str, "Plane"))
 						pMapObject = pMapObject->m_pSibling;
 
 					else
@@ -90,6 +89,7 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 			}
 		}
 	
+		// collision check with other player
 		//else if( i == 1 || i == 2) 
 		//{
 		//	/*if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
@@ -98,14 +98,21 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 		//	}*/
 		//	return false;
 		//}
-	
+		
+	// collision check with monster
 		else if (i > 2)
 		{
-	
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true && m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			// monster with player(attack mode)
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true 
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-	
-				gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
+				 //send attacked monster num
+				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
+				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 	
 				return(true);
 			}
@@ -730,7 +737,15 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	//	for (int i = 0; i < 3; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
 	//}
 	//else
-	for (int i = 0; i < m_nHierarchicalGameObjects; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
+
+	// monster dead
+	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
+	{
+		if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
+
+		if(i > 2 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead)
+			gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
+	}
 
 	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->AnimateObjects(fTimeElapsed);
 

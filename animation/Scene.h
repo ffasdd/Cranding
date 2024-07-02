@@ -76,6 +76,9 @@ public:
 	// 충돌체크 함수
 	virtual bool CheckObjectByObjectCollisions(CGameObject* pGameObject);
 
+	// monster npc끼리 충돌체크 함수
+	int CheckMonsterByMonsterCollisions();
+
 	// 바운딩박스
 	void RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 

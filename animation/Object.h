@@ -300,6 +300,8 @@ public:
 	~CAnimationController();
 
 public:
+	bool m_bIsAttacked = false;
+	
 	bool m_bisRotate = false;
 
 	// 치료 키 -> spacebar 누르면 치료
