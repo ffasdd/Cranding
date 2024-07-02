@@ -750,7 +750,7 @@ void CGameFramework::OnDestroy()
 
 void CGameFramework::BuildObjects(int nScene)
 {
-	//m_pUILayer = UILayer::Create(m_nSwapChainBuffers, 0, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+	m_pUILayer = UILayer::Create(m_nSwapChainBuffers, 0, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 	switch (nScene)
@@ -1065,21 +1065,29 @@ void CGameFramework::CreateShaderVariables()
 	m_pd3dcbTime->Map(0, NULL, (void**)&m_pTime);
 }
 
-void CGameFramework::UpdateUI()
+void CGameFramework::UpdateTime()
 {
-	total++;
-	if (total % 10 == 0) {
+	static float accumulatedTime = 0.0f;  // 누적된 시간
+	float fTimeElapsed = m_GameTimer.GetTimeElapsed();  // 경과 시간 가져오기
+	accumulatedTime += fTimeElapsed;  // 누적 시간 업데이트
 
-		curSecond++;
-		if (curSecond == 30) {
-			curSecond = 0;
-			curMinute++;
-			curMinute = curMinute % 5;
-			curDay++;
-		}
+	// 누적 시간이 초 단위 이상인 경우
+	int totalSeconds = static_cast<int>(accumulatedTime);  // 누적 시간을 초 단위로 변환
+
+	// 분과 초 계산
+	curMinute = totalSeconds / 60;
+	curSecond = totalSeconds % 60;
+
+	// 5분이 지나면 curDay를 증가시키고, 시간 초기화
+	if (curMinute >= 5) {
+		curDay++;
+		accumulatedTime -= (5 * 60);  // 5분(300초)을 뺌으로써 초기화
+		totalSeconds = static_cast<int>(accumulatedTime);  // 갱신된 누적 시간을 초 단위로 변환
+		curMinute = totalSeconds / 60;
+		curSecond = totalSeconds % 60;
 	}
-	
 }
+
 void CGameFramework::UpdateShaderVariables()
 {
 	
@@ -1109,7 +1117,8 @@ void CGameFramework::FrameAdvance()
 	d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * ::gnRtvDescriptorIncrementSize);
 
 	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera, &curMinute);
-	UpdateUI();
+	if(SceneNum > 1)
+		UpdateTime();
 
 	UpdateShaderVariables();
 

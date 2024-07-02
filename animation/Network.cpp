@@ -40,7 +40,9 @@ bool Network::ReadytoConnect()
 	sockaddrIn.sin_port = htons(PORT_NUM);
 
 	// 사용자로부터 IP 주소 입력 받기
-	string ipAddress = { "127.0.0.1" };
+	std::string ipAddress;
+	std::cout << "Enter the IP address: ";
+	std::cin >> ipAddress;
 
 
 	// 문자열 형태의 IP 주소를 네트워크 바이트 순서로 변환하여 설정

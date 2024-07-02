@@ -91,6 +91,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 							gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());
 						}
 					}
+
 					switch (gGameFramework.SceneNum)
 					{
 					case 2:
