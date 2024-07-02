@@ -278,6 +278,9 @@ void Server::InitialziedMonster(int room_Id)
 		ingameroom[room_Id].NightMonster[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
 		ingameroom[room_Id].NightMonster[i]._is_alive = true;
 		ingameroom[room_Id].NightMonster[i]._stagenum = 2;
+		ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
+		ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y= ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
+
 		}
 	}
 

@@ -26,7 +26,9 @@ public:
 	bool _is_alive = false;
 
 
-	BoundingOrientedBox _ob;
+	float                           m_fBoundingSize{ 15.0f };
+	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
+
 	mutex ingamePlayerlock;
 
 
@@ -34,6 +36,8 @@ public:
 	vector<Session*> ingamePlayer;
 
 public:
+
+	BoundingSphere& GetSpbb() { return m_SPBB; }
 
 	void Move();
 	void Remove();

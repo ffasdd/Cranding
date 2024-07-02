@@ -38,8 +38,8 @@ public:
 	mutex _p_lock;
 	unordered_set<int> _view_list;
 
-	BoundingOrientedBox _OBB = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f),XMFLOAT3(0.1f,0.1f,0.1f),XMFLOAT4(0.0f,0.0f,0.0f,1.0f));
-	
+	float                           m_fBoundingSize{ 15.0f };
+	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
 
 	
 
