@@ -131,7 +131,7 @@ private:
 	int							m_nWndClientWidth;
 	int							m_nWndClientHeight;
         
-	IDXGIFactory4				*m_pdxgiFactory = NULL;
+	Microsoft::WRL::ComPtr<IDXGIFactory4> m_pdxgiFactory = nullptr;
 	IDXGISwapChain3				*m_pdxgiSwapChain = NULL;
 	ID3D12Device				*m_pd3dDevice = NULL;
 
@@ -168,8 +168,6 @@ private:
 
 	CCamera						*m_pCamera = NULL;
 
-	UILayer* m_pUILayer1 = NULL;
-	UILayer* m_pUILayer2 = NULL;
 	UILayer* m_pUILayer = NULL;
 
 

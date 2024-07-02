@@ -13,22 +13,28 @@ CMesh::CMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandLis
 CMesh::~CMesh()
 {
 	if (m_pd3dPositionBuffer) m_pd3dPositionBuffer->Release();
+	m_pd3dPositionBuffer = NULL;
 
 	if (m_nSubMeshes > 0)
 	{
 		for (int i = 0; i < m_nSubMeshes; i++)
 		{
-			if (m_ppd3dSubSetIndexBuffers[i]) m_ppd3dSubSetIndexBuffers[i]->Release();
-			if (m_ppnSubSetIndices[i]) delete[] m_ppnSubSetIndices[i];
-		}
-		if (m_ppd3dSubSetIndexBuffers) delete[] m_ppd3dSubSetIndexBuffers;
-		if (m_pd3dSubSetIndexBufferViews) delete[] m_pd3dSubSetIndexBufferViews;
+			if (m_ppd3dSubSetIndexBuffers[i]) {
+				m_ppd3dSubSetIndexBuffers[i]->Release();
+				m_ppd3dSubSetIndexBuffers[i]=NULL;
+			}
 
-		if (m_pnSubSetIndices) delete[] m_pnSubSetIndices;
-		if (m_ppnSubSetIndices) delete[] m_ppnSubSetIndices;
+			if (m_ppnSubSetIndices[i])
+			{
+				m_ppnSubSetIndices[i] = NULL;
+			}
+		}
+		if (m_ppd3dSubSetIndexBuffers)  m_ppd3dSubSetIndexBuffers = NULL;
+		if (m_pd3dSubSetIndexBufferViews)  m_pd3dSubSetIndexBufferViews = NULL;
+
 	}
 
-	if (m_pxmf3Positions) delete[] m_pxmf3Positions;
+	if (m_pxmf3Positions) m_pxmf3Positions = NULL;
 }
 
 void CMesh::ReleaseUploadBuffers()
@@ -40,10 +46,12 @@ void CMesh::ReleaseUploadBuffers()
 	{
 		for (int i = 0; i < m_nSubMeshes; i++)
 		{
-			if (m_ppd3dSubSetIndexUploadBuffers[i]) m_ppd3dSubSetIndexUploadBuffers[i]->Release();
+			if (m_ppd3dSubSetIndexUploadBuffers[i])
+			{
+				m_ppd3dSubSetIndexUploadBuffers[i]->Release();
+				m_ppd3dSubSetIndexUploadBuffers[i] = NULL;
+			}
 		}
-		if (m_ppd3dSubSetIndexUploadBuffers) delete[] m_ppd3dSubSetIndexUploadBuffers;
-		m_ppd3dSubSetIndexUploadBuffers = NULL;
 	}
 }
 
@@ -266,8 +274,13 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsC
 CHeightMapGridMesh::~CHeightMapGridMesh()
 {
 	if (m_pd3dColorBuffer) m_pd3dColorBuffer->Release();
+	m_pd3dColorBuffer = NULL;
+
 	if (m_pd3dTextureCoord0Buffer) m_pd3dTextureCoord0Buffer->Release();
+	m_pd3dTextureCoord0Buffer = NULL;
+
 	if (m_pd3dTextureCoord1Buffer) m_pd3dTextureCoord1Buffer->Release();
+	m_pd3dTextureCoord1Buffer = NULL;
 
 	if (m_pxmf4Colors) delete[] m_pxmf4Colors;
 	if (m_pxmf2TextureCoords0) delete[] m_pxmf2TextureCoords0;
@@ -396,10 +409,19 @@ CStandardMesh::CStandardMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList
 CStandardMesh::~CStandardMesh()
 {
 	if (m_pd3dTextureCoord0Buffer) m_pd3dTextureCoord0Buffer->Release();
+	m_pd3dTextureCoord0Buffer = NULL;
+
 	if (m_pd3dTextureCoord1Buffer) m_pd3dTextureCoord1Buffer->Release();
+	m_pd3dTextureCoord1Buffer = NULL;
+
 	if (m_pd3dNormalBuffer) m_pd3dNormalBuffer->Release();
+	m_pd3dNormalBuffer = NULL;
+
 	if (m_pd3dTangentBuffer) m_pd3dTangentBuffer->Release();
+	m_pd3dTangentBuffer = NULL;
+
 	if (m_pd3dBiTangentBuffer) m_pd3dBiTangentBuffer->Release();
+	m_pd3dBiTangentBuffer = NULL;
 
 	if (m_pxmf4Colors) delete[] m_pxmf4Colors;
 	if (m_pxmf3Normals) delete[] m_pxmf3Normals;
@@ -416,6 +438,9 @@ void CStandardMesh::ReleaseUploadBuffers()
 
 	if (m_pd3dTextureCoord0UploadBuffer) m_pd3dTextureCoord0UploadBuffer->Release();
 	m_pd3dTextureCoord0UploadBuffer = NULL;
+
+	if (m_pd3dTextureCoord1UploadBuffer) m_pd3dTextureCoord1UploadBuffer->Release();
+	m_pd3dTextureCoord1UploadBuffer = NULL;
 
 	if (m_pd3dNormalUploadBuffer) m_pd3dNormalUploadBuffer->Release();
 	m_pd3dNormalUploadBuffer = NULL;
@@ -632,10 +657,18 @@ CSkinnedMesh::~CSkinnedMesh()
 	}
 
 	if (m_pxmf4x4BindPoseBoneOffsets) delete[] m_pxmf4x4BindPoseBoneOffsets;
+
 	if (m_pd3dcbBindPoseBoneOffsets) m_pd3dcbBindPoseBoneOffsets->Release();
+	m_pd3dcbBindPoseBoneOffsets = NULL;
+
+	if (m_pd3dcbSkinningBoneTransforms) m_pd3dcbSkinningBoneTransforms->Release();
+	m_pd3dcbSkinningBoneTransforms = NULL;
 
 	if (m_pd3dBoneIndexBuffer) m_pd3dBoneIndexBuffer->Release();
+	m_pd3dBoneIndexBuffer = NULL;
+
 	if (m_pd3dBoneWeightBuffer) m_pd3dBoneWeightBuffer->Release();
+	m_pd3dBoneWeightBuffer = NULL;
 
 	ReleaseShaderVariables();
 }

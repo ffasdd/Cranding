@@ -60,7 +60,10 @@ void CPlayer::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 
 void CPlayer::ReleaseShaderVariables()
 {
-	if (m_pCamera) m_pCamera->ReleaseShaderVariables();
+	if (m_pCamera)
+	{
+		m_pCamera->ReleaseShaderVariables();
+	}
 
 	if (m_pd3dcbPlayer)
 	{
