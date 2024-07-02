@@ -87,10 +87,11 @@ public:
 	// 서버로부터 받은 좌표 렌더링
 public:
 	unique_ptr<CBlurShader> m_BlurShader = NULL;
-	ID3D12Resource* m_pBlurBuffer = NULL;
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_pBlurBuffer = nullptr;
 	bool isBlurRender = true;
 
 	CPlayer* m_pPlayer = NULL;
+
 	int cl_id;
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
 	void myFunc_SetMonPosition(int n, XMFLOAT3 position);
@@ -119,8 +120,9 @@ public:
 	bool DayTime = false;
 	bool Night = false;
 
-	ID3D12Resource* m_pd3dcbTime = NULL;
-	TIME* m_pTime = NULL;
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_pd3dcbTime = nullptr;
+	std::unique_ptr<TIME> m_pTime = nullptr;
+
 
 private:
 	HINSTANCE					m_hInstance;
@@ -139,12 +141,12 @@ private:
 	static const UINT			m_nSwapChainBuffers = 2;
 	UINT						m_nSwapChainBufferIndex;
 
-	ID3D12Resource				*m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
-	ID3D12DescriptorHeap		*m_pd3dRtvDescriptorHeap = NULL;
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
+	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap>m_pd3dRtvDescriptorHeap = nullptr;
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBuffers];
 
-	ID3D12Resource				*m_pd3dDepthStencilBuffer = NULL;
-	ID3D12DescriptorHeap		*m_pd3dDsvDescriptorHeap = NULL;
+	ID3D12Resource* m_pd3dDepthStencilBuffer = NULL;
+	ID3D12DescriptorHeap* m_pd3dDsvDescriptorHeap = NULL;
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_d3dDsvDescriptorCPUHandle;
 
 	ID3D12CommandAllocator		*m_pd3dCommandAllocator = NULL;

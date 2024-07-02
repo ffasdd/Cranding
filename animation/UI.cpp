@@ -131,10 +131,31 @@ void UILayer::InitializeDevice(ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3
 
     ID3D11Device* pd3d11Device = NULL;
     ID3D12CommandQueue* ppd3dCommandQueues[] = { pd3dCommandQueue };
-    ::D3D11On12CreateDevice(pd3dDevice, d3d11DeviceFlags, nullptr, 0, reinterpret_cast<IUnknown**>(ppd3dCommandQueues), _countof(ppd3dCommandQueues), 0, (ID3D11Device**)&pd3d11Device, (ID3D11DeviceContext**)&m_pd3d11DeviceContext, nullptr);
+    HRESULT hr = ::D3D11On12CreateDevice(pd3dDevice, d3d11DeviceFlags, nullptr, 0, reinterpret_cast<IUnknown**>(ppd3dCommandQueues), _countof(ppd3dCommandQueues), 0, (ID3D11Device**)&pd3d11Device, (ID3D11DeviceContext**)&m_pd3d11DeviceContext, nullptr);
 
-    pd3d11Device->QueryInterface(__uuidof(ID3D11On12Device), (void**)&m_pd3d11On12Device);
-    pd3d11Device->Release();
+
+    if (FAILED(hr))
+    {
+        // Handle failure (e.g., log error, clean up resources)
+        // Typically, you would not proceed with further operations if this fails
+        return; // or appropriate error handling
+    }
+
+    // Check if pd3d11Device is valid before calling QueryInterface
+    if (pd3d11Device)
+    {
+        hr = pd3d11Device->QueryInterface(__uuidof(ID3D11On12Device), (void**)&m_pd3d11On12Device);
+        if (FAILED(hr))
+        {
+            // Handle failure to QueryInterface
+            // Log error or clean up resources
+            pd3d11Device->Release(); // Release pd3d11Device since we failed to get ID3D11On12Device
+            return; // or appropriate error handling
+        }
+
+        // Release pd3d11Device after successful QueryInterface call
+        pd3d11Device->Release();
+    }
 
 #if defined(_DEBUG) || defined(DBG)
     ID3D12InfoQueue* pd3dInfoQueue;
