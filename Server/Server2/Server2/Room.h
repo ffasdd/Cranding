@@ -39,7 +39,7 @@ public:
 	//array < Monster*, 10 >_NightMonsters; // 이렇게 바꿔야하나? 
 
 	// Night Monster
-	array<Monster, 10> NightMonster;
+	array<Monster, 30> NightMonster;
 
 	array<Monster, 10> IceMonster;
 	array<Monster, 10> FireMonster;

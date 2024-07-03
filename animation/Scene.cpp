@@ -963,7 +963,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	int IcrMonsterNum = 10;
 	int GrassMonsterNum = 10;
 
-	m_nHierarchicalGameObjects = 3 + FireMonsterNum + IcrMonsterNum + ;
+	m_nHierarchicalGameObjects = 3 + FireMonsterNum + IcrMonsterNum + GrassMonsterNum;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/spaceshipmap.bin", NULL);

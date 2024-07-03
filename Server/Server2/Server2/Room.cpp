@@ -37,7 +37,7 @@ void Room::SendAddMonster(int npc_id, int _id)
 void Room::UpdateNpc()
 {
 
-	NightMonstersUpdate sendmonsterupdatePacket[10];
+	NightMonstersUpdate sendmonsterupdatePacket[30];
 	int idx = 0;
 
 	// ÀüÃ¼ NPC UPDATE 

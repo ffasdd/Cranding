@@ -47,14 +47,14 @@ void Server::NetworkSet()
 	serverAddr.sin_port = htons(PORT_NUM);
 
 
-	
+
 	if (SOCKET_ERROR == bind(listensocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr)))
 		cout << "Bind Error" << endl;
 
 	if (SOCKET_ERROR == listen(listensocket, SOMAXCONN))
 		cout << " Listen Error " << endl;
 	if (listensocket != INVALID_SOCKET) {
-	
+
 		// listensocket의 현재 상태 확인
 		int optval;
 		int optlen = sizeof(optval);
@@ -160,7 +160,7 @@ void Server::WorkerThread()
 					clients[c_id]._pos = { 240.0f,10.0f,730.0f };
 				else if (c_id == 1)
 					clients[c_id]._pos = { 220.0f,10.0f,760.0f };
-				else if ( c_id % 2== 0)
+				else if (c_id % 2 == 0)
 					clients[c_id]._pos = { 210.0f, 10.0f,710.0f };
 
 				clients[c_id]._id = c_id;
@@ -220,7 +220,7 @@ void Server::WorkerThread()
 			ingameroom[r_id].UpdateNpc();
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
-			delete ex_over; 
+			delete ex_over;
 			break;
 		}
 		case COMP_TYPE::NPC_INITIALIZE: {
@@ -254,7 +254,7 @@ void Server::WorkerThread()
 			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
-				//TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
+			//TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 		}
 		default:
 			break;
@@ -270,21 +270,40 @@ void Server::InitialziedMonster(int room_Id)
 	std::uniform_real_distribution<float> xpos(50, 360);
 	std::uniform_real_distribution<float> zpos(-700, -350);
 
+	std::uniform_real_distribution<float> i_xpos(940, 1400);
+	std::uniform_real_distribution<float> i_zpos(1100, 1300);
+
+	std::uniform_real_distribution<float> n_xpos(-900, -500);
+	std::uniform_real_distribution<float> n_zpos(1100, 1500);
+
 	for (int i = 0; i < MAX_NPC; ++i)
 	{
 		if (ingameroom[room_Id].NightMonster[i]._is_alive == false)
 		{
-		ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
-		ingameroom[room_Id].NightMonster[i]._att = 10;
-		ingameroom[room_Id].NightMonster[i]._hp = 50;
-		ingameroom[room_Id].NightMonster[i]._look = XMFLOAT3(0.f, 0.f, 1.0f);
-		ingameroom[room_Id].NightMonster[i]._right = XMFLOAT3(1.0f, 0.f, 0.0f);
-		ingameroom[room_Id].NightMonster[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
-		ingameroom[room_Id].NightMonster[i]._is_alive = true;
-		ingameroom[room_Id].NightMonster[i]._stagenum = 2;
-		//ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
-		//ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 5.0f;
-		//ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y= ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
+			if (i < 10)
+			{
+				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+
+			}
+			else if (10 <= i && i < 20)
+			{
+				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(i_xpos(dre), 10.0f, i_zpos(dre));
+			}
+			else if( 20<= i && i < 30)
+			{
+				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(n_xpos(dre), 10.0f, n_zpos(dre));
+			}
+
+			ingameroom[room_Id].NightMonster[i]._att = 10;
+			ingameroom[room_Id].NightMonster[i]._hp = 50;
+			ingameroom[room_Id].NightMonster[i]._look = XMFLOAT3(0.f, 0.f, 1.0f);
+			ingameroom[room_Id].NightMonster[i]._right = XMFLOAT3(1.0f, 0.f, 0.0f);
+			ingameroom[room_Id].NightMonster[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
+			ingameroom[room_Id].NightMonster[i]._is_alive = true;
+			ingameroom[room_Id].NightMonster[i]._stagenum = 2;
+			//ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
+			//ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 5.0f;
+			//ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y= ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
 
 		}
 	}
@@ -316,7 +335,7 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			cout << "Matching" << endl;
 			// matching 말고 락으로? 
-			
+
 			//로그인을 해놓고 룸매칭을 하게 해야
 			// 추후에 매칭 방법을 수정해야 할듯 
 		}
@@ -340,7 +359,7 @@ void Server::ProcessPacket(int id, char* packet)
 		unordered_set<int> old_vlist = clients[id]._view_list;
 
 		clients[id]._v_lock.unlock();
-		
+
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
 			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
@@ -415,7 +434,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (old_vlist.count(pl) == 0)
 				clients[id].send_add_info_packet(pl);
 		}
-	
+
 		break;
 	}
 	case CS_CHANGE_ANIMATION: {
@@ -483,24 +502,24 @@ void Server::ProcessPacket(int id, char* packet)
 			std::uniform_real_distribution<float> zpos(710, 760);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		}
-			break;
-		case 3:{
+			  break;
+		case 3: {
 			std::uniform_real_distribution<float> xpos(-500, -400);
 			std::uniform_real_distribution<float> zpos(1120, 1200);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		}
-			break;
-		case 4:{
+			  break;
+		case 4: {
 			std::uniform_real_distribution<float> xpos(-732, -570);
 			std::uniform_real_distribution<float> zpos(531, 580);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		}
-			break;
-		case 5:{
-	/*		std::uniform_real_distribution<float> xpos(-450, 700);
-			std::uniform_real_distribution<float> zpos(206, 658);*/
+			  break;
+		case 5: {
+			/*		std::uniform_real_distribution<float> xpos(-450, 700);
+					std::uniform_real_distribution<float> zpos(206, 658);*/
 		}
-			break;
+			  break;
 		}
 		clients[id].send_change_scene(id, scenenum); // 나한테 나의 씬넘버를 보냄 
 
@@ -517,7 +536,7 @@ void Server::ProcessPacket(int id, char* packet)
 			// 몬스터정보를 다시보내야하나?  ㄴㄴㄴ 몬스터한테 다시 플레이어정보를 넘김 
 			for (auto& n_m : ingameroom[r_id].NightMonster)
 			{
-				if(find(n_m.ingamePlayer.begin(),n_m.ingamePlayer.end(),&clients[id]) == n_m.ingamePlayer.end())
+				if (find(n_m.ingamePlayer.begin(), n_m.ingamePlayer.end(), &clients[id]) == n_m.ingamePlayer.end())
 				{
 					clients[id]._p_lock.lock();
 					n_m.ingamePlayer.emplace_back(&clients[id]);
@@ -538,12 +557,12 @@ void Server::ProcessPacket(int id, char* packet)
 			for (auto& n_m : ingameroom[r_id].NightMonster)
 			{
 				{
-				lock_guard<mutex>ll{ n_m.ingamePlayerlock};
-				n_m.RemovePlayer(id);
+					lock_guard<mutex>ll{ n_m.ingamePlayerlock };
+					n_m.RemovePlayer(id);
 				}
 			}
-			 // 얼음몬스터 뿌려줘야함 
-			// 얼음 몬스터는 이미 있음, 얼음 몬스터 들에게 3번스테이지에 들어간 플레이어들의 정보를 입력해줘야 추적 
+			// 얼음몬스터 뿌려줘야함 
+		   // 얼음 몬스터는 이미 있음, 얼음 몬스터 들에게 3번스테이지에 들어간 플레이어들의 정보를 입력해줘야 추적 
 			for (auto& i_m : ingameroom[r_id].IceMonster)
 			{
 				if (find(i_m.ingamePlayer.begin(), i_m.ingamePlayer.end(), &clients[id]) == i_m.ingamePlayer.end())
@@ -621,15 +640,15 @@ void Server::ProcessPacket(int id, char* packet)
 
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
-			
-		
+
+
 			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
 
 			TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
 			g_Timer.InitTimerQueue(ev1);
 
-			TIMER_EVENT ev2{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NIGHT};
+			TIMER_EVENT ev2{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NIGHT };
 			g_Timer.InitTimerQueue(ev2);
 
 			TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_DAYTIME };
@@ -808,7 +827,7 @@ bool Server::SetReuseAddress(SOCKET socket, bool flag)
 	return false;
 }
 
-bool Server::SetTcpNoDelay(SOCKET _socket )
+bool Server::SetTcpNoDelay(SOCKET _socket)
 {
 	// 서버에서 노딜레이를 해주는게 맞을까 속도보단 안전성
 	int DelayZeroOpt = 1;

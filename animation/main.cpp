@@ -95,7 +95,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 					{
 					case 2:
 					{
-						// spaceship map
+						// spaceship map // 0  ~ 9 fire  10 ~ 19 ice 20  ~ 29 nature
 						for (int i = 0; i < g_monsters.size(); ++i)
 						{
 							gGameFramework.myFunc_SetMonPosition(i, g_monsters[i].getPos());

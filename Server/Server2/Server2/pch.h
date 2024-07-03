@@ -91,7 +91,8 @@ extern HINSTANCE						ghAppInstance;
 
 #include<random>
 #include<time.h>
-constexpr int MAX_NPC = 10;
+
+constexpr int MAX_NPC = 30;
 
 #define EPSILON					1.0e-10f
 
