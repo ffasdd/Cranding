@@ -1105,6 +1105,8 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->ClearRenderTargetView(m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], Colors::Red, 0, NULL);
 		m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], TRUE, &d3dDsvCPUDescriptorHandle);
 
+		m_pd3dCommandList->SetDescriptorHeaps(1, &m_BlurShader->m_pd3dCbvSrvDescriptorHeap);
+
 		m_BlurShader->Render(m_pd3dCommandList, m_pCamera);
 
 
