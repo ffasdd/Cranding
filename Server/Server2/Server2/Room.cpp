@@ -54,19 +54,21 @@ void Room::UpdateNpc()
 		sendmonsterupdatePacket[idx].size = sizeof(NightMonstersUpdate);
 		sendmonsterupdatePacket[idx].type = SC_MONSTER_UPDATE_POS;
 		sendmonsterupdatePacket[idx]._monster._id = idx;
-							
+
+		
 		sendmonsterupdatePacket[idx]._monster._x = npc._pos.x;
 		sendmonsterupdatePacket[idx]._monster._y = npc._pos.y;
 		sendmonsterupdatePacket[idx]._monster._z = npc._pos.z;
-							 
+
 		sendmonsterupdatePacket[idx]._monster._lx = npc._look.x;
 		sendmonsterupdatePacket[idx]._monster._ly = npc._look.y;
 		sendmonsterupdatePacket[idx]._monster._lz = npc._look.z;
-							  
+
 		sendmonsterupdatePacket[idx]._monster._rx = npc._right.x;
 		sendmonsterupdatePacket[idx]._monster._ry = npc._right.y;
 		sendmonsterupdatePacket[idx]._monster._rz = npc._right.z;
 
+		//MonsterCollide();
 
 		idx++;
 	}
@@ -77,7 +79,7 @@ void Room::UpdateNpc()
 		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
 		for (auto& packet : sendmonsterupdatePacket)
 		{
-			if(pl->_stage == 2) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+			if (pl->_stage == 2) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
 				pl->do_send(&packet);
 		}
 	}
@@ -221,7 +223,7 @@ void Room::IceNpcInitialized()
 		for (auto& packet : sendIceMonsterUpdatePacket)
 		{
 			//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
-				pl->do_send(&packet);
+			pl->do_send(&packet);
 		}
 	}
 }
@@ -263,5 +265,17 @@ void Room::NatureNpcInitialized()
 		NatureMonster[i]._att = 10;
 		NatureMonster[i]._hp = 50;
 		NatureMonster[i]._is_alive = true;
+	}
+}
+
+void Room::MonsterCollide()
+{
+	for (int i = 0; i < NightMonster.size(); ++i)
+	{
+		for (auto& monster : NightMonster)
+		{
+			if (NightMonster[i].m_SPBB.Intersects(monster.m_SPBB))
+				NightMonster[i]._pos = NightMonster[i]._prevpos;
+		}
 	}
 }

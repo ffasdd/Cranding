@@ -8,6 +8,7 @@ class Monster
 public:
 
 	XMFLOAT3 _pos;
+	XMFLOAT3 _prevpos;
 	XMFLOAT3 _right;
 	XMFLOAT3 _up;
 	XMFLOAT3 _look;
@@ -25,10 +26,9 @@ public:
 	bool _is_active = false;
 	bool _is_alive = false;
 
-
-	float                           m_fBoundingSize{ 15.0f };
+	float                           m_fBoundingSize{ 3.0f };
 	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
-
+	
 	mutex ingamePlayerlock;
 
 
@@ -37,12 +37,17 @@ public:
 
 public:
 
-	BoundingSphere& GetSpbb() { return m_SPBB; }
 
 	void Move();
 	void Remove();
 	void RemovePlayer(int client_id);
 
 	void IceMove();
+
+	bool CollideCheckToPlayer();
+
+
+
+
 };
 extern array<Monster, MAX_NPC> Monsters;

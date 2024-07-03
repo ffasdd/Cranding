@@ -69,5 +69,7 @@ public:
 	void IceNpcInitialized();
 	void FireNpcInitialized();
 	void NatureNpcInitialized();
+
+	void MonsterCollide();
 };
 

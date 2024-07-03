@@ -11,7 +11,7 @@ void Monster::Move()
 	// 사정거리를 벗어나면 다시 우주선 방향으로 이동 
 	//float checkPlayerPos = Vector3::Distance(pos);
 	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
-
+	_prevpos = _pos; //이동하기 이전 좌표를 저장 
 	for (auto& cl : ingamePlayer)
 	{
 		if (cl->_stage != _stagenum)continue;
@@ -31,7 +31,7 @@ void Monster::Move()
 
 		_right = rightFloat3;
 
-		float checkPlayerDistance = Vector3::Distance(_pos, cl->_pos);
+		float checkPlayerDistance = Vector3::Distance(_pos, cl->_pos); // 사용자와의 나의 거리 
 
 		if (_viewRange >= checkPlayerDistance) // 거리안에 들어왔다. 
 		{
@@ -59,21 +59,28 @@ void Monster::Move()
 
 			// right 벡터를 업데이트
 			_right = rightFloat3;
+			//if (CollideCheckToPlayer()) _pos = _prevpos;
+			//else 
+			
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
-			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed);
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
 			
 		}
 		else
 		{
 			_pos = Vector3::Add(_pos, directionToSpaceshipFloat3, _speed);
-			
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
+	;
 		}
 	}
 }
 
 void Monster::Remove()
 {
-	_pos = { 0.f,-30.f,0.f };
+	_pos = { 0.f,-100.f,0.f };
 }
 
 void Monster::RemovePlayer(int client_id)
@@ -142,4 +149,14 @@ void Monster::IceMove()
 
 		}
 	}
+}
+
+bool Monster::CollideCheckToPlayer()
+{
+	for (auto& pl : ingamePlayer)
+	{
+		if (m_SPBB.Intersects(pl->m_SPBB) == true)
+			return true;
+	}
+	return false;
 }

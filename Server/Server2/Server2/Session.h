@@ -33,13 +33,13 @@ public:
 	animateState animationstate;
 	animateState prevanimationstate;
 
+	float                           m_fBoundingSize{ 8.0f };
+	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
+
 	mutex _v_lock;
 	
 	mutex _p_lock;
 	unordered_set<int> _view_list;
-
-	float                           m_fBoundingSize{ 15.0f };
-	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
 
 	
 

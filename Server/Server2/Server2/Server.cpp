@@ -173,6 +173,10 @@ void Server::WorkerThread()
 				clients[c_id].characterType = 0;
 				clients[c_id].animationstate = animateState::FREE;
 
+				clients[c_id].m_SPBB.Center = clients[c_id]._pos;
+				clients[c_id].m_SPBB.Center.y = clients[c_id]._pos.y;
+				clients[c_id].m_SPBB.Radius = 10.0f;
+
 				CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientsocket), _IocpHandle, c_id, 0);
 				clients[c_id].do_recv();
 				clientsocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -278,8 +282,9 @@ void Server::InitialziedMonster(int room_Id)
 		ingameroom[room_Id].NightMonster[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
 		ingameroom[room_Id].NightMonster[i]._is_alive = true;
 		ingameroom[room_Id].NightMonster[i]._stagenum = 2;
-		ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
-		ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y= ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
+		//ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
+		//ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 5.0f;
+		//ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y= ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
 
 		}
 	}
@@ -324,7 +329,11 @@ void Server::ProcessPacket(int id, char* packet)
 
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 		int r_id = p->roomid;
+
 		clients[id]._pos = p->pos;
+
+		clients[id].m_SPBB.Center = clients[id]._pos;
+		clients[id].m_SPBB.Center.y = clients[id]._pos.y;
 		// view List 
 		unordered_set<int> near_list;
 		clients[id]._v_lock.lock();
