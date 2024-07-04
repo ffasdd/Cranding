@@ -309,11 +309,12 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
-		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
 		if (g_clients[cl_id].getCharacterType() == 0)
 		{
 			g_clients[cl_id].setAttack(true);
-			gNetwork.SendAttack(g_clients[cl_id].getAttack());
+			g_sendqueue.push(SENDTYPE::ATTACK);
+
+			//gNetwork.SendAttack(g_clients[cl_id].getAttack()); 
 		}
 		break;
 
@@ -398,7 +399,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 				ReleaseObjects();
 				BuildObjects(SceneNum);
-				gNetwork.SendChangeScene(SceneNum);
+
+				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_LOBBY);
+				//gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
 			else break;
@@ -414,9 +417,11 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			// bool로 일단 해보자 
 			if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
 			{
-				gNetwork.SendIngameStart();
+				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+				//gNetwork.SendIngameStart();
 			}
-			gNetwork.SendChangeScene(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//gNetwork.SendChangeScene(SceneNum);
 
 			break;
 
@@ -427,7 +432,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isready = false;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
-			gNetwork.SendChangeScene(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '4':
@@ -436,7 +442,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 4;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
-			gNetwork.SendChangeScene(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '5':
@@ -445,7 +452,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 5;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
-			gNetwork.SendChangeScene(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case VK_SPACE:

@@ -73,6 +73,7 @@ void Network::StartServer()
 	ServerStart = true;
 
 	netThread = std::thread([this]() {NetThreadFunc(); });
+
 	sendThread = std::thread([this]() {SendThreadFunc(); });
 
 }
@@ -120,7 +121,7 @@ void Network::SendProcess(SENDTYPE sendtype)
 		break;
 	}
 	case SENDTYPE::CHANGE_SCENE_LOBBY: {
-		SendChangeScene(9);// 로비번호
+		SendChangeScene(1);// 로비번호
 		break;
 	}
 	case SENDTYPE::CHANGE_SCENE_INGAME_READY: {
@@ -141,6 +142,12 @@ void Network::SendProcess(SENDTYPE sendtype)
 		break;
 	}
 	case SENDTYPE::ATTACK_COLLISION: {
+		break;
+	}
+	case SENDTYPE::CHANGE_STAGE: {
+
+		SendChangeScene(gGameFramework.SceneNum);
+
 		break;
 	}
 
@@ -201,7 +208,9 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setAnimation(int(p->a_state));
 		g_clients[my_id].setprevAnimation(int(p->prev_state));
 		gamestart = true;
+
 		SetEvent(loginevent);
+
 		break;
 	}
 

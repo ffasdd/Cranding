@@ -333,11 +333,8 @@ void Server::ProcessPacket(int id, char* packet)
 
 		while (clients[id].room_id == -1)
 		{
-			cout << "Matching" << endl;
-			// matching 말고 락으로? 
-
-			//로그인을 해놓고 룸매칭을 하게 해야
-			// 추후에 매칭 방법을 수정해야 할듯 
+			//cout << "Matching" << endl;
+			this_thread::sleep_for(1s);
 		}
 
 		clients[id].send_login_info_packet();
