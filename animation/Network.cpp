@@ -40,7 +40,7 @@ bool Network::ReadytoConnect()
 	sockaddrIn.sin_port = htons(PORT_NUM);
 
 	// 사용자로부터 IP 주소 입력 받기
-	string ipAddress = { "127.0.0.1" };
+	string ipAddress = { "127.0.0.1"};
 
 
 	// 문자열 형태의 IP 주소를 네트워크 바이트 순서로 변환하여 설정
@@ -62,8 +62,6 @@ bool Network::ReadytoConnect()
 
 // 여기까진 메인 쓰레드 
 // 리시브 하는 쓰레들 새로, 
-
-
 void Network::End()
 {
 }
@@ -83,9 +81,7 @@ void Network::NetThreadFunc()
 	while (ServerStart)
 	{
 		int ioByte = recv(clientsocket, _buf, BUF_SIZE, 0);
-
 		ProcessData(ioByte);
-
 	}
 }
 void Network::SendThreadFunc()
@@ -120,14 +116,6 @@ void Network::SendProcess(SENDTYPE sendtype)
 		SendChangeAnimation(g_clients[my_id].getAnimation(), g_clients[my_id].getprevAnimation());
 		break;
 	}
-	case SENDTYPE::CHANGE_SCENE_LOBBY: {
-		SendChangeScene(1);// 로비번호
-		break;
-	}
-	case SENDTYPE::CHANGE_SCENE_INGAME_READY: {
-		SendChangeScene(2);
-		break;
-	}
 	case SENDTYPE::CHANGE_SCENE_INGAME_START: {
 		SendIngameStart();
 		break;
@@ -136,27 +124,12 @@ void Network::SendProcess(SENDTYPE sendtype)
 		SendAttack(g_clients[my_id].getAttack());
 		break;
 	}
-	case SENDTYPE::TIME_CHECK: {
-
-		SendTime(curTimer);
-		break;
-	}
-	case SENDTYPE::ATTACK_COLLISION: {
-		break;
-	}
 	case SENDTYPE::CHANGE_STAGE: {
-
 		SendChangeScene(gGameFramework.SceneNum);
-
 		break;
 	}
 
 	}
-}
-
-void Network::TimerThread()
-{
-
 }
 
 void Network::ProcessData(size_t _size)
@@ -372,7 +345,6 @@ void Network::ProcessPacket(char* buf)
 
 		if (stage_num == 2)
 		{
-
 			// 10 개로 받아줘야한다. 
 			NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
 			int npc_id = p->_monster._id;
@@ -380,9 +352,7 @@ void Network::ProcessPacket(char* buf)
 			g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
 			g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
 			g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
-
 			g_monsters[npc_id].setUp({ 0.f,1.f,0.f });
-
 		}
 	
 		break;

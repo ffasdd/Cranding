@@ -400,7 +400,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				ReleaseObjects();
 				BuildObjects(SceneNum);
 
-				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_LOBBY);
+				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 				//gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
@@ -521,8 +521,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	if (cl_id == n)
 	{
 		m_pPlayer->SetId(cl_id);
-		// ���� �Ǵ��� �ȵǴ��� �𸣰���
-		//m_pPlayer->SetPosition(position);
+
 	}
 	else
 	{
@@ -627,7 +626,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
 		}
-		// �������� ���� ���� �ִϸ��̼� ��ȣ�� ���� �ִϸ��̼� ��ȣ�� �ٸ� ���(������ �ؾ��ϴ� ���)
+
 		if (prevAni != curAni)
 		{
 
@@ -641,10 +640,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
 
-			//if ()
-			//{
-
-			//}
+	
 			g_clients[others_id + 1].setprevAnimation(curAni);
 		}
 	}
@@ -955,7 +951,8 @@ void CGameFramework::ProcessInput()
 					g_clients[cl_id].setLook(m_pPlayer->GetLook());
 					g_clients[cl_id].setRight(m_pPlayer->GetRight());
 					g_clients[cl_id].setUp(m_pPlayer->GetUp());
-					g_sendqueue.push(SENDTYPE::ROTATE);
+					
+					//g_sendqueue.push(SENDTYPE::ROTATE);
 				}
 			}
 

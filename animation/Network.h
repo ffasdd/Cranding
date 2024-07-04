@@ -33,7 +33,7 @@ public:
 	// thread recv
 	void StartServer();
 	void NetThreadFunc();
-	void TimerThread();
+
 	void ProcessData(size_t _size);
 	void ProcessPacket( char* buf);
 

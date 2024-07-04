@@ -260,7 +260,6 @@ void Server::WorkerThread()
 			break;
 		}
 	}
-
 }
 
 void Server::InitialziedMonster(int room_Id)
@@ -333,12 +332,9 @@ void Server::ProcessPacket(int id, char* packet)
 
 		while (clients[id].room_id == -1)
 		{
-			//cout << "Matching" << endl;
 			this_thread::sleep_for(1s);
 		}
-
-		clients[id].send_login_info_packet();
-		// ADD X 
+		clients[id].send_login_info_packet(); 
 	}
 				 break;
 	case CS_MOVE: {
@@ -357,36 +353,43 @@ void Server::ProcessPacket(int id, char* packet)
 
 		clients[id]._v_lock.unlock();
 
-		for (auto& pl : ingameroom[r_id].ingamePlayer)
-		{
-			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
-			if (pl->_id == id)continue;
-			if (pl->_stage != clients[id]._stage)continue;
-			if (can_see(id, pl->_id))
-				near_list.insert(pl->_id);
-		}
-		// -------------------------------
+		//for (auto& pl : ingameroom[r_id].ingamePlayer)
+		//{
+		//	if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
+		//	if (pl->_id == id)continue;
+		//	if (pl->_stage != clients[id]._stage)continue;
+		//	if (can_see(id, pl->_id))
+		//		near_list.insert(pl->_id);
+		//}
+		//// -------------------------------
 		clients[id].send_move_packet(id);
-
-		// -------------------view list 
-		for (auto& pl : near_list)
+		for (auto& pl : clients)
 		{
-			clients[pl]._v_lock.lock();
-
-			if (clients[pl]._view_list.count(id))
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_move_packet(id);
-			}
-			else
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_add_info_packet(id);
-			}
-
-			if (old_vlist.count(pl) == 0)
-				clients[id].send_add_info_packet(pl);
+			if (pl._state == STATE::Alloc || pl._state == STATE::Free) continue;
+			if (pl._id == id)continue;
+			if (pl.room_id != clients[id].room_id)continue;
+			if (pl._stage != clients[id]._stage)continue;
+			pl.send_move_packet(id);
 		}
+		//// -------------------view list 
+		//for (auto& pl : near_list)
+		//{
+		//	clients[pl]._v_lock.lock();
+
+		//	if (clients[pl]._view_list.count(id))
+		//	{
+		//		clients[pl]._v_lock.unlock();
+		//		clients[pl].send_move_packet(id);
+		//	}
+		//	else
+		//	{
+		//		clients[pl]._v_lock.unlock();
+		//		clients[pl].send_add_info_packet(id);
+		//	}
+
+		//	if (old_vlist.count(pl) == 0)
+		//		clients[id].send_add_info_packet(pl);
+		//}
 	}
 				break;
 	case CS_ROTATE: {
@@ -397,40 +400,47 @@ void Server::ProcessPacket(int id, char* packet)
 		clients[id]._right = p->right;
 		clients[id]._up = p->up;
 
-		unordered_set<int> near_list;
-		clients[id]._v_lock.lock();
-		unordered_set<int> old_vlist = clients[id]._view_list;
-		clients[id]._v_lock.unlock();
+		//unordered_set<int> near_list;
+		//clients[id]._v_lock.lock();
+		//unordered_set<int> old_vlist = clients[id]._view_list;
+		//clients[id]._v_lock.unlock();
 
-		for (auto& pl : ingameroom[r_id].ingamePlayer)
-		{
-			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
-			if (pl->_id == id)continue;
-			if (pl->_stage != clients[id]._stage)continue;
-			if (can_see(id, pl->_id))
-				near_list.insert(pl->_id);
-		}
+		//for (auto& pl : ingameroom[r_id].ingamePlayer)
+		//{
+		//	if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
+		//	if (pl->_id == id)continue;
+		//	if (pl->_stage != clients[id]._stage)continue;
+		//	if (can_see(id, pl->_id))
+		//		near_list.insert(pl->_id);
+		//}
 
 		clients[id].send_rotate_packet(id);
-
-		for (auto& pl : near_list)
+		for (auto& pl : clients)
 		{
-
-			clients[pl]._v_lock.lock();
-
-			if (clients[pl]._view_list.count(id))
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_rotate_packet(id);
-			}
-			else
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_add_info_packet(id);
-			}
-			if (old_vlist.count(pl) == 0)
-				clients[id].send_add_info_packet(pl);
+			if (pl._state == STATE::Alloc || pl._state == STATE::Free) continue;
+			if (pl._id == id)continue;
+			if (pl.room_id != clients[id].room_id)continue;
+			if (pl._stage != clients[id]._stage)continue;
+			pl.send_rotate_packet(id);
 		}
+		//for (auto& pl : near_list)
+		//{
+
+		//	clients[pl]._v_lock.lock();
+
+		//	if (clients[pl]._view_list.count(id))
+		//	{
+		//		clients[pl]._v_lock.unlock();
+		//		clients[pl].send_rotate_packet(id);
+		//	}
+		//	else
+		//	{
+		//		clients[pl]._v_lock.unlock();
+		//		clients[pl].send_add_info_packet(id);
+		//	}
+		//	if (old_vlist.count(pl) == 0)
+		//		clients[id].send_add_info_packet(pl);
+		//}
 
 		break;
 	}
