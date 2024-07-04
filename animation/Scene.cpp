@@ -960,10 +960,10 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
 	int FireMonsterNum = 10;
-	int IcrMonsterNum = 10;
+	int IceMonsterNum = 10;
 	int GrassMonsterNum = 10;
 
-	m_nHierarchicalGameObjects = 3 + FireMonsterNum + IcrMonsterNum + GrassMonsterNum;
+	m_nHierarchicalGameObjects = 3 + FireMonsterNum + IceMonsterNum + GrassMonsterNum;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/spaceshipmap.bin", NULL);
@@ -1081,22 +1081,24 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->SetScale(20.0f, 20.0f, 20.0f);
 
 		// grass monster - 6 animations
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel, 6);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel, 6);
 
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
 														   
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
 														   
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->SetScale(20.0f, 20.0f, 20.0f);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.1);
+
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->SetScale(20.0f, 20.0f, 20.0f);
 	}
 
 	if (pFireMonModel) delete pFireMonModel;
