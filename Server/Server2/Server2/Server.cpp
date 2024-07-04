@@ -757,6 +757,8 @@ int Server::get_new_room_id(unordered_map<int, Room>& rooms)
 {
 	for (int i = 0; i < MAX_ROOM; ++i)
 	{
+		lock_guard<mutex> rl{ r_l };
+
 		if (rooms[i]._state == roomState::Free)
 		{
 			return i;
@@ -776,17 +778,13 @@ void Server::ReadyToStart()
 	{
 		if (!matchingqueue.empty())
 		{
-			// 각 쓰레드 생성? 
-			// 아니면 여기서 workerthread처럼 ? 
-			// 아예 workerthread에서?  낭비아닌가 
-
-
 			Session* _session = nullptr;
 			bool sessionok = matchingqueue.try_pop(_session);
 
 			if (!sessionok) continue;
 
 			int room_id = get_new_room_id(ingameroom); // room ID를 부여받음 ;
+
 			{
 				lock_guard<mutex> rl{ r_l };
 				ingameroom[room_id]._state = roomState::Ingame; // 상태를 Ingame상태로 바꿔준다 
