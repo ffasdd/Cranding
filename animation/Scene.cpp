@@ -55,25 +55,20 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 				{
-					// grassmap bridge
-					if (!strcmp(str, "bbgrassmap"))
-					{
-						m_pPlayer->isGrassMap = true;
-						return(true);
-					}
-
-					// firemap bridge
-					else if (!strcmp(str, "bbfiremap"))
+					if (!strcmp(str, "bbfire"))
 					{
 						m_pPlayer->isFireMap = true;
-						return(true);
+						return true;
 					}
-
-					// icemap bridge
-					else if (!strcmp(str, "bbicemap"))
+					else if (!strcmp(str, "bbice"))
 					{
 						m_pPlayer->isIceMap = true;
-						return(true);
+						return true;
+					}
+					else if (!strcmp(str, "bbgrass"))
+					{
+						m_pPlayer->isGrassMap = true;
+						return true;
 					}
 
 					// except plane
