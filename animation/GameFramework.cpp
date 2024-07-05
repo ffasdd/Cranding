@@ -1021,6 +1021,7 @@ void CGameFramework::AnimateObjects()
 		//else
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
+	m_pScene->CheckMonsterByMonsterCollisions();
 }
 
 void CGameFramework::WaitForGpuComplete()

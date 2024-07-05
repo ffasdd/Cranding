@@ -41,6 +41,22 @@ CScene::~CScene()
 }
 
 
+void CScene::CheckMonsterByMonsterCollisions()
+{
+	for (int i = 3; i < m_nHierarchicalGameObjects; i++)
+	{
+		for (int j = i + 1; j < m_nHierarchicalGameObjects; j++)
+		{
+
+			// monster with monster
+			if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[j]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			{
+				// 서버에 i - 3 번 npc가 충돌했다고 보내는 코드 들어가는 부분
+			}
+		}
+	}
+}
+
 bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 {
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
@@ -1099,6 +1115,13 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.1);
 
 		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->SetScale(20.0f, 20.0f, 20.0f);
+
+		float posX = (rand() % 2000) / 10.0;
+		float posY = (rand() % 2000) / 10.0;
+
+		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->SetPosition(posX + 10, 0.0f, posY);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->SetPosition(posX + 20, 0.0f, posY);
 	}
 
 	if (pFireMonModel) delete pFireMonModel;
