@@ -14,14 +14,15 @@ class UIRect
 {
 public:
     UIRect() {}
-    UIRect(D2D1_RECT_F r, function<bool()> f) { m_rect = r; m_function = f; }
+    UIRect(D2D1_RECT_F r, std::function<bool()> f) : m_rect(r), m_UIfunc(f) {}
+
     ~UIRect() {}
 
-    bool ClickCollide(POINT clickPos);
+    bool ClickCollide(POINT clickPos) const;
 
 private:
     D2D1_RECT_F m_rect;
-    function<bool()> m_function;
+    std::function<bool()> m_UIfunc;
 };
 
 class UILayer
@@ -37,7 +38,7 @@ public:
     void UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2dLayoutRect, IDWriteTextFormat* pdwFormat, ID2D1SolidColorBrush* pd2dTextBrush);
     void Render(UINT nFrame, int Scenenum, bool isready, int curDay, int curMinute, int curSecond);
     void ReleaseResources();
-
+    void AddUIRect(int sceneNum, D2D1_RECT_F rect, std::function<bool()> func);
 
     static UILayer* GetInstance() { return s_instance; }
 

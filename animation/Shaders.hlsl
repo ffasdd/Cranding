@@ -339,6 +339,11 @@ struct VS_SKYBOX_CUBEMAP_OUTPUT
 TextureCube gtxtSkyBoxTextureDay : register(t13);
 TextureCube gtxtSkyBoxTextureNight : register(t1);
 
+cbuffer cbBlendFactor : register(b10)
+{
+    float g_fMin;
+    float g_fSec;
+};
 
 SamplerState gssClamp : register(s1);
 
@@ -350,11 +355,6 @@ Texture2D<float> gtxtzDepthTexture : register(t17);
 Texture2D<float> gtxtDepthTexture : register(t18);
 
 
-cbuffer cbBlendFactor : register(b10)
-{
-    float g_fMin;
-    float g_fSec;
-};
 
 VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)
 {

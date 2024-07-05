@@ -47,20 +47,21 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
 {
     // 클릭 처리 필요한 ui
     // game start
-    m_uiRects[0].push_back(UIRect(m_GameStart, [this]()-> bool {
+    UILayer::GetInstance()->AddUIRect(0, m_GameStart, [this]() -> bool {
         gGameFramework.SceneNum = 1;
         gGameFramework.BuildObjects(1);
         cout << "게임 시작" << endl;
         return true;
-        }));
-    m_uiRects[0].push_back(UIRect(m_GameRule, [this]()-> bool {
+        });
+    UILayer::GetInstance()->AddUIRect(0, m_GameRule, [this]() -> bool {
         cout << "게임 방법" << endl;
         return true;
-        }));
-    m_uiRects[0].push_back(UIRect(m_GameQuit, [this]()-> bool {
+        });
+    UILayer::GetInstance()->AddUIRect(0, m_GameQuit, [this]() -> bool {
         cout << "게임 종료" << endl;
         return true;
-        }));
+        });
+
     m_fWidth = static_cast<float>(nWidth);
     m_fHeight = static_cast<float>(nHeight);
     m_nRenderTargets = nFrames;
@@ -359,13 +360,23 @@ void UILayer::ReleaseResources()
     if (m_pd3d11On12Device)m_pd3d11On12Device->Release();
 }
 
-bool UIRect::ClickCollide(POINT clickPos)
+void UILayer::AddUIRect(int sceneNum, D2D1_RECT_F rect, std::function<bool()> func)
+{
+    if (sceneNum <= m_uiRects.size()) {
+        m_uiRects[sceneNum].emplace_back(rect, func);
+    }
+    else {
+        std::cerr << "Invalid sceneNum: " << sceneNum << std::endl;
+    }
+}
+
+bool UIRect::ClickCollide(POINT clickPos) const
 {
     std::cout << "Click position: " << clickPos.x << ", " << clickPos.y << std::endl;
 
     if (m_rect.left <= clickPos.x && m_rect.right >= clickPos.x &&
         m_rect.top <= clickPos.y && m_rect.bottom >= clickPos.y) {
-        return m_function();
+        return m_UIfunc();
     }
 
     return false;
