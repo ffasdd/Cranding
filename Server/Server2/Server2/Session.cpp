@@ -192,6 +192,14 @@ void Session::send_add_monster(int npc_id)
 	do_send(&p);
 }
 
+void Session::Rotate()
+{
+	float radian = XMConvertToRadians(yaw);
+
+	XMFLOAT4 q{};
+	XMStoreFloat4(&q, XMQuaternionRotationRollPitchYaw(0.f, radian, 0.f));
+}
+
 void Session::send_game_start(int r_id)
 {
 	SC_GAMESTART_PACKET p;

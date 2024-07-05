@@ -55,6 +55,11 @@ XMFLOAT3 Session::getUp()
 	return m_up;
 }
 
+XMFLOAT3 Session::getPrevPos()
+{
+	return m_prevPos;
+}
+
 int Session::getAnimation()
 {
 	return m_animationstate;
@@ -166,4 +171,9 @@ void Session::setAttack(bool att)
 void Session::setState(STATE state)
 {
 	m_state = state;
+}
+
+void Session::setPrevPos(XMFLOAT3 prevpos)
+{
+	m_prevPos = prevpos;
 }
