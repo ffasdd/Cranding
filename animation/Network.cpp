@@ -40,7 +40,7 @@ bool Network::ReadytoConnect()
 	sockaddrIn.sin_port = htons(PORT_NUM);
 
 	// 사용자로부터 IP 주소 입력 받기
-	string ipAddress = { "118.36.113.206"};
+	string ipAddress = { "127.0.0.1"};
 
 
 	// 문자열 형태의 IP 주소를 네트워크 바이트 순서로 변환하여 설정
@@ -109,7 +109,7 @@ void Network::SendProcess(SENDTYPE sendtype)
 		break;
 	}
 	case SENDTYPE::ROTATE: {
-		SendRotatePlayer(g_clients[my_id].getLook(), g_clients[my_id].getRight(), g_clients[my_id].getUp());
+		SendRotatePlayer(g_clients[my_id].m_yaw);
 		break;
 	}
 	case SENDTYPE::CHANGE_ANIMATION: {
@@ -219,9 +219,8 @@ void Network::ProcessPacket(char* buf)
 		SC_ROTATE_OBJECT_PACKET* p = reinterpret_cast<SC_ROTATE_OBJECT_PACKET*>(buf);
 		int ob_id = (p->id);
 		//int ob_id = getmyid(p->id);
-		g_clients[ob_id].setLook(p->look);
-		g_clients[ob_id].setRight(p->right);
-		g_clients[ob_id].setUp(p->up);
+		float _yaw = p->yaw;
+		g_clients[ob_id].Rotate(_yaw);
 	}
 						 break;
 	case SC_CHANGE_ANIMATION: {
@@ -421,17 +420,25 @@ void Network::SendMovePlayer(XMFLOAT3 _pos)
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
-void Network::SendRotatePlayer(XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up)
+//void Network::SendRotatePlayer(XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up)
+//{
+//	CS_ROTATE_PACKET p;
+//	p.size = sizeof(CS_ROTATE_PACKET);
+//	p.type = CS_ROTATE;
+//	p.look = _look;
+//	p.right = _right;
+//	p.up = _up;
+//	p.roomid = my_roomid;
+//	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+//
+//}
+void Network::SendRotatePlayer(float _yaw)
 {
 	CS_ROTATE_PACKET p;
 	p.size = sizeof(CS_ROTATE_PACKET);
 	p.type = CS_ROTATE;
-	p.look = _look;
-	p.right = _right;
-	p.up = _up;
-	p.roomid = my_roomid;
+	p.yaw = _yaw;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-
 }
 
 void Network::SendChangeAnimation(int curanimate, int prevanimate)

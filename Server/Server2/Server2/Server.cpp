@@ -395,10 +395,12 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_ROTATE: {
 		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
 		int r_id = p->roomid;
+		clients[id].yaw = p->yaw;	
+		clients[id].Rotate();
 
-		clients[id]._look = p->look;
-		clients[id]._right = p->right;
-		clients[id]._up = p->up;
+		//clients[id]._look = p->look;
+		//clients[id]._right = p->right;
+		//clients[id]._up = p->up;
 
 		//unordered_set<int> near_list;
 		//clients[id]._v_lock.lock();

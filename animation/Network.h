@@ -46,7 +46,8 @@ public: // thread send
 	void SendLoginfo();
 	void SendTest();
 	void SendMovePlayer(XMFLOAT3 _pos);
-	void SendRotatePlayer(XMFLOAT3 _look,XMFLOAT3 _right, XMFLOAT3 _up);
+	//void SendRotatePlayer(XMFLOAT3 _look,XMFLOAT3 _right, XMFLOAT3 _up);
+	void SendRotatePlayer(float _yaw);
 	void SendChangeAnimation(int curanimate, int prevanimate);
 	void SendChangeScene(int scenenum);
 	void SendIngameStart();

@@ -41,16 +41,19 @@ public:
 	void setAttack(bool att);
 	void setState(STATE state);
 	void setPrevPos(XMFLOAT3 prevpos);
+	void Rotate(float yaw);
 
 	mutex _sessionlock;
 	bool m_blind = false;
 	int scene_num = -1;
+	float m_yaw = 0.0f;
 private:
 	int m_id  = -1;
 	int r_id = -1;
 	int characterType = -1;
 	char m_name[20];
 	int m_hp;
+
 	XMFLOAT3 m_right;
 	XMFLOAT3 m_up;
 	XMFLOAT3 m_look;

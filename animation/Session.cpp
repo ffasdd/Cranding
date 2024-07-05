@@ -177,3 +177,22 @@ void Session::setPrevPos(XMFLOAT3 prevpos)
 {
 	m_prevPos = prevpos;
 }
+
+void Session::Rotate(float yaw)
+{
+	if (yaw != 0.0f)
+	{
+		m_yaw += yaw;
+		if (m_yaw > 360.0f) m_yaw -= 360.0f;
+		if (m_yaw < 0.0f)m_yaw += 360.0f;
+
+		XMMATRIX xmmtxRotate = XMMatrixRotationAxis(XMLoadFloat3(&m_up), XMConvertToRadians(yaw));
+		m_look = Vector3::TransformNormal(m_look, xmmtxRotate);
+		m_right = Vector3::TransformNormal(m_right, xmmtxRotate);
+
+		m_look = Vector3::Normalize(m_look);
+		m_right = Vector3::CrossProduct(m_up, m_look, true);
+		m_up = { 0.0f,1.0f,0.0f };
+		//m_xmf3Up = Vector3::CrossProduct(m_look, m_right, true);
+	}
+}

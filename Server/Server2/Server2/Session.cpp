@@ -124,9 +124,10 @@ void Session::send_rotate_packet(int client_id)
 	p.id = client_id;
 	p.size = sizeof(SC_ROTATE_OBJECT_PACKET);
 	p.type = SC_ROTATE_OBJECT;
-	p.look = clients[client_id]._look;
-	p.right = clients[client_id]._right;
-	p.up = { 0.f,1.0f,0.f };
+	//p.look = clients[client_id]._look;
+	//p.right = clients[client_id]._right;
+	//p.up = { 0.f,1.0f,0.f };
+	p.yaw = clients[client_id].yaw;
 	do_send(&p);
 }
 

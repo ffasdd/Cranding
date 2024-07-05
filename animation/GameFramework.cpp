@@ -957,6 +957,8 @@ void CGameFramework::ProcessInput()
 					// 여기서 yaw 값만 있으면 Rotate 함수에서 회전 연산 가능합니당
 					float yaw = cxDelta;
 					m_pPlayer->RotateYaw(yaw);
+					g_clients[gNetwork.Getmyid()].m_yaw = yaw;
+					g_sendqueue.push(SENDTYPE::ROTATE);
 				}
 			}
 

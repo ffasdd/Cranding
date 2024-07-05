@@ -243,12 +243,19 @@ struct CS_LOGOUT_PACKET {
 	unsigned char size;
 	char	type;
 };
+//struct CS_ROTATE_PACKET {
+//	unsigned char size;
+//	char type;
+//	XMFLOAT3 look;
+//	XMFLOAT3 right;
+//	XMFLOAT3 up;
+//	int		roomid;
+//};
+
 struct CS_ROTATE_PACKET {
 	unsigned char size;
 	char type;
-	XMFLOAT3 look;
-	XMFLOAT3 right;
-	XMFLOAT3 up;
+	float yaw;
 	int		roomid;
 };
 struct CS_CHANGE_ANIMATION_PACKET {
@@ -379,12 +386,18 @@ struct SC_MOVE_OBJECT_PACKET {
 	int		id;
 	XMFLOAT3 pos;
 };
+//struct SC_ROTATE_OBJECT_PACKET {
+//	unsigned char size;
+//	char type;
+//	XMFLOAT3 look;
+//	XMFLOAT3 right;
+//	XMFLOAT3 up;
+//	int id;
+//};
 struct SC_ROTATE_OBJECT_PACKET {
 	unsigned char size;
 	char type;
-	XMFLOAT3 look;
-	XMFLOAT3 right;
-	XMFLOAT3 up;
+	float yaw;
 	int id;
 };
 struct SC_CHAT_PACKET {
