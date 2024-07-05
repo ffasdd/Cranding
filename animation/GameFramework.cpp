@@ -1002,23 +1002,16 @@ void CGameFramework::AnimateObjects()
 
 	if (SceneNum > 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
 	{
-		// ���⼭ �� ��ȯ ó�����ָ� �� ��
-		//if (m_pPlayer->isFireMap == true)
-		//{
-		//	m_pPlayer->isFireMap = false;
-		//	// ����ȯ
-		//}
-		//else if (m_pPlayer->isGrassMap == true)
-		//{
-		//	m_pPlayer->isGrassMap = false;
-		//	// ����ȯ
-		//}
-		//else if (m_pPlayer->isIceMap == true)
-		//{
-		//	m_pPlayer->isIceMap = false;
-		//	// ����ȯ
-		//}
-		//else
+		if (m_pPlayer->isFireMap == true)
+		{
+		}
+		else if (m_pPlayer->isGrassMap == true)
+		{
+		}
+		else if (m_pPlayer->isIceMap == true)
+		{
+		}
+
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
 	m_pScene->CheckMonsterByMonsterCollisions();

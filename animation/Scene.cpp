@@ -72,25 +72,20 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 				{
-					// grassmap ���� �ٸ��� �浹
-					if (!strcmp(str, "bbgrassmap"))
-					{
-						m_pPlayer->isGrassMap = true;
-						return(true);
-					}
-
-					// firemap ���� �ٸ��� �浹
-					else if (!strcmp(str, "bbfiremap"))
+					if (!strcmp(str, "bbfire"))
 					{
 						m_pPlayer->isFireMap = true;
-						return(true);
+						return true;
 					}
-
-					// icemap ���� �ٸ��� �浹
-					else if (!strcmp(str, "bbicemap"))
+					else if (!strcmp(str, "bbice"))
 					{
 						m_pPlayer->isIceMap = true;
-						return(true);
+						return true;
+					}
+					else if (!strcmp(str, "bbgrass"))
+					{
+						m_pPlayer->isGrassMap = true;
+						return true;
 					}
 
 					// �ٴ��� �浹 üũ �ȵǵ���
@@ -1116,12 +1111,12 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->SetScale(20.0f, 20.0f, 20.0f);
 
-		float posX = (rand() % 2000) / 10.0;
-		float posY = (rand() % 2000) / 10.0;
+		float posX = (rand() % 2000);
+		float posY = (rand() % 2000);
 
-		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->SetPosition(posX + 10, 0.0f, posY);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->SetPosition(posX + 20, 0.0f, posY);
+		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, -100.0f, posY);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->SetPosition(posX + 50, -100.0f, posY);
+		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IceMonsterNum]->SetPosition(posX + 100, -100.0f, posY);
 	}
 
 	if (pFireMonModel) delete pFireMonModel;
