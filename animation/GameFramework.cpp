@@ -309,16 +309,19 @@ void CGameFramework::ChangeSwapChainState()
 	CreateSwapChainRenderTargetViews();
 }
 
-// ���콺 �Է�, ����
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
-		// ��Ŭ������ ����
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
+
+		if (SceneNum == 0)
+		{
+			UILayer::GetInstance()->ProcessMouseClick(0, m_ptOldCursorPos);
+		}
 		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
 		if (g_clients[cl_id].getCharacterType() == 0)
 		{
@@ -397,18 +400,18 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (SceneNum == 0) {
 
 				SceneNum = 1;
-				isready = true;
+				isready = false;
 
-				gNetwork.SendLoginfo();
+				/*gNetwork.SendLoginfo();
 
 				WaitForSingleObject(loginevent, INFINITE);
 
 				cl_id = gNetwork.Getmyid();
-				m_pPlayer->c_id = gNetwork.Getmyid();
+				m_pPlayer->c_id = gNetwork.Getmyid();*/
 
 				ReleaseObjects();
 				BuildObjects(SceneNum);
-				gNetwork.SendChangeScene(SceneNum);
+				//gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
 			else break;
@@ -416,17 +419,17 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case '2':
 			if (SceneNum == 0) break;
 			// spaceship map
+			isready = true;
 			SceneNum = 2;
-			isready = false;
 			// send ready packet  
 			//if(처음 시작할 때에만 IngameStart() ) {}
 			// bool 을 두면 간단 하지만? bool보단 그냥 클라마다 상태체크하는게 좋을거같긴함 Ingame상태이거나 게임중인 상태에는 보낼 필요가 없으니까? 
 			// bool로 일단 해보자 
-			if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
-			{
-				gNetwork.SendIngameStart();
-			}
-			gNetwork.SendChangeScene(SceneNum);
+			//if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
+			//{
+			//	gNetwork.SendIngameStart();
+			//}
+			//gNetwork.SendChangeScene(SceneNum);
 
 			break;
 
@@ -437,7 +440,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isready = false;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
-			gNetwork.SendChangeScene(SceneNum);
+			//gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '4':
@@ -446,7 +449,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 4;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
-			gNetwork.SendChangeScene(SceneNum);
+			//gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '5':
@@ -455,7 +458,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 5;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
-			gNetwork.SendChangeScene(SceneNum);
+			//gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case VK_SPACE:

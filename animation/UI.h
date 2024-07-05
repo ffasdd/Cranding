@@ -1,11 +1,27 @@
 #pragma once
 
+#include <functional>
+
 struct TextBlock
 {
     WCHAR                           m_pstrText[256];
     D2D1_RECT_F                     m_d2dLayoutRect;
     IDWriteTextFormat* m_pdwFormat = NULL;
     ID2D1SolidColorBrush* m_pd2dTextBrush;
+};
+
+class UIRect
+{
+public:
+    UIRect() {}
+    UIRect(D2D1_RECT_F r, function<bool()> f) { m_rect = r; m_function = f; }
+    ~UIRect() {}
+
+    bool ClickCollide(POINT clickPos);
+
+private:
+    D2D1_RECT_F m_rect;
+    function<bool()> m_function;
 };
 
 class UILayer
@@ -15,7 +31,7 @@ public:
     UILayer();
     ~UILayer();
 
-
+    void ProcessMouseClick(int sceneNum, POINT clickPos);
     static UILayer* Create(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets, UINT nWidth, UINT nHeight);
     HRESULT Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets, UINT nWidth, UINT nHeight);
     void UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2dLayoutRect, IDWriteTextFormat* pdwFormat, ID2D1SolidColorBrush* pd2dTextBrush);
@@ -25,7 +41,7 @@ public:
 
     static UILayer* GetInstance() { return s_instance; }
 
-    ID2D1SolidColorBrush* CreateBrush(D2D1::ColorF d2dColor);
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>CreateBrush(D2D1::ColorF d2dColor);
     IDWriteTextFormat* CreateTextFormat(WCHAR* pszFontName, float fFontSize);
 
 public:
@@ -49,11 +65,16 @@ public:
     TextBlock* m_pTextBlocks = NULL;
 
 private:
+    array<vector<UIRect>, 3> m_uiRects;
+
     // login
     D2D1_RECT_F m_Title = D2D1::RectF(-FRAME_BUFFER_WIDTH/2.0f +100, -20.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
-    D2D1_RECT_F m_GameStart = D2D1::RectF(-FRAME_BUFFER_WIDTH / 2.0f - 100, 300.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
-    D2D1_RECT_F m_GameRule = D2D1::RectF(-FRAME_BUFFER_WIDTH/2.0f - 100, 500.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
-    D2D1_RECT_F m_GameQuit = D2D1::RectF(-FRAME_BUFFER_WIDTH/2.0f -100, 700.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+    // Click position: 185, 414
+    // 게임 시작
+    // Click position : 710, 557
+    D2D1_RECT_F m_GameStart = D2D1::RectF(150, 400, 750, 550);
+    D2D1_RECT_F m_GameRule = D2D1::RectF(150, 600.0f, 750, 750);
+    D2D1_RECT_F m_GameQuit = D2D1::RectF(150, 800.0f, 750, 950);
 
     // lobby
     D2D1_RECT_F m_ReadyMent = D2D1::RectF(0.0f, 0.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
@@ -69,7 +90,7 @@ private:
 private:
     static UILayer* s_instance;
 
-    array<ID2D1SolidColorBrush*, BRUSH_COLOR::BRUSH_COUNT> m_brushes;
+    array<Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>, BRUSH_COLOR::BRUSH_COUNT>m_brushes;
     array<IDWriteTextFormat*, TEXT_SIZE::TEXT_COUNT> m_textFormats;
 
     // login scene ui
