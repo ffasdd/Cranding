@@ -47,9 +47,11 @@ void CPlayer::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsComm
 	if (m_pCamera) m_pCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 
-	UINT ncbElementBytes = ((sizeof(CB_PLAYER_INFO) + 255) & ~255); //256�� ���
-	m_pd3dcbPlayer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	UINT ncbElementBytes = ((sizeof(CB_PLAYER_INFO) + 255) & ~255);
 
+	// gpu에 업로드 힙 타입 버퍼인 m_pd3dcbPlayer 버퍼 생성
+	m_pd3dcbPlayer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	// cpu 코드의 m_pcbMappedPlayer 정보를 gpu 의 상수 버퍼 m_pd3dcbPlayer에 매핑
 	m_pd3dcbPlayer->Map(0, NULL, (void**)&m_pcbMappedPlayer);
 }
 
@@ -618,6 +620,7 @@ CLoginPlayer::CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
 
 	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 3, pAngrybotModel);
+
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
@@ -631,7 +634,7 @@ CLoginPlayer::CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	UINT ncbElementBytes = ((sizeof(CB_PLAYER_INFO) + 255) & ~255); //256�� ���
+	//UINT ncbElementBytes = ((sizeof(CB_PLAYER_INFO) + 255) & ~255); //256�� ���
 
 	//D3D12_GPU_DESCRIPTOR_HANDLE d3dCbvGPUDescriptorHandle = CScene::CreateConstantBufferView(pd3dDevice, m_pd3dcbPlayer, ncbElementBytes);
 	//SetCbvGPUDescriptorHandle(d3dCbvGPUDescriptorHandle);
