@@ -24,6 +24,8 @@ public:
 	XMFLOAT3 _look;
 	XMFLOAT3 _right;
 	XMFLOAT3 _up;
+
+	float yaw;
 	char _name[100];
 	int _prevremain;
 
@@ -237,5 +239,7 @@ public:
 	void send_ingame_start();
 
 	void send_add_monster(int npc_id);
+
+	void Rotate();
 };
 extern array<Session, MAX_USER> clients;

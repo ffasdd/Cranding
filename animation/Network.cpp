@@ -40,7 +40,7 @@ bool Network::ReadytoConnect()
 	sockaddrIn.sin_port = htons(PORT_NUM);
 
 	// 사용자로부터 IP 주소 입력 받기
-	string ipAddress = { "127.0.0.1"};
+	string ipAddress = { "118.36.113.206"};
 
 
 	// 문자열 형태의 IP 주소를 네트워크 바이트 순서로 변환하여 설정
@@ -349,10 +349,12 @@ void Network::ProcessPacket(char* buf)
 			NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
 			int npc_id = p->_monster._id;
 			g_monsters[npc_id].setId(npc_id);
+			g_monsters[npc_id].setPrevPos(g_monsters[npc_id].getPos());
 			g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
 			g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
 			g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
 			g_monsters[npc_id].setUp({ 0.f,1.f,0.f });
+			
 		}
 	
 		break;
