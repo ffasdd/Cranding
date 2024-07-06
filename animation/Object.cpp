@@ -732,6 +732,12 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[k].m_fWeight));
 							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
 						}
+						// monster dead
+						if (m_bIsAttacked == true && fPosition == 0.0f)
+						{
+							m_bIsAttacked = false;
+							m_bIsDead = true;
+						}
 					}
 					m_pAnimationTracks[k].HandleCallback();
 				}
