@@ -252,7 +252,7 @@ void Network::ProcessPacket(char* buf)
 
 		g_clients[ob_id].scene_num = p->stage;
 		g_clients[ob_id].setPos(p->pos);
-		if (ob_id == my_id)
+		if (ob_id == my_id) // 내가 씬전환을 했다면
 		{
 			stage_num = p->stage;
 
@@ -268,22 +268,26 @@ void Network::ProcessPacket(char* buf)
 					IngameScene = true;
 					ClientState = true;
 					ingamecnt++;
-					if (ingamecnt == 2)
-					{
-						g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-						ingamecnt = 0;
-					}
+
 				}
-				else
+				else if ( IngameScene == true && ingamecnt >= 2)
 				{
 					SpaceshipScene = true;
 					for (int i = 0; i < g_clients.size(); ++i)
 					{
 						if (g_clients[i].getId() == my_id)continue;
 						if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+						{
+							this_thread::sleep_for(100ms);
 							gGameFramework.myFunc_SetBlind(i, ob_id, false);
+
+						}
 						else
+						{
+							this_thread::sleep_for(100ms);
 							gGameFramework.myFunc_SetBlind(i, ob_id, true);
+
+						}
 					}
 				}
 				break;
@@ -353,7 +357,7 @@ void Network::ProcessPacket(char* buf)
 			g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
 			g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
 			g_monsters[npc_id].setUp({ 0.f,1.f,0.f });
-			
+			g_monsters[npc_id].scene_num = 2;
 		}
 	
 		break;

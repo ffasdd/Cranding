@@ -288,7 +288,7 @@ void Server::InitialziedMonster(int room_Id)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(i_xpos(dre), 10.0f, i_zpos(dre));
 			}
-			else if( 20<= i && i < 30)
+			else if (20 <= i && i < 30)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(n_xpos(dre), 10.0f, n_zpos(dre));
 			}
@@ -334,7 +334,7 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			this_thread::sleep_for(1s);
 		}
-		clients[id].send_login_info_packet(); 
+		clients[id].send_login_info_packet();
 	}
 				 break;
 	case CS_MOVE: {
@@ -395,7 +395,7 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_ROTATE: {
 		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
 		int r_id = p->roomid;
-		clients[id].yaw = p->yaw;	
+		clients[id].yaw = p->yaw;
 		clients[id].Rotate();
 
 		//clients[id]._look = p->look;
@@ -542,7 +542,6 @@ void Server::ProcessPacket(int id, char* packet)
 
 		if (p->scenenum == 2)
 		{
-			// 몬스터정보를 다시보내야하나?  ㄴㄴㄴ 몬스터한테 다시 플레이어정보를 넘김 
 			for (auto& n_m : ingameroom[r_id].NightMonster)
 			{
 				if (find(n_m.ingamePlayer.begin(), n_m.ingamePlayer.end(), &clients[id]) == n_m.ingamePlayer.end())
@@ -556,7 +555,10 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				{
 					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
-					i_m.RemovePlayer(id);
+					if (find(i_m.ingamePlayer.begin(), i_m.ingamePlayer.end(), &clients[id]) != i_m.ingamePlayer.end())
+					{
+						i_m.RemovePlayer(id);
+					}
 				}
 			}
 		}
@@ -567,7 +569,10 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				{
 					lock_guard<mutex>ll{ n_m.ingamePlayerlock };
-					n_m.RemovePlayer(id);
+					if (find(n_m.ingamePlayer.begin(), n_m.ingamePlayer.end(), &clients[id]) != n_m.ingamePlayer.end())
+					{
+						n_m.RemovePlayer(id);
+					}
 				}
 			}
 			// 얼음몬스터 뿌려줘야함 
@@ -589,9 +594,14 @@ void Server::ProcessPacket(int id, char* packet)
 			// 불몬스터 뿌려줘야함 
 			for (auto& n_m : ingameroom[r_id].NightMonster)
 			{
+
 				{
 					lock_guard<mutex>ll{ clients[id]._p_lock };
-					n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+					if (find(n_m.ingamePlayer.begin(), n_m.ingamePlayer.end(), &clients[id]) != n_m.ingamePlayer.end())
+					{
+						n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+
+					}
 				}
 			}
 
@@ -633,9 +643,15 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Start;
+		}
+
+		{
+			lock_guard<mutex>ll{ ingameroom[r_id].r_l};
 			ingameroom[r_id].readycnt++;
 		}
-		if (ingameroom[r_id].readycnt == 2)
+		bool all_Start = all_of(ingameroom[r_id].ingamePlayer.begin(), ingameroom[r_id].ingamePlayer.end(), [](Session* s) {return s->_state == STATE::Start; });
+		
+		if (all_Start)
 		{
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
@@ -666,7 +682,8 @@ void Server::ProcessPacket(int id, char* packet)
 			TIMER_EVENT ev4{ ingameroom[r_id].start_time ,r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev4);
 		}
-
+		else
+			break;
 	}
 						break;
 	case CS_ATTACK: {
