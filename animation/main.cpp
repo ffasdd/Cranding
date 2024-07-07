@@ -78,66 +78,66 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			//	gNetwork.SpaceshipScene = false;
 			//}
 
-			if (gGameFramework.m_pPlayer != NULL)
-			{
-				if (gNetwork.gamestart)
-				{ 
-				for (int i = 0; i < g_clients.size(); ++i)  
-					{ 
-						gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
-						gGameFramework.myFunc_SetLookRightUp(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
-						gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
-						gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());
-										
-					}
+			//if (gGameFramework.m_pPlayer != NULL)
+			//{
+			//	if (gNetwork.gamestart)
+			//	{ 
+			//	for (int i = 0; i < g_clients.size(); ++i)  
+			//		{ 
+			//			gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
+			//			gGameFramework.myFunc_SetLookRightUp(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
+			//			gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
+			//			gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());
+			//							
+			//		}
 
-					switch (gGameFramework.SceneNum)
-					{
-					case 2:
-					{
-						// spaceship map // 0  ~ 9 fire  10 ~ 19 ice 20  ~ 29 nature
-						for (int i = 0; i < g_monsters.size(); ++i)
-						{
-							gGameFramework.myFunc_SetMonPosition(i, g_monsters[i].getPos());
-							gGameFramework.myFunc_SetMonLookRightUp(i, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
-						}
-						break;
-					}
-					case 3:
-					{
-						// ice map
-						for (int i = 0; i < g_ice_monsters.size(); ++i)
-						{
-							gGameFramework.myFunc_SetMonPosition(i, g_ice_monsters[i].getPos());
-							gGameFramework.myFunc_SetMonLookRightUp(i, g_ice_monsters[i].getLook(), g_ice_monsters[i].getUp(), g_ice_monsters[i].getRight());
-						}
-						break;
-					}
-					case 4: 
-					{
-						// fire map
-						for (int i = 0; i < g_fire_monsters.size(); ++i)
-						{
-							gGameFramework.myFunc_SetMonPosition(i, g_fire_monsters[i].getPos());
-							gGameFramework.myFunc_SetMonLookRightUp(i, g_fire_monsters[i].getLook(), g_fire_monsters[i].getUp(), g_fire_monsters[i].getRight());
-						}
-						break;
-					}
-					case 5:
-					{
-						// fire map
-						for (int i = 0; i < g_nature_monsters.size(); ++i)
-						{
-							gGameFramework.myFunc_SetMonPosition(i, g_nature_monsters[i].getPos());
-							gGameFramework.myFunc_SetMonLookRightUp(i, g_nature_monsters[i].getLook(), g_nature_monsters[i].getUp(), g_nature_monsters[i].getRight());
-						}
-						break;
-					}
+			//		switch (gGameFramework.SceneNum)
+			//		{
+			//		case 2:
+			//		{
+			//			// spaceship map // 0  ~ 9 fire  10 ~ 19 ice 20  ~ 29 nature
+			//			for (int i = 0; i < g_monsters.size(); ++i)
+			//			{
+			//				gGameFramework.myFunc_SetMonPosition(i, g_monsters[i].getPos());
+			//				gGameFramework.myFunc_SetMonLookRightUp(i, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
+			//			}
+			//			break;
+			//		}
+			//		case 3:
+			//		{
+			//			// ice map
+			//			for (int i = 0; i < g_ice_monsters.size(); ++i)
+			//			{
+			//				gGameFramework.myFunc_SetMonPosition(i, g_ice_monsters[i].getPos());
+			//				gGameFramework.myFunc_SetMonLookRightUp(i, g_ice_monsters[i].getLook(), g_ice_monsters[i].getUp(), g_ice_monsters[i].getRight());
+			//			}
+			//			break;
+			//		}
+			//		case 4: 
+			//		{
+			//			// fire map
+			//			for (int i = 0; i < g_fire_monsters.size(); ++i)
+			//			{
+			//				gGameFramework.myFunc_SetMonPosition(i, g_fire_monsters[i].getPos());
+			//				gGameFramework.myFunc_SetMonLookRightUp(i, g_fire_monsters[i].getLook(), g_fire_monsters[i].getUp(), g_fire_monsters[i].getRight());
+			//			}
+			//			break;
+			//		}
+			//		case 5:
+			//		{
+			//			// fire map
+			//			for (int i = 0; i < g_nature_monsters.size(); ++i)
+			//			{
+			//				gGameFramework.myFunc_SetMonPosition(i, g_nature_monsters[i].getPos());
+			//				gGameFramework.myFunc_SetMonLookRightUp(i, g_nature_monsters[i].getLook(), g_nature_monsters[i].getUp(), g_nature_monsters[i].getRight());
+			//			}
+			//			break;
+			//		}
 
-					default:
-						break;
-					}
-					
+			//		default:
+			//			break;
+			//		}
+			//		
 
 			//	}
 			//}
