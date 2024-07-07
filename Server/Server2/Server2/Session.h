@@ -24,6 +24,8 @@ public:
 	XMFLOAT3 _look;
 	XMFLOAT3 _right;
 	XMFLOAT3 _up;
+
+	float yaw;
 	char _name[100];
 	int _prevremain;
 
@@ -33,13 +35,13 @@ public:
 	animateState animationstate;
 	animateState prevanimationstate;
 
+	float                           m_fBoundingSize{ 8.0f };
+	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
+
 	mutex _v_lock;
 	
 	mutex _p_lock;
 	unordered_set<int> _view_list;
-
-	BoundingOrientedBox _OBB = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f),XMFLOAT3(0.1f,0.1f,0.1f),XMFLOAT4(0.0f,0.0f,0.0f,1.0f));
-	
 
 	
 
@@ -237,5 +239,7 @@ public:
 	void send_ingame_start();
 
 	void send_add_monster(int npc_id);
+
+	void Rotate();
 };
 extern array<Session, MAX_USER> clients;

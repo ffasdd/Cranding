@@ -124,9 +124,10 @@ void Session::send_rotate_packet(int client_id)
 	p.id = client_id;
 	p.size = sizeof(SC_ROTATE_OBJECT_PACKET);
 	p.type = SC_ROTATE_OBJECT;
-	p.look = clients[client_id]._look;
-	p.right = clients[client_id]._right;
-	p.up = { 0.f,1.0f,0.f };
+	//p.look = clients[client_id]._look;
+	//p.right = clients[client_id]._right;
+	//p.up = { 0.f,1.0f,0.f };
+	p.yaw = clients[client_id].yaw;
 	do_send(&p);
 }
 
@@ -190,6 +191,14 @@ void Session::send_add_monster(int npc_id)
 	p.up = XMFLOAT3(0.f, 1.f, 0.0f);
 	p.right = XMFLOAT3(1.f, 0.f, 0.0f);
 	do_send(&p);
+}
+
+void Session::Rotate()
+{
+	float radian = XMConvertToRadians(yaw);
+
+	XMFLOAT4 q{};
+	XMStoreFloat4(&q, XMQuaternionRotationRollPitchYaw(0.f, radian, 0.f));
 }
 
 void Session::send_game_start(int r_id)

@@ -46,6 +46,11 @@ protected:
 
 	CCamera						*m_pCamera = NULL;
 
+	float m_yaw = 0.0f;
+	XMVECTOR m_look;
+	XMVECTOR m_right;
+	XMVECTOR m_up;
+
 public:
 	int c_id = 0;
 public:
@@ -72,6 +77,14 @@ public:
 	void SetPosition(const XMFLOAT3& xmf3Position) { Move(XMFLOAT3(xmf3Position.x - m_xmf3Position.x, xmf3Position.y - m_xmf3Position.y, xmf3Position.z - m_xmf3Position.z), false); }
 
 	void SetScale(XMFLOAT3& xmf3Scale) { m_xmf3Scale = xmf3Scale; }
+
+	void UpdateRotation();
+	void RotateYaw(float yaw);
+	void SetYaw(float yaw) 
+	{
+		m_yaw += yaw;
+		UpdateRotation();
+	}
 
 	const XMFLOAT3& GetVelocity() const { return(m_xmf3Velocity); }
 	const XMFLOAT3& GetGravity()const { return(m_xmf3Gravity); }

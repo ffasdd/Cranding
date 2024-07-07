@@ -326,7 +326,9 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		if (g_clients[cl_id].getCharacterType() == 0)
 		{
 			g_clients[cl_id].setAttack(true);
-			gNetwork.SendAttack(g_clients[cl_id].getAttack());
+			g_sendqueue.push(SENDTYPE::ATTACK);
+
+			//gNetwork.SendAttack(g_clients[cl_id].getAttack()); 
 		}
 		break;
 
@@ -411,6 +413,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 				ReleaseObjects();
 				BuildObjects(SceneNum);
+
+				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 				//gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
@@ -425,10 +429,12 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			//if(처음 시작할 때에만 IngameStart() ) {}
 			// bool 을 두면 간단 하지만? bool보단 그냥 클라마다 상태체크하는게 좋을거같긴함 Ingame상태이거나 게임중인 상태에는 보낼 필요가 없으니까? 
 			// bool로 일단 해보자 
-			//if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
-			//{
-			//	gNetwork.SendIngameStart();
-			//}
+			if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
+			{
+				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+				//gNetwork.SendIngameStart();
+			}
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			//gNetwork.SendChangeScene(SceneNum);
 
 			break;
@@ -440,6 +446,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isready = false;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			//gNetwork.SendChangeScene(SceneNum);
 			break;
 
@@ -449,6 +456,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 4;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			//gNetwork.SendChangeScene(SceneNum);
 			break;
 
@@ -458,6 +466,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 5;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			//gNetwork.SendChangeScene(SceneNum);
 			break;
 
@@ -526,8 +535,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	if (cl_id == n)
 	{
 		m_pPlayer->SetId(cl_id);
-		// ���� �Ǵ��� �ȵǴ��� �𸣰���
-		//m_pPlayer->SetPosition(position);
+
 	}
 	else
 	{
@@ -628,7 +636,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
 		}
-		// �������� ���� ���� �ִϸ��̼� ��ȣ�� ���� �ִϸ��̼� ��ȣ�� �ٸ� ���(������ �ؾ��ϴ� ���)
+
 		if (prevAni != curAni)
 		{
 
@@ -642,10 +650,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
 
-			//if ()
-			//{
-
-			//}
+	
 			g_clients[others_id + 1].setprevAnimation(curAni);
 		}
 	}
@@ -997,10 +1002,17 @@ void CGameFramework::ProcessInput()
 			if (cxDelta || cyDelta)
 			{
 				if (pKeysBuffer[VK_RBUTTON] & 0xF0) {
+					/*
 					m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
 					g_clients[cl_id].setLook(m_pPlayer->GetLook());
 					g_clients[cl_id].setRight(m_pPlayer->GetRight());
-					g_clients[cl_id].setUp(m_pPlayer->GetUp());
+					g_clients[cl_id].setUp(m_pPlayer->GetUp());					
+					g_sendqueue.push(SENDTYPE::ROTATE);*/
+
+					// 여기서 yaw 값만 있으면 Rotate 함수에서 회전 연산 가능합니당
+					float yaw = cxDelta;
+					m_pPlayer->RotateYaw(yaw);
+					g_clients[gNetwork.Getmyid()].m_yaw = yaw;
 					g_sendqueue.push(SENDTYPE::ROTATE);
 				}
 			}
@@ -1045,25 +1057,19 @@ void CGameFramework::AnimateObjects()
 
 	if (SceneNum > 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
 	{
-		// ���⼭ �� ��ȯ ó�����ָ� �� ��
-		//if (m_pPlayer->isFireMap == true)
-		//{
-		//	m_pPlayer->isFireMap = false;
-		//	// ����ȯ
-		//}
-		//else if (m_pPlayer->isGrassMap == true)
-		//{
-		//	m_pPlayer->isGrassMap = false;
-		//	// ����ȯ
-		//}
-		//else if (m_pPlayer->isIceMap == true)
-		//{
-		//	m_pPlayer->isIceMap = false;
-		//	// ����ȯ
-		//}
-		//else
+		if (m_pPlayer->isFireMap == true)
+		{
+		}
+		else if (m_pPlayer->isGrassMap == true)
+		{
+		}
+		else if (m_pPlayer->isIceMap == true)
+		{
+		}
+
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
+	m_pScene->CheckMonsterByMonsterCollisions();
 }
 
 void CGameFramework::WaitForGpuComplete()

@@ -88,6 +88,59 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 	}
 }
 
+void CPlayer::UpdateRotation()
+{
+	// m_yaw 값을 사용하여 회전 업데이트
+	XMMATRIX rotationMatrix = XMMatrixRotationY(XMConvertToRadians(m_yaw));
+	m_look = XMVector3TransformNormal(m_look, rotationMatrix);
+	m_right = XMVector3TransformNormal(m_right, rotationMatrix);
+	m_up = XMVector3TransformNormal(m_up, rotationMatrix);
+
+	// 정규화
+	m_look = XMVector3Normalize(m_look);
+	m_right = XMVector3Normalize(m_right);
+	m_up = XMVector3Normalize(m_up);
+
+}
+void CPlayer::RotateYaw(float yaw) {
+	DWORD nCurrentCameraMode = m_pCamera->GetMode();
+
+	if ((nCurrentCameraMode == FIRST_PERSON_CAMERA) || (nCurrentCameraMode == THIRD_PERSON_CAMERA) || (nCurrentCameraMode == INGAME_SCENE_CAMERA)) {
+		if (yaw != 0.0f) {
+			m_fYaw += yaw;
+			if (m_fYaw > 360.0f) m_fYaw -= 360.0f;
+			if (m_fYaw < 0.0f) m_fYaw += 360.0f;
+
+			m_pCamera->Rotate(0.0f, yaw, 0.0f);
+
+			XMMATRIX xmmtxRotate = XMMatrixRotationAxis(XMLoadFloat3(&m_xmf3Up), XMConvertToRadians(yaw));
+			m_xmf3Look = Vector3::TransformNormal(m_xmf3Look, xmmtxRotate);
+			m_xmf3Right = Vector3::TransformNormal(m_xmf3Right, xmmtxRotate);
+
+			m_xmf3Look = Vector3::Normalize(m_xmf3Look);
+			m_xmf3Right = Vector3::CrossProduct(m_xmf3Up, m_xmf3Look, true);
+			m_xmf3Up = Vector3::CrossProduct(m_xmf3Look, m_xmf3Right, true);
+		}
+	}
+	else if (nCurrentCameraMode == SPACESHIP_CAMERA) {
+		if (yaw != 0.0f) {
+			m_fYaw += yaw;
+			if (m_fYaw > 360.0f) m_fYaw -= 360.0f;
+			if (m_fYaw < 0.0f) m_fYaw += 360.0f;
+
+			m_pCamera->Rotate(0.0f, yaw, 0.0f);
+
+			XMMATRIX xmmtxRotate = XMMatrixRotationAxis(XMLoadFloat3(&m_xmf3Up), XMConvertToRadians(yaw));
+			m_xmf3Look = Vector3::TransformNormal(m_xmf3Look, xmmtxRotate);
+			m_xmf3Right = Vector3::TransformNormal(m_xmf3Right, xmmtxRotate);
+
+			m_xmf3Look = Vector3::Normalize(m_xmf3Look);
+			m_xmf3Right = Vector3::CrossProduct(m_xmf3Up, m_xmf3Look, true);
+			m_xmf3Up = Vector3::CrossProduct(m_xmf3Look, m_xmf3Right, true);
+		}
+	}
+}
+
 void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 {
 	if (bUpdateVelocity)
