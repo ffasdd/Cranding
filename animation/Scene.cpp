@@ -1264,6 +1264,8 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	if (pGrassMonModel9) delete pGrassMonModel9;
 	if (pGrassMonModel10) delete pGrassMonModel10;
 
+
+
 }
 
 void CSpaceShipScene::ReleaseUploadBuffers()

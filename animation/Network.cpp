@@ -189,6 +189,7 @@ void Network::ProcessPacket(char* buf)
 
 	case SC_ADD_OBJECT: {
 
+		this_thread::sleep_for(10ms);
 		std::cout << "Add Player " << std::endl;
 		SC_ADD_OBJECT_PACKET* p = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		//int ob_id = getmyid(p->id);
@@ -267,10 +268,10 @@ void Network::ProcessPacket(char* buf)
 				{
 					IngameScene = true;
 					ClientState = true;
-					ingamecnt++;
+			
 
 				}
-				else if ( IngameScene == true && ingamecnt >= 2)
+				else if ( IngameScene == true )
 				{
 					SpaceshipScene = true;
 					for (int i = 0; i < g_clients.size(); ++i)
@@ -278,13 +279,13 @@ void Network::ProcessPacket(char* buf)
 						if (g_clients[i].getId() == my_id)continue;
 						if (g_clients[i].scene_num != g_clients[my_id].scene_num)
 						{
-							this_thread::sleep_for(100ms);
+						
 							gGameFramework.myFunc_SetBlind(i, ob_id, false);
 
 						}
 						else
 						{
-							this_thread::sleep_for(100ms);
+				
 							gGameFramework.myFunc_SetBlind(i, ob_id, true);
 
 						}
@@ -321,6 +322,7 @@ void Network::ProcessPacket(char* buf)
 		{
 			for (int i = 0; i < g_clients.size(); ++i)
 			{
+				if (p->stage == 1)continue;
 				if (g_clients[i].getId() == my_id)continue;
 				if (g_clients[i].scene_num != g_clients[my_id].scene_num)
 					gGameFramework.myFunc_SetBlind(i, ob_id, false);
