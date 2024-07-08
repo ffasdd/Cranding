@@ -109,9 +109,9 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
         pMap[i] = new WCHAR[256];
     }
 
-    wcscpy_s(pMap[0], 256, L"ice map으로 이동하기 위해 3번을 눌러주세요");
-    wcscpy_s(pMap[1], 256, L"fire map으로 이동하기 위해 4번을 눌러주세요");
-    wcscpy_s(pMap[2], 256, L"grass map으로 이동하기 위해 5번을 눌러주세요");
+    wcscpy_s(pMap[0], 256, L"ice map으로 이동하기 위해 F키를 눌러주세요");
+    wcscpy_s(pMap[1], 256, L"fire map으로 이동하기 위해 F키를 눌러주세요");
+    wcscpy_s(pMap[2], 256, L"grass map으로 이동하기 위해 F키를 눌러주세요");
     for (int i = 0; i < ingameUI_num; ++i) {
         m_vecIngameScene.push_back(pMap[i]);
     }

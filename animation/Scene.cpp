@@ -45,6 +45,17 @@ void CScene::CheckMonsterByMonsterCollisions()
 	}
 }
 
+void CScene::HandleCollisionEnd(CGameObject* pObject) {
+	// 충돌 종료 시 수행할 작업 구현
+	std::cout << "Collision ended with object: " << pObject->m_pstrFrameName << std::endl;
+	m_pPlayer->isFireMap = false;
+	m_pPlayer->isIceMap = false;
+	m_pPlayer->isGrassMap = false;
+
+	// 필요에 따라 추가 작업 수행
+	pObject->m_bWasColliding = false; // 충돌 종료 후 상태 초기화
+}
+
 bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 {
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
@@ -52,14 +63,18 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 		// �ʰ� �浹�� ���
 		if (i == 0) 
 		{
-			CGameObject* pMapObject = m_ppHierarchicalGameObjects[0]->m_pChild->m_pChild;
+			m_ppHierarchicalGameObjects[i]->m_bWasColliding = m_ppHierarchicalGameObjects[i]->m_bIsColliding;
+			m_ppHierarchicalGameObjects[i]->m_bIsColliding = false; // 현재 프레임의 충돌 상태 초기화
 
+			CGameObject* pMapObject = m_ppHierarchicalGameObjects[0]->m_pChild->m_pChild;
+			
 			for (int j = 0; j < m_ppHierarchicalGameObjects[0]->m_pChild->nChilds; j++)
 			{
 				const char* str = pMapObject->m_pstrFrameName;
 
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 				{
+					m_ppHierarchicalGameObjects[i]->m_bIsColliding = true;
 					if (!strcmp(str, "bbfire"))
 					{
 						m_pPlayer->isFireMap = true;
@@ -142,6 +157,12 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 				return(true);
 			}
 		}
+	}
+
+	
+	if (m_ppHierarchicalGameObjects[0]->m_bWasColliding && !m_ppHierarchicalGameObjects[0]->m_bIsColliding) {
+		// 충돌이 종료되었을 때 수행할 작업
+		HandleCollisionEnd(m_ppHierarchicalGameObjects[0]);
 	}
 	return(false);
 }

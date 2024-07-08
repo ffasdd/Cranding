@@ -791,24 +791,41 @@ CGameObject::CGameObject(int nMaterials, ID3D12Device* pd3dDevice, ID3D12Graphic
 
 CGameObject::~CGameObject()
 {
-	if (m_pMesh) m_pMesh->Release();
+	if (m_pMesh)
+	{
+		m_pMesh->Release();
+		m_pMesh = nullptr;  // Release 후 nullptr로 설정
+	}
 
-	if (m_pBoundingBoxMesh) m_pBoundingBoxMesh->Release();
-	m_pBoundingBoxMesh = NULL;
+	if (m_pBoundingBoxMesh)
+	{
+		m_pBoundingBoxMesh->Release();
+		m_pBoundingBoxMesh = nullptr;  // Release 후 nullptr로 설정
+	}
 
 	if (m_nMaterials > 0)
 	{
 		for (int i = 0; i < m_nMaterials; i++)
 		{
-			if (m_ppMaterials[i]) {
+			if (m_ppMaterials[i])
+			{
 				m_ppMaterials[i]->Release();
-				m_ppMaterials[i] = nullptr;
+				m_ppMaterials[i] = nullptr;  // Release 후 nullptr로 설정
 			}
 		}
 	}
-	if (m_ppMaterials) delete[] m_ppMaterials;
 
-	if (m_pSkinnedAnimationController) delete m_pSkinnedAnimationController;
+	if (m_ppMaterials)
+	{
+		delete[] m_ppMaterials;
+		m_ppMaterials = nullptr;  // delete 후 nullptr로 설정
+	}
+
+	if (m_pSkinnedAnimationController)
+	{
+		delete m_pSkinnedAnimationController;
+		m_pSkinnedAnimationController = nullptr;  // delete 후 nullptr로 설정
+	}
 
 	ReleaseShaderVariables();
 }

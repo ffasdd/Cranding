@@ -430,6 +430,10 @@ public:
 	// 서버에서 그리기 on/off
 	bool isdraw = true;
 
+	// 충돌 관련 변수
+		bool m_bIsColliding; // 현재 충돌 상태
+	bool m_bWasColliding; // 이전 프레임에서의 충돌 상태
+
 	void SetMesh(CMesh *pMesh);
 	void SetShader(CShader *pShader);
 	void SetShader(int nMaterial, CShader *pShader);

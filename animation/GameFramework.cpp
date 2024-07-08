@@ -404,18 +404,18 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 1;
 				isready = false;
 
-				/*gNetwork.SendLoginfo();
+				gNetwork.SendLoginfo();
 
 				WaitForSingleObject(loginevent, INFINITE);
 
 				cl_id = gNetwork.Getmyid();
-				m_pPlayer->c_id = gNetwork.Getmyid();*/
+				m_pPlayer->c_id = gNetwork.Getmyid();
 
 				ReleaseObjects();
 				BuildObjects(SceneNum);
 
-				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-				//gNetwork.SendChangeScene(SceneNum);
+				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
 			else break;
@@ -429,14 +429,15 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			//if(처음 시작할 때에만 IngameStart() ) {}
 			// bool 을 두면 간단 하지만? bool보단 그냥 클라마다 상태체크하는게 좋을거같긴함 Ingame상태이거나 게임중인 상태에는 보낼 필요가 없으니까? 
 			// bool로 일단 해보자 
-			//if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
-			//{
-			//	g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-			//	//gNetwork.SendIngameStart();
-			//}
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			//gNetwork.SendChangeScene(SceneNum);
+			if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
+			{
+				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+				//gNetwork.SendIngameStart();
+			}
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			gNetwork.SendChangeScene(SceneNum);
 
+			BuildObjects(SceneNum);
 			break;
 
 		case '3':
@@ -446,8 +447,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isready = false;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			//gNetwork.SendChangeScene(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '4':
@@ -456,8 +457,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 4;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			//gNetwork.SendChangeScene(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '5':
@@ -466,8 +467,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 5;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			//gNetwork.SendChangeScene(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case VK_SPACE:
@@ -481,6 +482,47 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 		case 'B':
 			m_bRenderBoundingBox = !m_bRenderBoundingBox;
+			break;
+		case 'F':
+			// 맵 이동 관련
+			PlayerPosX = m_pPlayer->GetPosition().x;
+			PlayerPosY = m_pPlayer->GetPosition().y;
+			if (PlayerPosX > 0 && PlayerPosY > 0)
+			{
+				if (SceneNum == 1 || SceneNum == 0) break;
+				// ice map
+				SceneNum = 3;
+				isready = false;
+				ReleaseObjects();
+				BuildObjects(SceneNum);
+				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				//gNetwork.SendChangeScene(SceneNum);
+				break;
+			}
+			else if (PlayerPosX > 0 && PlayerPosY < 0)
+			{
+				if (SceneNum == 1 || SceneNum == 0) break;
+				// fire map
+				SceneNum = 4;
+				ReleaseObjects();
+				BuildObjects(SceneNum);
+				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				//gNetwork.SendChangeScene(SceneNum);
+				break;
+			}
+			else if (PlayerPosX < 0 && PlayerPosY > 0)
+			{
+				if (SceneNum == 1 || SceneNum == 0) break;
+				// grass map
+				SceneNum = 5;
+				ReleaseObjects();
+				BuildObjects(SceneNum);
+				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				//gNetwork.SendChangeScene(SceneNum);
+				break;
+			}
+			else
+				break;
 			break;
 
 		default:
@@ -1059,6 +1101,7 @@ void CGameFramework::AnimateObjects()
 	{
 		if (m_pPlayer->isFireMap == true)
 		{
+
 		}
 		else if (m_pPlayer->isGrassMap == true)
 		{

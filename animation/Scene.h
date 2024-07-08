@@ -56,6 +56,8 @@ public:
 
 	void CheckMonsterByMonsterCollisions();
 
+	void HandleCollisionEnd(CGameObject* pObject);
+
 	// 바운딩박스
 	void RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 
@@ -125,6 +127,7 @@ public:
 
 	int									m_nHierarchicalGameObjects = 0;
 	CGameObject							**m_ppHierarchicalGameObjects = NULL;
+
 
 	XMFLOAT3							m_xmf3RotatePosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
