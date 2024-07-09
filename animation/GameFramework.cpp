@@ -621,7 +621,7 @@ void CGameFramework::myFunc_SetLookRightUp(int n, int id, XMFLOAT3 Look, XMFLOAT
 			break;
 		}
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetLook(Look.x, Look.y, Look.z);
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(0, 1, 0);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(Up.x,Up.y,Up.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetRight(Right.x, Right.y, Right.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetScale(20.0f, 20.0f, 20.0f);
 	}
@@ -845,6 +845,7 @@ void CGameFramework::BuildObjects(int nScene)
 	}
 	case 2:
 	{
+		//this_thread::sleep_for(10ms);
 		m_pScene = new CSpaceShipScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 

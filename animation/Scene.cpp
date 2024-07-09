@@ -742,7 +742,10 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 		if (i > 2 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead)
 		{
+			//g_sendqueue.push(SENDTYPE::ATTACK_COLLISION);
+	
 			gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
+			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 			//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			//if (i > 2 && i < 14) 
 			//	m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
@@ -1209,6 +1212,8 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	if (pGrassMonModel8) delete pGrassMonModel8;
 	if (pGrassMonModel9) delete pGrassMonModel9;
 	if (pGrassMonModel10) delete pGrassMonModel10;
+
+
 
 }
 

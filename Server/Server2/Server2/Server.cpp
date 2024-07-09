@@ -282,7 +282,6 @@ void Server::InitialziedMonster(int room_Id)
 			if (i < 10)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
-
 			}
 			else if (10 <= i && i < 20)
 			{
@@ -300,9 +299,9 @@ void Server::InitialziedMonster(int room_Id)
 			ingameroom[room_Id].NightMonster[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
 			ingameroom[room_Id].NightMonster[i]._is_alive = true;
 			ingameroom[room_Id].NightMonster[i]._stagenum = 2;
-			//ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
-			//ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 5.0f;
-			//ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y= ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
+			ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
+			ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 5.0f;
+			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y= ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
 
 		}
 	}
@@ -396,25 +395,9 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
 		int r_id = p->roomid;
 		clients[id].yaw = p->yaw;
-		clients[id].Rotate();
 
-		//clients[id]._look = p->look;
-		//clients[id]._right = p->right;
-		//clients[id]._up = p->up;
 
-		//unordered_set<int> near_list;
-		//clients[id]._v_lock.lock();
-		//unordered_set<int> old_vlist = clients[id]._view_list;
-		//clients[id]._v_lock.unlock();
 
-		//for (auto& pl : ingameroom[r_id].ingamePlayer)
-		//{
-		//	if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
-		//	if (pl->_id == id)continue;
-		//	if (pl->_stage != clients[id]._stage)continue;
-		//	if (can_see(id, pl->_id))
-		//		near_list.insert(pl->_id);
-		//}
 
 		clients[id].send_rotate_packet(id);
 		for (auto& pl : clients)
@@ -425,24 +408,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl._stage != clients[id]._stage)continue;
 			pl.send_rotate_packet(id);
 		}
-		//for (auto& pl : near_list)
-		//{
 
-		//	clients[pl]._v_lock.lock();
-
-		//	if (clients[pl]._view_list.count(id))
-		//	{
-		//		clients[pl]._v_lock.unlock();
-		//		clients[pl].send_rotate_packet(id);
-		//	}
-		//	else
-		//	{
-		//		clients[pl]._v_lock.unlock();
-		//		clients[pl].send_add_info_packet(id);
-		//	}
-		//	if (old_vlist.count(pl) == 0)
-		//		clients[id].send_add_info_packet(pl);
-		//}
 
 		break;
 	}
@@ -455,40 +421,20 @@ void Server::ProcessPacket(int id, char* packet)
 		clients[id].animationstate = (animateState)p->a_state;
 		clients[id].prevanimationstate = (animateState)p->prev_a_state;
 
-		unordered_set<int> near_list;
-		clients[id]._v_lock.lock();
-		unordered_set<int> old_vlist = clients[id]._view_list;
-		clients[id]._v_lock.unlock();
 
-		for (auto& pl : ingameroom[r_id].ingamePlayer)
-		{
-			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
-			if (pl->_id == id)continue;
-			if (pl->_stage != clients[id]._stage)continue;
-			if (can_see(id, pl->_id))
-				near_list.insert(pl->_id);
-		}
 
 		clients[id].send_change_animate_packet(id);
 
-		for (auto& pl : near_list)
+		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
 
-			clients[pl]._v_lock.lock();
-
-			if (clients[pl]._view_list.count(id))
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_change_animate_packet(id);
-			}
-			else
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_add_info_packet(id);
-			}
-			if (old_vlist.count(pl) == 0)
-				clients[id].send_add_info_packet(pl);
+			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
+			if (pl->_id == id)continue;
+			if (pl->_stage != clients[id]._stage) continue;
+			pl->send_change_animate_packet(id);
+			
 		}
+
 	}
 							break;
 	case CS_CHANGE_SCENE: {
@@ -525,8 +471,7 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 			  break;
 		case 5: {
-			/*		std::uniform_real_distribution<float> xpos(-450, 700);
-					std::uniform_real_distribution<float> zpos(206, 658);*/
+
 		}
 			  break;
 		}
@@ -692,40 +637,18 @@ void Server::ProcessPacket(int id, char* packet)
 
 		clients[id]._isAttack = p->isAttack;
 
-		unordered_set<int> near_list;
-		clients[id]._v_lock.lock();
-		unordered_set<int> old_vlist = clients[id]._view_list;
-		clients[id]._v_lock.unlock();
+
+		clients[id].send_attack_packet(id); // 내가 나한테, 나의 공격을 알림 
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
-			if (pl->_id == id)continue;
+			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free)continue;
+			if (pl->_id == id) continue;
 			if (pl->_stage != clients[id]._stage)continue;
-			if (can_see(id, pl->_id))
-				near_list.insert(pl->_id);
+			pl->send_attack_packet(id);
 		}
 
-		clients[id].send_attack_packet(id);
-
-		for (auto& pl : near_list)
-		{
-
-			clients[pl]._v_lock.lock();
-
-			if (clients[pl]._view_list.count(id))
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_attack_packet(id);
-			}
-			else
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_add_info_packet(id);
-			}
-			if (old_vlist.count(pl) == 0)
-				clients[id].send_add_info_packet(pl);
-		}
+		
 
 	}
 				  break;

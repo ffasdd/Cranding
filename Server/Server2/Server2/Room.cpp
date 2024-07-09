@@ -55,7 +55,7 @@ void Room::UpdateNpc()
 		sendmonsterupdatePacket[idx].type = SC_MONSTER_UPDATE_POS;
 		sendmonsterupdatePacket[idx]._monster._id = idx;
 
-		
+
 		sendmonsterupdatePacket[idx]._monster._x = npc._pos.x;
 		sendmonsterupdatePacket[idx]._monster._y = npc._pos.y;
 		sendmonsterupdatePacket[idx]._monster._z = npc._pos.z;
@@ -79,8 +79,10 @@ void Room::UpdateNpc()
 		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
 		for (auto& packet : sendmonsterupdatePacket)
 		{
-			if (pl->_stage == 2) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
-				pl->do_send(&packet);
+			if (pl->_stage != 2) continue;
+			// 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+			pl->do_send(&packet);
+
 		}
 	}
 }
