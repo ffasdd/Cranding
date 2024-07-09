@@ -1136,7 +1136,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(20.0f, 20.0f, 20.0f);
 
-		// ice monster - 6 animations
+		// grass monster - 6 animations
 
 		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
@@ -1151,9 +1151,11 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
 															  
+		m_ppHierarchicalGameObjects[3 + i + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.1);
+
 		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->SetScale(20.0f, 20.0f, 20.0f);
 															  
-		// grass monster - 6 animations			
+		// ice monster - 6 animations			
 															  
 		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
@@ -1167,9 +1169,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
-														   	  					 
-		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.1);
-															  				 
+															  				
 		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->SetScale(20.0f, 20.0f, 20.0f);
 
 		float posX = (rand() % 2000);
