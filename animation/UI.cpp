@@ -50,6 +50,8 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     UILayer::GetInstance()->AddUIRect(0, m_GameStart, [this]() -> bool {
         gGameFramework.SceneNum = 1;
         gGameFramework.BuildObjects(1);
+
+        g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
         cout << "게임 시작" << endl;
         return true;
         });

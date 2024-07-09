@@ -415,7 +415,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				BuildObjects(SceneNum);
 
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-				gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
 			else break;
@@ -435,9 +434,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				//gNetwork.SendIngameStart();
 			}
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			gNetwork.SendChangeScene(SceneNum);
 
-			BuildObjects(SceneNum);
+			//BuildObjects(SceneNum);
 			break;
 
 		case '3':
@@ -448,7 +446,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '4':
@@ -458,7 +455,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case '5':
@@ -468,7 +464,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			gNetwork.SendChangeScene(SceneNum);
 			break;
 
 		case VK_SPACE:
@@ -621,7 +616,7 @@ void CGameFramework::myFunc_SetLookRightUp(int n, int id, XMFLOAT3 Look, XMFLOAT
 			break;
 		}
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetLook(Look.x, Look.y, Look.z);
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(Up.x,Up.y,Up.z);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(0, 1, 0);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetRight(Right.x, Right.y, Right.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetScale(20.0f, 20.0f, 20.0f);
 	}
@@ -845,7 +840,6 @@ void CGameFramework::BuildObjects(int nScene)
 	}
 	case 2:
 	{
-		//this_thread::sleep_for(10ms);
 		m_pScene = new CSpaceShipScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
