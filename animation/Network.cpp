@@ -195,10 +195,11 @@ void Network::ProcessPacket(char* buf)
 	case SC_ADD_OBJECT: {
 
 		this_thread::sleep_for(10ms);
-		std::cout << "Add Player " << std::endl;
+
 		SC_ADD_OBJECT_PACKET* p = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		//int ob_id = getmyid(p->id);
 		int ob_id = (p->id);
+		std::cout << "Add Player ID - " << ob_id << std::endl;
 		g_clients[ob_id].setState(STATE::Ingame);
 		g_clients[ob_id].setId(ob_id);
 		g_clients[ob_id].setHp(p->hp);

@@ -432,12 +432,12 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
 			{
 				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-				//gNetwork.SendIngameStart();
+		
 			}
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			gNetwork.SendChangeScene(SceneNum);
+			//gNetwork.SendChangeScene(SceneNum);
 
-			BuildObjects(SceneNum);
+	
 			break;
 
 		case '3':
@@ -448,7 +448,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			gNetwork.SendChangeScene(SceneNum);
+	
 			break;
 
 		case '4':
@@ -458,7 +458,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			gNetwork.SendChangeScene(SceneNum);
+
 			break;
 
 		case '5':
@@ -468,7 +468,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			ReleaseObjects();
 			BuildObjects(SceneNum);
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			gNetwork.SendChangeScene(SceneNum);
+	
 			break;
 
 		case VK_SPACE:
@@ -743,7 +743,7 @@ void CGameFramework::myFunc_SetBlind(int n, int id, bool _isblind)
 			others_id = n;
 			break;
 		}
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->isdraw = _isblind;
+		if (m_pScene->m_ppHierarchicalGameObjects[others_id + 1])m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->isdraw = _isblind;
 	}
 
 }
