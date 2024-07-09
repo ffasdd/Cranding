@@ -230,7 +230,7 @@ void CGameFramework::CreateSwapChainRenderTargetViews()
 	for (UINT i = 0; i < m_nSwapChainBuffers; i++)
 	{
 		m_pdxgiSwapChain->GetBuffer(i, __uuidof(ID3D12Resource), (void**)&m_ppd3dSwapChainBackBuffers[i]);
-		m_pd3dDevice->CreateRenderTargetView(m_ppd3dSwapChainBackBuffers[i].Get(), NULL, d3dRtvCPUDescriptorHandle);
+		m_pd3dDevice->CreateRenderTargetView(m_ppd3dSwapChainBackBuffers[i], NULL, d3dRtvCPUDescriptorHandle);
 		m_pd3dSwapChainBackBufferRTVCPUHandles[i] = d3dRtvCPUDescriptorHandle;
 		d3dRtvCPUDescriptorHandle.ptr += ::gnRtvDescriptorIncrementSize;
 	}
@@ -751,25 +751,11 @@ void CGameFramework::OnDestroy()
 
 	::CloseHandle(m_hFenceEvent);
 
-	if (m_pBlurBuffer){
-		m_pBlurBuffer.Reset();
-	}
-
-	if (m_pd3dcbTime)
-	{
-		m_pd3dcbTime->Unmap(0, NULL);
-		m_pd3dcbTime.Reset();
-	}
-
-	if (m_pd3dDevice) m_pd3dDevice->Release();
-	if (m_pdxgiSwapChain) m_pdxgiSwapChain->Release();
-
-	for (int i = 0; i < m_nSwapChainBuffers; i++) if (m_ppd3dSwapChainBackBuffers[i]) m_ppd3dSwapChainBackBuffers[i].Reset();
-	if (m_pd3dRtvDescriptorHeap) m_pd3dRtvDescriptorHeap.Reset();
-	
 	if (m_pd3dDepthStencilBuffer) m_pd3dDepthStencilBuffer->Release();
 	if (m_pd3dDsvDescriptorHeap) m_pd3dDsvDescriptorHeap->Release();
 
+	for (int i = 0; i < m_nSwapChainBuffers; i++) if (m_ppd3dSwapChainBackBuffers[i]) m_ppd3dSwapChainBackBuffers[i]->Release();
+	if (m_pd3dRtvDescriptorHeap) m_pd3dRtvDescriptorHeap->Release();
 
 	if (m_pd3dCommandAllocator) m_pd3dCommandAllocator->Release();
 	if (m_pd3dCommandQueue) m_pd3dCommandQueue->Release();
@@ -777,15 +763,15 @@ void CGameFramework::OnDestroy()
 
 	if (m_pd3dFence) m_pd3dFence->Release();
 
+	//if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
+	//if (m_pPipelineState) m_pPipelineState->Release();
+
 	m_pdxgiSwapChain->SetFullscreenState(FALSE, NULL);
+	if (m_pdxgiSwapChain) m_pdxgiSwapChain->Release();
+	if (m_pd3dDevice) m_pd3dDevice->Release();
+	if (m_pdxgiFactory) m_pdxgiFactory->Release();
 
-
-
-	if (m_pdxgiFactory)
-	{
-		m_pdxgiFactory.Reset();
-	}
-	m_pdxgiFactory = nullptr;
+	if (m_pBlurBuffer)m_pBlurBuffer->Release();
 
 #if defined(_DEBUG)
 	IDXGIDebug1* pdxgiDebug = NULL;
@@ -799,7 +785,7 @@ void CGameFramework::OnDestroy()
 
 void CGameFramework::BuildObjects(int nScene)
 {
-	m_pUILayer = UILayer::Create(m_nSwapChainBuffers, 0, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers->GetAddressOf(), m_nWndClientWidth, m_nWndClientHeight);
+	m_pUILayer = UILayer::Create(m_nSwapChainBuffers, 0, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 	switch (nScene)
@@ -967,12 +953,13 @@ void CGameFramework::ReleaseObjects()
 #endif // _FULLSCRREN
 
 
-	if (m_pScene) m_pScene->ReleaseObjects(); // 4
+	if (m_pScene->m_pPlayer) m_pScene->m_pPlayer->Release();
+
+	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) {
 		delete m_pScene;
 		m_pScene = nullptr;
 	}
-	//if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseObjects();
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseShaderVariables();
@@ -1188,7 +1175,7 @@ void CGameFramework::FrameAdvance()
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * ::gnRtvDescriptorIncrementSize);
@@ -1225,13 +1212,13 @@ void CGameFramework::FrameAdvance()
 	if (isBlurRender)
 	{
 		// Render Target Resource Copy to BlurBuffer(For Blur Process)
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_pBlurBuffer.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_pBlurBuffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
 
-		m_pd3dCommandList->CopyResource(m_pBlurBuffer.Get(), m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex].Get());
+		m_pd3dCommandList->CopyResource(m_pBlurBuffer, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex]);
 
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_pBlurBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON);
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex].Get(), D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_pBlurBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON);
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 		m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 		m_pd3dCommandList->ClearRenderTargetView(m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], Colors::Red, 0, NULL);
@@ -1241,7 +1228,7 @@ void CGameFramework::FrameAdvance()
 		m_BlurShader->Render(m_pd3dCommandList, m_pCamera);
 	}
 
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	hResult = m_pd3dCommandList->Close();
 
@@ -1255,13 +1242,13 @@ void CGameFramework::FrameAdvance()
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
 	// 렌더 타겟으로 전환
-	SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	if (m_pUILayer)
 		UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, SceneNum, isready, curDay, curMinute, curSecond);
 
 	// 상태를 PRESENT로 전환
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	hResult = m_pd3dCommandList->Close();
 
