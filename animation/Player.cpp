@@ -356,6 +356,8 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
 
+	m_pSkinnedAnimationController->SetTrackSpeed(8, 1.5);
+	m_pSkinnedAnimationController->SetTrackSpeed(9, 1.5);
 
 	m_pSkinnedAnimationController->SetTrackEnable(0, false);
 	m_pSkinnedAnimationController->SetTrackEnable(2, false);
