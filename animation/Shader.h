@@ -9,6 +9,8 @@
 //#include "stdafx.h"
 //#include "Scene.h"
 
+struct LIGHT;
+
 class CShader
 {
 public:
