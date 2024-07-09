@@ -6,8 +6,13 @@
 #define KEY_A 0x41
 #define KEY_D 0x44
 
+#ifdef _FULLSCREEN
+#define FRAME_BUFFER_WIDTH				1920
+#define FRAME_BUFFER_HEIGHT				1080
+#else
 #define FRAME_BUFFER_WIDTH				640
 #define FRAME_BUFFER_HEIGHT				480
+#endif
 
 #define DRAW_SCENE_COLOR				'S'
 
@@ -26,6 +31,11 @@
 extern Network							gNetwork;
 
 
+struct TIME
+{
+	float fCurrentMin;
+	float fCurrentSec;
+};
 
 class UILayer;
 
@@ -60,8 +70,12 @@ public:
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
 
+	void CreateShaderVariables();
 
-	void UpdateUI();
+
+	void UpdateTime();
+
+	void UpdateShaderVariables();
 
 	void readyUI();
 
@@ -73,10 +87,13 @@ public:
 	// 서버로부터 받은 좌표 렌더링
 public:
 	unique_ptr<CBlurShader> m_BlurShader = NULL;
-	ID3D12Resource* m_pBlurBuffer = NULL;
-	bool isBlurRender = false;
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_pBlurBuffer = nullptr;
+	bool isBlurRender = true;
 
 	CPlayer* m_pPlayer = NULL;
+	float PlayerPosX;
+	float PlayerPosY;
+
 	int cl_id;
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
 	void myFunc_SetMonPosition(int n, XMFLOAT3 position);
@@ -105,6 +122,9 @@ public:
 	bool DayTime = false;
 	bool Night = false;
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_pd3dcbTime = nullptr;
+	std::unique_ptr<TIME> m_pTime = nullptr;
+
 
 private:
 	HINSTANCE					m_hInstance;
@@ -113,7 +133,7 @@ private:
 	int							m_nWndClientWidth;
 	int							m_nWndClientHeight;
         
-	IDXGIFactory4				*m_pdxgiFactory = NULL;
+	Microsoft::WRL::ComPtr<IDXGIFactory4> m_pdxgiFactory = nullptr;
 	IDXGISwapChain3				*m_pdxgiSwapChain = NULL;
 	ID3D12Device				*m_pd3dDevice = NULL;
 
@@ -123,12 +143,12 @@ private:
 	static const UINT			m_nSwapChainBuffers = 2;
 	UINT						m_nSwapChainBufferIndex;
 
-	ID3D12Resource				*m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
-	ID3D12DescriptorHeap		*m_pd3dRtvDescriptorHeap = NULL;
+	Microsoft::WRL::ComPtr<ID3D12Resource> m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
+	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap>m_pd3dRtvDescriptorHeap = nullptr;
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBuffers];
 
-	ID3D12Resource				*m_pd3dDepthStencilBuffer = NULL;
-	ID3D12DescriptorHeap		*m_pd3dDsvDescriptorHeap = NULL;
+	ID3D12Resource* m_pd3dDepthStencilBuffer = NULL;
+	ID3D12DescriptorHeap* m_pd3dDsvDescriptorHeap = NULL;
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_d3dDsvDescriptorCPUHandle;
 
 	ID3D12CommandAllocator		*m_pd3dCommandAllocator = NULL;
@@ -150,8 +170,6 @@ private:
 
 	CCamera						*m_pCamera = NULL;
 
-	UILayer* m_pUILayer1 = NULL;
-	UILayer* m_pUILayer2 = NULL;
 	UILayer* m_pUILayer = NULL;
 
 

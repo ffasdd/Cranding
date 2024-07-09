@@ -45,7 +45,22 @@ UILayer* UILayer::Create(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevic
 
 HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets, UINT nWidth, UINT nHeight)
 {
-    // 클릭 처리 필요한 ui 추가하기
+    // 클릭 처리 필요한 ui
+    // game start
+    UILayer::GetInstance()->AddUIRect(0, m_GameStart, [this]() -> bool {
+        gGameFramework.SceneNum = 1;
+        gGameFramework.BuildObjects(1);
+        cout << "게임 시작" << endl;
+        return true;
+        });
+    UILayer::GetInstance()->AddUIRect(0, m_GameRule, [this]() -> bool {
+        cout << "게임 방법" << endl;
+        return true;
+        });
+    UILayer::GetInstance()->AddUIRect(0, m_GameQuit, [this]() -> bool {
+        cout << "게임 종료" << endl;
+        return true;
+        });
 
     m_fWidth = static_cast<float>(nWidth);
     m_fHeight = static_cast<float>(nHeight);
@@ -94,9 +109,9 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
         pMap[i] = new WCHAR[256];
     }
 
-    wcscpy_s(pMap[0], 256, L"ice map으로 이동하기 위해 3번을 눌러주세요");
-    wcscpy_s(pMap[1], 256, L"fire map으로 이동하기 위해 4번을 눌러주세요");
-    wcscpy_s(pMap[2], 256, L"grass map으로 이동하기 위해 5번을 눌러주세요");
+    wcscpy_s(pMap[0], 256, L"ice map으로 이동하기 위해 F키를 눌러주세요");
+    wcscpy_s(pMap[1], 256, L"fire map으로 이동하기 위해 F키를 눌러주세요");
+    wcscpy_s(pMap[2], 256, L"grass map으로 이동하기 위해 F키를 눌러주세요");
     for (int i = 0; i < ingameUI_num; ++i) {
         m_vecIngameScene.push_back(pMap[i]);
     }
@@ -104,7 +119,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
 
     // brush
     m_brushes[BRUSH_COLOR::WHITE] = CreateBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
-    m_brushes[BRUSH_COLOR::LIME_GREEN] = CreateBrush(D2D1::ColorF(1.0f, 0.8f,0.8f, 1.0f));
+    m_brushes[BRUSH_COLOR::LIME_GREEN] = CreateBrush(D2D1::ColorF(1.0f, 0.8f, 0.8f, 1.0f));
     m_brushes[BRUSH_COLOR::BLACK] = CreateBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
     m_brushes[BRUSH_COLOR::RED] = CreateBrush(D2D1::ColorF(1.0f, 0.14f, 0.14f, 1.0f));
 
@@ -119,6 +134,17 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     return NOERROR;
 }
 
+void UILayer::ProcessMouseClick(int sceneNum, POINT clickPos)
+{
+    int index = static_cast<int>(sceneNum);
+
+    for (UIRect& rect : m_uiRects[index]) {
+        if (rect.ClickCollide(clickPos))
+            break;
+    }
+}
+
+
 void UILayer::InitializeDevice(ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets)
 {
     UINT d3d11DeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -131,10 +157,31 @@ void UILayer::InitializeDevice(ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3
 
     ID3D11Device* pd3d11Device = NULL;
     ID3D12CommandQueue* ppd3dCommandQueues[] = { pd3dCommandQueue };
-    ::D3D11On12CreateDevice(pd3dDevice, d3d11DeviceFlags, nullptr, 0, reinterpret_cast<IUnknown**>(ppd3dCommandQueues), _countof(ppd3dCommandQueues), 0, (ID3D11Device**)&pd3d11Device, (ID3D11DeviceContext**)&m_pd3d11DeviceContext, nullptr);
+    HRESULT hr = ::D3D11On12CreateDevice(pd3dDevice, d3d11DeviceFlags, nullptr, 0, reinterpret_cast<IUnknown**>(ppd3dCommandQueues), _countof(ppd3dCommandQueues), 0, (ID3D11Device**)&pd3d11Device, (ID3D11DeviceContext**)&m_pd3d11DeviceContext, nullptr);
 
-    pd3d11Device->QueryInterface(__uuidof(ID3D11On12Device), (void**)&m_pd3d11On12Device);
-    pd3d11Device->Release();
+
+    if (FAILED(hr))
+    {
+        // Handle failure (e.g., log error, clean up resources)
+        // Typically, you would not proceed with further operations if this fails
+        return; // or appropriate error handling
+    }
+
+    // Check if pd3d11Device is valid before calling QueryInterface
+    if (pd3d11Device)
+    {
+        hr = pd3d11Device->QueryInterface(__uuidof(ID3D11On12Device), (void**)&m_pd3d11On12Device);
+        if (FAILED(hr))
+        {
+            // Handle failure to QueryInterface
+            // Log error or clean up resources
+            pd3d11Device->Release(); // Release pd3d11Device since we failed to get ID3D11On12Device
+            return; // or appropriate error handling
+        }
+
+        // Release pd3d11Device after successful QueryInterface call
+        pd3d11Device->Release();
+    }
 
 #if defined(_DEBUG) || defined(DBG)
     ID3D12InfoQueue* pd3dInfoQueue;
@@ -179,13 +226,13 @@ void UILayer::InitializeDevice(ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3
     }
 }
 
-ID2D1SolidColorBrush* UILayer::CreateBrush(D2D1::ColorF d2dColor)
+Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> UILayer::CreateBrush(D2D1::ColorF d2dColor)
 {
-    ID2D1SolidColorBrush* pd2dDefaultTextBrush = NULL;
-    m_pd2dDeviceContext->CreateSolidColorBrush(d2dColor, &pd2dDefaultTextBrush);
-
-    return(pd2dDefaultTextBrush);
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> pd2dDefaultTextBrush;
+    m_pd2dDeviceContext->CreateSolidColorBrush(d2dColor, pd2dDefaultTextBrush.GetAddressOf());
+    return pd2dDefaultTextBrush;
 }
+
 
 IDWriteTextFormat* UILayer::CreateTextFormat(WCHAR* pszFontName, float fFontSize)
 {
@@ -207,8 +254,9 @@ void UILayer::UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2
     if (pd2dTextBrush) m_pTextBlocks[nIndex].m_pd2dTextBrush = pd2dTextBrush;
 }
 
-void UILayer::Render(UINT nFrame, int scenenum,bool isready, int curDay, int curMinute, int curSecond)
+void UILayer::Render(UINT nFrame, int scenenum, bool isready, int curDay, int curMinute, int curSecond)
 {
+
     ID3D11Resource* ppResources[] = { m_ppd3d11WrappedRenderTargets[nFrame] };
 
     m_pd2dDeviceContext->SetTarget(m_ppd2dRenderTargets[nFrame]);
@@ -219,18 +267,18 @@ void UILayer::Render(UINT nFrame, int scenenum,bool isready, int curDay, int cur
     case 0:
         // login
         m_pd2dDeviceContext->BeginDraw();
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[0], (UINT)wcslen(m_vecLoginSceneMenu[0]), m_textFormats[TEXT_SIZE::SIZE_60], m_Title, m_brushes[BRUSH_COLOR::BLACK]);
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[1], (UINT)wcslen(m_vecLoginSceneMenu[1]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameStart, m_brushes[BRUSH_COLOR::BLACK]);
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[2], (UINT)wcslen(m_vecLoginSceneMenu[2]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameRule, m_brushes[BRUSH_COLOR::BLACK]);
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[3], (UINT)wcslen(m_vecLoginSceneMenu[3]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameQuit, m_brushes[BRUSH_COLOR::BLACK]);
+        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[0], (UINT)wcslen(m_vecLoginSceneMenu[0]), m_textFormats[TEXT_SIZE::SIZE_60], m_Title, m_brushes[BRUSH_COLOR::BLACK].Get());
+        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[1], (UINT)wcslen(m_vecLoginSceneMenu[1]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameStart, m_brushes[BRUSH_COLOR::BLACK].Get());
+        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[2], (UINT)wcslen(m_vecLoginSceneMenu[2]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameRule, m_brushes[BRUSH_COLOR::BLACK].Get());
+        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[3], (UINT)wcslen(m_vecLoginSceneMenu[3]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameQuit, m_brushes[BRUSH_COLOR::BLACK].Get());
         m_pd2dDeviceContext->EndDraw();
         break;
     case 1:
         // lobby
         m_pd2dDeviceContext->BeginDraw();
-        m_pd2dDeviceContext->DrawText(m_vecLobbyScene[0], (UINT)wcslen(m_vecLobbyScene[0]), m_textFormats[TEXT_SIZE::SIZE_25], m_ReadyMent, m_brushes[BRUSH_COLOR::WHITE]);
-        if(isready)
-            m_pd2dDeviceContext->DrawText(m_vecLobbyScene[1], (UINT)wcslen(m_vecLobbyScene[1]), m_textFormats[TEXT_SIZE::SIZE_30], m_Ready, m_brushes[BRUSH_COLOR::WHITE]);
+        m_pd2dDeviceContext->DrawText(m_vecLobbyScene[0], (UINT)wcslen(m_vecLobbyScene[0]), m_textFormats[TEXT_SIZE::SIZE_25], m_ReadyMent, m_brushes[BRUSH_COLOR::WHITE].Get());
+        if (isready)
+            m_pd2dDeviceContext->DrawText(m_vecLobbyScene[1], (UINT)wcslen(m_vecLobbyScene[1]), m_textFormats[TEXT_SIZE::SIZE_30], m_Ready, m_brushes[BRUSH_COLOR::WHITE].Get());
         m_pd2dDeviceContext->EndDraw();
         break;
     default:
@@ -245,28 +293,24 @@ void UILayer::Render(UINT nFrame, int scenenum,bool isready, int curDay, int cur
             timenum = 0;
 
         swprintf_s(pstrOutputText, 256, L"Day: %d  Time:%02d:%02d %s", curDay, curMinute, curSecond, DnN[timenum].c_str());
-        m_pd2dDeviceContext->DrawText(pstrOutputText, (UINT)wcslen(pstrOutputText), m_textFormats[TEXT_SIZE::SIZE_18], m_Timer, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        m_pd2dDeviceContext->DrawText(pstrOutputText, (UINT)wcslen(pstrOutputText), m_textFormats[TEXT_SIZE::SIZE_18], m_Timer, m_brushes[BRUSH_COLOR::LIME_GREEN].Get());
 
-        m_pd2dDeviceContext->FillRectangle(m_HPBar, m_brushes[BRUSH_COLOR::RED]);
+        m_pd2dDeviceContext->FillRectangle(m_HPBar, m_brushes[BRUSH_COLOR::RED].Get());
 
         // map 이동
-        if(gGameFramework.m_pPlayer->isIceMap)
-            m_pd2dDeviceContext->DrawText(m_vecIngameScene[0], (UINT)wcslen(m_vecIngameScene[0]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        if (gGameFramework.m_pPlayer->isIceMap)
+            m_pd2dDeviceContext->DrawText(m_vecIngameScene[0], (UINT)wcslen(m_vecIngameScene[0]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN].Get());
 
         if (gGameFramework.m_pPlayer->isFireMap)
-            m_pd2dDeviceContext->DrawText(m_vecIngameScene[1], (UINT)wcslen(m_vecIngameScene[1]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+            m_pd2dDeviceContext->DrawText(m_vecIngameScene[1], (UINT)wcslen(m_vecIngameScene[1]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN].Get());
 
         if (gGameFramework.m_pPlayer->isGrassMap)
-            m_pd2dDeviceContext->DrawText(m_vecIngameScene[2], (UINT)wcslen(m_vecIngameScene[2]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+            m_pd2dDeviceContext->DrawText(m_vecIngameScene[2], (UINT)wcslen(m_vecIngameScene[2]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN].Get());
 
 
         m_pd2dDeviceContext->EndDraw();
         break;
     }
-
-
-
-
 
 
     m_pd3d11On12Device->ReleaseWrappedResources(ppResources, _countof(ppResources));
@@ -278,7 +322,7 @@ void UILayer::ReleaseResources()
     for (UINT i = 0; i < m_nTextBlocks; i++)
     {
         m_pTextBlocks[i].m_pdwFormat->Release();
-        m_pTextBlocks[i].m_pd2dTextBrush->Release();
+        // m_pTextBlocks[i].m_pd2dTextBrush->Release(); // ComPtr 사용으로 인해 필요 없음
     }
     delete[] m_pTextBlocks;
     m_pTextBlocks = nullptr;
@@ -298,11 +342,7 @@ void UILayer::ReleaseResources()
         m_ppd3d11WrappedRenderTargets[i]->Release();
     }
 
-    for (int i = 0; i < m_brushes.size(); ++i) {
-        if (m_brushes[i]) {
-            m_brushes[i]->Release();
-        }
-    }
+    // m_brushes.fill(nullptr); // ComPtr 사용으로 인해 필요 없음
 
     for (int i = 0; i < m_textFormats.size(); ++i) {
         if (m_textFormats[i]) {
@@ -310,11 +350,34 @@ void UILayer::ReleaseResources()
         }
     }
 
-    if(m_pd2dDeviceContext)m_pd2dDeviceContext->Release();
-    if(m_pd2dWriteFactory)m_pd2dWriteFactory->Release();
-    if(m_pd2dDevice)m_pd2dDevice->Release();
-    if(m_pd2dFactory)m_pd2dFactory->Release();
-    if(m_pd3d11DeviceContext)m_pd3d11DeviceContext->Release();
-    if(m_pd3d11On12Device)m_pd3d11On12Device->Release();
+    // ComPtr 사용으로 인해 수동 해제가 필요 없음
+
+    if (m_pd2dDeviceContext)m_pd2dDeviceContext->Release();
+    if (m_pd2dWriteFactory)m_pd2dWriteFactory->Release();
+    if (m_pd2dDevice)m_pd2dDevice->Release();
+    if (m_pd2dFactory)m_pd2dFactory->Release();
+    if (m_pd3d11DeviceContext)m_pd3d11DeviceContext->Release();
+    if (m_pd3d11On12Device)m_pd3d11On12Device->Release();
 }
 
+void UILayer::AddUIRect(int sceneNum, D2D1_RECT_F rect, std::function<bool()> func)
+{
+    if (sceneNum <= m_uiRects.size()) {
+        m_uiRects[sceneNum].emplace_back(rect, func);
+    }
+    else {
+        std::cerr << "Invalid sceneNum: " << sceneNum << std::endl;
+    }
+}
+
+bool UIRect::ClickCollide(POINT clickPos) const
+{
+    std::cout << "Click position: " << clickPos.x << ", " << clickPos.y << std::endl;
+
+    if (m_rect.left <= clickPos.x && m_rect.right >= clickPos.x &&
+        m_rect.top <= clickPos.y && m_rect.bottom >= clickPos.y) {
+        return m_UIfunc();
+    }
+
+    return false;
+}
