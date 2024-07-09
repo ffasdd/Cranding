@@ -7,8 +7,9 @@
 #include "Shader.h"
 #include "Player.h"
 #include "Network.h"
+//#include "stdafx.h"
 
-#define MAX_LIGHTS						16 
+#define MAX_LIGHTS						1
 
 #define POINT_LIGHT						1
 #define SPOT_LIGHT						2
@@ -108,8 +109,12 @@ public:
 	ID3D12DescriptorHeap* GetDescriptorHeap() { return m_pd3dCbvSrvDescriptorHeap; }
 	static ID3D12DescriptorHeap* m_pd3dCbvSrvDescriptorHeap;
 
+	void OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+
 	CPlayer								*m_pPlayer = NULL;
 protected:
+	//LIGHTS* m_pLights = NULL;
+
 	ID3D12RootSignature					*m_pd3dGraphicsRootSignature = NULL;
 	ID3D12RootSignature* m_pd3dComputeRootSignature = NULL;
 
@@ -178,6 +183,11 @@ public:
 
 	ID3D12Resource						*m_pd3dcbLights = NULL;
 	LIGHTS								*m_pcbMappedLights = NULL;
+
+	CDepthRenderShader* m_pDepthRenderShader = NULL;
+
+	CShadowMapShader* m_pShadowShader = NULL;
+	CTextureToViewportShader* m_pShadowMapToViewport = NULL;
 };
 
 class CLoginScene : public CScene

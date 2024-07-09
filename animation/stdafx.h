@@ -70,6 +70,17 @@ extern HINSTANCE						ghAppInstance;
 #define FRAME_BUFFER_WIDTH				640
 #define FRAME_BUFFER_HEIGHT				480
 
+#define _PLANE_WIDTH			1024
+#define _PLANE_HEIGHT			1024
+
+#define _DEPTH_BUFFER_WIDTH		(FRAME_BUFFER_WIDTH * 4)
+#define _DEPTH_BUFFER_HEIGHT	(FRAME_BUFFER_HEIGHT * 4)
+
+#define MAX_LIGHTS				1
+
+#define MAX_DEPTH_TEXTURES		MAX_LIGHTS
+
+
 constexpr int DEFERREDNUM = 5;
 
 #pragma comment(lib, "d3dcompiler.lib")

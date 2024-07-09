@@ -22,6 +22,8 @@
 #include "Player.h"
 #include "Scene.h"
 #include "Network.h"
+//#include "stdafx.h"
+
 
 extern Network							gNetwork;
 

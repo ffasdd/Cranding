@@ -751,9 +751,25 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 		CLoginPlayer* pPlayer = new CLoginPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
-
+		
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
+
+		CObjectsShader* pObjectShader = new CObjectsShader(m_pScene->m_nHierarchicalGameObjects + 1, m_pScene->m_ppHierarchicalGameObjects, m_pScene->m_pPlayer);
+
+		// shadow
+		m_pScene->m_pDepthRenderShader = new CDepthRenderShader(pObjectShader, m_pScene->m_pLights);
+		DXGI_FORMAT pdxgiRtvFormats[1] = { DXGI_FORMAT_R32_FLOAT };
+		m_pScene->m_pDepthRenderShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, pdxgiRtvFormats, DXGI_FORMAT_D32_FLOAT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		m_pScene->m_pDepthRenderShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL);
+
+		m_pScene->m_pShadowShader = new CShadowMapShader(pObjectShader);
+		m_pScene->m_pShadowShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(),1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		m_pScene->m_pShadowShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->m_pDepthRenderShader->GetDepthTexture());
+
+		m_pScene->m_pShadowMapToViewport = new CTextureToViewportShader();
+		m_pScene->m_pShadowMapToViewport->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		m_pScene->m_pShadowMapToViewport->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->m_pDepthRenderShader->GetDepthTexture());
 
 		break;
 	}
@@ -847,6 +863,9 @@ void CGameFramework::BuildObjects(int nScene)
 
 	DXGI_FORMAT pdxgiDepthSrvFormats[1] = { DXGI_FORMAT_R32_FLOAT };
 	m_pPostProcessingShader->CreateShaderResourceViews(m_pd3dDevice, 1, &m_pd3dDepthStencilBuffer, pdxgiDepthSrvFormats);
+
+	// shadow
+
 
 	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0, 1);
 	m_pBlurBuffer = pTexture->CreateTexture(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_COMMON, NULL, RESOURCE_TEXTURE2D, 0, 1);
@@ -1067,8 +1086,11 @@ void CGameFramework::FrameAdvance()
 
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
+	// ** 메테리얼, 라이트 업데이트
 	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera);
 
+	// ** 쉐도우 맵 생성(광원 시점에서의 씬 렌더링 후 그걸 텍스처에 저장)
+	m_pScene->OnPreRender(m_pd3dCommandList, m_pCamera);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 

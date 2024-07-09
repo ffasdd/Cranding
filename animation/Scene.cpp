@@ -121,6 +121,15 @@ void CScene::BuildDefaultLightsAndMaterials()
 	::ZeroMemory(m_pLights, sizeof(LIGHT) * m_nLights);
 	m_xmf4GlobalAmbient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
 
+	m_pLights[0].m_bEnable = true;
+	m_pLights[0].m_nType = DIRECTIONAL_LIGHT;
+	m_pLights[0].m_xmf4Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	m_pLights[0].m_xmf4Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+	m_pLights[0].m_xmf4Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 0.0f);
+	m_pLights[0].m_xmf3Direction = XMFLOAT3(-0.3f, -0.85f, -0.3f);
+	m_pLights[0].m_fRange = 2000.0f;
+	m_pLights[0].m_xmf3Position = XMFLOAT3(-(_PLANE_WIDTH * 0.5f), 512.0f, 0.0f);
+
 	// m_pLights[0].m_bEnable = true;
 	// m_pLights[0].m_nType = POINT_LIGHT;
 	// m_pLights[0].m_fRange = 300.0f;
@@ -141,12 +150,7 @@ void CScene::BuildDefaultLightsAndMaterials()
 	// m_pLights[1].m_fFalloff = 8.0f;
 	// m_pLights[1].m_fPhi = (float)cos(XMConvertToRadians(40.0f));
 	// m_pLights[1].m_fTheta = (float)cos(XMConvertToRadians(20.0f));
-	m_pLights[0].m_bEnable = true;
-	m_pLights[0].m_nType = DIRECTIONAL_LIGHT;
-	m_pLights[0].m_xmf4Ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	m_pLights[0].m_xmf4Diffuse = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	m_pLights[0].m_xmf4Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 0.0f);
-	m_pLights[0].m_xmf3Direction = XMFLOAT3(-0.3f, -0.85f, -0.3f);
+
 	// m_pLights[3].m_bEnable = true;
 	// m_pLights[3].m_nType = SPOT_LIGHT;
 	// m_pLights[3].m_fRange = 600.0f;
@@ -377,6 +381,11 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	pd3dRootParameters[15].DescriptorTable.NumDescriptorRanges = 1;
 	pd3dRootParameters[15].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[9]; //Texture2DArray
 	pd3dRootParameters[15].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	pd3dRootParameters[16].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pd3dRootParameters[16].Descriptor.ShaderRegister = 10; //ToLight - shadow
+	pd3dRootParameters[16].Descriptor.RegisterSpace = 0;
+	pd3dRootParameters[16].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_STATIC_SAMPLER_DESC pd3dSamplerDescs[2];
 
@@ -746,6 +755,11 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	//XMFLOAT4X4 xmf4x4Rotate = Matrix4x4::Rotate(0.0f, -fAngle, 0.0f);
 	//XMFLOAT3 xmf3Position = Vector3::TransformCoord(XMFLOAT3(65.0f, 0.0f, 0.0f), xmf4x4Rotate);
 
+}
+
+void CScene::OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	m_pDepthRenderShader->PrepareShadowMap(pd3dCommandList, pCamera /*&m_xmBoundingBox*/);
 }
 
 void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
