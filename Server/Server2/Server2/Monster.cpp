@@ -33,9 +33,11 @@ void Monster::Move()
 
 		float checkPlayerDistance = Vector3::Distance(_pos, cl->_pos); // 사용자와의 나의 거리 
 
+		// 몬스터와 사용자간의 거리를 먼저 계산하고 array에 담아두고
+		// 
 		if (_viewRange >= checkPlayerDistance) // 거리안에 들어왔다. 
 		{
-			
+
 			//if (cl->_stage != 2)
 			//{
 			//	// 같은 스테이지가 아닐때 따라가지 못하게 막아놔야함 
@@ -59,21 +61,22 @@ void Monster::Move()
 
 			// right 벡터를 업데이트
 			_right = rightFloat3;
-			//if (CollideCheckToPlayer()) _pos = _prevpos;
+
 			//else 
-			
-			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+			if (CollideCheckToPlayer()) _pos = _prevpos;
+			else
+				_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
 			m_SPBB.Center = _pos;
 			m_SPBB.Center.y = _pos.y;
-			
+
 		}
 		else
 		{
 			_pos = Vector3::Add(_pos, directionToSpaceshipFloat3, _speed);
 			m_SPBB.Center = _pos;
 			m_SPBB.Center.y = _pos.y;
-	;
+			;
 		}
 	}
 }

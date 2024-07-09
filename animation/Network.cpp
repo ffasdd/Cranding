@@ -127,6 +127,11 @@ void Network::SendProcess(SENDTYPE sendtype)
 	case SENDTYPE::CHANGE_STAGE: {
 		SendChangeScene(gGameFramework.SceneNum);
 		break;
+	case SENDTYPE::ATTACK_COLLISION:
+	{
+		//SendAttackCollision()
+		break;
+	}
 	}
 
 	}
@@ -426,18 +431,6 @@ void Network::SendMovePlayer(XMFLOAT3 _pos)
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
-//void Network::SendRotatePlayer(XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up)
-//{
-//	CS_ROTATE_PACKET p;
-//	p.size = sizeof(CS_ROTATE_PACKET);
-//	p.type = CS_ROTATE;
-//	p.look = _look;
-//	p.right = _right;
-//	p.up = _up;
-//	p.roomid = my_roomid;
-//	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-//
-//}
 void Network::SendRotatePlayer(float _yaw)
 {
 	CS_ROTATE_PACKET p;
