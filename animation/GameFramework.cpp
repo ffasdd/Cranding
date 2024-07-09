@@ -495,8 +495,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				isready = false;
 				ReleaseObjects();
 				BuildObjects(SceneNum);
-				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-				//gNetwork.SendChangeScene(SceneNum);
+				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 				break;
 			}
 			else if (PlayerPosX > 0 && PlayerPosY < 0)
@@ -506,8 +505,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 4;
 				ReleaseObjects();
 				BuildObjects(SceneNum);
-				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-				//gNetwork.SendChangeScene(SceneNum);
+				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 				break;
 			}
 			else if (PlayerPosX < 0 && PlayerPosY > 0)
@@ -517,8 +515,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 5;
 				ReleaseObjects();
 				BuildObjects(SceneNum);
-				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-				//gNetwork.SendChangeScene(SceneNum);
+				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				
 				break;
 			}
 			else
