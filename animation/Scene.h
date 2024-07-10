@@ -54,6 +54,8 @@ public:
 	// 충돌체크 함수
 	virtual bool CheckObjectByObjectCollisions(CGameObject* pGameObject);
 
+
+	// monster npc끼리 충돌체크 함수
 	void CheckMonsterByMonsterCollisions();
 
 	void HandleCollisionEnd(CGameObject* pObject);

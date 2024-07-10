@@ -438,33 +438,33 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			//BuildObjects(SceneNum);
 			break;
 
-		case '3':
-			if (SceneNum == 1 || SceneNum == 0) break;
-			// ice map
-			SceneNum = 3;
-			isready = false;
-			ReleaseObjects();
-			BuildObjects(SceneNum);
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			break;
+		//case '3':
+		//	if (SceneNum == 1 || SceneNum == 0) break;
+		//	// ice map
+		//	SceneNum = 3;
+		//	isready = false;
+		//	ReleaseObjects();
+		//	BuildObjects(SceneNum);
+		//	g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+		//	break;
 
-		case '4':
-			if (SceneNum == 1 || SceneNum == 0) break;
-			// fire map
-			SceneNum = 4;
-			ReleaseObjects();
-			BuildObjects(SceneNum);
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			break;
+		//case '4':
+		//	if (SceneNum == 1 || SceneNum == 0) break;
+		//	// fire map
+		//	SceneNum = 4;
+		//	ReleaseObjects();
+		//	BuildObjects(SceneNum);
+		//	g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+		//	break;
 
-		case '5':
-			if (SceneNum == 1 || SceneNum == 0) break;
-			// grass map
-			SceneNum = 5;
-			ReleaseObjects();
-			BuildObjects(SceneNum);
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			break;
+		//case '5':
+		//	if (SceneNum == 1 || SceneNum == 0) break;
+		//	// grass map
+		//	SceneNum = 5;
+		//	ReleaseObjects();
+		//	BuildObjects(SceneNum);
+		//	g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+		//	break;
 
 		case VK_SPACE:
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
@@ -479,6 +479,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			m_bRenderBoundingBox = !m_bRenderBoundingBox;
 			break;
 		case 'F':
+		{
+			cout << "f입력 후 씬 전환" << endl;
 			// 맵 이동 관련
 			PlayerPosX = m_pPlayer->GetPosition().x;
 			PlayerPosZ = m_pPlayer->GetPosition().z;
@@ -511,13 +513,13 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				ReleaseObjects();
 				BuildObjects(SceneNum);
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-				
+
 				break;
 			}
 			else
 				break;
 			break;
-
+		}
 		default:
 			break;
 		}
@@ -627,6 +629,8 @@ void CGameFramework::myFunc_SetMonPosition(int n, XMFLOAT3 position)
 	m_pScene->m_ppHierarchicalGameObjects[n + 3]->isdraw = true;
 	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetPosition(position);
 	m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
+
+	m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_xmf3BeforeCollidedPosition = position;
 	//m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
 }
 
@@ -1050,7 +1054,6 @@ void CGameFramework::AnimateObjects()
 	{
 		if (m_pPlayer->isFireMap == true)
 		{
-
 		}
 		else if (m_pPlayer->isGrassMap == true)
 		{

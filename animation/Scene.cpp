@@ -60,14 +60,14 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 {
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
-		// �ʰ� �浹�� ���
 		if (i == 0) 
 		{
 			m_ppHierarchicalGameObjects[i]->m_bWasColliding = m_ppHierarchicalGameObjects[i]->m_bIsColliding;
 			m_ppHierarchicalGameObjects[i]->m_bIsColliding = false; // 현재 프레임의 충돌 상태 초기화
 
 			CGameObject* pMapObject = m_ppHierarchicalGameObjects[0]->m_pChild->m_pChild;
-			
+
+			// colliison check with map
 			for (int j = 0; j < m_ppHierarchicalGameObjects[0]->m_pChild->nChilds; j++)
 			{
 				const char* str = pMapObject->m_pstrFrameName;
@@ -91,8 +91,8 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 						return true;
 					}
 
-					// �ٴ��� �浹 üũ �ȵǵ���
-					/*else */if (!strcmp(str, "Plane"))
+					// except plane
+					if (!strcmp(str, "Plane"))
 						pMapObject = pMapObject->m_pSibling;
 
 					else

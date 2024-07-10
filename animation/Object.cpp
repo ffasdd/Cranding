@@ -732,6 +732,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[k].m_fWeight));
 							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
 						}
+
 						// monster dead
 						if (m_bIsAttacked == true && fPosition == 0.0f)
 						{
@@ -1728,7 +1729,6 @@ void CPlayerAnimationController::OnRootMotion(CGameObject* pRootGameObject)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-// **이거 뭐임??? 없어도 될 것 같은데
 CPlayerObject::CPlayerObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks)
 {
 	CLoadedModelInfo *pPlayerModel = pModel;
@@ -1758,76 +1758,6 @@ CFireEnemyObject::CFireEnemyObject(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 CFireEnemyObject::~CFireEnemyObject()
 {
-}
-
-void CFireEnemyObject::Animate(float fTimeElapsed)
-{
-	//if()
-	//// 플레이어와 적 객체의 거리가 50 이하가 되면 적이 플레이어를 바라보고 쫓아온다
-	//for (int i = 0; i < m_nObjects; ++i) {
-
-	//	XMFLOAT3 ePos = m_ppObjects[i]->GetPosition();
-	//	float eR = m_ppObjects[i]->radius;
-	//	XMFLOAT3 pPos = m_pPlayer->GetPosition();
-	//	float pR = m_pPlayer->radius;
-
-	//	// 적 & 적 충돌 체크
-	//	for (int j = 0; j < m_nObjects; ++j) {
-	//		XMFLOAT3 e2Pos = m_ppObjects[j]->GetPosition();
-	//		float e2R = m_ppObjects[j]->radius;
-
-	//		if ((i != j) && IsCollisionSphereToSphere(ePos, eR, e2Pos, e2R) == true)
-	//		{
-	//			m_ppObjects[i]->MoveBehind(fTimeElapsed * 2);
-	//			m_ppObjects[j]->MoveBehind(fTimeElapsed * 10);
-	//		}
-	//	}
-
-	//	// 적 & 총알 충돌체크
-	//	for (int b = 0; b < BULLETS; b++)
-	//	{
-	//		if (ppBullets[b]->m_bActive == true)
-	//		{
-	//			XMFLOAT3 bPos = ppBullets[b]->GetPosition();
-	//			float bR = ppBullets[b]->radius;
-
-	//			if (IsCollisionSphereToSphere(ePos, eR, bPos, bR) == true)
-	//			{
-	//				ppBullets[b]->SetPosition(99999.0, 88888.0, 88888.0);
-	//				ppBullets[b]->m_bActive = false;
-	//				m_ppObjects[i]->SetPosition(99999.0, 88888.0, 88888.0);
-	//			}
-	//		}
-	//	}
-
-	//	if (GetDistance(m_pPlayer, m_ppObjects[i]) <= 50) {
-	//		// 적 & 플레이어의 거리가 50 이하면 플레이어에게 총 쏨
-	//		//m_ppObjects->FireBullet(((CAirplanePlayer*)m_pPlayer)->GetPosition(), ((CAirplanePlayer*)m_pPlayer)->GetLook());
-
-	//		// CObjectsShader가 CShader의 자식인데 CShader에서 Player의 클래스 포인터를 public으로 갖고 있기 때문에 접근 가능
-	//		m_ppObjects[i]->LookTarget(pPos);
-
-	//		// 적 & 플레이어 충돌 체크
-	//		if (IsCollisionSphereToSphere(pPos, pR, ePos, eR) == true)
-	//			m_ppObjects[i]->MoveBehind(fTimeElapsed * 10);
-	//		else
-	//			m_ppObjects[i]->MoveForward(fTimeElapsed * 10);
-	//	}
-
-	//	// 거리가 50 초과면 알아서 움직이게 됨
-	//	else {
-	//		if (m_ppObjects[i]->MoveNum >= 3000)
-	//		{
-	//			m_ppObjects[i]->Rotate(0.0f, 90.f, 0.0f);
-	//			m_ppObjects[i]->MoveForward(fTimeElapsed * 10);
-	//			m_ppObjects[i]->MoveNum = 0;
-	//		}
-	//		if (m_ppObjects[i]->MoveNum < 3000) {
-	//			m_ppObjects[i]->MoveForward(fTimeElapsed * 10);
-	//			m_ppObjects[i]->MoveNum++;
-	//		}
-	//	}
-	//}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

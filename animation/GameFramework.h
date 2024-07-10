@@ -87,8 +87,10 @@ public:
 	// 서버로부터 받은 좌표 렌더링
 public:
 	unique_ptr<CBlurShader> m_BlurShader = NULL;
-	  ID3D12Resource* m_pBlurBuffer = NULL;
-	bool isBlurRender = true;
+
+	ID3D12Resource* m_pBlurBuffer = NULL;
+	bool isBlurRender = false;
+
 
 	CPlayer* m_pPlayer = NULL;
 	float PlayerPosX;
