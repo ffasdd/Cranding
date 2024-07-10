@@ -92,7 +92,7 @@ public:
 
 	CPlayer* m_pPlayer = NULL;
 	float PlayerPosX;
-	float PlayerPosY;
+	float PlayerPosZ;
 
 	int cl_id;
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
@@ -144,7 +144,7 @@ private:
 	UINT						m_nSwapChainBufferIndex;
 
 	ID3D12Resource *m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
-	ID3D12DescriptorHeap *m_pd3dRtvDescriptorHeap = nullptr;
+	ID3D12DescriptorHeap *m_pd3dRtvDescriptorHeap = NULL;
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBuffers];
 
 	ID3D12Resource* m_pd3dDepthStencilBuffer = NULL;

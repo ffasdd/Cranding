@@ -90,7 +90,7 @@ public:
 	ID3D12DescriptorHeap* GetDescriptorHeap() { return m_pd3dCbvSrvDescriptorHeap; }
 	static ID3D12DescriptorHeap* m_pd3dCbvSrvDescriptorHeap;
 
-	std::unique_ptr<CPlayer> m_pPlayer = nullptr;
+	CPlayer* m_pPlayer = NULL;
 protected:
 	ID3D12RootSignature					*m_pd3dGraphicsRootSignature = NULL;
 	ID3D12RootSignature* m_pd3dComputeRootSignature = NULL;

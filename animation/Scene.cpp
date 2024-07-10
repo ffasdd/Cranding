@@ -238,28 +238,15 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 
 void CScene::ReleaseObjects()
 {
-	if (m_pd3dCbvSrvDescriptorHeap) {
-		int ref = m_pd3dCbvSrvDescriptorHeap->Release();
-		if (ref) {
-			cout << "Scene, m_pd3dCbvSrvDescriptorHeap Ref: " << ref << endl;
-		}
-		else
-			m_pd3dCbvSrvDescriptorHeap = nullptr;
-	}
-	if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
+	//if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
+	if (m_pd3dCbvSrvDescriptorHeap) m_pd3dCbvSrvDescriptorHeap->Release();
+	//if (m_pDescriptorHeap) delete m_pDescriptorHeap;
 
-	if (m_ppGameObjects)
-	{
-		for (int i = 0; i < m_nGameObjects; i++) {
-			m_ppGameObjects[i]->ReleaseShaderVariables();
-			m_ppGameObjects[i]->Release();
-			m_ppGameObjects[i]->ReleaseUploadBuffers();
-			m_ppGameObjects[i] = nullptr;
-		}
-
-		delete[] m_ppGameObjects;
-		m_ppGameObjects = nullptr;
-	}
+	//if (m_ppGameObjects)
+	//{
+	//	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Release();
+	//	delete[] m_ppGameObjects;
+	//}
 
 	if (m_ppShaders)
 	{
@@ -280,21 +267,9 @@ void CScene::ReleaseObjects()
 		m_pSkyBox = nullptr;
 	}
 
-	if (m_pTerrain) {
-		delete m_pTerrain;
-		m_pTerrain = nullptr;
-	}
-
 	if (m_ppHierarchicalGameObjects)
 	{
-		for (int i = 0; i < m_nHierarchicalGameObjects; i++)
-		{
-			if (m_ppHierarchicalGameObjects[i])
-			{
-				m_ppHierarchicalGameObjects[i]->Release();
-			}
-		}
-
+		for (int i = 0; i < m_nHierarchicalGameObjects; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Release();
 		delete[] m_ppHierarchicalGameObjects;
 	}
 
@@ -755,13 +730,13 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			//	m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 		}
 	}
-
+	
 	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->AnimateObjects(fTimeElapsed);
 
 	if (m_pLights)
 	{
-		m_pLights[1].m_xmf3Position = m_pPlayer.get()->GetPosition();
-		m_pLights[1].m_xmf3Direction = m_pPlayer.get()->GetLookVector();
+		m_pLights[1].m_xmf3Position = m_pPlayer->GetPosition();
+		m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
 	}
 
 

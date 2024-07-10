@@ -481,8 +481,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case 'F':
 			// 맵 이동 관련
 			PlayerPosX = m_pPlayer->GetPosition().x;
-			PlayerPosY = m_pPlayer->GetPosition().y;
-			if (PlayerPosX > 0 && PlayerPosY > 0)
+			PlayerPosZ = m_pPlayer->GetPosition().z;
+			if (PlayerPosX > 0 && PlayerPosZ > 0)
 			{
 				if (SceneNum == 1 || SceneNum == 0) break;
 				// ice map
@@ -493,7 +493,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 				break;
 			}
-			else if (PlayerPosX > 0 && PlayerPosY < 0)
+			else if (PlayerPosX > 0 && PlayerPosZ < 0)
 			{
 				if (SceneNum == 1 || SceneNum == 0) break;
 				// fire map
@@ -503,7 +503,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 				break;
 			}
-			else if (PlayerPosX < 0 && PlayerPosY > 0)
+			else if (PlayerPosX < 0 && PlayerPosZ > 0)
 			{
 				if (SceneNum == 1 || SceneNum == 0) break;
 				// grass map
@@ -795,14 +795,9 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene = new CLoginScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-		std::unique_ptr<CLoginPlayer> pPlayer = std::make_unique<CLoginPlayer>(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CLoginPlayer* pPlayer = new CLoginPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
-		// Scene의 m_pPlayer에 소유권 이전
-		m_pScene->m_pPlayer = std::move(pPlayer);
-
-		// m_pPlayer에 Scene의 m_pPlayer의 객체를 가리키는 포인터 저장
-		m_pPlayer = m_pScene->m_pPlayer.get();
-
+		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
 
 		break;
@@ -812,13 +807,9 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene = new CLobbyScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-		std::unique_ptr<CTerrainPlayer> pPlayer = std::make_unique<CTerrainPlayer>(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 2);
-		// Scene의 m_pPlayer에 소유권 이전
-		m_pScene->m_pPlayer = std::move(pPlayer);
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 2);
 
-		// m_pPlayer에 Scene의 m_pPlayer의 객체를 가리키는 포인터 저장
-		m_pPlayer = m_pScene->m_pPlayer.get();
-
+		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
 
 
@@ -829,15 +820,9 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene = new CSpaceShipScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 2);
 
-		std::unique_ptr<CTerrainPlayer> pPlayer = std::make_unique<CTerrainPlayer>(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 1);
-
-		// Scene의 m_pPlayer에 소유권 이전
-		m_pScene->m_pPlayer = std::move(pPlayer);
-
-		// m_pPlayer에 Scene의 m_pPlayer의 객체를 가리키는 포인터 저장
-		m_pPlayer = m_pScene->m_pPlayer.get();
-
+		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
 
 
@@ -850,15 +835,9 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene = new CIceScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 2);
 
-		std::unique_ptr<CTerrainPlayer> pPlayer = std::make_unique<CTerrainPlayer>(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
-
-		// Scene의 m_pPlayer에 소유권 이전
-		m_pScene->m_pPlayer = std::move(pPlayer);
-
-		// m_pPlayer에 Scene의 m_pPlayer의 객체를 가리키는 포인터 저장
-		m_pPlayer = m_pScene->m_pPlayer.get();
-
+		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
 
 		break;
@@ -870,14 +849,9 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene = new CFireScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-		std::unique_ptr<CTerrainPlayer> pPlayer = std::make_unique<CTerrainPlayer>(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 2);
 
-		// Scene의 m_pPlayer에 소유권 이전
-		m_pScene->m_pPlayer = std::move(pPlayer);
-
-		// m_pPlayer에 Scene의 m_pPlayer의 객체를 가리키는 포인터 저장
-		m_pPlayer = m_pScene->m_pPlayer.get();
-
+		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
 
 		break;
@@ -889,14 +863,9 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene = new CGrassScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
+		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 2);
 
-		std::unique_ptr<CTerrainPlayer> pPlayer = std::make_unique<CTerrainPlayer>(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
-		// Scene의 m_pPlayer에 소유권 이전
-		m_pScene->m_pPlayer = std::move(pPlayer);
-
-		// m_pPlayer에 Scene의 m_pPlayer의 객체를 가리키는 포인터 저장
-		m_pPlayer = m_pScene->m_pPlayer.get();
-
+		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
 
 
