@@ -31,6 +31,8 @@ public:
 
 	int room_id;
 	int _stage;
+
+	float distance = -1.0f;
 	
 	animateState animationstate;
 	animateState prevanimationstate;

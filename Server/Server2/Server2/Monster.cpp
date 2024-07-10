@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Monster.h"
 #include"Session.h"
+#include<limits>
 array<Monster, MAX_NPC> Monsters; //전체 NPC 
 
 void Monster::Move()
@@ -12,9 +13,41 @@ void Monster::Move()
 	//float checkPlayerPos = Vector3::Distance(pos);
 	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
 	_prevpos = _pos; //이동하기 이전 좌표를 저장 
-	for (auto& cl : ingamePlayer)
+	// ID가 아닌 거리와 좌표를 저장? 
+	int id = FindClosePlayer();
+	
+	if (id != -1)
 	{
-		if (cl->_stage != _stagenum)continue;
+
+		XMVECTOR posVec = XMLoadFloat3(&_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
+
+		XMFLOAT3 directionToPlayerFloat3;
+		XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+		_look = directionToPlayerFloat3;
+
+		// right 벡터 계산 (look과 up 벡터의 외적)
+		XMVECTOR upVec = XMLoadFloat3(&up);
+		XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+		XMFLOAT3 rightFloat3;
+		XMStoreFloat3(&rightFloat3, rightVec);
+
+		// right 벡터를 업데이트
+		_right = rightFloat3;
+
+		//else 
+		//if (CollideCheckToPlayer()) _pos = _prevpos;
+		//else
+		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+
+		//m_SPBB.Center = _pos;
+		//m_SPBB.Center.y = _pos.y;
+	}
+	else
+	{
+		// 플레이어와의 최대거리가 가시거리 밖이라면 우주선을 향해 간다. 
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
 		XMVECTOR spaceshipVec = XMLoadFloat3(&spaceshippos);
 		XMVECTOR dirToSpaceship = XMVector3Normalize(spaceshipVec - posVec);
@@ -31,55 +64,13 @@ void Monster::Move()
 
 		_right = rightFloat3;
 
-		float checkPlayerDistance = Vector3::Distance(_pos, cl->_pos); // 사용자와의 나의 거리 
+		_pos = Vector3::Add(_pos, directionToSpaceshipFloat3, _speed);
+		m_SPBB.Center = _pos;
+		m_SPBB.Center.y = _pos.y;
 
-		// 몬스터와 사용자간의 거리를 먼저 계산하고 array에 담아두고
-		// 
-		if (_viewRange >= checkPlayerDistance) // 거리안에 들어왔다. 
-		{
-
-			//if (cl->_stage != 2)
-			//{
-			//	// 같은 스테이지가 아닐때 따라가지 못하게 막아놔야함 
-			//	_pos = Vector3::Add(_pos, directionToSpaceshipFloat3, _speed);
-
-			//}//cout << cl->_id << " 번 클라이언트 접근 " << endl;
-			XMVECTOR posVec = XMLoadFloat3(&_pos);
-			XMVECTOR playerVec = XMLoadFloat3(&cl->_pos);
-			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
-
-			XMFLOAT3 directionToPlayerFloat3;
-			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
-
-			_look = directionToPlayerFloat3;
-
-			// right 벡터 계산 (look과 up 벡터의 외적)
-			XMVECTOR upVec = XMLoadFloat3(&up);
-			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
-			XMFLOAT3 rightFloat3;
-			XMStoreFloat3(&rightFloat3, rightVec);
-
-			// right 벡터를 업데이트
-			_right = rightFloat3;
-
-			//else 
-			if (CollideCheckToPlayer()) _pos = _prevpos;
-			else
-				_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
-
-			m_SPBB.Center = _pos;
-			m_SPBB.Center.y = _pos.y;
-
-		}
-		else
-		{
-			_pos = Vector3::Add(_pos, directionToSpaceshipFloat3, _speed);
-			m_SPBB.Center = _pos;
-			m_SPBB.Center.y = _pos.y;
-			;
-		}
 	}
 }
+
 
 void Monster::Remove()
 {
@@ -163,3 +154,31 @@ bool Monster::CollideCheckToPlayer()
 	}
 	return false;
 }
+
+int Monster::FindClosePlayer()
+{
+	int closestPlayerId = -1;
+	int farthestPlayerId = -1;
+
+	float minDistance = 50000.0f;
+	float maxDistance = 0.0f;
+
+	int  idx = 0;
+	for (auto& pl : ingamePlayer)
+	{
+		pl->distance = Vector3::Distance(pl->_pos, _pos);
+		if (pl->distance <= _viewRange)
+		{
+			if (pl->distance < minDistance)
+			{
+				minDistance = pl->distance;
+				closestPlayerId = idx;
+
+			}
+		}
+		idx++;
+	}
+	return closestPlayerId;
+}
+
+

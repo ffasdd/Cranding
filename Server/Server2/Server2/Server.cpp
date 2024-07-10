@@ -254,8 +254,15 @@ void Server::WorkerThread()
 			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
-			//TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 		}
+		/*case COMP_TYPE::NPC_TRACE: {
+			int r_id = static_cast<int>(key);
+			ingameroom[r_id].NightMonsterTracetoPlayer();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(10ms),r_id,EVENT_TYPE::EV_TRACE_PLAYER };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+		}*/
 		default:
 			break;
 		}
@@ -527,7 +534,7 @@ void Server::ProcessPacket(int id, char* packet)
 				if (find(i_m.ingamePlayer.begin(), i_m.ingamePlayer.end(), &clients[id]) == i_m.ingamePlayer.end())
 				{
 					clients[id]._p_lock.lock();
-					i_m.ingamePlayer.emplace_back(&clients[id]);
+					i_m.ingamePlayer[id] = (&clients[id]);
 					clients[id]._p_lock.unlock();
 				}
 			}
@@ -610,8 +617,6 @@ void Server::ProcessPacket(int id, char* packet)
 
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
-
-
 			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
 
@@ -626,6 +631,9 @@ void Server::ProcessPacket(int id, char* packet)
 
 			TIMER_EVENT ev4{ ingameroom[r_id].start_time ,r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev4);
+
+			TIMER_EVENT ev5{ ingameroom[r_id].start_time + chrono::seconds(6s), r_id,EVENT_TYPE::EV_TRACE_PLAYER };
+			g_Timer.InitTimerQueue(ev5);
 		}
 		else
 			break;

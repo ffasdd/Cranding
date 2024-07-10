@@ -44,12 +44,15 @@ void Room::UpdateNpc()
 	for (auto& npc : NightMonster)
 	{
 		npc.ingamePlayer = ingamePlayer;
+
 		if (npc._is_alive == false)
 		{
 			npc.Remove();
 		}
 		else
+		{
 			npc.Move();
+		}
 
 		sendmonsterupdatePacket[idx].size = sizeof(NightMonstersUpdate);
 		sendmonsterupdatePacket[idx].type = SC_MONSTER_UPDATE_POS;
@@ -279,5 +282,13 @@ void Room::MonsterCollide()
 			if (NightMonster[i].m_SPBB.Intersects(monster.m_SPBB))
 				NightMonster[i]._pos = NightMonster[i]._prevpos;
 		}
+	}
+}
+
+void Room::NightMonsterTracetoPlayer()
+{
+	for (auto& n_m : NightMonster)
+	{
+	
 	}
 }

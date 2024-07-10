@@ -33,8 +33,10 @@ public:
 
 
 public:
+
 	vector<Session*> ingamePlayer;
 
+	vector<pair<float, XMFLOAT3>> playerdisPos;
 public:
 
 
@@ -46,6 +48,8 @@ public:
 
 	bool CollideCheckToPlayer();
 
+	// trace
+	int FindClosePlayer();
 
 
 

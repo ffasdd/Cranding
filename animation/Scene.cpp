@@ -292,6 +292,7 @@ void CScene::ReleaseObjects()
 			if (m_ppHierarchicalGameObjects[i])
 			{
 				m_ppHierarchicalGameObjects[i]->Release();
+				m_ppHierarchicalGameObjects[i] = NULL;
 			}
 		}
 
