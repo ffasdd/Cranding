@@ -74,7 +74,7 @@ public:
 	void UpdateShaderVariables();
 
 
-	void UpdateUI();
+	void UpdateTime();
 
 	void readyUI();
 

@@ -1078,18 +1078,26 @@ void CGameFramework::UpdateShaderVariables()
 
 }
 
-void CGameFramework::UpdateUI()
+void CGameFramework::UpdateTime()
 {
-	total++;
-	if (total % 10 == 0) {
+	static float accumulatedTime = 0.0f;  // 누적된 시간
+	float fTimeElapsed = m_GameTimer.GetTimeElapsed();  // 경과 시간 가져오기
+	accumulatedTime += fTimeElapsed;  // 누적 시간 업데이트
 
-		curSecond++;
-		if (curSecond == 60) {
-			curSecond = 0;
-			curMinute++;
-			curMinute = curMinute % 5;
-			curDay++;
-		}
+	// 누적 시간이 초 단위 이상인 경우
+	int totalSeconds = static_cast<int>(accumulatedTime);  // 누적 시간을 초 단위로 변환
+
+	// 분과 초 계산
+	curMinute = totalSeconds / 60;
+	curSecond = totalSeconds % 60;
+
+	// 5분이 지나면 curDay를 증가시키고, 시간 초기화
+	if (curMinute >= 5) {
+		curDay++;
+		accumulatedTime -= (5 * 60);  // 5분(300초)을 뺌으로써 초기화
+		totalSeconds = static_cast<int>(accumulatedTime);  // 갱신된 누적 시간을 초 단위로 변환
+		curMinute = totalSeconds / 60;
+		curSecond = totalSeconds % 60;
 	}
 }
 
@@ -1109,9 +1117,9 @@ void CGameFramework::FrameAdvance()
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * ::gnRtvDescriptorIncrementSize);
 
-	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera);
-	UpdateUI();
-
+	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera); 
+	if (SceneNum > 1)
+		UpdateTime();
 	UpdateShaderVariables();
 
 
