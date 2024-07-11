@@ -181,7 +181,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     input.normalW = normalize(input.normalW);
     output.normal = float4(input.normalW, 0);
     
-    output.zDepth = float4(input.position.z, 0.0f, input.position.z, 1.0);
+    output.zDepth = input.position.z;
+    //output.zDepth = float4(input.position.z, 0.0f, input.position.z, 1.0);
     //output.Position = float4(input.positionW, 0);
     
     output.scene = output.cTexture + gMaterial.m_cEmissive;
@@ -292,12 +293,13 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
     //output.normal = float4(0.0,0.0,0.0, 1.0f);
 
 	//output.normal = float4(input.normalW.xyz * 0.5f + 0.5f, 1.0f);
-    input.normalW = normalize(input.normalW);
+    //output.normal = float4(input.normalW, 0);
+    //output.zDepth = input.position.z;
+    //output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
+    
     output.normal = float4(input.normalW, 0);
-    output.zDepth = input.position.z;
-    output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
-   // output.Position = float4(input.positionW, 0);
-
+    input.normalW = normalize(input.normalW);
+    
     output.diffuse = gMaterial.m_cDiffuse;
     //output.diffuse = float4(1.0, 1.0, 1.0, 1.0);
 	
@@ -533,9 +535,9 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     float2 texelCoord = input.uv * textureSize;
     uint3 texCoord = uint3(texelCoord, 0);
     
-    float3 pos = input.position;
-    //float4 position = gtxtzDepthTexture.Load(texCoord);
-    //float3 pos = position.xyz;
+    //float3 pos = input.position;
+    float4 position = gtxtzDepthTexture.Load(texCoord);
+    float3 pos = position.xyz;
     //float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
     float3 normal = gtxtdrNormalTexture.Load(texCoord).rgb; // good
     float4 specular = float4(0.0f, 0.0f, 0.0f, 1.0f);
