@@ -73,7 +73,9 @@ public:
     CScene();
     ~CScene();
 
+
 	// 충돌체크 함수
+	void HandleCollisionEnd(CGameObject* pObject);
 	virtual bool CheckObjectByObjectCollisions(CGameObject* pGameObject);
 
 	// 바운딩박스

@@ -466,6 +466,48 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			m_bRenderBoundingBox = !m_bRenderBoundingBox;
 			break;
 
+		case 'F':
+			// 맵 이동 관련
+			PlayerPosX = m_pPlayer->GetPosition().x;
+			PlayerPosY = m_pPlayer->GetPosition().y;
+			if (PlayerPosX > 0 && PlayerPosY > 0)
+			{
+				if (SceneNum == 1 || SceneNum == 0) break;
+				// ice map
+				SceneNum = 3;
+				isready = false;
+				ReleaseObjects();
+				BuildObjects(SceneNum);
+				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				//gNetwork.SendChangeScene(SceneNum);
+				break;
+			}
+			else if (PlayerPosX > 0 && PlayerPosY < 0)
+			{
+				if (SceneNum == 1 || SceneNum == 0) break;
+				// fire map
+				SceneNum = 4;
+				ReleaseObjects();
+				BuildObjects(SceneNum);
+				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				//gNetwork.SendChangeScene(SceneNum);
+				break;
+			}
+			else if (PlayerPosX < 0 && PlayerPosY > 0)
+			{
+				if (SceneNum == 1 || SceneNum == 0) break;
+				// grass map
+				SceneNum = 5;
+				ReleaseObjects();
+				BuildObjects(SceneNum);
+				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				//gNetwork.SendChangeScene(SceneNum);
+				break;
+			}
+			else
+				break;
+			break;
+
 		default:
 			break;
 		}
