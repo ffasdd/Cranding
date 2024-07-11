@@ -968,11 +968,16 @@ void CGameFramework::ProcessInput()
 			if (cxDelta || cyDelta)
 			{
 				if (pKeysBuffer[VK_RBUTTON] & 0xF0) {
+					/*
 					m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
 					g_clients[cl_id].setLook(m_pPlayer->GetLook());
 					g_clients[cl_id].setRight(m_pPlayer->GetRight());
 					g_clients[cl_id].setUp(m_pPlayer->GetUp());
-					g_sendqueue.push(SENDTYPE::ROTATE);
+					g_sendqueue.push(SENDTYPE::ROTATE);*/
+
+					// 여기서 yaw 값만 있으면 Rotate 함수에서 회전 연산 가능합니당
+					float yaw = cxDelta;
+					m_pPlayer->RotateYaw(yaw);
 				}
 			}
 
