@@ -91,7 +91,7 @@ public:
 
 	CPlayer* m_pPlayer = NULL;
 	float PlayerPosX;
-	float PlayerPosY;
+	float PlayerPosZ;
 
 	int cl_id;
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);

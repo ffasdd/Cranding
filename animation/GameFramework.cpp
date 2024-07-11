@@ -469,8 +469,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case 'F':
 			// 맵 이동 관련
 			PlayerPosX = m_pPlayer->GetPosition().x;
-			PlayerPosY = m_pPlayer->GetPosition().y;
-			if (PlayerPosX > 0 && PlayerPosY > 0)
+			PlayerPosZ = m_pPlayer->GetPosition().z;
+			if (PlayerPosX > 0 && PlayerPosZ > 0)
 			{
 				if (SceneNum == 1 || SceneNum == 0) break;
 				// ice map
@@ -482,7 +482,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				//gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
-			else if (PlayerPosX > 0 && PlayerPosY < 0)
+			else if (PlayerPosX > 0 && PlayerPosZ < 0)
 			{
 				if (SceneNum == 1 || SceneNum == 0) break;
 				// fire map
@@ -493,7 +493,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				//gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
-			else if (PlayerPosX < 0 && PlayerPosY > 0)
+			else if (PlayerPosX < 0 && PlayerPosZ > 0)
 			{
 				if (SceneNum == 1 || SceneNum == 0) break;
 				// grass map
