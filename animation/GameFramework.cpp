@@ -831,6 +831,9 @@ void CGameFramework::BuildObjects(int nScene)
 	default:
 		break;
 	}
+
+	CreateShaderVariables();
+
 	m_pPostProcessingShader = new CTextureToFullScreenShader();
 	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
@@ -1038,6 +1041,29 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
+void CGameFramework::CreateShaderVariables()
+{
+	UINT ncbElementBytes = ((sizeof(UINT) + 255) & ~255); //256의 배수
+	m_pd3dcbTime = ::CreateBufferResource(m_pd3dDevice, m_pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+
+	m_pd3dcbTime->Map(0, NULL, (void**)&m_pTime);
+}
+
+void CGameFramework::UpdateShaderVariables()
+{
+
+	TIME temp;
+	temp.fCurrentMin = curMinute;
+	temp.fCurrentSec = curSecond;
+
+	::memcpy(m_pTime, &temp, sizeof(TIME));
+
+	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbTime->GetGPUVirtualAddress();
+	m_pd3dCommandList->SetGraphicsRootConstantBufferView(16, d3dcbLightsGpuVirtualAddress);
+
+
+}
+
 void CGameFramework::UpdateUI()
 {
 	total++;
@@ -1067,6 +1093,9 @@ void CGameFramework::FrameAdvance()
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera);
+	UpdateUI();
+
+	UpdateShaderVariables();
 
 
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();

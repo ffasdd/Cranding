@@ -25,7 +25,11 @@
 
 extern Network							gNetwork;
 
-
+struct TIME
+{
+	float fCurrentMin;
+	float fCurrentSec;
+};
 
 class UILayer;
 
@@ -59,6 +63,10 @@ public:
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
+
+	void CreateShaderVariables();
+
+	void UpdateShaderVariables();
 
 
 	void UpdateUI();
@@ -104,6 +112,9 @@ public:
 	
 	bool DayTime = false;
 	bool Night = false;
+
+	ID3D12Resource* m_pd3dcbTime = NULL;
+	TIME* m_pTime = NULL;
 
 
 private:
