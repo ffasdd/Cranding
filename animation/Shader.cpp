@@ -1443,10 +1443,12 @@ void CDepthRenderShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 		d3dRtvCPUDescriptorHandle.ptr += ::gnRtvDescriptorIncrementSize;
 	}
 
-	d3dDescriptorHeapDesc.NumDescriptors = 1;
-	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+	// DSV 디스크립터 힙 생성
+	d3dDescriptorHeapDesc.NumDescriptors = 1;	// 1개의 디스크립터를 포함
+	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;		// DSV 저장에 사용
 	hResult = pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dDsvDescriptorHeap);
 
+	// depth buffer 리소스 생성
 	D3D12_RESOURCE_DESC d3dResourceDesc;
 	d3dResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	d3dResourceDesc.Alignment = 0;
@@ -1538,7 +1540,7 @@ void CDepthRenderShader::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCo
 	// ** 상수버퍼의 GPU 주소 얻어서
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbToLightGpuVirtualAddress = m_pd3dcbToLightSpaces->GetGPUVirtualAddress();
 
-	// ** 해당 주소(상수버퍼)를 쉐이더의 루트시그니처 16번 슬롯에 set해줌 -> GPU가 6번 슬롯에서 상수버퍼의 데이터에 접근 가능해짐
+	// ** 해당 주소(상수버퍼)를 쉐이더의 루트시그니처 16번 슬롯에 set해줌 -> GPU가 16번 슬롯에서 상수버퍼의 데이터에 접근 가능해짐
 	pd3dCommandList->SetGraphicsRootConstantBufferView(16, d3dcbToLightGpuVirtualAddress); //ToLight
 }
 
