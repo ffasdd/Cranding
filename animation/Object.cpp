@@ -38,8 +38,15 @@ CTexture::~CTexture()
 {
 	if (m_ppd3dTextures)
 	{
-		for (int i = 0; i < m_nTextures; i++) if (m_ppd3dTextures[i]) m_ppd3dTextures[i]->Release();
+		for (int i = 0; i < m_nTextures; i++)
+			if (m_ppd3dTextures[i])
+			{
+				if (!m_ppd3dTextures[i]->Release()) {
+					m_ppd3dTextures[i] = nullptr;
+				}
+			}
 		delete[] m_ppd3dTextures;
+		m_ppd3dTextures = nullptr;
 	}
 	if (m_pnResourceTypes) delete[] m_pnResourceTypes;
 	if (m_pdxgiBufferFormats) delete[] m_pdxgiBufferFormats;

@@ -10,18 +10,18 @@
 
 CGameFramework::CGameFramework()
 {
-	m_pdxgiFactory = nullptr;
+	m_pdxgiFactory = NULL;
 	m_pdxgiSwapChain = NULL;
 	m_pd3dDevice = NULL;
 
-	for (int i = 0; i < m_nSwapChainBuffers; i++) m_ppd3dSwapChainBackBuffers[i] = nullptr;
+	for (int i = 0; i < m_nSwapChainBuffers; i++) m_ppd3dSwapChainBackBuffers[i] = NULL;
 	m_nSwapChainBufferIndex = 0;
 
 	m_pd3dCommandAllocator = NULL;
 	m_pd3dCommandQueue = NULL;
 	m_pd3dCommandList = NULL;
 
-	m_pd3dRtvDescriptorHeap = nullptr;
+	m_pd3dRtvDescriptorHeap = NULL;
 	m_pd3dDsvDescriptorHeap = NULL;
 
 	m_hFenceEvent = NULL;
@@ -438,33 +438,33 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			//BuildObjects(SceneNum);
 			break;
 
-		//case '3':
-		//	if (SceneNum == 1 || SceneNum == 0) break;
-		//	// ice map
-		//	SceneNum = 3;
-		//	isready = false;
-		//	ReleaseObjects();
-		//	BuildObjects(SceneNum);
-		//	g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-		//	break;
+		case '3':
+			if (SceneNum == 1 || SceneNum == 0) break;
+			// ice map
+			SceneNum = 3;
+			isready = false;
+			ReleaseObjects();
+			BuildObjects(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			break;
 
-		//case '4':
-		//	if (SceneNum == 1 || SceneNum == 0) break;
-		//	// fire map
-		//	SceneNum = 4;
-		//	ReleaseObjects();
-		//	BuildObjects(SceneNum);
-		//	g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-		//	break;
+		case '4':
+			if (SceneNum == 1 || SceneNum == 0) break;
+			// fire map
+			SceneNum = 4;
+			ReleaseObjects();
+			BuildObjects(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			break;
 
-		//case '5':
-		//	if (SceneNum == 1 || SceneNum == 0) break;
-		//	// grass map
-		//	SceneNum = 5;
-		//	ReleaseObjects();
-		//	BuildObjects(SceneNum);
-		//	g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-		//	break;
+		case '5':
+			if (SceneNum == 1 || SceneNum == 0) break;
+			// grass map
+			SceneNum = 5;
+			ReleaseObjects();
+			BuildObjects(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			break;
 
 		case VK_SPACE:
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = false;
@@ -777,6 +777,11 @@ void CGameFramework::OnDestroy()
 
 	if (m_pBlurBuffer)m_pBlurBuffer->Release();
 
+	if (m_pd3dcbTime)
+	{
+		m_pd3dcbTime->Unmap(0, NULL);
+		m_pd3dcbTime->Release();
+	}
 #if defined(_DEBUG)
 	IDXGIDebug1* pdxgiDebug = NULL;
 	DXGIGetDebugInterface1(0, __uuidof(IDXGIDebug1), (void**)&pdxgiDebug);
@@ -926,7 +931,8 @@ void CGameFramework::ReleaseObjects()
 #endif // _FULLSCRREN
 
 
-	if (m_pScene->m_pPlayer) m_pScene->m_pPlayer->Release();
+	//if (m_pScene->m_pPlayer) m_pScene->m_pPlayer->Release();
+	if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) {
@@ -1131,7 +1137,7 @@ void CGameFramework::UpdateShaderVariables()
 	temp.fCurrentMin = curMinute;
 	temp.fCurrentSec = curSecond;
 
-	::memcpy(m_pTime.get(), &temp, sizeof(TIME));
+	::memcpy(m_pTime, &temp, sizeof(TIME));
 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbTime->GetGPUVirtualAddress();
 	m_pd3dCommandList->SetGraphicsRootConstantBufferView(16, d3dcbLightsGpuVirtualAddress);

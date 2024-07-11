@@ -87,7 +87,6 @@ public:
 	// 서버로부터 받은 좌표 렌더링
 public:
 	unique_ptr<CBlurShader> m_BlurShader = NULL;
-
 	ID3D12Resource* m_pBlurBuffer = NULL;
 	bool isBlurRender = false;
 
@@ -124,8 +123,8 @@ public:
 	bool DayTime = false;
 	bool Night = false;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> m_pd3dcbTime = nullptr;
-	std::unique_ptr<TIME> m_pTime = nullptr;
+	ID3D12Resource* m_pd3dcbTime = NULL;
+	TIME* m_pTime = NULL;
 
 
 private:

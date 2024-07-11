@@ -19,22 +19,14 @@ CMesh::~CMesh()
 	{
 		for (int i = 0; i < m_nSubMeshes; i++)
 		{
-			if (m_ppd3dSubSetIndexBuffers[i]) {
-				m_ppd3dSubSetIndexBuffers[i]->Release();
-				m_ppd3dSubSetIndexBuffers[i]=NULL;
-			}
-
-			if (m_ppnSubSetIndices[i])
-			{
-				m_ppnSubSetIndices[i] = NULL;
-			}
+			if (m_ppd3dSubSetIndexBuffers[i]) m_ppd3dSubSetIndexBuffers[i]->Release();
+			if (m_ppnSubSetIndices[i]) delete[] m_ppnSubSetIndices[i];
 		}
-		if (m_ppd3dSubSetIndexBuffers)  m_ppd3dSubSetIndexBuffers = NULL;
-		if (m_pd3dSubSetIndexBufferViews)  m_pd3dSubSetIndexBufferViews = NULL;
+		if (m_ppd3dSubSetIndexBuffers) delete[] m_ppd3dSubSetIndexBuffers;
+		if (m_pd3dSubSetIndexBufferViews) delete[] m_pd3dSubSetIndexBufferViews;
 
 	}
-
-	if (m_pxmf3Positions) m_pxmf3Positions = NULL;
+	if (m_pxmf3Positions) delete[] m_pxmf3Positions;
 }
 
 void CMesh::ReleaseUploadBuffers()
@@ -46,12 +38,10 @@ void CMesh::ReleaseUploadBuffers()
 	{
 		for (int i = 0; i < m_nSubMeshes; i++)
 		{
-			if (m_ppd3dSubSetIndexUploadBuffers[i])
-			{
-				m_ppd3dSubSetIndexUploadBuffers[i]->Release();
-				m_ppd3dSubSetIndexUploadBuffers[i] = NULL;
-			}
+			if (m_ppd3dSubSetIndexUploadBuffers[i]) m_ppd3dSubSetIndexUploadBuffers[i]->Release();
 		}
+		if (m_ppd3dSubSetIndexUploadBuffers) delete[] m_ppd3dSubSetIndexUploadBuffers;
+		m_ppd3dSubSetIndexUploadBuffers = NULL;
 	}
 }
 
