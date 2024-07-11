@@ -309,6 +309,10 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
+		if (SceneNum == 0)
+		{
+			UILayer::GetInstance()->ProcessMouseClick(0, m_ptOldCursorPos);
+		}
 		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
 		if (g_clients[cl_id].getCharacterType() == 0)
 		{
@@ -387,7 +391,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (SceneNum == 0) {
 
 				SceneNum = 1;
-				isready = true;
+				isready = false;
 
 				gNetwork.SendLoginfo();
 
@@ -407,7 +411,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (SceneNum == 0) break;
 			// spaceship map
 			SceneNum = 2;
-			isready = false;
+			isready = true;
 			// send ready packet  
 			//if(처음 시작할 때에만 IngameStart() ) {}
 			// bool 을 두면 간단 하지만? bool보단 그냥 클라마다 상태체크하는게 좋을거같긴함 Ingame상태이거나 게임중인 상태에는 보낼 필요가 없으니까? 
@@ -416,8 +420,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			{
 				gNetwork.SendIngameStart();
 			}
+			
+			//
 			gNetwork.SendChangeScene(SceneNum);
-
 			break;
 
 		case '3':
@@ -753,6 +758,7 @@ void CGameFramework::BuildObjects(int nScene)
 	{
 	case 0:
 	{
+		cout << "CLoginScene BuildObjects" << endl;
 		m_pScene = new CLoginScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
@@ -765,6 +771,7 @@ void CGameFramework::BuildObjects(int nScene)
 	}
 	case 1:
 	{
+		cout << "CLoginScene BuildObjects" << endl;
 		m_pScene = new CLobbyScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
@@ -779,9 +786,9 @@ void CGameFramework::BuildObjects(int nScene)
 	}
 	case 2:
 	{
+		cout << "CSpaceShipScene BuildObjects" << endl;
 		m_pScene = new CSpaceShipScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
-
 
 		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 1);
 
@@ -794,6 +801,7 @@ void CGameFramework::BuildObjects(int nScene)
 	}
 	case 3:
 	{
+		cout << "CIceScene BuildObjects" << endl;
 		// ice map
 		m_pScene = new CIceScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);

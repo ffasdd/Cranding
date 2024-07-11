@@ -34,7 +34,7 @@ cbuffer cbGameObjectInfo : register(b2)
 #define MATERIAL_DETAIL_ALBEDO_MAP	0x20
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
 
-//_FULLSCREEN
+////_FULLSCREEN
 #define FRAME_BUFFER_WIDTH				1920
 #define FRAME_BUFFER_HEIGHT				1080
 

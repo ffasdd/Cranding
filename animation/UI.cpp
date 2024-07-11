@@ -45,7 +45,22 @@ UILayer* UILayer::Create(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevic
 
 HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets, UINT nWidth, UINT nHeight)
 {
-    // 클릭 처리 필요한 ui 추가하기
+    // 클릭 처리 필요한 ui
+    // game start
+    m_uiRects[0].push_back(UIRect(m_GameStart, [this]()-> bool {
+        gGameFramework.SceneNum = 1;
+        gGameFramework.BuildObjects(1);
+        cout << "게임 시작" << endl;
+        return true;
+        }));
+    m_uiRects[0].push_back(UIRect(m_GameRule, [this]()-> bool {
+        cout << "게임 방법" << endl;
+        return true;
+        }));
+    m_uiRects[0].push_back(UIRect(m_GameQuit, [this]()-> bool {
+        cout << "게임 종료" << endl;
+        return true;
+        }));
 
     m_fWidth = static_cast<float>(nWidth);
     m_fHeight = static_cast<float>(nHeight);
@@ -117,6 +132,16 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     m_textFormats[TEXT_SIZE::SIZE_60] = CreateTextFormat(L"맑은 고딕", 80.0f * 3.35f);
 
     return NOERROR;
+}
+
+void UILayer::ProcessMouseClick(int sceneNum, POINT clickPos)
+{
+    int index = static_cast<int>(sceneNum);
+
+    for (UIRect& rect : m_uiRects[index]) {
+        if (rect.ClickCollide(clickPos))
+            break;
+    }
 }
 
 void UILayer::InitializeDevice(ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets)
@@ -318,3 +343,14 @@ void UILayer::ReleaseResources()
     if(m_pd3d11On12Device)m_pd3d11On12Device->Release();
 }
 
+bool UIRect::ClickCollide(POINT clickPos)
+{
+    std::cout << "Click position: " << clickPos.x << ", " << clickPos.y << std::endl;
+
+    if (m_rect.left <= clickPos.x && m_rect.right >= clickPos.x &&
+        m_rect.top <= clickPos.y && m_rect.bottom >= clickPos.y) {
+        return m_function();
+    }
+
+    return false;
+}
