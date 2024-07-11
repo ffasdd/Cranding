@@ -724,6 +724,12 @@ void CGameFramework::OnDestroy()
 
 	if (m_pBlurBuffer)m_pBlurBuffer->Release();
 
+	if (m_pd3dcbTime)
+	{
+		m_pd3dcbTime->Unmap(0, NULL);
+		m_pd3dcbTime->Release();
+	}
+
 #if defined(_DEBUG)
 	IDXGIDebug1* pdxgiDebug = NULL;
 	DXGIGetDebugInterface1(0, __uuidof(IDXGIDebug1), (void**)&pdxgiDebug);
@@ -736,7 +742,11 @@ void CGameFramework::OnDestroy()
 
 void CGameFramework::BuildObjects(int nScene)
 {
-	//m_pUILayer = UILayer::Create(m_nSwapChainBuffers, 0, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+#ifdef _FULLSCREEN
+	m_pUILayer = UILayer::Create(m_nSwapChainBuffers, 0, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+
+#endif // _FULLSCREEN
+
 
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 	switch (nScene)
@@ -872,16 +882,20 @@ void CGameFramework::BuildObjects(int nScene)
 
 void CGameFramework::ReleaseObjects()
 {
-	/*  if (m_pUILayer) m_pUILayer->ReleaseResources();
-	  if (m_pUILayer) delete m_pUILayer;*/
+#ifdef _FULLSCRREN
+	if (m_pUILayer) m_pUILayer->ReleaseResources();
+	if (m_pUILayer) delete m_pUILayer;
 
-	if (m_pScene->m_pPlayer) m_pScene->m_pPlayer->Release();
+#endif // _FULLSCRREN
+
+	//if (m_pScene->m_pPlayer) m_pScene->m_pPlayer->Release();
 
 	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) {
 		delete m_pScene;
 		m_pScene = nullptr;
 	}
+	if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseObjects();
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseShaderVariables();
@@ -1136,21 +1150,7 @@ void CGameFramework::FrameAdvance()
 
 		m_pd3dCommandList->SetDescriptorHeaps(1, &m_BlurShader->m_pd3dCbvSrvDescriptorHeap);
 		m_BlurShader->Render(m_pd3dCommandList, m_pCamera);
-
-
-	//	//if (m_pScene)
-	//	//{
-	//	//	ID3D12DescriptorHeap* heaps[] = { m_pScene->GetDescriptorHeap() };
-	//	//	m_pd3dCommandList->SetDescriptorHeaps(1, heaps); // 배열의 주소를 전달
-	//	//}
 	}
-
-	//else
-	//{
-	//	ID3D12DescriptorHeap* heaps[] = { m_pScene->GetDescriptorHeap() };
-	//	m_pd3dCommandList->SetDescriptorHeaps(1, heaps); // 배열의 주소를 전달
-	//}
-
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	hResult = m_pd3dCommandList->Close();
@@ -1159,6 +1159,30 @@ void CGameFramework::FrameAdvance()
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 
 	WaitForGpuComplete();
+#ifdef _FULLSCREEN
+	// 명령 리스트 기록 시작
+	hResult = m_pd3dCommandAllocator->Reset();
+	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
+
+	// 렌더 타겟으로 전환
+	SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	if (m_pUILayer)
+		UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, SceneNum, isready, curDay, curMinute, curSecond);
+
+	// 상태를 PRESENT로 전환
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+
+	hResult = m_pd3dCommandList->Close();
+
+	// 명령 목록 실행
+	ID3D12CommandList* pd3dCommandLists[] = { m_pd3dCommandList };
+	m_pd3dCommandQueue->ExecuteCommandLists(1, pd3dCommandLists);
+
+	// GPU가 명령을 처리할 때까지 기다림
+	WaitForGpuComplete();
+
+#endif // _FULLSCREEN
 
 #ifdef _WITH_PRESENT_PARAMETERS
 	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;

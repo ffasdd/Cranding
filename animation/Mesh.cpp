@@ -396,6 +396,7 @@ CStandardMesh::CStandardMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList
 CStandardMesh::~CStandardMesh()
 {
 	if (m_pd3dTextureCoord0Buffer) m_pd3dTextureCoord0Buffer->Release();
+	if (m_pd3dTextureCoord1Buffer) m_pd3dTextureCoord1Buffer->Release();
 	if (m_pd3dNormalBuffer) m_pd3dNormalBuffer->Release();
 	if (m_pd3dTangentBuffer) m_pd3dTangentBuffer->Release();
 	if (m_pd3dBiTangentBuffer) m_pd3dBiTangentBuffer->Release();
