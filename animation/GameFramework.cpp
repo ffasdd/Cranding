@@ -117,6 +117,8 @@ void CGameFramework::CreateSwapChain()
 
 	hResult = m_pdxgiFactory->MakeWindowAssociation(m_hWnd, DXGI_MWA_NO_ALT_ENTER);
 	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
+
+
 }
 
 void CGameFramework::CreateDirect3DDevice()
@@ -199,12 +201,20 @@ void CGameFramework::CreateRtvAndDsvDescriptorHeaps()
 	d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	d3dDescriptorHeapDesc.NodeMask = 0;
 	HRESULT hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dRtvDescriptorHeap);
+	if (SUCCEEDED(hResult))
+	{
+		m_pd3dRtvDescriptorHeap->SetName(L"CGameFramework::CreateRtvAndDsvDescriptorHeaps 1");
+	}
 	// **
 	::gnRtvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	d3dDescriptorHeapDesc.NumDescriptors = 2;
 	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dDsvDescriptorHeap);
+	if (SUCCEEDED(hResult))
+	{
+		m_pd3dDsvDescriptorHeap->SetName(L"CGameFramework::CreateRtvAndDsvDescriptorHeaps 2");
+	}
 	::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 }
 
@@ -299,13 +309,11 @@ void CGameFramework::ChangeSwapChainState()
 	CreateSwapChainRenderTargetViews();
 }
 
-// ���콺 �Է�, ����
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
-		// ��Ŭ������ ����
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
@@ -317,7 +325,9 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		if (g_clients[cl_id].getCharacterType() == 0)
 		{
 			g_clients[cl_id].setAttack(true);
-			gNetwork.SendAttack(g_clients[cl_id].getAttack());
+			g_sendqueue.push(SENDTYPE::ATTACK);
+
+			//gNetwork.SendAttack(g_clients[cl_id].getAttack()); 
 		}
 		break;
 
@@ -402,6 +412,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 				ReleaseObjects();
 				BuildObjects(SceneNum);
+
+				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 				gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
@@ -410,19 +422,21 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case '2':
 			if (SceneNum == 0) break;
 			// spaceship map
-			SceneNum = 2;
 			isready = true;
+			SceneNum = 2;
 			// send ready packet  
 			//if(처음 시작할 때에만 IngameStart() ) {}
 			// bool 을 두면 간단 하지만? bool보단 그냥 클라마다 상태체크하는게 좋을거같긴함 Ingame상태이거나 게임중인 상태에는 보낼 필요가 없으니까? 
 			// bool로 일단 해보자 
 			if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
 			{
-				gNetwork.SendIngameStart();
+				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+		
 			}
-			
-			//
-			gNetwork.SendChangeScene(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//gNetwork.SendChangeScene(SceneNum);
+
+	
 			break;
 
 		case '3':
@@ -432,7 +446,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isready = false;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
-			gNetwork.SendChangeScene(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+	
 			break;
 
 		case '4':
@@ -441,7 +456,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 4;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
-			gNetwork.SendChangeScene(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+
 			break;
 
 		case '5':
@@ -450,7 +466,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			SceneNum = 5;
 			ReleaseObjects();
 			BuildObjects(SceneNum);
-			gNetwork.SendChangeScene(SceneNum);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+	
 			break;
 
 		case VK_SPACE:
@@ -560,8 +577,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	if (cl_id == n)
 	{
 		m_pPlayer->SetId(cl_id);
-		// ���� �Ǵ��� �ȵǴ��� �𸣰���
-		//m_pPlayer->SetPosition(position);
+
 	}
 	else
 	{
@@ -583,9 +599,6 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	}
 }
 
-
-
-
 void CGameFramework::myFunc_SetLookRightUp(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
 {
 	if (cl_id == n)
@@ -593,7 +606,6 @@ void CGameFramework::myFunc_SetLookRightUp(int n, int id, XMFLOAT3 Look, XMFLOAT
 		m_pPlayer->SetLook(Look);
 		m_pPlayer->SetUp(Up);
 		m_pPlayer->SetRight(Right);
-
 	}
 	else
 	{
@@ -611,7 +623,7 @@ void CGameFramework::myFunc_SetLookRightUp(int n, int id, XMFLOAT3 Look, XMFLOAT
 			break;
 		}
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetLook(Look.x, Look.y, Look.z);
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(0, 1, 0);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(Up.x,Up.y,Up.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetRight(Right.x, Right.y, Right.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetScale(20.0f, 20.0f, 20.0f);
 	}
@@ -666,7 +678,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
 		}
-		// �������� ���� ���� �ִϸ��̼� ��ȣ�� ���� �ִϸ��̼� ��ȣ�� �ٸ� ���(������ �ؾ��ϴ� ���)
+
 		if (prevAni != curAni)
 		{
 
@@ -680,10 +692,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
 
-			//if ()
-			//{
-
-			//}
+	
 			g_clients[others_id + 1].setprevAnimation(curAni);
 		}
 	}
@@ -707,8 +716,8 @@ void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
 			break;
 		}
 
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5);
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(8, 1.0);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 1.0);
 
 		if (isAttack == true)
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsAttack = true;
@@ -736,7 +745,7 @@ void CGameFramework::myFunc_SetBlind(int n, int id, bool _isblind)
 			others_id = n;
 			break;
 		}
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->isdraw = _isblind;
+		if (m_pScene->m_ppHierarchicalGameObjects[others_id + 1])m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->isdraw = _isblind;
 	}
 
 }
@@ -752,8 +761,6 @@ void CGameFramework::OnDestroy()
 	if (m_pd3dDepthStencilBuffer) m_pd3dDepthStencilBuffer->Release();
 	if (m_pd3dDsvDescriptorHeap) m_pd3dDsvDescriptorHeap->Release();
 
-	for (int i = 0; i < m_nSwapChainBuffers; i++) if (m_ppd3dSwapChainBackBuffers[i]) m_ppd3dSwapChainBackBuffers[i]->Release();
-	if (m_pd3dRtvDescriptorHeap) m_pd3dRtvDescriptorHeap->Release();
 
 	if (m_pd3dCommandAllocator) m_pd3dCommandAllocator->Release();
 	if (m_pd3dCommandQueue) m_pd3dCommandQueue->Release();
@@ -764,10 +771,6 @@ void CGameFramework::OnDestroy()
 	//if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
 	//if (m_pPipelineState) m_pPipelineState->Release();
 
-	m_pdxgiSwapChain->SetFullscreenState(FALSE, NULL);
-	if (m_pdxgiSwapChain) m_pdxgiSwapChain->Release();
-	if (m_pd3dDevice) m_pd3dDevice->Release();
-	if (m_pdxgiFactory) m_pdxgiFactory->Release();
 
 	if (m_pBlurBuffer)m_pBlurBuffer->Release();
 
@@ -829,6 +832,7 @@ void CGameFramework::BuildObjects(int nScene)
 	case 2:
 	{
 		cout << "CSpaceShipScene BuildObjects" << endl;
+		//this_thread::sleep_for(10ms);
 		m_pScene = new CSpaceShipScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
@@ -868,7 +872,6 @@ void CGameFramework::BuildObjects(int nScene)
 
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
-
 
 		break;
 	}
@@ -1014,12 +1017,14 @@ void CGameFramework::ProcessInput()
 					m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
 					g_clients[cl_id].setLook(m_pPlayer->GetLook());
 					g_clients[cl_id].setRight(m_pPlayer->GetRight());
-					g_clients[cl_id].setUp(m_pPlayer->GetUp());
+					g_clients[cl_id].setUp(m_pPlayer->GetUp());					
 					g_sendqueue.push(SENDTYPE::ROTATE);*/
 
 					// 여기서 yaw 값만 있으면 Rotate 함수에서 회전 연산 가능합니당
 					float yaw = cxDelta;
 					m_pPlayer->RotateYaw(yaw);
+					g_clients[gNetwork.Getmyid()].m_yaw = yaw;
+					g_sendqueue.push(SENDTYPE::ROTATE);
 				}
 			}
 
@@ -1063,25 +1068,20 @@ void CGameFramework::AnimateObjects()
 
 	if (SceneNum > 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
 	{
-		// ���⼭ �� ��ȯ ó�����ָ� �� ��
-		//if (m_pPlayer->isFireMap == true)
-		//{
-		//	m_pPlayer->isFireMap = false;
-		//	// ����ȯ
-		//}
-		//else if (m_pPlayer->isGrassMap == true)
-		//{
-		//	m_pPlayer->isGrassMap = false;
-		//	// ����ȯ
-		//}
-		//else if (m_pPlayer->isIceMap == true)
-		//{
-		//	m_pPlayer->isIceMap = false;
-		//	// ����ȯ
-		//}
-		//else
+		if (m_pPlayer->isFireMap == true)
+		{
+
+		}
+		else if (m_pPlayer->isGrassMap == true)
+		{
+		}
+		else if (m_pPlayer->isIceMap == true)
+		{
+		}
+
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
+	m_pScene->CheckMonsterByMonsterCollisions();
 }
 
 void CGameFramework::WaitForGpuComplete()
@@ -1160,7 +1160,6 @@ void CGameFramework::UpdateTime()
 void CGameFramework::FrameAdvance()
 {
 	m_GameTimer.Tick(60.0f);
-
 	ProcessInput();
 
 	AnimateObjects();
@@ -1168,6 +1167,9 @@ void CGameFramework::FrameAdvance()
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	//D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	//d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * ::gnRtvDescriptorIncrementSize);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * ::gnRtvDescriptorIncrementSize);
@@ -1178,6 +1180,7 @@ void CGameFramework::FrameAdvance()
 	UpdateShaderVariables();
 
 
+	// 사용
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
 	m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH , 1.0f, 0, 0, NULL);
@@ -1198,6 +1201,7 @@ void CGameFramework::FrameAdvance()
 	d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
 	m_pd3dCommandList->SetDescriptorHeaps(1, &m_pPostProcessingShader->m_pd3dCbvSrvDescriptorHeap);
+	//d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
 	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera, &m_nDrawOption);
 
@@ -1217,7 +1221,6 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 		m_pd3dCommandList->ClearRenderTargetView(m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], Colors::Red, 0, NULL);
 		m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], TRUE, &d3dDsvCPUDescriptorHandle);
-
 		m_pd3dCommandList->SetDescriptorHeaps(1, &m_BlurShader->m_pd3dCbvSrvDescriptorHeap);
 		m_BlurShader->Render(m_pd3dCommandList, m_pCamera);
 	}

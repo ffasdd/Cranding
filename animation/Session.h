@@ -16,11 +16,13 @@ public:
 	XMFLOAT3 getLook();
 	XMFLOAT3 getRight();
 	XMFLOAT3 getUp();
+	XMFLOAT3 getPrevPos();
 	int getAnimation();
 	int getprevAnimation();
 	int getCharacterType();
 	STATE getState();
 	bool getAttack();
+
 
 	void setCharacterType(int type);
 	void setId(int id);
@@ -38,20 +40,25 @@ public:
 	void setprevAnimation(int ani);
 	void setAttack(bool att);
 	void setState(STATE state);
+	void setPrevPos(XMFLOAT3 prevpos);
+	void Rotate(float yaw);
 
 	mutex _sessionlock;
 	bool m_blind = false;
 	int scene_num = -1;
+	float m_yaw = 0.0f;
 private:
 	int m_id  = -1;
 	int r_id = -1;
 	int characterType = -1;
 	char m_name[20];
 	int m_hp;
+
 	XMFLOAT3 m_right;
 	XMFLOAT3 m_up;
 	XMFLOAT3 m_look;
 	XMFLOAT3 m_pos;
+	XMFLOAT3 m_prevPos;
 	bool m_isattack = false;
 	// state 
 	STATE m_state = STATE::Free;

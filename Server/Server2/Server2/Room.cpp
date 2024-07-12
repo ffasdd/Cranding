@@ -37,36 +37,43 @@ void Room::SendAddMonster(int npc_id, int _id)
 void Room::UpdateNpc()
 {
 
-	NightMonstersUpdate sendmonsterupdatePacket[10];
+	NightMonstersUpdate sendmonsterupdatePacket[30];
 	int idx = 0;
 
 	// 전체 NPC UPDATE 
 	for (auto& npc : NightMonster)
 	{
 		npc.ingamePlayer = ingamePlayer;
+
 		if (npc._is_alive == false)
 		{
 			npc.Remove();
 		}
 		else
+		{
 			npc.Move();
+		}
+
 
 		sendmonsterupdatePacket[idx].size = sizeof(NightMonstersUpdate);
 		sendmonsterupdatePacket[idx].type = SC_MONSTER_UPDATE_POS;
 		sendmonsterupdatePacket[idx]._monster._id = idx;
-							
+
+
 		sendmonsterupdatePacket[idx]._monster._x = npc._pos.x;
 		sendmonsterupdatePacket[idx]._monster._y = npc._pos.y;
 		sendmonsterupdatePacket[idx]._monster._z = npc._pos.z;
-							 
+
 		sendmonsterupdatePacket[idx]._monster._lx = npc._look.x;
 		sendmonsterupdatePacket[idx]._monster._ly = npc._look.y;
 		sendmonsterupdatePacket[idx]._monster._lz = npc._look.z;
-							  
+
 		sendmonsterupdatePacket[idx]._monster._rx = npc._right.x;
 		sendmonsterupdatePacket[idx]._monster._ry = npc._right.y;
 		sendmonsterupdatePacket[idx]._monster._rz = npc._right.z;
 
+
+		MonsterCollide(npc);
 
 		idx++;
 	}
@@ -77,8 +84,10 @@ void Room::UpdateNpc()
 		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
 		for (auto& packet : sendmonsterupdatePacket)
 		{
-			if(pl->_stage == 2) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
-				pl->do_send(&packet);
+			if (pl->_stage != 2) continue;
+			// 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+			pl->do_send(&packet);
+
 		}
 	}
 }
@@ -221,7 +230,7 @@ void Room::IceNpcInitialized()
 		for (auto& packet : sendIceMonsterUpdatePacket)
 		{
 			//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
-				pl->do_send(&packet);
+			pl->do_send(&packet);
 		}
 	}
 }
@@ -265,3 +274,55 @@ void Room::NatureNpcInitialized()
 		NatureMonster[i]._is_alive = true;
 	}
 }
+
+void Room::MonsterCollide(Monster& _monster)
+{
+	for (auto& monster : NightMonster)
+	{
+		if (monster._id == _monster._id)continue;
+		if (monster._is_alive == false)continue;
+		XMVECTOR otherPos = XMLoadFloat3(&monster._pos);
+		XMVECTOR myPos = XMLoadFloat3(&_monster._pos);
+
+		XMVECTOR disVec = XMVectorSubtract(otherPos, myPos);
+		disVec = XMVector3Normalize(disVec);
+
+		XMVECTOR lookDir = XMLoadFloat3(&_monster._look);
+		lookDir = XMVector3Normalize(lookDir);
+
+		float dotProduct = XMVectorGetX(XMVector3Dot(lookDir, disVec));
+
+
+		float angleThreshold = cosf(XMConvertToRadians(45.0f)); // 45도 이내
+		if (dotProduct > angleThreshold)
+		{
+			if (_monster.m_SPBB.Intersects(monster.m_SPBB))
+			{
+				_monster._speed = 0.f;
+
+			}
+		}
+	}
+
+	//for (int i = 0; i < NightMonster.size(); ++i)
+	//{
+	//	for (auto& monster : NightMonster)
+	//	{
+	//		if (monster._id == i)continue;
+	//		if (monster._is_alive == false)continue;
+	//		if (NightMonster[i].m_SPBB.Intersects(monster.m_SPBB))
+	//		{
+	//			//XMVECTOR posCurrent = XMLoadFloat3(&NightMonster[i]._pos);
+	//			//XMVECTOR posOther = XMLoadFloat3(&monster._pos);
+	//			//XMVECTOR direction = posCurrent - posOther;
+	//			//direction = XMVector3Normalize(direction); 
+
+	//			//XMVECTOR newPos = posOther + direction * 2.0f;
+	//			//XMStoreFloat3(&NightMonster[i]._pos, newPos);
+	//			NightMonster[i]._pos = NightMonster[i]._prevpos;
+	//		}
+	//	}
+	//}
+}
+
+

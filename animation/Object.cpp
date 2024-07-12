@@ -47,7 +47,6 @@ CTexture::~CTexture()
 
 	if (m_pnRootParameterIndices) delete[] m_pnRootParameterIndices;
 	if (m_pd3dSrvGpuDescriptorHandles) delete[] m_pd3dSrvGpuDescriptorHandles;
-
 	if (m_pd3dSamplerGpuDescriptorHandles) delete[] m_pd3dSamplerGpuDescriptorHandles;
 }
 
@@ -731,6 +730,12 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 
 							xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[k].m_fWeight));
 							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
+						}
+						// monster dead
+						if (m_bIsAttacked == true && fPosition == 0.0f)
+						{
+							m_bIsAttacked = false;
+							m_bIsDead = true;
 						}
 					}
 					m_pAnimationTracks[k].HandleCallback();
@@ -1631,7 +1636,7 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device *pd3dDevice, ID3D12GraphicsCom
 
 	CMaterial *pTerrainMaterial = new CMaterial(1);
 	//pTerrainMaterial->SetTexture(pTerrainBaseTexture, 0);
-	pTerrainMaterial->SetTexture(pTerrainDetailTexture, 1);
+	pTerrainMaterial->SetTexture(pTerrainDetailTexture, 0);
 	//pTerrainMaterial->SetShader(pTerrainShader);
 
 	SetMaterial(0, pTerrainMaterial);

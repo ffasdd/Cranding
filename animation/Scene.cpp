@@ -18,26 +18,31 @@ D3D12_GPU_DESCRIPTOR_HANDLE	CScene::m_d3dCbvGPUDescriptorNextHandle;
 D3D12_CPU_DESCRIPTOR_HANDLE	CScene::m_d3dSrvCPUDescriptorNextHandle;
 D3D12_GPU_DESCRIPTOR_HANDLE	CScene::m_d3dSrvGPUDescriptorNextHandle;
 
-/*
-CDescriptorHeap* CScene::m_pDescriptorHeap = NULL;
 
-CDescriptorHeap::CDescriptorHeap()
-{
-	m_d3dSrvCPUDescriptorStartHandle.ptr = NULL;
-	m_d3dSrvGPUDescriptorStartHandle.ptr = NULL;
-}
-
-CDescriptorHeap::~CDescriptorHeap()
-{
-	if (m_pd3dCbvSrvDescriptorHeap) m_pd3dCbvSrvDescriptorHeap->Release();
-}
-*/
 
 CScene::CScene()
 {
 }
 CScene::~CScene()
 {
+
+}
+
+
+void CScene::CheckMonsterByMonsterCollisions()
+{
+	for (int i = 3; i < m_nHierarchicalGameObjects; i++)
+	{
+		for (int j = i + 1; j < m_nHierarchicalGameObjects; j++)
+		{
+
+			// monster with monster
+			if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[j]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			{
+				// 서버에 i - 3 번 npc가 충돌했다고 보내는 코드 들어가는 부분
+			}
+		}
+	}
 }
 
 void CScene::HandleCollisionEnd(CGameObject* pObject) {
@@ -62,7 +67,7 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 			m_ppHierarchicalGameObjects[i]->m_bIsColliding = false; // 현재 프레임의 충돌 상태 초기화
 
 			CGameObject* pMapObject = m_ppHierarchicalGameObjects[0]->m_pChild->m_pChild;
-
+			
 			for (int j = 0; j < m_ppHierarchicalGameObjects[0]->m_pChild->nChilds; j++)
 			{
 				const char* str = pMapObject->m_pstrFrameName;
@@ -70,25 +75,20 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 				{
 					m_ppHierarchicalGameObjects[i]->m_bIsColliding = true;
-					// grassmap ���� �ٸ��� �浹
-					if (!strcmp(str, "bbgrassmap"))
-					{
-						m_pPlayer->isGrassMap = true;
-						return(true);
-					}
-
-					// firemap ���� �ٸ��� �浹
-					else if (!strcmp(str, "bbfiremap"))
+					if (!strcmp(str, "bbfire"))
 					{
 						m_pPlayer->isFireMap = true;
-						return(true);
+						return true;
 					}
-
-					// icemap ���� �ٸ��� �浹
-					else if (!strcmp(str, "bbicemap"))
+					else if (!strcmp(str, "bbice"))
 					{
 						m_pPlayer->isIceMap = true;
-						return(true);
+						return true;
+					}
+					else if (!strcmp(str, "bbgrass"))
+					{
+						m_pPlayer->isGrassMap = true;
+						return true;
 					}
 
 					// �ٴ��� �浹 üũ �ȵǵ���
@@ -103,28 +103,63 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 					if (pMapObject == NULL)break;
 			}
 		}
-	
-		//else if( i == 1 || i == 2) 
-		//{
-		//	/*if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
-		//	{
-		//		return(true);
-		//	}*/
-		//	return false;
-		//}
-	
-		else if (i > 2)
+
+		// collision check with fire monster
+		else if (i > 2 && i < 14)
 		{
-	
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true && m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			// monster with player(attack mode)
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-	
-				gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
-	
+				//send attacked monster num
+				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
+				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+
+				return(true);
+			}
+		}
+		// collision check with grass monster
+		else if (i >= 14 && i < 24)
+		{
+			// monster with player(attack mode)
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			{
+				//send attacked monster num
+				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
+				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+
+				return(true);
+			}
+		}
+		// collision check with ice monster
+		else if (i >= 24 && i < 34)
+		{
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			{
+				//send attacked monster num
+				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
+				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+
 				return(true);
 			}
 		}
 	}
+
+	
 	if (m_ppHierarchicalGameObjects[0]->m_bWasColliding && !m_ppHierarchicalGameObjects[0]->m_bIsColliding) {
 		// 충돌이 종료되었을 때 수행할 작업
 		HandleCollisionEnd(m_ppHierarchicalGameObjects[0]);
@@ -244,7 +279,6 @@ void CScene::ReleaseObjects()
 		delete[] m_pLights;
 		m_pLights = nullptr;
 	}
-	
 }
 
 ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevice)
@@ -486,7 +520,6 @@ void CScene::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 {
 	UINT ncbElementBytes = ((sizeof(LIGHTS) + 255) & ~255); //256�� ���
 	m_pd3dcbLights = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
-
 	m_pd3dcbLights->Map(0, NULL, (void **)&m_pcbMappedLights);
 }
 
@@ -522,22 +555,18 @@ void CScene::CreateCbvSrvDescriptorHeaps(ID3D12Device *pd3dDevice, int nConstant
 	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	d3dDescriptorHeapDesc.NodeMask = 0;
-	pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void **)&m_pd3dCbvSrvDescriptorHeap);
-
+	
+	HRESULT hResult = pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void **)&m_pd3dCbvSrvDescriptorHeap);
+	if (SUCCEEDED(hResult))
+	{
+		m_pd3dCbvSrvDescriptorHeap->SetName(L"CScene::CreateCbvSrvDescriptorHeaps");
+	}
 
 	m_d3dCbvCPUDescriptorNextHandle = m_d3dCbvCPUDescriptorStartHandle = m_pd3dCbvSrvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	m_d3dCbvGPUDescriptorNextHandle = m_d3dCbvGPUDescriptorStartHandle = m_pd3dCbvSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
 	m_d3dSrvCPUDescriptorNextHandle.ptr = m_d3dSrvCPUDescriptorStartHandle.ptr = m_d3dCbvCPUDescriptorStartHandle.ptr + (::gnCbvSrvDescriptorIncrementSize * nConstantBufferViews);
 	m_d3dSrvGPUDescriptorNextHandle.ptr = m_d3dSrvGPUDescriptorStartHandle.ptr = m_d3dCbvGPUDescriptorStartHandle.ptr + (::gnCbvSrvDescriptorIncrementSize * nConstantBufferViews);
-	/*m_pDescriptorHeap->m_d3dCbvCPUDescriptorStartHandle = m_pDescriptorHeap->m_pd3dCbvSrvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	m_pDescriptorHeap->m_d3dCbvGPUDescriptorStartHandle = m_pDescriptorHeap->m_pd3dCbvSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
-	m_pDescriptorHeap->m_d3dSrvCPUDescriptorStartHandle.ptr = m_pDescriptorHeap->m_d3dCbvCPUDescriptorStartHandle.ptr + (::gnCbvSrvDescriptorIncrementSize * nConstantBufferViews);
-	m_pDescriptorHeap->m_d3dSrvGPUDescriptorStartHandle.ptr = m_pDescriptorHeap->m_d3dCbvGPUDescriptorStartHandle.ptr + (::gnCbvSrvDescriptorIncrementSize * nConstantBufferViews);
 
-	m_pDescriptorHeap->m_d3dCbvCPUDescriptorNextHandle = m_pDescriptorHeap->m_d3dCbvCPUDescriptorStartHandle;
-	m_pDescriptorHeap->m_d3dCbvGPUDescriptorNextHandle = m_pDescriptorHeap->m_d3dCbvGPUDescriptorStartHandle;
-	m_pDescriptorHeap->m_d3dSrvCPUDescriptorNextHandle = m_pDescriptorHeap->m_d3dSrvCPUDescriptorStartHandle;
-	m_pDescriptorHeap->m_d3dSrvGPUDescriptorNextHandle = m_pDescriptorHeap->m_d3dSrvGPUDescriptorStartHandle;*/
 }
 
 void CScene::CreateConstantBufferViews(ID3D12Device* pd3dDevice, int nConstantBufferViews, ID3D12Resource* pd3dConstantBuffers, UINT nStride)
@@ -553,83 +582,7 @@ void CScene::CreateConstantBufferViews(ID3D12Device* pd3dDevice, int nConstantBu
 		m_d3dCbvGPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
 	}
 }
-/*
-D3D12_GPU_DESCRIPTOR_HANDLE CScene::CreateConstantBufferView(ID3D12Device* pd3dDevice, ID3D12Resource* pd3dConstantBuffer, UINT nStride)
-{
-	D3D12_CONSTANT_BUFFER_VIEW_DESC d3dCBVDesc;
-	d3dCBVDesc.SizeInBytes = nStride;
-	d3dCBVDesc.BufferLocation = pd3dConstantBuffer->GetGPUVirtualAddress();
-	pd3dDevice->CreateConstantBufferView(&d3dCBVDesc, m_d3dCbvCPUDescriptorNextHandle);
-	D3D12_GPU_DESCRIPTOR_HANDLE d3dCbvGPUDescriptorHandle = m_d3dCbvGPUDescriptorNextHandle;
-	m_d3dCbvCPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
-	m_d3dCbvGPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
 
-	return(d3dCbvGPUDescriptorHandle);
-}
-
-
-D3D12_GPU_DESCRIPTOR_HANDLE CScene::CreateConstantBufferView(ID3D12Device* pd3dDevice, D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress, UINT nStride)
-{
-	D3D12_CONSTANT_BUFFER_VIEW_DESC d3dCBVDesc;
-	d3dCBVDesc.SizeInBytes = nStride;
-	d3dCBVDesc.BufferLocation = d3dGpuVirtualAddress;
-	pd3dDevice->CreateConstantBufferView(&d3dCBVDesc, m_d3dCbvCPUDescriptorNextHandle);
-	D3D12_GPU_DESCRIPTOR_HANDLE d3dCbvGPUDescriptorHandle = m_d3dCbvGPUDescriptorNextHandle;
-	m_d3dCbvCPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
-	m_d3dCbvGPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
-
-	return(d3dCbvGPUDescriptorHandle);
-}
-
-D3D12_GPU_DESCRIPTOR_HANDLE CScene::CreateShaderResourceView(ID3D12Device* pd3dDevice, ID3D12Resource* pd3dResource, DXGI_FORMAT dxgiSrvFormat)
-{
-	D3D12_SHADER_RESOURCE_VIEW_DESC d3dShaderResourceViewDesc;
-	d3dShaderResourceViewDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	d3dShaderResourceViewDesc.Format = dxgiSrvFormat;
-	d3dShaderResourceViewDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	d3dShaderResourceViewDesc.Texture2D.MipLevels = 1;
-	d3dShaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-	d3dShaderResourceViewDesc.Texture2D.PlaneSlice = 0;
-	d3dShaderResourceViewDesc.Texture2D.ResourceMinLODClamp = 0.0f;
-	D3D12_GPU_DESCRIPTOR_HANDLE d3dSrvGPUDescriptorHandle = m_d3dSrvGPUDescriptorNextHandle;
-	pd3dDevice->CreateShaderResourceView(pd3dResource, &d3dShaderResourceViewDesc, m_d3dSrvCPUDescriptorNextHandle);
-	m_d3dSrvCPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
-	m_d3dSrvGPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
-
-	return(d3dSrvGPUDescriptorHandle);
-}
-*/
-void CScene::CreateShaderResourceView(ID3D12Device* pd3dDevice, CTexture* pTexture, int nIndex, UINT nRootParameterStartIndex)
-{
-	ID3D12Resource* pShaderResource = pTexture->GetResource(nIndex);
-	D3D12_GPU_DESCRIPTOR_HANDLE d3dGpuDescriptorHandle = pTexture->GetGpuDescriptorHandle(nIndex);
-	if (pShaderResource && !d3dGpuDescriptorHandle.ptr)
-	{
-		D3D12_SHADER_RESOURCE_VIEW_DESC d3dShaderResourceViewDesc = pTexture->GetShaderResourceViewDesc(nIndex);
-		pd3dDevice->CreateShaderResourceView(pShaderResource, &d3dShaderResourceViewDesc, m_d3dSrvCPUDescriptorNextHandle);
-		m_d3dSrvCPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
-
-		pTexture->SetGpuDescriptorHandle(nIndex, m_d3dSrvGPUDescriptorNextHandle);
-		m_d3dSrvGPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
-
-		pTexture->SetRootParameterIndex(nIndex, nRootParameterStartIndex + nIndex);
-	}
-}
-
-void CScene::CreateShaderResourceView(ID3D12Device* pd3dDevice, CTexture* pTexture, int nIndex)
-{
-	ID3D12Resource* pShaderResource = pTexture->GetResource(nIndex);
-	D3D12_GPU_DESCRIPTOR_HANDLE d3dGpuDescriptorHandle = pTexture->GetGpuDescriptorHandle(nIndex);
-	if (pShaderResource && !d3dGpuDescriptorHandle.ptr)
-	{
-		D3D12_SHADER_RESOURCE_VIEW_DESC d3dShaderResourceViewDesc = pTexture->GetShaderResourceViewDesc(nIndex);
-		pd3dDevice->CreateShaderResourceView(pShaderResource, &d3dShaderResourceViewDesc, m_d3dSrvCPUDescriptorNextHandle);
-		m_d3dSrvCPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
-
-		pTexture->SetGpuDescriptorHandle(nIndex, m_d3dSrvGPUDescriptorNextHandle);
-		m_d3dSrvGPUDescriptorNextHandle.ptr += ::gnCbvSrvDescriptorIncrementSize;
-	}
-}
 
 
 
@@ -750,10 +703,30 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 	//if (m_nHierarchicalGameObjects > 3)
 	//{
-	//	for (int i = 0; i < 3; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
+	//   for (int i = 0; i < 3; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
 	//}
 	//else
-	for (int i = 0; i < m_nHierarchicalGameObjects; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
+
+	// monster dead
+	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
+	{
+		if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
+
+		if (i > 2 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead)
+		{
+			//g_sendqueue.push(SENDTYPE::ATTACK_COLLISION);
+	
+			gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
+			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+			//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+			//if (i > 2 && i < 14) 
+			//	m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+			//else if (i >= 14 && i < 24)
+			//	m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+			//else if (i >= 24 && i < 34)
+			//	m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+		}
+	}
 
 	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->AnimateObjects(fTimeElapsed);
 
@@ -781,24 +754,10 @@ void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 
 	UpdateShaderVariables(pd3dCommandList);
 
-	//D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
-	//pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT, d3dcbLightsGpuVirtualAddress); //Lights
-
-	//D3D12_GPU_VIRTUAL_ADDRESS d3dcbMaterialsGpuVirtualAddress = m_pd3dcbMaterials->GetGPUVirtualAddress();
-	//pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_MATERIAL, d3dcbMaterialsGpuVirtualAddress); //Materials
-
 }
 
 void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
 {
-	/*if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
-	if (m_pd3dCbvSrvDescriptorHeap) pd3dCommandList->SetDescriptorHeaps(1, &m_pDescriptorHeap->m_pd3dCbvSrvDescriptorHeap);
-
-	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
-	pCamera->UpdateShaderVariables(pd3dCommandList);
-
-	UpdateShaderVariables(pd3dCommandList);*/
-
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Light
 
@@ -983,10 +942,10 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
 	int FireMonsterNum = 10;
-	int IcrMonsterNum = 10;
+	int IceMonsterNum = 10;
 	int GrassMonsterNum = 10;
 	cout << "inside builbobj" << endl;
-	m_nHierarchicalGameObjects = 3 + FireMonsterNum + IcrMonsterNum + GrassMonsterNum;
+	m_nHierarchicalGameObjects = 3 + FireMonsterNum + IceMonsterNum + GrassMonsterNum;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/spaceshipmap.bin", NULL);
@@ -998,9 +957,9 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 
 	cout << "make player" << endl;
-	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
+	CLoadedModelInfo* pPlayerModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 
-	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
+	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel1, 11);
 
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
@@ -1028,7 +987,9 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 
-	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 11);
+	CLoadedModelInfo* pPlayerModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
+
+	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel2, 11);
 
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
@@ -1056,21 +1017,82 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
 
-	if (pPlayerModel) delete pPlayerModel;
+	if (pPlayerModel1) delete pPlayerModel1;
+	if (pPlayerModel2) delete pPlayerModel2;
 
 
 	cout << "make mons" << endl;
 	// monster model load
-	CLoadedModelInfo* pFireMonModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
-	CLoadedModelInfo* pIceMonModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Icicle.bin", NULL);
-	CLoadedModelInfo* pGrassMonModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Cube.bin", NULL);
+	CLoadedModelInfo* pFireMonModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	CLoadedModelInfo* pFireMonModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	CLoadedModelInfo* pFireMonModel3 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	CLoadedModelInfo* pFireMonModel4 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	CLoadedModelInfo* pFireMonModel5 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	CLoadedModelInfo* pFireMonModel6 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	CLoadedModelInfo* pFireMonModel7 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	CLoadedModelInfo* pFireMonModel8 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	CLoadedModelInfo* pFireMonModel9 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+	CLoadedModelInfo* pFireMonModel10 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
+
+	CLoadedModelInfo* pIceMonModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Icicle.bin", NULL);
+	CLoadedModelInfo* pIceMonModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Icicle.bin", NULL);
+	CLoadedModelInfo* pIceMonModel3 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Icicle.bin", NULL);
+	CLoadedModelInfo* pIceMonModel4 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Icicle.bin", NULL);
+	CLoadedModelInfo* pIceMonModel5 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Icicle.bin", NULL);
+	CLoadedModelInfo* pIceMonModel6 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Icicle.bin", NULL);
+	CLoadedModelInfo* pIceMonModel7 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Icicle.bin", NULL);
+	CLoadedModelInfo* pIceMonModel8 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Icicle.bin", NULL);
+	CLoadedModelInfo* pIceMonModel9 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Icicle.bin", NULL);
+	CLoadedModelInfo* pIceMonModel10 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Icicle.bin", NULL);
+
+	CLoadedModelInfo* pGrassMonModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Cube.bin", NULL);
+	CLoadedModelInfo* pGrassMonModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Cube.bin", NULL);
+	CLoadedModelInfo* pGrassMonModel3 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Cube.bin", NULL);
+	CLoadedModelInfo* pGrassMonModel4 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Cube.bin", NULL);
+	CLoadedModelInfo* pGrassMonModel5 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Cube.bin", NULL);
+	CLoadedModelInfo* pGrassMonModel6 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Cube.bin", NULL);
+	CLoadedModelInfo* pGrassMonModel7 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Cube.bin", NULL);
+	CLoadedModelInfo* pGrassMonModel8 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Cube.bin", NULL);
+	CLoadedModelInfo* pGrassMonModel9 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Cube.bin", NULL);
+	CLoadedModelInfo* pGrassMonModel10 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Cube.bin", NULL);
+
+	m_ppHierarchicalGameObjects[3] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireMonModel1, 7);
+	m_ppHierarchicalGameObjects[4] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireMonModel2, 7);
+	m_ppHierarchicalGameObjects[5] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireMonModel3, 7);
+	m_ppHierarchicalGameObjects[6] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireMonModel4, 7);
+	m_ppHierarchicalGameObjects[7] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireMonModel5, 7);
+	m_ppHierarchicalGameObjects[8] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireMonModel6, 7);
+	m_ppHierarchicalGameObjects[9] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireMonModel7, 7);
+	m_ppHierarchicalGameObjects[10] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireMonModel8, 7);
+	m_ppHierarchicalGameObjects[11] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireMonModel9, 7);
+	m_ppHierarchicalGameObjects[12] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireMonModel10, 7);
+									
+	m_ppHierarchicalGameObjects[13] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel1, 6);
+	m_ppHierarchicalGameObjects[14] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel2, 6);
+	m_ppHierarchicalGameObjects[15] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel3, 6);
+	m_ppHierarchicalGameObjects[16] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel4, 6);
+	m_ppHierarchicalGameObjects[17] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel5, 6);
+	m_ppHierarchicalGameObjects[18] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel6, 6);
+	m_ppHierarchicalGameObjects[19] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel7, 6);
+	m_ppHierarchicalGameObjects[20] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel8, 6);
+	m_ppHierarchicalGameObjects[21] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel9, 6);
+	m_ppHierarchicalGameObjects[22] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel10, 6);
+
+	m_ppHierarchicalGameObjects[23] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceMonModel1, 6);
+	m_ppHierarchicalGameObjects[24] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceMonModel2, 6);
+	m_ppHierarchicalGameObjects[25] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceMonModel3, 6);
+	m_ppHierarchicalGameObjects[26] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceMonModel4, 6);
+	m_ppHierarchicalGameObjects[27] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceMonModel5, 6);
+	m_ppHierarchicalGameObjects[28] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceMonModel6, 6);
+	m_ppHierarchicalGameObjects[29] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceMonModel7, 6);
+	m_ppHierarchicalGameObjects[30] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceMonModel8, 6);
+	m_ppHierarchicalGameObjects[31] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceMonModel9, 6);
+	m_ppHierarchicalGameObjects[32] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceMonModel10, 6);
 
 	// 30 monsters
 	for (int i = 0; i < 10; i++)
 	{
 		// fire monster - 7 animations
-		m_ppHierarchicalGameObjects[3 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireMonModel, 7);
-
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
 		m_ppHierarchicalGameObjects[3 + i]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
@@ -1088,46 +1110,85 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(20.0f, 20.0f, 20.0f);
 
-		// ice monster - 6 animations
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceMonModel, 6);
-
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
-
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
-
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum]->SetScale(20.0f, 20.0f, 20.0f);
-
 		// grass monster - 6 animations
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassMonModel, 6);
 
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
-														   
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
-														   
-		m_ppHierarchicalGameObjects[3 + i + FireMonsterNum + IcrMonsterNum]->SetScale(20.0f, 20.0f, 20.0f);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+															  
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+															  
+		m_ppHierarchicalGameObjects[3 + i + IceMonsterNum]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.1);
+
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum]->SetScale(20.0f, 20.0f, 20.0f);
+															  
+		// ice monster - 6 animations			
+															  
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+														   	  					 
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+															  				
+		m_ppHierarchicalGameObjects[3 + i +IceMonsterNum + FireMonsterNum]->SetScale(20.0f, 20.0f, 20.0f);
+
+		float posX = (rand() % 2000);
+		float posY = (rand() % 2000);
+
+		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, -100.0f, posY);
+		m_ppHierarchicalGameObjects[3 + i + IceMonsterNum]->SetPosition(posX + 50, -100.0f, posY);
+		m_ppHierarchicalGameObjects[3 + i + IceMonsterNum + FireMonsterNum]->SetPosition(posX + 100, -100.0f, posY);
 	}
 
-	if (pFireMonModel) delete pFireMonModel;
-	if (pIceMonModel) delete pIceMonModel;
-	if (pGrassMonModel) delete pGrassMonModel;
+	if (pFireMonModel1) delete pFireMonModel1;
+	if (pFireMonModel2) delete pFireMonModel2;
+	if (pFireMonModel3) delete pFireMonModel3;
+	if (pFireMonModel4) delete pFireMonModel4;
+	if (pFireMonModel5) delete pFireMonModel5;
+	if (pFireMonModel6) delete pFireMonModel6;
+	if (pFireMonModel7) delete pFireMonModel7;
+	if (pFireMonModel8) delete pFireMonModel8;
+	if (pFireMonModel9) delete pFireMonModel9;
+	if (pFireMonModel10) delete pFireMonModel10;
+
+	if (pIceMonModel1) delete pIceMonModel1;
+	if (pIceMonModel2) delete pIceMonModel2;
+	if (pIceMonModel3) delete pIceMonModel3;
+	if (pIceMonModel4) delete pIceMonModel4;
+	if (pIceMonModel5) delete pIceMonModel5;
+	if (pIceMonModel6) delete pIceMonModel6;
+	if (pIceMonModel7) delete pIceMonModel7;
+	if (pIceMonModel8) delete pIceMonModel8;
+	if (pIceMonModel9) delete pIceMonModel9;
+	if (pIceMonModel10) delete pIceMonModel10;
+
+	if (pGrassMonModel1) delete pGrassMonModel1;
+	if (pGrassMonModel2) delete pGrassMonModel2;
+	if (pGrassMonModel3) delete pGrassMonModel3;
+	if (pGrassMonModel4) delete pGrassMonModel4;
+	if (pGrassMonModel5) delete pGrassMonModel5;
+	if (pGrassMonModel6) delete pGrassMonModel6;
+	if (pGrassMonModel7) delete pGrassMonModel7;
+	if (pGrassMonModel8) delete pGrassMonModel8;
+	if (pGrassMonModel9) delete pGrassMonModel9;
+	if (pGrassMonModel10) delete pGrassMonModel10;
+
+
+
 }
 
 void CSpaceShipScene::ReleaseUploadBuffers()

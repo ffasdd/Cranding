@@ -24,22 +24,26 @@ public:
 	XMFLOAT3 _look;
 	XMFLOAT3 _right;
 	XMFLOAT3 _up;
+
+	float yaw;
 	char _name[100];
 	int _prevremain;
 
 	int room_id;
 	int _stage;
+
+	float distance = -1.0f;
 	
 	animateState animationstate;
 	animateState prevanimationstate;
+
+	float                           m_fBoundingSize{ 8.0f };
+	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
 
 	mutex _v_lock;
 	
 	mutex _p_lock;
 	unordered_set<int> _view_list;
-
-	float                           m_fBoundingSize{ 15.0f };
-	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
 
 	
 
@@ -237,5 +241,7 @@ public:
 	void send_ingame_start();
 
 	void send_add_monster(int npc_id);
+
+	void Rotate();
 };
 extern array<Session, MAX_USER> clients;

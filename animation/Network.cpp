@@ -40,7 +40,7 @@ bool Network::ReadytoConnect()
 	sockaddrIn.sin_port = htons(PORT_NUM);
 
 	// 사용자로부터 IP 주소 입력 받기
-	string ipAddress = { "127.0.0.1" };
+	string ipAddress = { "127.0.0.1"};
 
 
 	// 문자열 형태의 IP 주소를 네트워크 바이트 순서로 변환하여 설정
@@ -62,8 +62,6 @@ bool Network::ReadytoConnect()
 
 // 여기까진 메인 쓰레드 
 // 리시브 하는 쓰레들 새로, 
-
-
 void Network::End()
 {
 }
@@ -73,6 +71,7 @@ void Network::StartServer()
 	ServerStart = true;
 
 	netThread = std::thread([this]() {NetThreadFunc(); });
+
 	sendThread = std::thread([this]() {SendThreadFunc(); });
 
 }
@@ -82,9 +81,7 @@ void Network::NetThreadFunc()
 	while (ServerStart)
 	{
 		int ioByte = recv(clientsocket, _buf, BUF_SIZE, 0);
-
 		ProcessData(ioByte);
-
 	}
 }
 void Network::SendThreadFunc()
@@ -112,19 +109,11 @@ void Network::SendProcess(SENDTYPE sendtype)
 		break;
 	}
 	case SENDTYPE::ROTATE: {
-		SendRotatePlayer(g_clients[my_id].getLook(), g_clients[my_id].getRight(), g_clients[my_id].getUp());
+		SendRotatePlayer(g_clients[my_id].m_yaw);
 		break;
 	}
 	case SENDTYPE::CHANGE_ANIMATION: {
 		SendChangeAnimation(g_clients[my_id].getAnimation(), g_clients[my_id].getprevAnimation());
-		break;
-	}
-	case SENDTYPE::CHANGE_SCENE_LOBBY: {
-		SendChangeScene(9);// 로비번호
-		break;
-	}
-	case SENDTYPE::CHANGE_SCENE_INGAME_READY: {
-		SendChangeScene(2);
 		break;
 	}
 	case SENDTYPE::CHANGE_SCENE_INGAME_START: {
@@ -135,21 +124,17 @@ void Network::SendProcess(SENDTYPE sendtype)
 		SendAttack(g_clients[my_id].getAttack());
 		break;
 	}
-	case SENDTYPE::TIME_CHECK: {
-
-		SendTime(curTimer);
+	case SENDTYPE::CHANGE_STAGE: {
+		SendChangeScene(gGameFramework.SceneNum);
+		break;
+	case SENDTYPE::ATTACK_COLLISION:
+	{
+		//SendAttackCollision()
 		break;
 	}
-	case SENDTYPE::ATTACK_COLLISION: {
-		break;
 	}
 
 	}
-}
-
-void Network::TimerThread()
-{
-
 }
 
 void Network::ProcessData(size_t _size)
@@ -201,16 +186,20 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setAnimation(int(p->a_state));
 		g_clients[my_id].setprevAnimation(int(p->prev_state));
 		gamestart = true;
+
 		SetEvent(loginevent);
+
 		break;
 	}
 
 	case SC_ADD_OBJECT: {
 
-		std::cout << "Add Player " << std::endl;
+		this_thread::sleep_for(10ms);
+
 		SC_ADD_OBJECT_PACKET* p = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		//int ob_id = getmyid(p->id);
 		int ob_id = (p->id);
+		std::cout << "Add Player ID - " << ob_id << std::endl;
 		g_clients[ob_id].setState(STATE::Ingame);
 		g_clients[ob_id].setId(ob_id);
 		g_clients[ob_id].setHp(p->hp);
@@ -237,9 +226,8 @@ void Network::ProcessPacket(char* buf)
 		SC_ROTATE_OBJECT_PACKET* p = reinterpret_cast<SC_ROTATE_OBJECT_PACKET*>(buf);
 		int ob_id = (p->id);
 		//int ob_id = getmyid(p->id);
-		g_clients[ob_id].setLook(p->look);
-		g_clients[ob_id].setRight(p->right);
-		g_clients[ob_id].setUp(p->up);
+		float _yaw = p->yaw;
+		g_clients[ob_id].Rotate(_yaw);
 	}
 						 break;
 	case SC_CHANGE_ANIMATION: {
@@ -271,7 +259,7 @@ void Network::ProcessPacket(char* buf)
 
 		g_clients[ob_id].scene_num = p->stage;
 		g_clients[ob_id].setPos(p->pos);
-		if (ob_id == my_id)
+		if (ob_id == my_id) // 내가 씬전환을 했다면
 		{
 			stage_num = p->stage;
 
@@ -286,23 +274,27 @@ void Network::ProcessPacket(char* buf)
 				{
 					IngameScene = true;
 					ClientState = true;
-					ingamecnt++;
-					if (ingamecnt == 2)
-					{
-						g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-						ingamecnt = 0;
-					}
+			
+
 				}
-				else
+				else if ( IngameScene == true )
 				{
 					SpaceshipScene = true;
 					for (int i = 0; i < g_clients.size(); ++i)
 					{
 						if (g_clients[i].getId() == my_id)continue;
 						if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+						{
+						
 							gGameFramework.myFunc_SetBlind(i, ob_id, false);
+
+						}
 						else
+						{
+				
 							gGameFramework.myFunc_SetBlind(i, ob_id, true);
+
+						}
 					}
 				}
 				break;
@@ -336,6 +328,7 @@ void Network::ProcessPacket(char* buf)
 		{
 			for (int i = 0; i < g_clients.size(); ++i)
 			{
+				if (p->stage == 1)continue;
 				if (g_clients[i].getId() == my_id)continue;
 				if (g_clients[i].scene_num != g_clients[my_id].scene_num)
 					gGameFramework.myFunc_SetBlind(i, ob_id, false);
@@ -363,17 +356,17 @@ void Network::ProcessPacket(char* buf)
 
 		if (stage_num == 2)
 		{
-
 			// 10 개로 받아줘야한다. 
 			NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
 			int npc_id = p->_monster._id;
 			g_monsters[npc_id].setId(npc_id);
+			g_monsters[npc_id].setPrevPos(g_monsters[npc_id].getPos());
+		
 			g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
 			g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
 			g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
-
 			g_monsters[npc_id].setUp({ 0.f,1.f,0.f });
-
+			g_monsters[npc_id].scene_num = 2;
 		}
 	
 		break;
@@ -440,17 +433,13 @@ void Network::SendMovePlayer(XMFLOAT3 _pos)
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
-void Network::SendRotatePlayer(XMFLOAT3 _look, XMFLOAT3 _right, XMFLOAT3 _up)
+void Network::SendRotatePlayer(float _yaw)
 {
 	CS_ROTATE_PACKET p;
 	p.size = sizeof(CS_ROTATE_PACKET);
 	p.type = CS_ROTATE;
-	p.look = _look;
-	p.right = _right;
-	p.up = _up;
-	p.roomid = my_roomid;
+	p.yaw = _yaw;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-
 }
 
 void Network::SendChangeAnimation(int curanimate, int prevanimate)
@@ -519,6 +508,11 @@ void Network::SendTime(int time)
 	p.roomid = my_roomid;
 	p.time = time;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+bool Network::MonsterCollide(Session& _monster)
+{
+	return 0;
 }
 
 

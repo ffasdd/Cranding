@@ -55,6 +55,11 @@ XMFLOAT3 Session::getUp()
 	return m_up;
 }
 
+XMFLOAT3 Session::getPrevPos()
+{
+	return m_prevPos;
+}
+
 int Session::getAnimation()
 {
 	return m_animationstate;
@@ -166,4 +171,43 @@ void Session::setAttack(bool att)
 void Session::setState(STATE state)
 {
 	m_state = state;
+}
+
+void Session::setPrevPos(XMFLOAT3 prevpos)
+{
+	m_prevPos = prevpos;
+}
+
+void Session::Rotate(float yaw)
+{
+	if (yaw != 0.0f)
+	{
+		m_yaw += yaw;
+		if (m_yaw > 360.0f) m_yaw -= 360.0f;
+		if (m_yaw < 0.0f) m_yaw += 360.0f;
+
+		// Load current vectors
+		XMVECTOR upVec = XMLoadFloat3(&m_up);
+		XMVECTOR lookVec = XMLoadFloat3(&m_look);
+		XMVECTOR rightVec = XMLoadFloat3(&m_right);
+
+		// Create rotation matrix
+		XMMATRIX xmmtxRotate = XMMatrixRotationAxis(upVec, XMConvertToRadians(yaw));
+
+		// Transform vectors
+		lookVec = XMVector3TransformNormal(lookVec, xmmtxRotate);
+		rightVec = XMVector3TransformNormal(rightVec, xmmtxRotate);
+
+		// Normalize vectors
+		lookVec = XMVector3Normalize(lookVec);
+		rightVec = XMVector3Normalize(XMVector3Cross(upVec, lookVec));
+
+		// Store back to member variables
+		XMStoreFloat3(&m_look, lookVec);
+		XMStoreFloat3(&m_right, rightVec);
+
+		// Ensure up vector is orthogonal and normalized
+		upVec = XMVector3Normalize(XMVector3Cross(lookVec, rightVec));
+		XMStoreFloat3(&m_up, upVec);
+	}
 }

@@ -47,14 +47,14 @@ void Server::NetworkSet()
 	serverAddr.sin_port = htons(PORT_NUM);
 
 
-	
+
 	if (SOCKET_ERROR == bind(listensocket, reinterpret_cast<sockaddr*>(&serverAddr), sizeof(serverAddr)))
 		cout << "Bind Error" << endl;
 
 	if (SOCKET_ERROR == listen(listensocket, SOMAXCONN))
 		cout << " Listen Error " << endl;
 	if (listensocket != INVALID_SOCKET) {
-	
+
 		// listensocket의 현재 상태 확인
 		int optval;
 		int optlen = sizeof(optval);
@@ -160,7 +160,7 @@ void Server::WorkerThread()
 					clients[c_id]._pos = { 240.0f,10.0f,730.0f };
 				else if (c_id == 1)
 					clients[c_id]._pos = { 220.0f,10.0f,760.0f };
-				else if ( c_id % 2== 0)
+				else if (c_id % 2 == 0)
 					clients[c_id]._pos = { 210.0f, 10.0f,710.0f };
 
 				clients[c_id]._id = c_id;
@@ -172,6 +172,10 @@ void Server::WorkerThread()
 				clients[c_id]._right = XMFLOAT3(1.0f, 0.0f, 0.0f);
 				clients[c_id].characterType = 0;
 				clients[c_id].animationstate = animateState::FREE;
+
+				clients[c_id].m_SPBB.Center = clients[c_id]._pos;
+				clients[c_id].m_SPBB.Center.y = clients[c_id]._pos.y;
+				clients[c_id].m_SPBB.Radius = 10.0f;
 
 				CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientsocket), _IocpHandle, c_id, 0);
 				clients[c_id].do_recv();
@@ -216,7 +220,7 @@ void Server::WorkerThread()
 			ingameroom[r_id].UpdateNpc();
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
-			delete ex_over; 
+			delete ex_over;
 			break;
 		}
 		case COMP_TYPE::NPC_INITIALIZE: {
@@ -250,36 +254,61 @@ void Server::WorkerThread()
 			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
-				//TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 		}
+		/*case COMP_TYPE::NPC_TRACE: {
+			int r_id = static_cast<int>(key);
+			ingameroom[r_id].NightMonsterTracetoPlayer();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(10ms),r_id,EVENT_TYPE::EV_TRACE_PLAYER };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+		}*/
 		default:
 			break;
 		}
 	}
-
 }
 
 void Server::InitialziedMonster(int room_Id)
 {
 	std::random_device rd;
 	std::default_random_engine dre;
-	std::uniform_real_distribution<float> xpos(50, 360);
-	std::uniform_real_distribution<float> zpos(-700, -350);
+	std::uniform_real_distribution<float> xpos(20, 360);
+	std::uniform_real_distribution<float> zpos(-710, 160);
+
+	std::uniform_real_distribution<float> i_xpos(940, 1400);
+	std::uniform_real_distribution<float> i_zpos(1100, 1300);
+
+	std::uniform_real_distribution<float> n_xpos(-900, -500);
+	std::uniform_real_distribution<float> n_zpos(1100, 1500);
 
 	for (int i = 0; i < MAX_NPC; ++i)
 	{
 		if (ingameroom[room_Id].NightMonster[i]._is_alive == false)
 		{
-		ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
-		ingameroom[room_Id].NightMonster[i]._att = 10;
-		ingameroom[room_Id].NightMonster[i]._hp = 50;
-		ingameroom[room_Id].NightMonster[i]._look = XMFLOAT3(0.f, 0.f, 1.0f);
-		ingameroom[room_Id].NightMonster[i]._right = XMFLOAT3(1.0f, 0.f, 0.0f);
-		ingameroom[room_Id].NightMonster[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
-		ingameroom[room_Id].NightMonster[i]._is_alive = true;
-		ingameroom[room_Id].NightMonster[i]._stagenum = 2;
-		ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
-		ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y= ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
+			if (i < 10)
+			{
+				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+			}
+			else if (10 <= i && i < 20)
+			{
+				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(i_xpos(dre), 10.0f, i_zpos(dre));
+			}
+			else if (20 <= i && i < 30)
+			{
+				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(n_xpos(dre), 10.0f, n_zpos(dre));
+			}
+			ingameroom[room_Id].NightMonster[i]._id = i;
+			ingameroom[room_Id].NightMonster[i]._att = 10;
+			ingameroom[room_Id].NightMonster[i]._hp = 50;
+			ingameroom[room_Id].NightMonster[i]._look = XMFLOAT3(0.f, 0.f, 1.0f);
+			ingameroom[room_Id].NightMonster[i]._right = XMFLOAT3(1.0f, 0.f, 0.0f);
+			ingameroom[room_Id].NightMonster[i]._up = XMFLOAT3(0.f, 1.0f, 0.0f);
+			ingameroom[room_Id].NightMonster[i]._is_alive = true;
+			ingameroom[room_Id].NightMonster[i]._stagenum = 2;
+			ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
+			ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 8.0f;
+			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y= ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
 
 		}
 	}
@@ -309,104 +338,85 @@ void Server::ProcessPacket(int id, char* packet)
 
 		while (clients[id].room_id == -1)
 		{
-			cout << "Matching" << endl;
-			// matching 말고 락으로? 
-			
-			//로그인을 해놓고 룸매칭을 하게 해야
-			// 추후에 매칭 방법을 수정해야 할듯 
+			this_thread::sleep_for(1s);
 		}
-
 		clients[id].send_login_info_packet();
-		// ADD X 
 	}
 				 break;
 	case CS_MOVE: {
 
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 		int r_id = p->roomid;
+
 		clients[id]._pos = p->pos;
+
+		clients[id].m_SPBB.Center = clients[id]._pos;
+		clients[id].m_SPBB.Center.y = clients[id]._pos.y;
 		// view List 
 		unordered_set<int> near_list;
 		clients[id]._v_lock.lock();
 		unordered_set<int> old_vlist = clients[id]._view_list;
 
 		clients[id]._v_lock.unlock();
-		
-		for (auto& pl : ingameroom[r_id].ingamePlayer)
-		{
-			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
-			if (pl->_id == id)continue;
-			if (pl->_stage != clients[id]._stage)continue;
-			if (can_see(id, pl->_id))
-				near_list.insert(pl->_id);
-		}
-		// -------------------------------
+
+		//for (auto& pl : ingameroom[r_id].ingamePlayer)
+		//{
+		//	if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
+		//	if (pl->_id == id)continue;
+		//	if (pl->_stage != clients[id]._stage)continue;
+		//	if (can_see(id, pl->_id))
+		//		near_list.insert(pl->_id);
+		//}
+		//// -------------------------------
 		clients[id].send_move_packet(id);
-
-		// -------------------view list 
-		for (auto& pl : near_list)
+		for (auto& pl : clients)
 		{
-			clients[pl]._v_lock.lock();
-
-			if (clients[pl]._view_list.count(id))
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_move_packet(id);
-			}
-			else
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_add_info_packet(id);
-			}
-
-			if (old_vlist.count(pl) == 0)
-				clients[id].send_add_info_packet(pl);
+			if (pl._state == STATE::Alloc || pl._state == STATE::Free) continue;
+			if (pl._id == id)continue;
+			if (pl.room_id != clients[id].room_id)continue;
+			if (pl._stage != clients[id]._stage)continue;
+			pl.send_move_packet(id);
 		}
+		//// -------------------view list 
+		//for (auto& pl : near_list)
+		//{
+		//	clients[pl]._v_lock.lock();
+
+		//	if (clients[pl]._view_list.count(id))
+		//	{
+		//		clients[pl]._v_lock.unlock();
+		//		clients[pl].send_move_packet(id);
+		//	}
+		//	else
+		//	{
+		//		clients[pl]._v_lock.unlock();
+		//		clients[pl].send_add_info_packet(id);
+		//	}
+
+		//	if (old_vlist.count(pl) == 0)
+		//		clients[id].send_add_info_packet(pl);
+		//}
 	}
 				break;
 	case CS_ROTATE: {
 		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
 		int r_id = p->roomid;
+		clients[id].yaw = p->yaw;
 
-		clients[id]._look = p->look;
-		clients[id]._right = p->right;
-		clients[id]._up = p->up;
 
-		unordered_set<int> near_list;
-		clients[id]._v_lock.lock();
-		unordered_set<int> old_vlist = clients[id]._view_list;
-		clients[id]._v_lock.unlock();
 
-		for (auto& pl : ingameroom[r_id].ingamePlayer)
-		{
-			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
-			if (pl->_id == id)continue;
-			if (pl->_stage != clients[id]._stage)continue;
-			if (can_see(id, pl->_id))
-				near_list.insert(pl->_id);
-		}
 
 		clients[id].send_rotate_packet(id);
-
-		for (auto& pl : near_list)
+		for (auto& pl : clients)
 		{
-
-			clients[pl]._v_lock.lock();
-
-			if (clients[pl]._view_list.count(id))
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_rotate_packet(id);
-			}
-			else
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_add_info_packet(id);
-			}
-			if (old_vlist.count(pl) == 0)
-				clients[id].send_add_info_packet(pl);
+			if (pl._state == STATE::Alloc || pl._state == STATE::Free) continue;
+			if (pl._id == id)continue;
+			if (pl.room_id != clients[id].room_id)continue;
+			if (pl._stage != clients[id]._stage)continue;
+			pl.send_rotate_packet(id);
 		}
-	
+
+
 		break;
 	}
 	case CS_CHANGE_ANIMATION: {
@@ -418,40 +428,20 @@ void Server::ProcessPacket(int id, char* packet)
 		clients[id].animationstate = (animateState)p->a_state;
 		clients[id].prevanimationstate = (animateState)p->prev_a_state;
 
-		unordered_set<int> near_list;
-		clients[id]._v_lock.lock();
-		unordered_set<int> old_vlist = clients[id]._view_list;
-		clients[id]._v_lock.unlock();
 
-		for (auto& pl : ingameroom[r_id].ingamePlayer)
-		{
-			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
-			if (pl->_id == id)continue;
-			if (pl->_stage != clients[id]._stage)continue;
-			if (can_see(id, pl->_id))
-				near_list.insert(pl->_id);
-		}
 
 		clients[id].send_change_animate_packet(id);
 
-		for (auto& pl : near_list)
+		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
 
-			clients[pl]._v_lock.lock();
-
-			if (clients[pl]._view_list.count(id))
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_change_animate_packet(id);
-			}
-			else
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_add_info_packet(id);
-			}
-			if (old_vlist.count(pl) == 0)
-				clients[id].send_add_info_packet(pl);
+			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
+			if (pl->_id == id)continue;
+			if (pl->_stage != clients[id]._stage) continue;
+			pl->send_change_animate_packet(id);
+			
 		}
+
 	}
 							break;
 	case CS_CHANGE_SCENE: {
@@ -474,24 +464,23 @@ void Server::ProcessPacket(int id, char* packet)
 			std::uniform_real_distribution<float> zpos(710, 760);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		}
-			break;
-		case 3:{
+			  break;
+		case 3: {
 			std::uniform_real_distribution<float> xpos(-500, -400);
 			std::uniform_real_distribution<float> zpos(1120, 1200);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		}
-			break;
-		case 4:{
+			  break;
+		case 4: {
 			std::uniform_real_distribution<float> xpos(-732, -570);
 			std::uniform_real_distribution<float> zpos(531, 580);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		}
-			break;
-		case 5:{
-	/*		std::uniform_real_distribution<float> xpos(-450, 700);
-			std::uniform_real_distribution<float> zpos(206, 658);*/
+			  break;
+		case 5: {
+
 		}
-			break;
+			  break;
 		}
 		clients[id].send_change_scene(id, scenenum); // 나한테 나의 씬넘버를 보냄 
 
@@ -505,10 +494,9 @@ void Server::ProcessPacket(int id, char* packet)
 
 		if (p->scenenum == 2)
 		{
-			// 몬스터정보를 다시보내야하나?  ㄴㄴㄴ 몬스터한테 다시 플레이어정보를 넘김 
 			for (auto& n_m : ingameroom[r_id].NightMonster)
 			{
-				if(find(n_m.ingamePlayer.begin(),n_m.ingamePlayer.end(),&clients[id]) == n_m.ingamePlayer.end())
+				if (find(n_m.ingamePlayer.begin(), n_m.ingamePlayer.end(), &clients[id]) == n_m.ingamePlayer.end())
 				{
 					clients[id]._p_lock.lock();
 					n_m.ingamePlayer.emplace_back(&clients[id]);
@@ -519,7 +507,10 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				{
 					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
-					i_m.RemovePlayer(id);
+					if (find(i_m.ingamePlayer.begin(), i_m.ingamePlayer.end(), &clients[id]) != i_m.ingamePlayer.end())
+					{
+						i_m.RemovePlayer(id);
+					}
 				}
 			}
 		}
@@ -529,18 +520,21 @@ void Server::ProcessPacket(int id, char* packet)
 			for (auto& n_m : ingameroom[r_id].NightMonster)
 			{
 				{
-				lock_guard<mutex>ll{ n_m.ingamePlayerlock};
-				n_m.RemovePlayer(id);
+					lock_guard<mutex>ll{ n_m.ingamePlayerlock };
+					if (find(n_m.ingamePlayer.begin(), n_m.ingamePlayer.end(), &clients[id]) != n_m.ingamePlayer.end())
+					{
+						n_m.RemovePlayer(id);
+					}
 				}
 			}
-			 // 얼음몬스터 뿌려줘야함 
-			// 얼음 몬스터는 이미 있음, 얼음 몬스터 들에게 3번스테이지에 들어간 플레이어들의 정보를 입력해줘야 추적 
+			// 얼음몬스터 뿌려줘야함 
+		   // 얼음 몬스터는 이미 있음, 얼음 몬스터 들에게 3번스테이지에 들어간 플레이어들의 정보를 입력해줘야 추적 
 			for (auto& i_m : ingameroom[r_id].IceMonster)
 			{
 				if (find(i_m.ingamePlayer.begin(), i_m.ingamePlayer.end(), &clients[id]) == i_m.ingamePlayer.end())
 				{
 					clients[id]._p_lock.lock();
-					i_m.ingamePlayer.emplace_back(&clients[id]);
+					i_m.ingamePlayer[id] = (&clients[id]);
 					clients[id]._p_lock.unlock();
 				}
 			}
@@ -552,9 +546,14 @@ void Server::ProcessPacket(int id, char* packet)
 			// 불몬스터 뿌려줘야함 
 			for (auto& n_m : ingameroom[r_id].NightMonster)
 			{
+
 				{
 					lock_guard<mutex>ll{ clients[id]._p_lock };
-					n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+					if (find(n_m.ingamePlayer.begin(), n_m.ingamePlayer.end(), &clients[id]) != n_m.ingamePlayer.end())
+					{
+						n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+
+					}
 				}
 			}
 
@@ -596,9 +595,15 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Start;
+		}
+
+		{
+			lock_guard<mutex>ll{ ingameroom[r_id].r_l};
 			ingameroom[r_id].readycnt++;
 		}
-		if (ingameroom[r_id].readycnt == 2)
+		bool all_Start = all_of(ingameroom[r_id].ingamePlayer.begin(), ingameroom[r_id].ingamePlayer.end(), [](Session* s) {return s->_state == STATE::Start; });
+		
+		if (all_Start)
 		{
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
@@ -612,15 +617,13 @@ void Server::ProcessPacket(int id, char* packet)
 
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
-			
-		
 			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
 
 			TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
 			g_Timer.InitTimerQueue(ev1);
 
-			TIMER_EVENT ev2{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NIGHT};
+			TIMER_EVENT ev2{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NIGHT };
 			g_Timer.InitTimerQueue(ev2);
 
 			TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_DAYTIME };
@@ -628,8 +631,12 @@ void Server::ProcessPacket(int id, char* packet)
 
 			TIMER_EVENT ev4{ ingameroom[r_id].start_time ,r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev4);
-		}
 
+			TIMER_EVENT ev5{ ingameroom[r_id].start_time + chrono::seconds(6s), r_id,EVENT_TYPE::EV_TRACE_PLAYER };
+			g_Timer.InitTimerQueue(ev5);
+		}
+		else
+			break;
 	}
 						break;
 	case CS_ATTACK: {
@@ -638,40 +645,18 @@ void Server::ProcessPacket(int id, char* packet)
 
 		clients[id]._isAttack = p->isAttack;
 
-		unordered_set<int> near_list;
-		clients[id]._v_lock.lock();
-		unordered_set<int> old_vlist = clients[id]._view_list;
-		clients[id]._v_lock.unlock();
+
+		clients[id].send_attack_packet(id); // 내가 나한테, 나의 공격을 알림 
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
-			if (pl->_id == id)continue;
+			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free)continue;
+			if (pl->_id == id) continue;
 			if (pl->_stage != clients[id]._stage)continue;
-			if (can_see(id, pl->_id))
-				near_list.insert(pl->_id);
+			pl->send_attack_packet(id);
 		}
 
-		clients[id].send_attack_packet(id);
-
-		for (auto& pl : near_list)
-		{
-
-			clients[pl]._v_lock.lock();
-
-			if (clients[pl]._view_list.count(id))
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_attack_packet(id);
-			}
-			else
-			{
-				clients[pl]._v_lock.unlock();
-				clients[pl].send_add_info_packet(id);
-			}
-			if (old_vlist.count(pl) == 0)
-				clients[id].send_add_info_packet(pl);
-		}
+		
 
 	}
 				  break;
@@ -722,6 +707,8 @@ int Server::get_new_room_id(unordered_map<int, Room>& rooms)
 {
 	for (int i = 0; i < MAX_ROOM; ++i)
 	{
+		lock_guard<mutex> rl{ r_l };
+
 		if (rooms[i]._state == roomState::Free)
 		{
 			return i;
@@ -741,17 +728,13 @@ void Server::ReadyToStart()
 	{
 		if (!matchingqueue.empty())
 		{
-			// 각 쓰레드 생성? 
-			// 아니면 여기서 workerthread처럼 ? 
-			// 아예 workerthread에서?  낭비아닌가 
-
-
 			Session* _session = nullptr;
 			bool sessionok = matchingqueue.try_pop(_session);
 
 			if (!sessionok) continue;
 
 			int room_id = get_new_room_id(ingameroom); // room ID를 부여받음 ;
+
 			{
 				lock_guard<mutex> rl{ r_l };
 				ingameroom[room_id]._state = roomState::Ingame; // 상태를 Ingame상태로 바꿔준다 
@@ -799,7 +782,7 @@ bool Server::SetReuseAddress(SOCKET socket, bool flag)
 	return false;
 }
 
-bool Server::SetTcpNoDelay(SOCKET _socket )
+bool Server::SetTcpNoDelay(SOCKET _socket)
 {
 	// 서버에서 노딜레이를 해주는게 맞을까 속도보단 안전성
 	int DelayZeroOpt = 1;

@@ -109,9 +109,9 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
         pMap[i] = new WCHAR[256];
     }
 
-    wcscpy_s(pMap[0], 256, L"ice map으로 이동하기 위해 3번을 눌러주세요");
-    wcscpy_s(pMap[1], 256, L"fire map으로 이동하기 위해 4번을 눌러주세요");
-    wcscpy_s(pMap[2], 256, L"grass map으로 이동하기 위해 5번을 눌러주세요");
+    wcscpy_s(pMap[0], 256, L"ice map으로 이동하기 위해 F키를 눌러주세요");
+    wcscpy_s(pMap[1], 256, L"fire map으로 이동하기 위해 F키를 눌러주세요");
+    wcscpy_s(pMap[2], 256, L"grass map으로 이동하기 위해 F키를 눌러주세요");
     for (int i = 0; i < ingameUI_num; ++i) {
         m_vecIngameScene.push_back(pMap[i]);
     }
@@ -119,7 +119,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
 
     // brush
     m_brushes[BRUSH_COLOR::WHITE] = CreateBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
-    m_brushes[BRUSH_COLOR::LIME_GREEN] = CreateBrush(D2D1::ColorF(1.0f, 0.8f,0.8f, 1.0f));
+    m_brushes[BRUSH_COLOR::LIME_GREEN] = CreateBrush(D2D1::ColorF(1.0f, 0.8f, 0.8f, 1.0f));
     m_brushes[BRUSH_COLOR::BLACK] = CreateBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
     m_brushes[BRUSH_COLOR::RED] = CreateBrush(D2D1::ColorF(1.0f, 0.14f, 0.14f, 1.0f));
 
@@ -232,8 +232,9 @@ void UILayer::UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2
     if (pd2dTextBrush) m_pTextBlocks[nIndex].m_pd2dTextBrush = pd2dTextBrush;
 }
 
-void UILayer::Render(UINT nFrame, int scenenum,bool isready, int curDay, int curMinute, int curSecond)
+void UILayer::Render(UINT nFrame, int scenenum, bool isready, int curDay, int curMinute, int curSecond)
 {
+
     ID3D11Resource* ppResources[] = { m_ppd3d11WrappedRenderTargets[nFrame] };
 
     m_pd2dDeviceContext->SetTarget(m_ppd2dRenderTargets[nFrame]);
@@ -288,10 +289,6 @@ void UILayer::Render(UINT nFrame, int scenenum,bool isready, int curDay, int cur
         m_pd2dDeviceContext->EndDraw();
         break;
     }
-
-
-
-
 
 
     m_pd3d11On12Device->ReleaseWrappedResources(ppResources, _countof(ppResources));

@@ -42,7 +42,7 @@ public:
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList *pd3dCommandList, XMFLOAT4X4 *pxmf4x4World) { }
 
 	virtual void OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, int nPipelineState=0);
-	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, void* pContext=NULL);
+	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, void* pContext = NULL);
 
 
 	void CreateShaderResourceViews(ID3D12Device* pd3dDevice, int nResources, ID3D12Resource** ppd3dResources, DXGI_FORMAT* pdxgiSrvFormats);
@@ -174,42 +174,6 @@ public:
 	D3D12_SHADER_BYTECODE CreatePixelShader();
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-class CSkinnedAnimationObjectsShader : public CSkinnedAnimationStandardShader
-{
-public:
-	CSkinnedAnimationObjectsShader();
-	virtual ~CSkinnedAnimationObjectsShader();
-
-	virtual void BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, void *pContext = NULL);
-	virtual void AnimateObjects(float fTimeElapsed);
-	virtual void ReleaseObjects();
-
-	virtual void ReleaseUploadBuffers();
-
-	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, void* pContext);
-
-protected:
-	CGameObject						**m_ppObjects = 0;
-	int								m_nObjects = 0;
-};*/
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-/*
-class CPlayerObjectsShader : public CSkinnedAnimationObjectsShader
-{
-public:
-	CPlayerObjectsShader();
-	virtual ~CPlayerObjectsShader();
-
-	virtual void BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, void *pContext = NULL);
-};*/
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-
 
 class CPostProcessingShader : public CShader
 {
@@ -252,6 +216,7 @@ struct PS_CB_DRAW_OPTIONS
 {
 	XMINT4							m_xmn4DrawOptions;
 };
+
 
 class CTextureToFullScreenShader : public CPostProcessingShader
 {

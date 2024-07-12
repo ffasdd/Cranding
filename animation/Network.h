@@ -33,7 +33,7 @@ public:
 	// thread recv
 	void StartServer();
 	void NetThreadFunc();
-	void TimerThread();
+
 	void ProcessData(size_t _size);
 	void ProcessPacket( char* buf);
 
@@ -46,7 +46,8 @@ public: // thread send
 	void SendLoginfo();
 	void SendTest();
 	void SendMovePlayer(XMFLOAT3 _pos);
-	void SendRotatePlayer(XMFLOAT3 _look,XMFLOAT3 _right, XMFLOAT3 _up);
+	//void SendRotatePlayer(XMFLOAT3 _look,XMFLOAT3 _right, XMFLOAT3 _up);
+	void SendRotatePlayer(float _yaw);
 	void SendChangeAnimation(int curanimate, int prevanimate);
 	void SendChangeScene(int scenenum);
 	void SendIngameStart();
@@ -55,6 +56,7 @@ public: // thread send
 	void SendReady();
 	void SendTime(int time);
 	
+	bool MonsterCollide(Session& _monster);
 	
 public: // utils
 	int getmyid(int _id);
@@ -86,6 +88,9 @@ private:
 	int second{ 30 };
 	unsigned int curTimer = 0;
 	//CPlayer* PlayerInfo;
+
+	float                           m_fBoundingSize{ 3.0f };
+	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
 
 	
 private:

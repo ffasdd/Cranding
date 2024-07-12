@@ -35,11 +35,11 @@ cbuffer cbGameObjectInfo : register(b2)
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
 
 ////_FULLSCREEN
-#define FRAME_BUFFER_WIDTH				1920
-#define FRAME_BUFFER_HEIGHT				1080
+//#define FRAME_BUFFER_WIDTH				1920
+//#define FRAME_BUFFER_HEIGHT				1080
 
-//#define FRAME_BUFFER_WIDTH				640
-//#define FRAME_BUFFER_HEIGHT				480
+#define FRAME_BUFFER_WIDTH				640
+#define FRAME_BUFFER_HEIGHT				480
 
 Texture2D gtxtAlbedoTexture : register(t6);
 Texture2D gtxtSpecularTexture : register(t7);
@@ -307,6 +307,10 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
     output.diffuse = gMaterial.m_cDiffuse;
     //output.diffuse = float4(1.0, 1.0, 1.0, 1.0);
 	
+    //output.zDepth = input.position.z;
+    //output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
+    // output.Position = float4(input.positionW, 0);
+    
     float4 cIllumination = Lighting(input.positionW, input.normalW);
 	
     output.cTexture = lerp(output.cTexture, cIllumination, 0.5f);
@@ -568,9 +572,9 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     float2 texelCoord = input.uv * textureSize;
     uint3 texCoord = uint3(texelCoord, 0);
     
-    //float3 pos = input.position;
-    float4 position = gtxtzDepthTexture.Load(texCoord);
-    float3 pos = position.xyz;
+    float3 pos = input.position;
+    //float4 position = gtxtzDepthTexture.Load(texCoord);
+    //float3 pos = position.xyz;
     //float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
     float3 normal = gtxtdrNormalTexture.Load(texCoord).rgb; // good
     float4 specular = float4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -709,7 +713,7 @@ float4 GaussianBlur(float2 texCoord, float blurStrength)
 
 float4 PSBlur(float4 position : SV_POSITION) : SV_Target
 {
-     // 주어진 화면 좌표에서 알베도 텍스처의 색상을 가져옴
+    // 주어진 화면 좌표에서 알베도 텍스처의 색상을 가져옴
     float4 cColor = gtxtAlbedoTexture[int2(position.xy)];
     // 화면 공간의 위치를 텍스처 좌표로 변환 (uv)
     float2 texCoord = position.xy / float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
@@ -717,7 +721,7 @@ float4 PSBlur(float4 position : SV_POSITION) : SV_Target
     // gtxtzDepthTexture에서 텍스처 좌표에 해당하는 샘플을 가져옴
     //float4 objInfo = gtxtzDepthTexture.Sample(gssWrap, texCoord);
     
-    //float depth = gtxtzDepthTexture.Load(uint3((uint) position.x, (uint) position.y, 0));;
+    //float depth = objInfo.a;
     //float brightness = dot(cColor.rgb, float3(0.299, 0.587, 0.114));
     //float blurStrength = 0.5;
     //if (brightness > 0.7f && depth >= 0.01f)

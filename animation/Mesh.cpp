@@ -416,6 +416,9 @@ void CStandardMesh::ReleaseUploadBuffers()
 	if (m_pd3dTextureCoord0UploadBuffer) m_pd3dTextureCoord0UploadBuffer->Release();
 	m_pd3dTextureCoord0UploadBuffer = NULL;
 
+	if (m_pd3dTextureCoord1UploadBuffer) m_pd3dTextureCoord1UploadBuffer->Release();
+	m_pd3dTextureCoord1UploadBuffer = NULL;
+
 	if (m_pd3dNormalUploadBuffer) m_pd3dNormalUploadBuffer->Release();
 	m_pd3dNormalUploadBuffer = NULL;
 

@@ -70,7 +70,6 @@ public:
 	
 	void SetRootParameterIndex(int nIndex, UINT nRootParameterIndex);
 	void SetGpuDescriptorHandle(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSrvGpuDescriptorHandle);
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGpuDescriptorHandle(int nIndex) { return(m_pd3dSrvGpuDescriptorHandles[nIndex]); }
 
 	int GetRootParameters() { return(m_nRootParameters); }
 	int GetTextures() { return(m_nTextures); }
@@ -300,6 +299,8 @@ public:
 	~CAnimationController();
 
 public:
+	bool m_bIsAttacked = false;
+
 	bool m_bisRotate = false;
 
 	// 치료 키 -> spacebar 누르면 치료

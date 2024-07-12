@@ -243,6 +243,7 @@ void CShader::OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, int nP
 	//if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 }
 
+
 void CShader::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, void* pContext)
 {
 	OnPrepareRender(pd3dCommandList);
@@ -278,6 +279,10 @@ void CShader::CreateCbvSrvDescriptorHeaps(ID3D12Device* pd3dDevice, int nConstan
 	d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	d3dDescriptorHeapDesc.NodeMask = 0;
 	HRESULT hResult = pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dCbvSrvDescriptorHeap);
+	if (SUCCEEDED(hResult))
+	{
+		m_pd3dCbvSrvDescriptorHeap->SetName(L"CShader::CreateCbvSrvDescriptorHeaps");
+	}
 
 	m_d3dCbvCPUDescriptorStartHandle = m_pd3dCbvSrvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	m_d3dCbvGPUDescriptorStartHandle = m_pd3dCbvSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
@@ -578,107 +583,6 @@ XMFLOAT3 RandomPositionInSphere(XMFLOAT3 xmf3Center, float fRadius, int nColumn,
 	return(xmf3Position);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-CSkinnedAnimationObjectsShader::CSkinnedAnimationObjectsShader()
-{
-}
-
-CSkinnedAnimationObjectsShader::~CSkinnedAnimationObjectsShader()
-{
-}
-
-void CSkinnedAnimationObjectsShader::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, void *pContext)
-{
-}
-
-void CSkinnedAnimationObjectsShader::ReleaseObjects()
-{
-	if (m_ppObjects)
-	{
-		for (int j = 0; j < m_nObjects; j++) if (m_ppObjects[j]) m_ppObjects[j]->Release();
-		delete[] m_ppObjects;
-	}
-}
-
-void CSkinnedAnimationObjectsShader::AnimateObjects(float fTimeElapsed)
-{
-	m_fElapsedTime = fTimeElapsed;
-}
-
-void CSkinnedAnimationObjectsShader::ReleaseUploadBuffers()
-{
-	for (int j = 0; j < m_nObjects; j++) if (m_ppObjects[j]) m_ppObjects[j]->ReleaseUploadBuffers();
-}
-
-void CSkinnedAnimationObjectsShader::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, void* pContext)
-{
-	CSkinnedAnimationStandardShader::Render(pd3dCommandList, pCamera,pContext);
-
-	for (int j = 0; j < m_nObjects; j++)
-	{
-		if (m_ppObjects[j])
-		{
-			m_ppObjects[j]->Animate(m_fElapsedTime);
-			m_ppObjects[j]->Render(pd3dCommandList, pCamera);
-		}
-	}
-}
-
-*/
- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-/*
-CPlayerObjectsShader::CPlayerObjectsShader()
-{
-}
-
-CPlayerObjectsShader::~CPlayerObjectsShader()
-{
-}
-
-void CPlayerObjectsShader::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, void *pContext)
-{
-	int xObjects = 3, zObjects = 3, i = 0;
-
-	m_nObjects = (xObjects * 2 + 1) * (zObjects * 2 + 1);
-
-	m_ppObjects = new CGameObject*[m_nObjects];
-
-	float fxPitch = 7.0f * 2.5f;
-	float fzPitch = 7.0f * 2.5f;
-
-	CHeightMapTerrain *pTerrain = (CHeightMapTerrain *)pContext;
-
-	CLoadedModelInfo *pAngrybotModel = pModel;
-	if (!pAngrybotModel) pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Angrybot.bin", NULL);
-
-	int nObjects = 0;
-	for (int x = -xObjects; x <= xObjects; x++)
-	{
-		for (int z = -zObjects; z <= zObjects; z++)
-		{
-			m_ppObjects[nObjects] = new CPlayerObject(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, pAngrybotModel, 1);
-			m_ppObjects[nObjects]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, (nObjects % 2));
-			m_ppObjects[nObjects]->m_pSkinnedAnimationController->SetTrackSpeed(0, (nObjects % 2) ? 0.25f : 1.0f);
-			m_ppObjects[nObjects]->m_pSkinnedAnimationController->SetTrackPosition(0, (nObjects % 3) ? 0.85f : 0.0f);
-			XMFLOAT3 xmf3Position = XMFLOAT3(fxPitch*x + 390.0f, 0.0f, 730.0f + fzPitch * z);
-			xmf3Position.y = pTerrain->GetHeight(xmf3Position.x, xmf3Position.z);
-			m_ppObjects[nObjects]->SetPosition(xmf3Position);
-			m_ppObjects[nObjects++]->SetScale(2.0f, 2.0f, 2.0f);
-		}
-    }
-
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	//D3D12_GPU_DESCRIPTOR_HANDLE d3dCbvGPUDescriptorNextHandle = CScene::GetGPUCbvDescriptorNextHandle();
-	//CScene::CreateConstantBufferViews(pd3dDevice, m_nObjects, m_pd3dcbGameObjects, /ncbElementBytes);
-
-	if (!pModel && pAngrybotModel) delete pAngrybotModel;
-}
-*/
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
 CPostProcessingShader::CPostProcessingShader()
 {
 }
@@ -879,9 +783,8 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 {
 	// CShader::Render function call
 	CShader::Render(pd3dCommandList, pCamera, pContext);
+
 	pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
-
-
 
 	if (m_pTexture) {
 		m_pTexture->UpdateShaderVariables(pd3dCommandList);
@@ -889,8 +792,6 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -925,14 +826,14 @@ void CTextureToFullScreenShader::CreateShaderVariables(ID3D12Device* pd3dDevice,
 
 void CTextureToFullScreenShader::ReleaseShaderVariables()
 {
-	 //if (m_pd3dcbDrawOptions) m_pd3dcbDrawOptions->Release();
+	 if (m_pd3dcbDrawOptions) m_pd3dcbDrawOptions->Release();
 }
 
 void CTextureToFullScreenShader::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
 	m_pcbMappedDrawOptions->m_xmn4DrawOptions.x = *((int*)pContext);
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbDrawOptions->GetGPUVirtualAddress();
-	pd3dCommandList->SetGraphicsRootConstantBufferView(14, d3dGpuVirtualAddress);/*dd*/
+	pd3dCommandList->SetGraphicsRootConstantBufferView(14, d3dGpuVirtualAddress);/*draw option*/
 
 	CPostProcessingShader::UpdateShaderVariables(pd3dCommandList, pContext);
 }

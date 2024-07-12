@@ -66,8 +66,7 @@ using Microsoft::WRL::ComPtr;
 extern HINSTANCE						ghAppInstance;
 
 //#define _WITH_SWAPCHAIN_FULLSCREEN_STATE
-#define _FULLSCREEN
-
+//#define _FULLSCREEN
 
 #ifdef _FULLSCREEN
 #define FRAME_BUFFER_WIDTH				1920
@@ -132,8 +131,8 @@ inline void Swap(float *pfS, float *pfT) { float fTemp = *pfS; *pfS = *pfT; *pfT
 // 비교해서 다를떄만 블랜딩되게
 // 보내야되는게 지금 애니메이션이랑 
 // prev 지금 서버에선 지금꺼만, 클라에서는 두칸짜리 배열을 만들어서 
-enum class SENDTYPE : INT { MOVE, ROTATE, ATTACK,CHANGE_ANIMATION,CHANGE_SCENE_LOBBY, CHANGE_SCENE_INGAME_READY,CHANGE_SCENE_INGAME_START,TIME_CHECK, ATTACK_COLLISION
-};
+enum class SENDTYPE : INT { MOVE, ROTATE, ATTACK,CHANGE_ANIMATION,CHANGE_SCENE_LOBBY, CHANGE_SCENE_INGAME_READY,CHANGE_SCENE_INGAME_START,TIME_CHECK,
+	ATTACK_COLLISION, CHANGE_STAGE};
 
 namespace Vector3
 {

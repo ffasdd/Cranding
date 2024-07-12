@@ -28,7 +28,8 @@ enum class EVENT_TYPE : char {
 	EV_NPC_INITIALIZE,
 	EV_DAYTIME,
 	EV_NIGHT,
-	EV_ICE_NPC_UPDATE
+	EV_ICE_NPC_UPDATE,
+	EV_TRACE_PLAYER
 };
 
 struct TIMER_EVENT
@@ -91,7 +92,8 @@ extern HINSTANCE						ghAppInstance;
 
 #include<random>
 #include<time.h>
-constexpr int MAX_NPC = 10;
+
+constexpr int MAX_NPC = 30;
 
 #define EPSILON					1.0e-10f
 
@@ -101,6 +103,8 @@ inline bool IsZero(float fValue, float fEpsilon) { return((fabsf(fValue) < fEpsi
 inline bool IsEqual(float fA, float fB, float fEpsilon) { return(::IsZero(fA - fB, fEpsilon)); }
 inline float InverseSqrt(float fValue) { return 1.0f / sqrtf(fValue); }
 inline void Swap(float* pfS, float* pfT) { float fTemp = *pfS; *pfS = *pfT; *pfT = fTemp; }
+
+
 
 namespace Vector3
 {
