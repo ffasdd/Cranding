@@ -47,7 +47,7 @@ private:
 
 	int								m_nRootParameters = 0;
 	UINT* m_pnRootParameterIndices = NULL;
-	std::shared_ptr<D3D12_GPU_DESCRIPTOR_HANDLE[]> m_sharepd3dSrvGpuDescriptorHandles = nullptr;
+	D3D12_GPU_DESCRIPTOR_HANDLE* m_pd3dSrvGpuDescriptorHandles = NULL;
 
 	int								m_nSamplers = 0;
 	D3D12_GPU_DESCRIPTOR_HANDLE* m_pd3dSamplerGpuDescriptorHandles = NULL;
@@ -382,7 +382,7 @@ private:
 
 public:
 	void AddRef();
-	int Release();
+	void Release();
 
 public:
 	CGameObject();
@@ -431,7 +431,7 @@ public:
 	bool isdraw = true;
 
 	// 충돌 관련 변수
-		bool m_bIsColliding; // 현재 충돌 상태
+	bool m_bIsColliding; // 현재 충돌 상태
 	bool m_bWasColliding; // 이전 프레임에서의 충돌 상태
 
 	void SetMesh(CMesh *pMesh);
@@ -449,7 +449,7 @@ public:
 	void SetRootParameter(ID3D12GraphicsCommandList* pd3dCommandList);
 
 	virtual void OnPrepareRender() { }
-	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL, int nPipelineState = 0);
+	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
 
 	virtual void OnLateUpdate() { }
 
@@ -554,7 +554,7 @@ public:
 	CSkyBox(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature);
 	virtual ~CSkyBox();
 
-	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL, int nPipelineState = 0);
+	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
 };
 
 

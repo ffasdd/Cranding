@@ -34,12 +34,12 @@ cbuffer cbGameObjectInfo : register(b2)
 #define MATERIAL_DETAIL_ALBEDO_MAP	0x20
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
 
-//#ifdef _FULLSCREEN
-#define FRAME_BUFFER_WIDTH				1920
-#define FRAME_BUFFER_HEIGHT				1080
+////_FULLSCREEN
+//#define FRAME_BUFFER_WIDTH				1920
+//#define FRAME_BUFFER_HEIGHT				1080
 
-//#define FRAME_BUFFER_WIDTH				640
-//#define FRAME_BUFFER_HEIGHT				480
+#define FRAME_BUFFER_WIDTH				640
+#define FRAME_BUFFER_HEIGHT				480
 
 Texture2D gtxtAlbedoTexture : register(t6);
 Texture2D gtxtSpecularTexture : register(t7);
@@ -297,13 +297,17 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
     //output.normal = float4(0.0,0.0,0.0, 1.0f);
 
 	//output.normal = float4(input.normalW.xyz * 0.5f + 0.5f, 1.0f);
+    //output.normal = float4(input.normalW, 0);
+    //output.zDepth = input.position.z;
+    //output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
+    
+    output.normal = float4(input.normalW, 0);
     input.normalW = normalize(input.normalW);
-    output.normal = float4(input.normalW, 0); 
-
+    
     output.diffuse = gMaterial.m_cDiffuse;
     //output.diffuse = float4(1.0, 1.0, 1.0, 1.0);
 	
-    output.zDepth = input.position.z;
+    //output.zDepth = input.position.z;
     //output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
     // output.Position = float4(input.positionW, 0);
     
@@ -339,12 +343,6 @@ struct VS_SKYBOX_CUBEMAP_OUTPUT
 TextureCube gtxtSkyBoxTextureDay : register(t13);
 TextureCube gtxtSkyBoxTextureNight : register(t1);
 
-cbuffer cbBlendFactor : register(b10)
-{
-    float g_fMin;
-    float g_fSec;
-};
-
 SamplerState gssClamp : register(s1);
 
 Texture2D<float4> gtxtTextureTexture : register(t14);
@@ -354,26 +352,20 @@ Texture2D<float4> gtxtdrNormalTexture : register(t16);
 Texture2D<float> gtxtzDepthTexture : register(t17);
 Texture2D<float> gtxtDepthTexture : register(t18);
 
-
-
-VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)
+cbuffer cbBlendFactor : register(b10)
 {
-    VS_SKYBOX_CUBEMAP_OUTPUT output;
+    float g_fMin;
+    float g_fSec;
+};
 
-    output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);
-    output.positionL = input.position;
-
-    
-    return (output);
-}
 float4 BlendSkyTextures(float3 direction)
 {
     float4 dayColor = gtxtSkyBoxTextureDay.Sample(gssWrap, direction);
     float4 nightColor = gtxtSkyBoxTextureNight.Sample(gssWrap, direction);
-    
+
     // Total time in seconds within the 5-minute cycle
     float totalSeconds = g_fMin * 60.0 + g_fSec;
-    
+
     // Calculate the blend factor based on the total time
     float blendFactor = 0.0f;
     if (totalSeconds <= 180.0) // First 3 minutes
@@ -388,11 +380,23 @@ float4 BlendSkyTextures(float3 direction)
     return lerp(dayColor, nightColor, blendFactor);
 }
 
+VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)
+{
+    VS_SKYBOX_CUBEMAP_OUTPUT output;
+
+    output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);
+    output.positionL = input.position;
+
+    
+    return (output);
+}
+
 float4 PSSkyBox(VS_SKYBOX_CUBEMAP_OUTPUT input) : SV_TARGET
 {
     float3 direction = input.positionL;
-    float4 color = BlendSkyTextures(direction);
-    return color;
+    float4 cColor = BlendSkyTextures(direction);
+    //cColor = float4(.0, .0, 1.0, 0.0);
+    return (cColor);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -568,9 +572,9 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     float2 texelCoord = input.uv * textureSize;
     uint3 texCoord = uint3(texelCoord, 0);
     
-    //float3 pos = input.position;
-    float4 position = gtxtzDepthTexture.Load(texCoord);
-    float3 pos = position.xyz;
+    float3 pos = input.position;
+    //float4 position = gtxtzDepthTexture.Load(texCoord);
+    //float3 pos = position.xyz;
     //float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
     float3 normal = gtxtdrNormalTexture.Load(texCoord).rgb; // good
     float4 specular = float4(0.0f, 0.0f, 0.0f, 1.0f);

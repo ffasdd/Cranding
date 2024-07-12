@@ -30,7 +30,6 @@
 
 extern Network							gNetwork;
 
-
 struct TIME
 {
 	float fCurrentMin;
@@ -72,10 +71,10 @@ public:
 
 	void CreateShaderVariables();
 
+	void UpdateShaderVariables();
+
 
 	void UpdateTime();
-
-	void UpdateShaderVariables();
 
 	void readyUI();
 
@@ -87,12 +86,12 @@ public:
 	// 서버로부터 받은 좌표 렌더링
 public:
 	unique_ptr<CBlurShader> m_BlurShader = NULL;
-	Microsoft::WRL::ComPtr<ID3D12Resource> m_pBlurBuffer = nullptr;
+	ID3D12Resource* m_pBlurBuffer = NULL;
 	bool isBlurRender = true;
 
 	CPlayer* m_pPlayer = NULL;
 	float PlayerPosX;
-	float PlayerPosY;
+	float PlayerPosZ;
 
 	int cl_id;
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
@@ -122,8 +121,8 @@ public:
 	bool DayTime = false;
 	bool Night = false;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> m_pd3dcbTime = nullptr;
-	std::unique_ptr<TIME> m_pTime = nullptr;
+	ID3D12Resource* m_pd3dcbTime = NULL;
+	TIME* m_pTime = NULL;
 
 
 private:
@@ -133,7 +132,7 @@ private:
 	int							m_nWndClientWidth;
 	int							m_nWndClientHeight;
         
-	Microsoft::WRL::ComPtr<IDXGIFactory4> m_pdxgiFactory = nullptr;
+	IDXGIFactory4				*m_pdxgiFactory = NULL;
 	IDXGISwapChain3				*m_pdxgiSwapChain = NULL;
 	ID3D12Device				*m_pd3dDevice = NULL;
 
@@ -143,12 +142,12 @@ private:
 	static const UINT			m_nSwapChainBuffers = 2;
 	UINT						m_nSwapChainBufferIndex;
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
-	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap>m_pd3dRtvDescriptorHeap = nullptr;
+	ID3D12Resource				*m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
+	ID3D12DescriptorHeap		*m_pd3dRtvDescriptorHeap = NULL;
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBuffers];
 
-	ID3D12Resource* m_pd3dDepthStencilBuffer = NULL;
-	ID3D12DescriptorHeap* m_pd3dDsvDescriptorHeap = NULL;
+	ID3D12Resource				*m_pd3dDepthStencilBuffer = NULL;
+	ID3D12DescriptorHeap		*m_pd3dDsvDescriptorHeap = NULL;
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_d3dDsvDescriptorCPUHandle;
 
 	ID3D12CommandAllocator		*m_pd3dCommandAllocator = NULL;
@@ -170,6 +169,8 @@ private:
 
 	CCamera						*m_pCamera = NULL;
 
+	UILayer* m_pUILayer1 = NULL;
+	UILayer* m_pUILayer2 = NULL;
 	UILayer* m_pUILayer = NULL;
 
 

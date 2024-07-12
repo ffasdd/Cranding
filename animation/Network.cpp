@@ -540,7 +540,7 @@ void Network::SendTime(int time)
 
 bool Network::MonsterCollide(Session& _monster)
 {
-	
+	return 0;
 }
 
 

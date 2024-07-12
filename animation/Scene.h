@@ -51,12 +51,13 @@ public:
     CScene();
     ~CScene();
 
+
 	// 충돌체크 함수
+	void HandleCollisionEnd(CGameObject* pObject);
 	virtual bool CheckObjectByObjectCollisions(CGameObject* pGameObject);
 
 	void CheckMonsterByMonsterCollisions();
 
-	void HandleCollisionEnd(CGameObject* pObject);
 
 	// 바운딩박스
 	void RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
@@ -65,7 +66,7 @@ public:
 	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
 	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
-	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, void* pContext = NULL);
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
 	virtual void ReleaseShaderVariables();
 
 	void BuildDefaultLightsAndMaterials();
@@ -82,15 +83,14 @@ public:
 	bool ProcessInput(UCHAR *pKeysBuffer);
     void AnimateObjects(float fTimeElapsed);
 
-	void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, void* pContext=NULL);
+	void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
     void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
 
 	void ReleaseUploadBuffers();
 
 	ID3D12DescriptorHeap* GetDescriptorHeap() { return m_pd3dCbvSrvDescriptorHeap; }
 	static ID3D12DescriptorHeap* m_pd3dCbvSrvDescriptorHeap;
-
-	std::unique_ptr<CPlayer> m_pPlayer = nullptr;
+	CPlayer* m_pPlayer = NULL;
 protected:
 	ID3D12RootSignature					*m_pd3dGraphicsRootSignature = NULL;
 	ID3D12RootSignature* m_pd3dComputeRootSignature = NULL;

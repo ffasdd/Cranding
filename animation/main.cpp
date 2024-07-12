@@ -46,7 +46,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	while (!gNetwork.ReadytoConnect());
 
 
-	////// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
+	//// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
 	gNetwork.StartServer();
 
 	// 로그인 완료 

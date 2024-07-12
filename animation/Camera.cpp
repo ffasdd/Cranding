@@ -51,7 +51,7 @@ CCamera::CCamera(CCamera *pCamera)
 
 CCamera::~CCamera()
 { 
-	//ReleaseShaderVariables();
+	ReleaseShaderVariables();
 }
 
 void CCamera::SetViewport(int xTopLeft, int yTopLeft, int nWidth, int nHeight, float fMinZ, float fMaxZ)

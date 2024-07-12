@@ -1,5 +1,4 @@
 #pragma once
-
 #include <functional>
 
 struct TextBlock
@@ -15,13 +14,13 @@ class UIRect
 public:
     UIRect() {}
     UIRect(D2D1_RECT_F r, std::function<bool()> f) : m_rect(r), m_UIfunc(f) {}
-
     ~UIRect() {}
 
     bool ClickCollide(POINT clickPos) const;
 
 private:
     D2D1_RECT_F m_rect;
+    function<bool()> m_function;
     std::function<bool()> m_UIfunc;
 };
 
@@ -42,7 +41,7 @@ public:
 
     static UILayer* GetInstance() { return s_instance; }
 
-    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>CreateBrush(D2D1::ColorF d2dColor);
+    ID2D1SolidColorBrush* CreateBrush(D2D1::ColorF d2dColor);
     IDWriteTextFormat* CreateTextFormat(WCHAR* pszFontName, float fFontSize);
 
 public:
@@ -69,10 +68,7 @@ private:
     array<vector<UIRect>, 3> m_uiRects;
 
     // login
-    D2D1_RECT_F m_Title = D2D1::RectF(-FRAME_BUFFER_WIDTH/2.0f +100, -20.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
-    // Click position: 185, 414
-    // 게임 시작
-    // Click position : 710, 557
+    D2D1_RECT_F m_Title = D2D1::RectF(-FRAME_BUFFER_WIDTH/2.0f +100, -20.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT); 
     D2D1_RECT_F m_GameStart = D2D1::RectF(150, 400, 750, 550);
     D2D1_RECT_F m_GameRule = D2D1::RectF(150, 600.0f, 750, 750);
     D2D1_RECT_F m_GameQuit = D2D1::RectF(150, 800.0f, 750, 950);
@@ -91,7 +87,7 @@ private:
 private:
     static UILayer* s_instance;
 
-    array<Microsoft::WRL::ComPtr<ID2D1SolidColorBrush>, BRUSH_COLOR::BRUSH_COUNT>m_brushes;
+    array<ID2D1SolidColorBrush*, BRUSH_COLOR::BRUSH_COUNT> m_brushes;
     array<IDWriteTextFormat*, TEXT_SIZE::TEXT_COUNT> m_textFormats;
 
     // login scene ui

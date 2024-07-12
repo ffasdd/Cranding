@@ -238,27 +238,14 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 
 void CScene::ReleaseObjects()
 {
-	if (m_pd3dCbvSrvDescriptorHeap) {
-		int ref = m_pd3dCbvSrvDescriptorHeap->Release();
-		if (ref) {
-			cout << "Scene, m_pd3dCbvSrvDescriptorHeap Ref: " << ref << endl;
-		}
-		else
-			m_pd3dCbvSrvDescriptorHeap = nullptr;
-	}
-	if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
+	//if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
+	if (m_pd3dCbvSrvDescriptorHeap) m_pd3dCbvSrvDescriptorHeap->Release();
+	//if (m_pDescriptorHeap) delete m_pDescriptorHeap;
 
 	if (m_ppGameObjects)
 	{
-		for (int i = 0; i < m_nGameObjects; i++) {
-			m_ppGameObjects[i]->ReleaseShaderVariables();
-			m_ppGameObjects[i]->Release();
-			m_ppGameObjects[i]->ReleaseUploadBuffers();
-			m_ppGameObjects[i] = nullptr;
-		}
-
+		for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Release();
 		delete[] m_ppGameObjects;
-		m_ppGameObjects = nullptr;
 	}
 
 	if (m_ppShaders)
@@ -280,22 +267,9 @@ void CScene::ReleaseObjects()
 		m_pSkyBox = nullptr;
 	}
 
-	if (m_pTerrain) {
-		delete m_pTerrain;
-		m_pTerrain = nullptr;
-	}
-
 	if (m_ppHierarchicalGameObjects)
 	{
-		for (int i = 0; i < m_nHierarchicalGameObjects; i++)
-		{
-			if (m_ppHierarchicalGameObjects[i])
-			{
-				m_ppHierarchicalGameObjects[i]->Release();
-				m_ppHierarchicalGameObjects[i] = NULL;
-			}
-		}
-
+		for (int i = 0; i < m_nHierarchicalGameObjects; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Release();
 		delete[] m_ppHierarchicalGameObjects;
 	}
 
@@ -547,11 +521,9 @@ void CScene::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 	UINT ncbElementBytes = ((sizeof(LIGHTS) + 255) & ~255); //256�� ���
 	m_pd3dcbLights = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 	m_pd3dcbLights->Map(0, NULL, (void **)&m_pcbMappedLights);
-
-	
 }
 
-void CScene::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, void* pContext)
+void CScene::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList)
 {
 	::memcpy(m_pcbMappedLights->m_pLights, m_pLights, sizeof(LIGHT) * m_nLights);
 	::memcpy(&m_pcbMappedLights->m_xmf4GlobalAmbient, &m_xmf4GlobalAmbient, sizeof(XMFLOAT4));
@@ -670,7 +642,6 @@ void CScene::RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCame
 
 bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-
 	return(false);
 }
 
@@ -761,8 +732,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 	if (m_pLights)
 	{
-		m_pLights[1].m_xmf3Position = m_pPlayer.get()->GetPosition();
-		m_pLights[1].m_xmf3Direction = m_pPlayer.get()->GetLookVector();
+		m_pLights[1].m_xmf3Position = m_pPlayer->GetPosition();
+		m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
 	}
 
 
@@ -773,7 +744,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 }
 
-void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, void* pContext)
+void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 	if (m_pd3dCbvSrvDescriptorHeap) pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
@@ -781,7 +752,7 @@ void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	pCamera->UpdateShaderVariables(pd3dCommandList);
 
-	UpdateShaderVariables(pd3dCommandList, pContext);
+	UpdateShaderVariables(pd3dCommandList);
 
 }
 
@@ -973,7 +944,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	int FireMonsterNum = 10;
 	int IceMonsterNum = 10;
 	int GrassMonsterNum = 10;
-
+	cout << "inside builbobj" << endl;
 	m_nHierarchicalGameObjects = 3 + FireMonsterNum + IceMonsterNum + GrassMonsterNum;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
@@ -984,6 +955,8 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 	if (map) delete map;
 
+
+	cout << "make player" << endl;
 	CLoadedModelInfo* pPlayerModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 
 	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel1, 11);
@@ -1048,7 +1021,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	if (pPlayerModel2) delete pPlayerModel2;
 
 
-
+	cout << "make mons" << endl;
 	// monster model load
 	CLoadedModelInfo* pFireMonModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 	CLoadedModelInfo* pFireMonModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
