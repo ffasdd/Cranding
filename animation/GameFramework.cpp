@@ -1111,6 +1111,8 @@ void CGameFramework::AnimateObjects()
 
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
+	if(SceneNum> 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+
 	m_pScene->CheckMonsterByMonsterCollisions();
 }
 

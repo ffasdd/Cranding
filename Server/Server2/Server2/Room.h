@@ -54,7 +54,10 @@ public:
 	void FireNpcInitialized();
 	void NatureNpcInitialized();
 
-	void MonsterCollide(Monster& _monster);
+	void NightMonsterCollide(Monster& _monster);
+	void IceMonsterCollide(Monster& _monster);
+	void FireMonsterCollide(Monster& _monster);
+	void NatureMontserCollide(Monster& _monster);
 
 };
 

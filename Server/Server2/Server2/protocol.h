@@ -50,6 +50,8 @@ constexpr char SC_MONSTER_UPDATE_POS = 25;
 constexpr char SC_MONSTER_UPDATE_LOOK = 26;
 constexpr char SC_MONSTER_UPDATE_RIGHT = 27;
 constexpr char SC_ICE_MONSTER_UPDATE = 28;
+constexpr char SC_FIRE_MONSTER_UPDATE = 29;
+constexpr char SC_NATURE_MONSTER_UPDATE = 30;
 
 
 
@@ -138,6 +140,8 @@ struct IceMonstersUpdate
 	char type;
 	IceMonster _monster;
 };
+
+
 
 struct Firemonster
 {
