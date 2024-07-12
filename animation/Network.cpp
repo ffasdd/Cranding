@@ -361,6 +361,7 @@ void Network::ProcessPacket(char* buf)
 			int npc_id = p->_monster._id;
 			g_monsters[npc_id].setId(npc_id);
 			g_monsters[npc_id].setPrevPos(g_monsters[npc_id].getPos());
+		
 			g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
 			g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
 			g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
@@ -507,6 +508,11 @@ void Network::SendTime(int time)
 	p.roomid = my_roomid;
 	p.time = time;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+bool Network::MonsterCollide(Session& _monster)
+{
+	
 }
 
 

@@ -54,6 +54,7 @@ void Room::UpdateNpc()
 			npc.Move();
 		}
 
+
 		sendmonsterupdatePacket[idx].size = sizeof(NightMonstersUpdate);
 		sendmonsterupdatePacket[idx].type = SC_MONSTER_UPDATE_POS;
 		sendmonsterupdatePacket[idx]._monster._id = idx;
@@ -71,7 +72,8 @@ void Room::UpdateNpc()
 		sendmonsterupdatePacket[idx]._monster._ry = npc._right.y;
 		sendmonsterupdatePacket[idx]._monster._rz = npc._right.z;
 
-		//MonsterCollide();
+
+		MonsterCollide(npc);
 
 		idx++;
 	}
@@ -273,22 +275,54 @@ void Room::NatureNpcInitialized()
 	}
 }
 
-void Room::MonsterCollide()
+void Room::MonsterCollide(Monster& _monster)
 {
-	for (int i = 0; i < NightMonster.size(); ++i)
+	for (auto& monster : NightMonster)
 	{
-		for (auto& monster : NightMonster)
+		if (monster._id == _monster._id)continue;
+		if (monster._is_alive == false)continue;
+		XMVECTOR otherPos = XMLoadFloat3(&monster._pos);
+		XMVECTOR myPos = XMLoadFloat3(&_monster._pos);
+
+		XMVECTOR disVec = XMVectorSubtract(otherPos, myPos);
+		disVec = XMVector3Normalize(disVec);
+
+		XMVECTOR lookDir = XMLoadFloat3(&_monster._look);
+		lookDir = XMVector3Normalize(lookDir);
+
+		float dotProduct = XMVectorGetX(XMVector3Dot(lookDir, disVec));
+
+
+		float angleThreshold = cosf(XMConvertToRadians(45.0f)); // 45µµ ÀÌ³»
+		if (dotProduct > angleThreshold)
 		{
-			if (NightMonster[i].m_SPBB.Intersects(monster.m_SPBB))
-				NightMonster[i]._pos = NightMonster[i]._prevpos;
+			if (_monster.m_SPBB.Intersects(monster.m_SPBB))
+			{
+				_monster._speed = 0.f;
+
+			}
 		}
 	}
+
+	//for (int i = 0; i < NightMonster.size(); ++i)
+	//{
+	//	for (auto& monster : NightMonster)
+	//	{
+	//		if (monster._id == i)continue;
+	//		if (monster._is_alive == false)continue;
+	//		if (NightMonster[i].m_SPBB.Intersects(monster.m_SPBB))
+	//		{
+	//			//XMVECTOR posCurrent = XMLoadFloat3(&NightMonster[i]._pos);
+	//			//XMVECTOR posOther = XMLoadFloat3(&monster._pos);
+	//			//XMVECTOR direction = posCurrent - posOther;
+	//			//direction = XMVector3Normalize(direction); 
+
+	//			//XMVECTOR newPos = posOther + direction * 2.0f;
+	//			//XMStoreFloat3(&NightMonster[i]._pos, newPos);
+	//			NightMonster[i]._pos = NightMonster[i]._prevpos;
+	//		}
+	//	}
+	//}
 }
 
-void Room::NightMonsterTracetoPlayer()
-{
-	for (auto& n_m : NightMonster)
-	{
-	
-	}
-}
+

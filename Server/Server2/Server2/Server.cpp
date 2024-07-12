@@ -273,8 +273,8 @@ void Server::InitialziedMonster(int room_Id)
 {
 	std::random_device rd;
 	std::default_random_engine dre;
-	std::uniform_real_distribution<float> xpos(50, 360);
-	std::uniform_real_distribution<float> zpos(-700, -350);
+	std::uniform_real_distribution<float> xpos(20, 360);
+	std::uniform_real_distribution<float> zpos(-710, 160);
 
 	std::uniform_real_distribution<float> i_xpos(940, 1400);
 	std::uniform_real_distribution<float> i_zpos(1100, 1300);
@@ -298,7 +298,7 @@ void Server::InitialziedMonster(int room_Id)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(n_xpos(dre), 10.0f, n_zpos(dre));
 			}
-
+			ingameroom[room_Id].NightMonster[i]._id = i;
 			ingameroom[room_Id].NightMonster[i]._att = 10;
 			ingameroom[room_Id].NightMonster[i]._hp = 50;
 			ingameroom[room_Id].NightMonster[i]._look = XMFLOAT3(0.f, 0.f, 1.0f);
@@ -307,7 +307,7 @@ void Server::InitialziedMonster(int room_Id)
 			ingameroom[room_Id].NightMonster[i]._is_alive = true;
 			ingameroom[room_Id].NightMonster[i]._stagenum = 2;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
-			ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 5.0f;
+			ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 8.0f;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y= ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
 
 		}

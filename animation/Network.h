@@ -56,6 +56,7 @@ public: // thread send
 	void SendReady();
 	void SendTime(int time);
 	
+	bool MonsterCollide(Session& _monster);
 	
 public: // utils
 	int getmyid(int _id);
@@ -87,6 +88,9 @@ private:
 	int second{ 30 };
 	unsigned int curTimer = 0;
 	//CPlayer* PlayerInfo;
+
+	float                           m_fBoundingSize{ 3.0f };
+	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
 
 	
 private:

@@ -54,8 +54,7 @@ public:
 	void FireNpcInitialized();
 	void NatureNpcInitialized();
 
-	void MonsterCollide();
+	void MonsterCollide(Monster& _monster);
 
-	void NightMonsterTracetoPlayer();
 };
 

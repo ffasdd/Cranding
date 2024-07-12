@@ -15,7 +15,7 @@ void Monster::Move()
 	_prevpos = _pos; //이동하기 이전 좌표를 저장 
 	// ID가 아닌 거리와 좌표를 저장? 
 	int id = FindClosePlayer();
-	
+
 	if (id != -1)
 	{
 
@@ -38,12 +38,13 @@ void Monster::Move()
 		_right = rightFloat3;
 
 		//else 
-		//if (CollideCheckToPlayer()) _pos = _prevpos;
-		//else
+		if (CollideCheckToPlayer()) _speed = 0;
+	
 		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
-
-		//m_SPBB.Center = _pos;
-		//m_SPBB.Center.y = _pos.y;
+		
+		_speed = 1.0f;
+		m_SPBB.Center = _pos;
+		m_SPBB.Center.y = _pos.y;
 	}
 	else
 	{
