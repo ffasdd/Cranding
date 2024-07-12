@@ -534,7 +534,7 @@ void Server::ProcessPacket(int id, char* packet)
 				if (find(i_m.ingamePlayer.begin(), i_m.ingamePlayer.end(), &clients[id]) == i_m.ingamePlayer.end())
 				{
 					clients[id]._p_lock.lock();
-					i_m.ingamePlayer[id] = (&clients[id]);
+					i_m.ingamePlayer.emplace_back(&clients[id]);
 					clients[id]._p_lock.unlock();
 				}
 			}
