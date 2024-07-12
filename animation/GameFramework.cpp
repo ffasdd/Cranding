@@ -755,22 +755,6 @@ void CGameFramework::BuildObjects(int nScene)
 		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 		m_pCamera = m_pPlayer->GetCamera();
 
-		CObjectsShader* pObjectShader = new CObjectsShader(m_pScene->m_nHierarchicalGameObjects + 1, m_pScene->m_ppHierarchicalGameObjects, m_pScene->m_pPlayer);
-
-		// shadow
-		m_pScene->m_pDepthRenderShader = new CDepthRenderShader(pObjectShader, m_pScene->m_pLights);
-		DXGI_FORMAT pdxgiRtvFormats[1] = { DXGI_FORMAT_R32_FLOAT };
-		m_pScene->m_pDepthRenderShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, pdxgiRtvFormats, DXGI_FORMAT_D32_FLOAT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-		m_pScene->m_pDepthRenderShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL);
-
-		m_pScene->m_pShadowShader = new CShadowMapShader(pObjectShader);
-		m_pScene->m_pShadowShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(),1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-		m_pScene->m_pShadowShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->m_pDepthRenderShader->GetDepthTexture());
-
-		m_pScene->m_pShadowMapToViewport = new CTextureToViewportShader();
-		m_pScene->m_pShadowMapToViewport->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-		m_pScene->m_pShadowMapToViewport->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->m_pDepthRenderShader->GetDepthTexture());
-
 		break;
 	}
 	case 1:
@@ -851,6 +835,27 @@ void CGameFramework::BuildObjects(int nScene)
 	default:
 		break;
 	}
+
+	// shadow
+	CObjectsShader* pObjectShader = new CObjectsShader(m_pScene->m_nHierarchicalGameObjects + 1, m_pScene->m_ppHierarchicalGameObjects, m_pScene->m_pPlayer);
+	pObjectShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	pObjectShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL);
+
+	m_pScene->m_pDepthRenderShader = new CDepthRenderShader(pObjectShader, m_pScene->m_pLights);
+	DXGI_FORMAT pdxgiRtvFormats[1] = { DXGI_FORMAT_R32_FLOAT };
+	m_pScene->m_pDepthRenderShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, pdxgiRtvFormats, DXGI_FORMAT_D32_FLOAT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	m_pScene->m_pDepthRenderShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL);
+
+	m_pScene->m_pShadowShader = new CShadowMapShader(pObjectShader);
+	m_pScene->m_pShadowShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	m_pScene->m_pShadowShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->m_pDepthRenderShader->GetDepthTexture());
+
+	m_pScene->m_pShadowMapToViewport = new CTextureToViewportShader();
+	m_pScene->m_pShadowMapToViewport->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	m_pScene->m_pShadowMapToViewport->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->m_pDepthRenderShader->GetDepthTexture());
+
+
+
 	m_pPostProcessingShader = new CTextureToFullScreenShader();
 	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
@@ -863,8 +868,6 @@ void CGameFramework::BuildObjects(int nScene)
 
 	DXGI_FORMAT pdxgiDepthSrvFormats[1] = { DXGI_FORMAT_R32_FLOAT };
 	m_pPostProcessingShader->CreateShaderResourceViews(m_pd3dDevice, 1, &m_pd3dDepthStencilBuffer, pdxgiDepthSrvFormats);
-
-	// shadow
 
 
 	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0, 1);
