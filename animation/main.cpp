@@ -3,7 +3,6 @@
 #include "GameFramework.h"
 #include "Network.h"
 #include "Session.h"
-
 #define MAX_LOADSTRING 100
 
 HINSTANCE						ghAppInstance;
