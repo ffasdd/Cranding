@@ -1190,7 +1190,7 @@ void CGameFramework::FrameAdvance()
 	m_pScene->Render(m_pd3dCommandList, m_pCamera);
 	m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
-	if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
+	//if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 
 	m_pPostProcessingShader->OnPostRenderTarget(m_pd3dCommandList);
 
