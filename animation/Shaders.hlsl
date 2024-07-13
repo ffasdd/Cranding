@@ -16,8 +16,10 @@ cbuffer cbCameraInfo : register(b1)
 cbuffer cbGameObjectInfo : register(b2)
 {
     matrix gmtxGameObject : packoffset(c0);     // worldmatrix
+    /**/// 여기 gMaterial 지워도 됩ㄴㅣ다. 근데 이거 지우려면 조금 꼬이긴 할듯
     MATERIAL gMaterial : packoffset(c4);
     uint gnTexturesMask : packoffset(c8);
+    uint gnMaterial : packoffset(c9);
 };
 
 #include "Light.hlsl"
@@ -28,7 +30,7 @@ struct CB_TOOBJECTSPACE
     float4 f4Position;
 };
 
-cbuffer cbToLightSpace : register(b16)
+cbuffer cbToLightSpace : register(b10)
 {
     CB_TOOBJECTSPACE gcbToLightSpaces[MAX_LIGHTS];
 };
@@ -161,33 +163,34 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
     
 	// 객체 렌더링
-    float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
-        cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
+    //float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
+    //    cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
 	
-    float4 cSpecularColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    if (gnTexturesMask & MATERIAL_SPECULAR_MAP)
-        cSpecularColor = gtxtSpecularTexture.Sample(gssWrap, input.uv);
+    //float4 cSpecularColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //if (gnTexturesMask & MATERIAL_SPECULAR_MAP)
+    //    cSpecularColor = gtxtSpecularTexture.Sample(gssWrap, input.uv);
 	
-    float4 cNormalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    if (gnTexturesMask & MATERIAL_NORMAL_MAP)
-        cNormalColor = gtxtNormalTexture.Sample(gssWrap, input.uv);
+    //float4 cNormalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //if (gnTexturesMask & MATERIAL_NORMAL_MAP)
+    //    cNormalColor = gtxtNormalTexture.Sample(gssWrap, input.uv);
 	
-    float4 cMetallicColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    if (gnTexturesMask & MATERIAL_METALLIC_MAP)
-        cMetallicColor = gtxtMetallicTexture.Sample(gssWrap, input.uv);
+    //float4 cMetallicColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //if (gnTexturesMask & MATERIAL_METALLIC_MAP)
+    //    cMetallicColor = gtxtMetallicTexture.Sample(gssWrap, input.uv);
 	
-    float4 cEmissionColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    if (gnTexturesMask & MATERIAL_EMISSION_MAP)
-        cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
+    //float4 cEmissionColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //if (gnTexturesMask & MATERIAL_EMISSION_MAP)
+    //    cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
 	
-    output.cTexture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
+    //output.cTexture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
 	
     output.cTexture = float4(0.0f, 0.0f, 0.0f, 1.0f);
     if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
         output.cTexture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
     
     output.diffuse = gMaterial.m_cDiffuse;
+   // output.diffuse = float4(1.0, 1.0, 1.0, 1.0);
     
     input.normalW = normalize(input.normalW);
     output.normal = float4(input.normalW, 0);
@@ -547,14 +550,14 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     float3 pos = input.position;
     //float4 position = gtxtzDepthTexture.Load(texCoord);
     //float3 pos = position.xyz;
-    //float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
-    float3 normal = gtxtdrNormalTexture.Load(texCoord).rgb; // good
+    float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
+    //float3 normal = gtxtdrNormalTexture.Load(texCoord).rgb; // good
     float4 specular = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 ambient = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 diffuse = gMaterial.m_cDiffuse;
     //float4 diffuse = gtxtDepthTexture.Load(texCoord);
-    //float4 tex = gtxtTextureTexture.Sample(gssWrap, input.uv);
-    float4 tex = gtxtTextureTexture.Load(texCoord);
+    float4 tex = gtxtTextureTexture.Sample(gssWrap, input.uv);
+    //float4 tex = gtxtTextureTexture.Load(texCoord);
 
     float4 cColor = DeferredLighting(pos, normal, specular, diffuse, ambient, tex);
     
@@ -760,7 +763,7 @@ float4 PSLighting(VS_LIGHTING_OUTPUT input) : SV_TARGET
 //
 struct PS_DEPTH_OUTPUT
 {
-    float fzPosition : SV_Target;
+    float fzPosition : SV_Target5;
     float fDepth : SV_Depth;
 };
 
@@ -789,25 +792,28 @@ VS_SHADOW_MAP_OUTPUT VSShadowMapShadow(VS_LIGHTING_INPUT input)
 {
     VS_SHADOW_MAP_OUTPUT output = (VS_SHADOW_MAP_OUTPUT) 0;
 
-    float4 positionW = mul(float4(input.position, 1.0f), gmtxGameObject);
-    output.positionW = positionW.xyz;
-    output.position = mul(mul(positionW, gmtxView), gmtxProjection);
-    output.normalW = mul(float4(input.normal, 0.0f), gmtxGameObject).xyz;
+    //float4 positionW = mul(float4(input.position, 1.0f), gmtxGameObject);
+    //output.positionW = positionW.xyz;
+    //output.position = mul(mul(positionW, gmtxView), gmtxProjection);
+    //output.normalW = mul(float4(input.normal, 0.0f), gmtxGameObject).xyz;
 
-    for (int i = 0; i < MAX_LIGHTS; i++)
-    {
-        if (gcbToLightSpaces[i].f4Position.w != 0.0f)
-            output.uvs[i] = mul(positionW, gcbToLightSpaces[i].mtxToTexture);
-    }
+    //for (int i = 0; i < MAX_LIGHTS; i++)
+    //{
+    //    if (gcbToLightSpaces[i].f4Position.w != 0.0f)
+    //        output.uvs[i] = mul(positionW, gcbToLightSpaces[i].mtxToTexture);
+    //}
 
+    float4 posW = mul(float4(input.position, 1.0f), gmtxGameObject);
+    output.position = mul(mul(posW, gmtxView), gmtxProjection);
+    
     return (output);
 }
 
-float4 PSShadowMapShadow(VS_SHADOW_MAP_OUTPUT input) : SV_TARGET
+void PSShadowMapShadow(VS_SHADOW_MAP_OUTPUT input) 
 {
-    float4 cIllumination = ShadowLighting(input.positionW, normalize(input.normalW), true, input.uvs);
+    //float4 cIllumination = ShadowLighting(input.positionW, normalize(input.normalW), true, input.uvs);
 
-    return (cIllumination);
+    //return (cIllumination);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -896,11 +902,11 @@ VS_TEXTURED_OUTPUT VSTextureToViewport(uint nVertexID : SV_VertexID)
 //    return (cColor);
 //}
 
-SamplerState gssBorder : register(s3);
+SamplerState gssBorder : register(s2);
 
-float4 PSTextureToViewport(VS_TEXTURED_OUTPUT input) : SV_Target
+void PSTextureToViewport(VS_TEXTURED_OUTPUT input) 
 {
-    float fDepthFromLight0 = gtxtDepthTextures[0].SampleLevel(gssBorder, input.uv, 0).r;
+    //float fDepthFromLight0 = gtxtDepthTextures[0].SampleLevel(gssBorder, input.uv, 0).r;
 
-    return ((float4) (fDepthFromLight0 * 0.8f));
+    //return ((float4) (fDepthFromLight0 * 0.8f));
 }

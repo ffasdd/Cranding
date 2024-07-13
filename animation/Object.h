@@ -122,7 +122,6 @@ public:
 	void SetShader(CShader *pShader);
 	void SetMaterialType(UINT nType) { m_nType |= nType; }
 	void SetTexture(CTexture *pTexture, UINT nTexture = 0);
-
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList *pd3dCommandList);
 
 	virtual void ReleaseUploadBuffers();
@@ -388,7 +387,8 @@ public:
 	CGameObject(int nMaterials, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
     virtual ~CGameObject();
 
-
+	/**/// 언니 먼가 이게 핵심인것ㄱㅏ터 지금은 m_ppMaterial 을 쓰고있어
+	CMaterial* m_pMaterial = NULL;
 	D3D12_GPU_DESCRIPTOR_HANDLE		m_d3dCbvGPUDescriptorHandle;
 
 public:	
@@ -428,6 +428,11 @@ public:
 
 	// 서버에서 그리기 on/off
 	bool isdraw = true;
+
+
+	UINT							m_nReflection = 0;
+
+	void SetReflection(UINT nReflection) { m_nReflection = nReflection; }
 
 	void SetMesh(CMesh *pMesh);
 	void SetShader(CShader *pShader);

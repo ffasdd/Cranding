@@ -140,6 +140,7 @@ D3D12_SHADER_RESOURCE_VIEW_DESC CTexture::GetShaderResourceViewDesc(int nIndex)
 	case RESOURCE_TEXTURE2D: //(d3dResourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D)(d3dResourceDesc.DepthOrArraySize == 1)
 	case RESOURCE_TEXTURE2D_ARRAY: //[]
 		d3dShaderResourceViewDesc.Format = d3dResourceDesc.Format;
+		if (d3dResourceDesc.Format == DXGI_FORMAT_D32_FLOAT) d3dShaderResourceViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
 		d3dShaderResourceViewDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 			d3dShaderResourceViewDesc.Texture2D.MipLevels = -1;
 		d3dShaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
@@ -259,6 +260,7 @@ void CMaterial::UpdateShaderVariable(ID3D12GraphicsCommandList *pd3dCommandList)
 
 	// gnTexturesMask
 	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 1, &m_nType, 32);
+
 
 	for (int i = 0; i < m_nTextures; i++)
 	{
@@ -805,6 +807,7 @@ CGameObject::~CGameObject()
 	if (m_pSkinnedAnimationController) delete m_pSkinnedAnimationController;
 
 	ReleaseShaderVariables();
+	if (m_pMaterial) m_pMaterial->Release();
 }
 
 void CGameObject::UpdateBoundingBox()
@@ -1041,12 +1044,15 @@ void CGameObject::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandLi
 {
 }
 
-void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList *pd3dCommandList, XMFLOAT4X4 *pxmf4x4World)
+void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
 {
 	XMFLOAT4X4 xmf4x4World;
 	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
 	// gmtxGameObject
 	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 16, &xmf4x4World, 0);
+
+	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 1, &m_nReflection, 33); /**/// 이 코드는 8-6-7-2 기준     uint		gnMaterial : packoffset(c4); 값을 넘겨주는 코드야
+
 }
 
 void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList *pd3dCommandList, CMaterial *pMaterial)

@@ -77,7 +77,7 @@ extern HINSTANCE						ghAppInstance;
 #define _DEPTH_BUFFER_HEIGHT	(FRAME_BUFFER_HEIGHT * 4)
 
 #define MAX_LIGHTS				1
-
+#define MAX_MATERIALS			10 
 #define MAX_DEPTH_TEXTURES		MAX_LIGHTS
 
 

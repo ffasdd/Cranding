@@ -266,6 +266,10 @@ void CGameFramework::CreateDepthStencilView()
 
 	D3D12_CPU_DESCRIPTOR_HANDLE m_DSVDescriptorCPUHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencilBuffer, &d3dDepthStencilViewDesc, m_DSVDescriptorCPUHandle);
+
+
+	m_d3dDsvDescriptorCPUHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencilBuffer, NULL, m_d3dDsvDescriptorCPUHandle);
 }
 
 void CGameFramework::ChangeSwapChainState()
@@ -837,7 +841,7 @@ void CGameFramework::BuildObjects(int nScene)
 	}
 
 	// shadow
-	CObjectsShader* pObjectShader = new CObjectsShader(m_pScene->m_nHierarchicalGameObjects + 1, m_pScene->m_ppHierarchicalGameObjects, m_pScene->m_pPlayer);
+	/*CObjectsShader* pObjectShader = new CObjectsShader(m_pScene->m_nHierarchicalGameObjects + 1, m_pScene->m_ppHierarchicalGameObjects, m_pScene->m_pPlayer);
 	pObjectShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	pObjectShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL);
 
@@ -854,7 +858,7 @@ void CGameFramework::BuildObjects(int nScene)
 	m_pScene->m_pShadowMapToViewport->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	m_pScene->m_pShadowMapToViewport->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->m_pDepthRenderShader->GetDepthTexture());
 
-
+*/
 
 	m_pPostProcessingShader = new CTextureToFullScreenShader();
 	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
@@ -1154,7 +1158,7 @@ void CGameFramework::FrameAdvance()
 
 		m_pd3dCommandList->SetDescriptorHeaps(1, &m_BlurShader->m_pd3dCbvSrvDescriptorHeap);
 
-		m_BlurShader->Render(m_pd3dCommandList, m_pCamera);
+		//m_BlurShader->Render(m_pd3dCommandList, m_pCamera);
 
 
 	//	//if (m_pScene)

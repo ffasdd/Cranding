@@ -9,6 +9,13 @@
 #define _WITH_LOCAL_VIEWER_HIGHLIGHTING
 #define _WITH_THETA_PHI_CONES
 //#define _WITH_REFLECT
+struct MATERIALa
+{
+    float4 m_cAmbient;
+    float4 m_cDiffuse;
+    float4 m_cSpecular; //a = power
+    float4 m_cEmissive;
+};
 
 struct LIGHT
 {
@@ -27,9 +34,10 @@ struct LIGHT
 	float					padding;
 };
 
+/**/// 여기 보면 아까 b3로 넘어온게 있져
 cbuffer cbMaterial : register(b3)
 {
-    MATERIAL gMaterials[MAX_MATERIALS];
+    MATERIALa gMaterials[MAX_MATERIALS];
 };
 
 cbuffer cbLights : register(b4)

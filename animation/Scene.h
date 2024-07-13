@@ -40,6 +40,19 @@ struct LIGHTS
 	XMFLOAT4							m_xmf4GlobalAmbient;
 	int									m_nLights;
 };
+
+struct MATERIAL
+{
+	XMFLOAT4				m_xmf4Ambient;
+	XMFLOAT4				m_xmf4Diffuse;
+	XMFLOAT4				m_xmf4Specular; //(r,g,b,a=power)
+	XMFLOAT4				m_xmf4Emissive;
+};
+
+struct MATERIALS
+{
+	MATERIAL				m_pReflections[MAX_MATERIALS];
+};
 /*
 class CDescriptorHeap
 {
@@ -188,6 +201,11 @@ public:
 
 	CShadowMapShader* m_pShadowShader = NULL;
 	CTextureToViewportShader* m_pShadowMapToViewport = NULL;
+
+	ID3D12Resource* m_pd3dcbMaterials = NULL;
+	MATERIAL* m_pcbMappedMaterials = NULL;
+
+	MATERIALS* m_pMaterials = NULL;
 };
 
 class CLoginScene : public CScene
