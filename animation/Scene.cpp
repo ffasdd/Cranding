@@ -944,7 +944,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	int FireMonsterNum = 10;
 	int IceMonsterNum = 10;
 	int GrassMonsterNum = 10;
-	cout << "inside builbobj" << endl;
+
 	m_nHierarchicalGameObjects = 3 + FireMonsterNum + IceMonsterNum + GrassMonsterNum;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
@@ -956,7 +956,6 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	if (map) delete map;
 
 
-	cout << "make player" << endl;
 	CLoadedModelInfo* pPlayerModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SK_Mesh_Astronaut_sword.bin", NULL);
 
 	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel1, 11);
@@ -1021,7 +1020,6 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	if (pPlayerModel2) delete pPlayerModel2;
 
 
-	cout << "make mons" << endl;
 	// monster model load
 	CLoadedModelInfo* pFireMonModel1 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);
 	CLoadedModelInfo* pFireMonModel2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shade.bin", NULL);

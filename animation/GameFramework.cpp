@@ -816,7 +816,7 @@ void CGameFramework::BuildObjects(int nScene)
 	}
 	case 1:
 	{
-		cout << "CLoginScene BuildObjects" << endl;
+		cout << "CLobbyScene BuildObjects" << endl;
 		m_pScene = new CLobbyScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
