@@ -272,14 +272,14 @@ void Server::WorkerThread()
 			break;
 		}
 
-		/*case COMP_TYPE::NPC_TRACE: {
-			int r_id = static_cast<int>(key);
-			ingameroom[r_id].NightMonsterTracetoPlayer();
-			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(10ms),r_id,EVENT_TYPE::EV_TRACE_PLAYER };
-			g_Timer.InitTimerQueue(ev);
-			delete ex_over;
-			break;
-		}*/
+										 /*case COMP_TYPE::NPC_TRACE: {
+											 int r_id = static_cast<int>(key);
+											 ingameroom[r_id].NightMonsterTracetoPlayer();
+											 TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(10ms),r_id,EVENT_TYPE::EV_TRACE_PLAYER };
+											 g_Timer.InitTimerQueue(ev);
+											 delete ex_over;
+											 break;
+										 }*/
 		default:
 			break;
 		}
@@ -325,7 +325,7 @@ void Server::InitialziedMonster(int room_Id)
 			ingameroom[room_Id].NightMonster[i]._stagenum = 2;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 8.0f;
-			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y= ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
+			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y = ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
 
 		}
 	}
@@ -456,7 +456,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage) continue;
 			pl->send_change_animate_packet(id);
-			
+
 		}
 
 	}
@@ -524,10 +524,13 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				{
 					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
+
 					if (find(i_m.ingamePlayer.begin(), i_m.ingamePlayer.end(), &clients[id]) != i_m.ingamePlayer.end())
 					{
-						i_m.RemovePlayer(id);
+						i_m.ingamePlayer.erase(i_m.ingamePlayer.begin() + id);
+
 					}
+
 				}
 			}
 		}
@@ -538,10 +541,13 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				{
 					lock_guard<mutex>ll{ n_m.ingamePlayerlock };
+				
 					if (find(n_m.ingamePlayer.begin(), n_m.ingamePlayer.end(), &clients[id]) != n_m.ingamePlayer.end())
 					{
-						n_m.RemovePlayer(id);
+						n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+
 					}
+					
 				}
 			}
 			// æÛ¿Ω∏ÛΩ∫≈Õ ª—∑¡¡‡æﬂ«‘ 
@@ -615,11 +621,11 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 
 		{
-			lock_guard<mutex>ll{ ingameroom[r_id].r_l};
+			lock_guard<mutex>ll{ ingameroom[r_id].r_l };
 			ingameroom[r_id].readycnt++;
 		}
 		bool all_Start = all_of(ingameroom[r_id].ingamePlayer.begin(), ingameroom[r_id].ingamePlayer.end(), [](Session* s) {return s->_state == STATE::Start; });
-		
+
 		if (all_Start)
 		{
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
@@ -676,7 +682,7 @@ void Server::ProcessPacket(int id, char* packet)
 			pl->send_attack_packet(id);
 		}
 
-		
+
 
 	}
 				  break;

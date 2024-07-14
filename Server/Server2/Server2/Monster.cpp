@@ -135,6 +135,96 @@ void Monster::IceMove()
 	}
 }
 
+void Monster::FireMove()
+{
+	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
+
+	_prevpos = _pos;
+	int id = FindClosePlayer();
+	if (id != -1)
+	{
+		for (auto& cl : ingamePlayer)
+		{
+			XMVECTOR posVec = XMLoadFloat3(&_pos);
+			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
+
+			XMFLOAT3 directionToPlayerFloat3;
+			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+			_look = directionToPlayerFloat3;
+
+			// right 벡터 계산 (look과 up 벡터의 외적)
+			XMVECTOR upVec = XMLoadFloat3(&up);
+			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+			XMFLOAT3 rightFloat3;
+			XMStoreFloat3(&rightFloat3, rightVec);
+
+			// right 벡터를 업데이트
+			_right = rightFloat3;
+
+			//else 
+			if (CollideCheckToPlayer()) _speed = 0;
+
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+
+			_speed = 1.0f;
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
+
+		}
+	}
+	else
+	{
+
+	}
+}
+
+void Monster::NatureMove()
+{
+	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
+
+	_prevpos = _pos;
+	int id = FindClosePlayer();
+	if (id != -1)
+	{
+		for (auto& cl : ingamePlayer)
+		{
+			XMVECTOR posVec = XMLoadFloat3(&_pos);
+			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
+
+			XMFLOAT3 directionToPlayerFloat3;
+			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+			_look = directionToPlayerFloat3;
+
+			// right 벡터 계산 (look과 up 벡터의 외적)
+			XMVECTOR upVec = XMLoadFloat3(&up);
+			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+			XMFLOAT3 rightFloat3;
+			XMStoreFloat3(&rightFloat3, rightVec);
+
+			// right 벡터를 업데이트
+			_right = rightFloat3;
+
+			//else 
+			if (CollideCheckToPlayer()) _speed = 0;
+
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+
+			_speed = 1.0f;
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
+
+		}
+	}
+	else
+	{
+
+	}
+}
+
 bool Monster::CollideCheckToPlayer()
 {
 	for (auto& pl : ingamePlayer)

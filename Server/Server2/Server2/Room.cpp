@@ -151,10 +151,90 @@ void Room::IceUpdateNpc()
 
 void Room::FireUpdateNpc()
 {
+	FireMonsterUpdate sendFireMonsterUpdatePacket[10];
+	int idx = 0;
+
+	for (auto& npc : IceMonster)
+	{
+		if (npc._is_alive == false)
+		{
+			npc.Remove();
+		}
+		else
+			npc.FireMove();
+
+		sendFireMonsterUpdatePacket[idx].size = sizeof(FireMonsterUpdate);
+		sendFireMonsterUpdatePacket[idx].type = SC_FIRE_MONSTER_UPDATE;
+		sendFireMonsterUpdatePacket[idx]._monster._id = idx;
+
+		sendFireMonsterUpdatePacket[idx]._monster._x = npc._pos.x;
+		sendFireMonsterUpdatePacket[idx]._monster._y = npc._pos.y;
+		sendFireMonsterUpdatePacket[idx]._monster._z = npc._pos.z;
+
+		sendFireMonsterUpdatePacket[idx]._monster._lx = npc._look.x;
+		sendFireMonsterUpdatePacket[idx]._monster._ly = npc._look.y;
+		sendFireMonsterUpdatePacket[idx]._monster._lz = npc._look.z;
+	
+		sendFireMonsterUpdatePacket[idx]._monster._rx = npc._right.x;
+		sendFireMonsterUpdatePacket[idx]._monster._ry = npc._right.y;
+		sendFireMonsterUpdatePacket[idx]._monster._rz = npc._right.z;
+
+
+		idx++;
+	}
+	for (auto& pl : ingamePlayer)
+	{
+		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
+		for (auto& packet : sendFireMonsterUpdatePacket)
+		{
+			if (pl->_stage == 4) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+				pl->do_send(&packet);
+		}
+	}
 }
 
 void Room::NatureUpdateNpc()
 {
+	NatureMonsterUpdate sendNatureMontserUpdatePacket[10];
+	int idx = 0;
+
+	for (auto& npc : IceMonster)
+	{
+		if (npc._is_alive == false)
+		{
+			npc.Remove();
+		}
+		else
+			npc.NatureMove();
+
+		sendNatureMontserUpdatePacket[idx].size = sizeof(NatureMonsterUpdate);
+		sendNatureMontserUpdatePacket[idx].type = SC_NATURE_MONSTER_UPDATE;
+		sendNatureMontserUpdatePacket[idx]._monster._id = idx;
+		
+		sendNatureMontserUpdatePacket[idx]._monster._x = npc._pos.x;
+		sendNatureMontserUpdatePacket[idx]._monster._y = npc._pos.y;
+		sendNatureMontserUpdatePacket[idx]._monster._z = npc._pos.z;
+		
+		sendNatureMontserUpdatePacket[idx]._monster._lx = npc._look.x;
+		sendNatureMontserUpdatePacket[idx]._monster._ly = npc._look.y;
+		sendNatureMontserUpdatePacket[idx]._monster._lz = npc._look.z;
+		
+		sendNatureMontserUpdatePacket[idx]._monster._rx = npc._right.x;
+		sendNatureMontserUpdatePacket[idx]._monster._ry = npc._right.y;
+		sendNatureMontserUpdatePacket[idx]._monster._rz = npc._right.z;
+
+
+		idx++;
+	}
+	for (auto& pl : ingamePlayer)
+	{
+		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
+		for (auto& packet : sendNatureMontserUpdatePacket)
+		{
+			if (pl->_stage == 5) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+				pl->do_send(&packet);
+		}
+	}
 }
 
 void Room::DayTimeSend()
