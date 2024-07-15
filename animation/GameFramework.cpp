@@ -577,7 +577,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	if (cl_id == n)
 	{
 		m_pPlayer->SetId(cl_id);
-
+		m_pPlayer->SetPosition(position);
 	}
 	else
 	{
@@ -1047,7 +1047,7 @@ void CGameFramework::ProcessInput()
 				if (fLength > m_pPlayer->GetMaxVelocityY()) temp.y *= (fMaxVelocityY / fLength);
 
 				XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(temp, m_GameTimer.GetTimeElapsed(), false);
-				m_pPlayer->Move(xmf3Velocity, false);
+				m_pPlayer->Move(cl_id,xmf3Velocity, false);
 				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
 				g_sendqueue.push(SENDTYPE::MOVE);
 

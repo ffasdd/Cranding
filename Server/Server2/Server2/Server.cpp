@@ -272,14 +272,7 @@ void Server::WorkerThread()
 			break;
 		}
 
-										 /*case COMP_TYPE::NPC_TRACE: {
-											 int r_id = static_cast<int>(key);
-											 ingameroom[r_id].NightMonsterTracetoPlayer();
-											 TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(10ms),r_id,EVENT_TYPE::EV_TRACE_PLAYER };
-											 g_Timer.InitTimerQueue(ev);
-											 delete ex_over;
-											 break;
-										 }*/
+								
 		default:
 			break;
 		}
@@ -370,22 +363,8 @@ void Server::ProcessPacket(int id, char* packet)
 		clients[id].m_SPBB.Center = clients[id]._pos;
 		clients[id].m_SPBB.Center.y = clients[id]._pos.y;
 		// view List 
-		unordered_set<int> near_list;
-		clients[id]._v_lock.lock();
-		unordered_set<int> old_vlist = clients[id]._view_list;
+		//clients[id].send_move_packet(id);
 
-		clients[id]._v_lock.unlock();
-
-		//for (auto& pl : ingameroom[r_id].ingamePlayer)
-		//{
-		//	if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
-		//	if (pl->_id == id)continue;
-		//	if (pl->_stage != clients[id]._stage)continue;
-		//	if (can_see(id, pl->_id))
-		//		near_list.insert(pl->_id);
-		//}
-		//// -------------------------------
-		clients[id].send_move_packet(id);
 		for (auto& pl : clients)
 		{
 			if (pl._state == STATE::Alloc || pl._state == STATE::Free) continue;
@@ -394,35 +373,13 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl._stage != clients[id]._stage)continue;
 			pl.send_move_packet(id);
 		}
-		//// -------------------view list 
-		//for (auto& pl : near_list)
-		//{
-		//	clients[pl]._v_lock.lock();
 
-		//	if (clients[pl]._view_list.count(id))
-		//	{
-		//		clients[pl]._v_lock.unlock();
-		//		clients[pl].send_move_packet(id);
-		//	}
-		//	else
-		//	{
-		//		clients[pl]._v_lock.unlock();
-		//		clients[pl].send_add_info_packet(id);
-		//	}
-
-		//	if (old_vlist.count(pl) == 0)
-		//		clients[id].send_add_info_packet(pl);
-		//}
 	}
 				break;
 	case CS_ROTATE: {
 		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
 		int r_id = p->roomid;
 		clients[id].yaw = p->yaw;
-
-
-
-
 		clients[id].send_rotate_packet(id);
 		for (auto& pl : clients)
 		{
