@@ -3,6 +3,7 @@
 #include "GameFramework.h"
 #include "Network.h"
 #include "Session.h"
+
 #define MAX_LOADSTRING 100
 
 HINSTANCE						ghAppInstance;
@@ -17,8 +18,6 @@ unordered_map<int, Session> g_monsters;
 unordered_map<int, Session> g_ice_monsters;
 unordered_map<int, Session> g_fire_monsters;
 unordered_map<int, Session> g_nature_monsters;
-
-
 
 concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 HANDLE loginevent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -66,9 +65,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				::TranslateMessage(&msg);
 				::DispatchMessage(&msg);
 			}
+			
 		}
 		else
 		{
+
 			if (gNetwork.IngameStart == true || gNetwork.SpaceshipScene == true)
 			{
 				gGameFramework.ReleaseObjects();
@@ -151,6 +152,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			gGameFramework.FrameAdvance();
 		}
 	}
+
+
+
 	gGameFramework.OnDestroy();
 
 	return((int)msg.wParam);
@@ -192,6 +196,23 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	::ShowWindow(hMainWnd, nCmdShow);
 	::UpdateWindow(hMainWnd);
+
+	//imgui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+	ImGui::StyleColorsDark();
+
+	// 플랫폼/렌더러 바인딩 설정
+	ImGui_ImplWin32_Init(hMainWnd);
+	ImGui_ImplDX12_Init(gGameFramework.GetDevice(), 3,
+		DXGI_FORMAT_R8G8B8A8_UNORM, gGameFramework.m_pd3dImGuiDescriptorHeap,
+		gGameFramework.m_pd3dImGuiDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+		gGameFramework.m_pd3dImGuiDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+
 
 	return(TRUE);
 }
@@ -259,3 +280,4 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return((INT_PTR)FALSE);
 }
+

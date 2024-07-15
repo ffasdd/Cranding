@@ -51,7 +51,7 @@ public:
 	void CreateDirect3DDevice();
 	void CreateCommandQueueAndList();
 
-	void CreateRtvAndDsvDescriptorHeaps();
+	void CreateRtvAndDsvAndImGuiDescriptorHeaps();
 
 	void CreateSwapChainRenderTargetViews();
 	void CreateDepthStencilView();
@@ -73,6 +73,7 @@ public:
 
 	void UpdateShaderVariables();
 
+	ID3D12Device *GetDevice() { return (m_pd3dDevice); }
 
 	void UpdateTime();
 
@@ -125,6 +126,9 @@ public:
 	TIME* m_pTime = NULL;
 
 
+	//imgui
+	ID3D12DescriptorHeap* m_pd3dImGuiDescriptorHeap = NULL;
+
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 
@@ -157,6 +161,7 @@ private:
 	ID3D12Fence					*m_pd3dFence = NULL;
 	UINT64						m_nFenceValues[m_nSwapChainBuffers];
 	HANDLE						m_hFenceEvent;
+
 
 #if defined(_DEBUG)
 	ID3D12Debug					*m_pd3dDebugController;
