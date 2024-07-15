@@ -105,7 +105,7 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 		}
 
 		// collision check with fire monster
-		else if (i > 2 && i < 14)
+		else if (i > 2 && i < 13)
 		{
 			// monster with player(attack mode)
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
@@ -123,7 +123,7 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 			}
 		}
 		// collision check with grass monster
-		else if (i >= 14 && i < 24)
+		else if (i >= 13 && i < 23)
 		{
 			// monster with player(attack mode)
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
@@ -141,7 +141,7 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 			}
 		}
 		// collision check with ice monster
-		else if (i >= 24 && i < 34)
+		else if (i >= 23 && i < 33)
 		{
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
