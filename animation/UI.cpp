@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "UI.h"
 #include "GameFramework.h"
+#include "Scenemanager.h"
 
 using namespace std;
 
@@ -48,16 +49,16 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     // 클릭 처리 필요한 ui
     // game start
     UILayer::GetInstance()->AddUIRect(0, m_GameStart, [this]()-> bool {
-        gGameFramework.SceneNum = 1;
-    gGameFramework.isready = false;
-    gNetwork.SendLoginfo();
-    WaitForSingleObject(loginevent, INFINITE);
+        gGameFramework.sceneManager.SetCurrentScene(SCENEKIND::LOBBY);
+        gGameFramework.isready = false;
+        gNetwork.SendLoginfo();
+        WaitForSingleObject(loginevent, INFINITE);
 
-    gGameFramework.cl_id = gNetwork.Getmyid();
-    gGameFramework.m_pPlayer->c_id = gNetwork.Getmyid();
+        gGameFramework.cl_id = gNetwork.Getmyid();
+        gGameFramework.m_pPlayer->c_id = gNetwork.Getmyid();
 
         gGameFramework.ReleaseObjects();
-        gGameFramework.BuildObjects(1);
+        gGameFramework.BuildObjects(gGameFramework.sceneManager.GetCurrentScene());
         cout << "게임 시작" << endl;
         return true;
         });

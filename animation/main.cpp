@@ -73,7 +73,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			if (gNetwork.IngameStart == true || gNetwork.SpaceshipScene == true)
 			{
 				gGameFramework.ReleaseObjects();
-				gGameFramework.BuildObjects(2);
+				gGameFramework.BuildObjects(SCENEKIND::SPACESHIP);
 				gNetwork.IngameStart = false;
 				gNetwork.SpaceshipScene = false;
 			}

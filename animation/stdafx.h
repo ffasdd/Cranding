@@ -93,6 +93,18 @@ constexpr int DEFERREDNUM = 5;
 
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 
+enum class SCENEKIND
+{
+	NONE,
+	LOGIN,
+	LOBBY,
+	LOADING,
+	SPACESHIP,
+	ICE,
+	FIRE,
+	NATURE
+};
+
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 
 extern UINT	gnCbvSrvDescriptorIncrementSize;
