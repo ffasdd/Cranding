@@ -434,7 +434,7 @@ void Network::ProcessPacket(char* buf)
 
 		
 	}
-	brea;
+	break;
 
 	}
 }
