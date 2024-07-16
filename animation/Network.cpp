@@ -428,6 +428,13 @@ void Network::ProcessPacket(char* buf)
 		g_nature_monsters[npc_id].setUp({ 0.f,1.f,0.f });
 	}
 	break;
+	case SC_ICE_BOSS_UPDATE:
+	{
+		BossUpdate_Ice* p = reinterpret_cast<BossUpdate_Ice*>(buf);
+
+		
+	}
+	brea;
 
 	}
 }

@@ -237,6 +237,47 @@ void Room::NatureUpdateNpc()
 	}
 }
 
+void Room::IceBossUpdate()
+{
+	BossUpdate_Ice sendIceBossUpdatePacket;
+	if (IceBoss._is_alive == true)
+	{
+		IceBoss.Move();
+	}
+	else
+	{
+		IceBoss.Remove();
+	}
+	sendIceBossUpdatePacket.size = sizeof(BossUpdate_Ice);
+	sendIceBossUpdatePacket.type = SC_ICE_BOSS_UPDATE;
+	
+	sendIceBossUpdatePacket._monster._x = IceBoss._pos.x;
+	sendIceBossUpdatePacket._monster._y = IceBoss._pos.y;
+	sendIceBossUpdatePacket._monster._z = IceBoss._pos.z;
+
+	sendIceBossUpdatePacket._monster._lx = IceBoss._look.x;
+	sendIceBossUpdatePacket._monster._ly = IceBoss._look.y;
+	sendIceBossUpdatePacket._monster._lz = IceBoss._look.z;
+
+	sendIceBossUpdatePacket._monster._rx = IceBoss._right.x;
+	sendIceBossUpdatePacket._monster._ry = IceBoss._right.y;
+	sendIceBossUpdatePacket._monster._rz = IceBoss._right.z;
+
+	for (auto& cl : ingamePlayer)
+	{
+		if (cl->_stage == 3)
+			cl->do_send(&sendIceBossUpdatePacket);
+	}
+}
+
+void Room::FireBossUpdate()
+{
+}
+
+void Room::NatureBossUpdate()
+{
+}
+
 void Room::DayTimeSend()
 {
 	SC_DAYTIME_PACKET p;

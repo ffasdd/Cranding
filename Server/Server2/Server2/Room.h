@@ -3,6 +3,11 @@
 #include"Session.h"
 class Session;
 class Monster;
+
+class IceBossMonster;
+class FireBossMonster;
+class NatureBossMonster;
+
 enum class roomState : int { Free, Ingame };
 class Room
 {
@@ -53,6 +58,11 @@ public:
 	void FireUpdateNpc();
 	void NatureUpdateNpc();
 
+	void IceBossUpdate();
+	void FireBossUpdate();
+	void NatureBossUpdate();
+	
+
 	void DayTimeSend();
 	void NightSend();
 
@@ -62,6 +72,7 @@ public:
 	void NatureNpcInitialized();
 
 	void NightMonsterCollide(Monster& _monster);
+
 	void IceMonsterCollide(Monster& _monster);
 	void FireMonsterCollide(Monster& _monster);
 	void NatureMontserCollide(Monster& _monster);

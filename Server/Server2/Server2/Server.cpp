@@ -4,10 +4,6 @@
 extern Timer g_Timer;
 extern array<Monster, MAX_NPC> Monsters;
 
-extern FireBossMonster _FireBoss;
-extern IceBossMonster _IceBoss;
-extern NatureBossMonster _NatureBoss;
-
 Server& Server::GetInstance()
 {
 	static Server instance;
@@ -277,6 +273,9 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::ICE_BOSS_MOVE: {
 			int r_id = static_cast<int>(key);
+			ingameroom[r_id].IceBossUpdate();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_ICE_BOSS_MOVE };
+			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
 		}
@@ -547,6 +546,15 @@ void Server::ProcessPacket(int id, char* packet)
 
 			TIMER_EVENT ev6{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NATURE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev6);
+
+			TIMER_EVENT ev7{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_ICE_BOSS_MOVE };
+			g_Timer.InitTimerQueue(ev7);
+
+			//TIMER_EVENT ev8{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_FIRE_BOSS_MOVE };
+			//g_Timer.InitTimerQueue(ev8);
+
+			//TIMER_EVENT ev9{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NATURE_BOSS_MOVE };
+			//g_Timer.InitTimerQueue(ev9);
 		}
 		else
 			break;
