@@ -23,7 +23,6 @@ CGameFramework::CGameFramework()
 
 	m_pd3dRtvDescriptorHeap = NULL;
 	m_pd3dDsvDescriptorHeap = NULL;
-	m_pd3dImGuiDescriptorHeap = NULL;
 
 	m_hFenceEvent = NULL;
 	m_pd3dFence = NULL;
@@ -49,7 +48,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	CreateDirect3DDevice();
 	CreateCommandQueueAndList();
-	CreateRtvAndDsvAndImGuiDescriptorHeaps();
+	CreateRtvAndDsvDescriptorHeaps();
 
 	CreateSwapChain();
 
@@ -59,7 +58,6 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	CoInitialize(NULL);
 
-	
 	BuildObjects(0);
 
 	return(true);
@@ -194,7 +192,7 @@ void CGameFramework::CreateCommandQueueAndList()
 	hResult = m_pd3dCommandList->Close();
 }
 
-void CGameFramework::CreateRtvAndDsvAndImGuiDescriptorHeaps()
+void CGameFramework::CreateRtvAndDsvDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC d3dDescriptorHeapDesc;
 	::ZeroMemory(&d3dDescriptorHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
@@ -218,19 +216,6 @@ void CGameFramework::CreateRtvAndDsvAndImGuiDescriptorHeaps()
 		m_pd3dDsvDescriptorHeap->SetName(L"CGameFramework::CreateRtvAndDsvDescriptorHeaps 2");
 	}
 	::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-
-	//imgui
-	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	d3dDescriptorHeapDesc.NumDescriptors = 1;
-	d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	d3dDescriptorHeapDesc.NodeMask = 0;
-	hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dImGuiDescriptorHeap);
-	if (SUCCEEDED(hResult))
-	{
-		m_pd3dDsvDescriptorHeap->SetName(L"ImGUIDescriptorHeaps");
-	}
-	::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
 }
 
 void CGameFramework::CreateSwapChainRenderTargetViews()
@@ -332,7 +317,7 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
-		if (SceneNum == 0 && m_pUILayer != NULL)
+		if (SceneNum == 0)
 		{
 			UILayer::GetInstance()->ProcessMouseClick(0, m_ptOldCursorPos);
 		}
@@ -795,11 +780,6 @@ void CGameFramework::OnDestroy()
 		m_pd3dcbTime->Release();
 	}
 
-	//imgui
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-
 #if defined(_DEBUG)
 	IDXGIDebug1* pdxgiDebug = NULL;
 	DXGIGetDebugInterface1(0, __uuidof(IDXGIDebug1), (void**)&pdxgiDebug);
@@ -817,7 +797,6 @@ void CGameFramework::BuildObjects(int nScene)
 
 #endif // _FULLSCREEN
 
-	
 
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 	switch (nScene)
@@ -1210,33 +1189,10 @@ void CGameFramework::FrameAdvance()
 
 	m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], d3dDsvCPUDescriptorHandle);
 
-	// imgui
-	bool isActive = false;
-
-	//if (ImGui::Begin("chat", &isActive))
-	//{
-	//	static char serverAddress[256] = "";
-
-	//	
-	//	ImGui::InputText("Server Address", serverAddress, sizeof(serverAddress));
-
-	//	if (ImGui::Button("Connect"))
-	//	{
-	//		// Connect to server logic can be added here
-	//		std::cout << "Connecting to server at: " << serverAddress << std::endl;
-	//		// Example: gNetwork.Connect(serverAddress);
-	//	}
-
-	//	ImGui::End();
-	//}
-	//ImGui::Render();
-	//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_pd3dCommandList);
-
-
 	m_pScene->Render(m_pd3dCommandList, m_pCamera);
 	m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
-	//if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
+	if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 
 	m_pPostProcessingShader->OnPostRenderTarget(m_pd3dCommandList);
 

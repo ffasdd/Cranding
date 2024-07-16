@@ -37,9 +37,9 @@ CPlayer::CPlayer()
 
 CPlayer::~CPlayer()
 {
-	ReleaseShaderVariables();
+	//ReleaseShaderVariables();
 
-	//if (m_pCamera) delete m_pCamera;
+	if (m_pCamera) delete m_pCamera;
 }
 
 void CPlayer::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
