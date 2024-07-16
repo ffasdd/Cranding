@@ -259,15 +259,15 @@ int Monster::FindClosePlayer()
 	return closestPlayerId;
 }
 
+void IceBossMonster::Move()
+{
+}
+
 void FireBossMonster::Move()
 {
 	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
 
 	_prevpos = _pos;
-}
-
-void IceBossMonster::Move()
-{
 }
 
 void NatureBossMonster::Move()

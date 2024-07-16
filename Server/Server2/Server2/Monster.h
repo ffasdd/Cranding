@@ -65,6 +65,7 @@ public:
 
 class IceBossMonster : public Monster
 {
+public:
 	void Move() override;
 };
 
