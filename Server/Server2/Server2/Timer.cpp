@@ -83,6 +83,27 @@ void Timer::TimerThread()
 					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
 				}
+				case EVENT_TYPE::EV_ICE_BOSS_MOVE: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::ICE_BOSS_MOVE;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+					
+				}
+				case EVENT_TYPE::EV_FIRE_BOSS_MOVE: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::FIRE_BOSS_MOVE;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+
+				}
+				case EVENT_TYPE::EV_NATURE_BOSS_MOVE: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::NATURE_BOSS_MOVE;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+
+				}
 	
 
 

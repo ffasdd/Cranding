@@ -259,6 +259,16 @@ void Room::NightSend()
 	}
 }
 
+void Room::BossMonsterInitialziedMonster()
+{
+	FireBoss._pos = XMFLOAT3(-60.0f, 10.0f, 1327.0f);
+	FireBoss._is_alive = true;
+	IceBoss._pos = XMFLOAT3(-12.0f, 10.0f, -220.f);
+	IceBoss._is_alive = true;
+	NatureBoss._pos = XMFLOAT3(77.0f, 10.0f, -408.0f);
+	NatureBoss._is_alive = true;
+}
+
 void Room::IceNpcInitialized()
 {
 	std::random_device rd;

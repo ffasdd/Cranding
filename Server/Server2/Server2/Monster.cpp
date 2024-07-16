@@ -4,6 +4,10 @@
 #include<limits>
 array<Monster, MAX_NPC> Monsters; //전체 NPC 
 
+FireBossMonster _FireBoss;
+IceBossMonster _IceBoss;
+NatureBossMonster _NatureBoss;
+
 void Monster::Move()
 {
 	// Look 방향을우주선 방향으로 설정 
@@ -77,16 +81,7 @@ void Monster::Remove()
 	_pos = { 0.f,-100.f,0.f };
 }
 
-void Monster::RemovePlayer(int client_id)
-{
-	Session* removeplayer;
-	auto it = find_if(ingamePlayer.begin(), ingamePlayer.end(), [client_id](Session* s) {return s->_id == client_id; });
-	//오토에는 클라이언트 아이디가 들어가있음
-	if (ingamePlayer.end() != it)
-	{
-		//ingamePlayer.erase(it);
-	}
-}
+
 
 
 
@@ -186,6 +181,7 @@ void Monster::NatureMove()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
+
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
 	{
 		for (auto& cl : ingamePlayer)
@@ -263,4 +259,17 @@ int Monster::FindClosePlayer()
 	return closestPlayerId;
 }
 
+void FireBossMonster::Move()
+{
+	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
 
+	_prevpos = _pos;
+}
+
+void IceBossMonster::Move()
+{
+}
+
+void NatureBossMonster::Move()
+{
+}

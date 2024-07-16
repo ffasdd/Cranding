@@ -28,6 +28,12 @@ public:
 	array<Monster, 10> IceMonster;
 	array<Monster, 10> FireMonster;
 	array<Monster, 10 > NatureMonster;
+
+
+	FireBossMonster FireBoss;
+	IceBossMonster IceBoss;
+	NatureBossMonster NatureBoss;
+
 	//// Fire Monster
 	//array<Monster, 30> FireMonster;
 	//// Ice Monster
@@ -50,6 +56,7 @@ public:
 	void DayTimeSend();
 	void NightSend();
 
+	void BossMonsterInitialziedMonster();
 	void IceNpcInitialized();
 	void FireNpcInitialized();
 	void NatureNpcInitialized();

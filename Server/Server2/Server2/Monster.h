@@ -40,9 +40,8 @@ public:
 public:
 
 
-	void Move();
+	virtual void Move();
 	void Remove();
-	void RemovePlayer(int client_id);
 
 	void IceMove();
 	void FireMove();
@@ -55,5 +54,22 @@ public:
 
 
 
+};
+
+class FireBossMonster : public Monster
+{
+public:
+	void Move() override;
+
+};
+
+class IceBossMonster : public Monster
+{
+	void Move() override;
+};
+
+class NatureBossMonster : public Monster
+{
+	void Move() override;
 };
 extern array<Monster, MAX_NPC> Monsters;
