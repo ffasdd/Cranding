@@ -73,7 +73,7 @@ void Room::UpdateNpc()
 		sendmonsterupdatePacket[idx]._monster._rz = npc._right.z;
 
 
-		MonsterCollide(npc);
+		NightMonsterCollide(npc);
 
 		idx++;
 	}
@@ -151,10 +151,90 @@ void Room::IceUpdateNpc()
 
 void Room::FireUpdateNpc()
 {
+	FireMonsterUpdate sendFireMonsterUpdatePacket[10];
+	int idx = 0;
+
+	for (auto& npc : IceMonster)
+	{
+		if (npc._is_alive == false)
+		{
+			npc.Remove();
+		}
+		else
+			npc.FireMove();
+
+		sendFireMonsterUpdatePacket[idx].size = sizeof(FireMonsterUpdate);
+		sendFireMonsterUpdatePacket[idx].type = SC_FIRE_MONSTER_UPDATE;
+		sendFireMonsterUpdatePacket[idx]._monster._id = idx;
+
+		sendFireMonsterUpdatePacket[idx]._monster._x = npc._pos.x;
+		sendFireMonsterUpdatePacket[idx]._monster._y = npc._pos.y;
+		sendFireMonsterUpdatePacket[idx]._monster._z = npc._pos.z;
+
+		sendFireMonsterUpdatePacket[idx]._monster._lx = npc._look.x;
+		sendFireMonsterUpdatePacket[idx]._monster._ly = npc._look.y;
+		sendFireMonsterUpdatePacket[idx]._monster._lz = npc._look.z;
+	
+		sendFireMonsterUpdatePacket[idx]._monster._rx = npc._right.x;
+		sendFireMonsterUpdatePacket[idx]._monster._ry = npc._right.y;
+		sendFireMonsterUpdatePacket[idx]._monster._rz = npc._right.z;
+
+
+		idx++;
+	}
+	for (auto& pl : ingamePlayer)
+	{
+		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
+		for (auto& packet : sendFireMonsterUpdatePacket)
+		{
+			if (pl->_stage == 4) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+				pl->do_send(&packet);
+		}
+	}
 }
 
 void Room::NatureUpdateNpc()
 {
+	NatureMonsterUpdate sendNatureMontserUpdatePacket[10];
+	int idx = 0;
+
+	for (auto& npc : IceMonster)
+	{
+		if (npc._is_alive == false)
+		{
+			npc.Remove();
+		}
+		else
+			npc.NatureMove();
+
+		sendNatureMontserUpdatePacket[idx].size = sizeof(NatureMonsterUpdate);
+		sendNatureMontserUpdatePacket[idx].type = SC_NATURE_MONSTER_UPDATE;
+		sendNatureMontserUpdatePacket[idx]._monster._id = idx;
+		
+		sendNatureMontserUpdatePacket[idx]._monster._x = npc._pos.x;
+		sendNatureMontserUpdatePacket[idx]._monster._y = npc._pos.y;
+		sendNatureMontserUpdatePacket[idx]._monster._z = npc._pos.z;
+		
+		sendNatureMontserUpdatePacket[idx]._monster._lx = npc._look.x;
+		sendNatureMontserUpdatePacket[idx]._monster._ly = npc._look.y;
+		sendNatureMontserUpdatePacket[idx]._monster._lz = npc._look.z;
+		
+		sendNatureMontserUpdatePacket[idx]._monster._rx = npc._right.x;
+		sendNatureMontserUpdatePacket[idx]._monster._ry = npc._right.y;
+		sendNatureMontserUpdatePacket[idx]._monster._rz = npc._right.z;
+
+
+		idx++;
+	}
+	for (auto& pl : ingamePlayer)
+	{
+		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
+		for (auto& packet : sendNatureMontserUpdatePacket)
+		{
+			if (pl->_stage == 5) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+				pl->do_send(&packet);
+		}
+	}
 }
 
 void Room::DayTimeSend()
@@ -242,6 +322,7 @@ void Room::FireNpcInitialized()
 	std::uniform_real_distribution<float> xpos(-50, 380);
 	std::uniform_real_distribution<float> zpos(-320, 1250);
 
+
 	for (int i = 0; i < FireMonster.max_size(); ++i)
 	{
 		FireMonster[i]._id = i;
@@ -253,6 +334,42 @@ void Room::FireNpcInitialized()
 		FireMonster[i]._hp = 50;
 		FireMonster[i]._is_alive = true;
 	}
+
+	FireMonsterUpdate sendFireMonsterUpdatePacket[10];
+	int idx = 0;
+
+	for (auto& npc : IceMonster)
+	{
+		sendFireMonsterUpdatePacket[idx].size = sizeof(FireMonsterUpdate);
+		sendFireMonsterUpdatePacket[idx].type = SC_FIRE_MONSTER_UPDATE;
+		sendFireMonsterUpdatePacket[idx]._monster._id = idx;
+
+		sendFireMonsterUpdatePacket[idx]._monster._x = npc._pos.x;
+		sendFireMonsterUpdatePacket[idx]._monster._y = npc._pos.y;
+		sendFireMonsterUpdatePacket[idx]._monster._z = npc._pos.z;
+	
+		sendFireMonsterUpdatePacket[idx]._monster._lx = npc._look.x;
+		sendFireMonsterUpdatePacket[idx]._monster._ly = npc._look.y;
+		sendFireMonsterUpdatePacket[idx]._monster._lz = npc._look.z;
+	
+		sendFireMonsterUpdatePacket[idx]._monster._rx = npc._right.x;
+		sendFireMonsterUpdatePacket[idx]._monster._ry = npc._right.y;
+		sendFireMonsterUpdatePacket[idx]._monster._rz = npc._right.z;
+
+
+		idx++;
+	}
+
+	for (auto& pl : ingamePlayer)
+	{
+		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
+		for (auto& packet : sendFireMonsterUpdatePacket)
+		{
+			//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+			pl->do_send(&packet);
+		}
+	}
+
 }
 
 void Room::NatureNpcInitialized()
@@ -273,9 +390,44 @@ void Room::NatureNpcInitialized()
 		NatureMonster[i]._hp = 50;
 		NatureMonster[i]._is_alive = true;
 	}
+
+	NatureMonsterUpdate sendNatureMonsterUpdatePacket[10];
+	int idx = 0;
+
+	for (auto& npc : IceMonster)
+	{
+		sendNatureMonsterUpdatePacket[idx].size = sizeof(NatureMonsterUpdate);
+		sendNatureMonsterUpdatePacket[idx].type = SC_NATURE_MONSTER_UPDATE;
+		sendNatureMonsterUpdatePacket[idx]._monster._id = idx;
+		
+		sendNatureMonsterUpdatePacket[idx]._monster._x = npc._pos.x;
+		sendNatureMonsterUpdatePacket[idx]._monster._y = npc._pos.y;
+		sendNatureMonsterUpdatePacket[idx]._monster._z = npc._pos.z;
+		
+		sendNatureMonsterUpdatePacket[idx]._monster._lx = npc._look.x;
+		sendNatureMonsterUpdatePacket[idx]._monster._ly = npc._look.y;
+		sendNatureMonsterUpdatePacket[idx]._monster._lz = npc._look.z;
+		
+		sendNatureMonsterUpdatePacket[idx]._monster._rx = npc._right.x;
+		sendNatureMonsterUpdatePacket[idx]._monster._ry = npc._right.y;
+		sendNatureMonsterUpdatePacket[idx]._monster._rz = npc._right.z;
+
+
+		idx++;
+	}
+
+	for (auto& pl : ingamePlayer)
+	{
+		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
+		for (auto& packet : sendNatureMonsterUpdatePacket)
+		{
+			//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+			pl->do_send(&packet);
+		}
+	}
 }
 
-void Room::MonsterCollide(Monster& _monster)
+void Room::NightMonsterCollide(Monster& _monster)
 {
 	for (auto& monster : NightMonster)
 	{
@@ -304,25 +456,6 @@ void Room::MonsterCollide(Monster& _monster)
 		}
 	}
 
-	//for (int i = 0; i < NightMonster.size(); ++i)
-	//{
-	//	for (auto& monster : NightMonster)
-	//	{
-	//		if (monster._id == i)continue;
-	//		if (monster._is_alive == false)continue;
-	//		if (NightMonster[i].m_SPBB.Intersects(monster.m_SPBB))
-	//		{
-	//			//XMVECTOR posCurrent = XMLoadFloat3(&NightMonster[i]._pos);
-	//			//XMVECTOR posOther = XMLoadFloat3(&monster._pos);
-	//			//XMVECTOR direction = posCurrent - posOther;
-	//			//direction = XMVector3Normalize(direction); 
-
-	//			//XMVECTOR newPos = posOther + direction * 2.0f;
-	//			//XMStoreFloat3(&NightMonster[i]._pos, newPos);
-	//			NightMonster[i]._pos = NightMonster[i]._prevpos;
-	//		}
-	//	}
-	//}
 }
 
 

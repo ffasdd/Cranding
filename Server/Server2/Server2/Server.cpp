@@ -255,14 +255,24 @@ void Server::WorkerThread()
 			delete ex_over;
 			break;
 		}
-		/*case COMP_TYPE::NPC_TRACE: {
+		case COMP_TYPE::FIRE_NPC_UPDATE: {
 			int r_id = static_cast<int>(key);
-			ingameroom[r_id].NightMonsterTracetoPlayer();
-			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(10ms),r_id,EVENT_TYPE::EV_TRACE_PLAYER };
+			ingameroom[r_id].FireUpdateNpc();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms), r_id,EVENT_TYPE::EV_FIRE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
-		}*/
+		}
+		case COMP_TYPE::NATURE_NPC_UPDATE: {
+			int r_id = static_cast<int>(key);
+			ingameroom[r_id].NatureUpdateNpc();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms), r_id,EVENT_TYPE::EV_NATURE_NPC_UPDATE };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+		}
+
+								
 		default:
 			break;
 		}
@@ -308,7 +318,7 @@ void Server::InitialziedMonster(int room_Id)
 			ingameroom[room_Id].NightMonster[i]._stagenum = 2;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 8.0f;
-			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y= ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
+			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y = ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
 
 		}
 	}
@@ -353,22 +363,8 @@ void Server::ProcessPacket(int id, char* packet)
 		clients[id].m_SPBB.Center = clients[id]._pos;
 		clients[id].m_SPBB.Center.y = clients[id]._pos.y;
 		// view List 
-		unordered_set<int> near_list;
-		clients[id]._v_lock.lock();
-		unordered_set<int> old_vlist = clients[id]._view_list;
+		//clients[id].send_move_packet(id);
 
-		clients[id]._v_lock.unlock();
-
-		//for (auto& pl : ingameroom[r_id].ingamePlayer)
-		//{
-		//	if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
-		//	if (pl->_id == id)continue;
-		//	if (pl->_stage != clients[id]._stage)continue;
-		//	if (can_see(id, pl->_id))
-		//		near_list.insert(pl->_id);
-		//}
-		//// -------------------------------
-		clients[id].send_move_packet(id);
 		for (auto& pl : clients)
 		{
 			if (pl._state == STATE::Alloc || pl._state == STATE::Free) continue;
@@ -377,35 +373,13 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl._stage != clients[id]._stage)continue;
 			pl.send_move_packet(id);
 		}
-		//// -------------------view list 
-		//for (auto& pl : near_list)
-		//{
-		//	clients[pl]._v_lock.lock();
 
-		//	if (clients[pl]._view_list.count(id))
-		//	{
-		//		clients[pl]._v_lock.unlock();
-		//		clients[pl].send_move_packet(id);
-		//	}
-		//	else
-		//	{
-		//		clients[pl]._v_lock.unlock();
-		//		clients[pl].send_add_info_packet(id);
-		//	}
-
-		//	if (old_vlist.count(pl) == 0)
-		//		clients[id].send_add_info_packet(pl);
-		//}
 	}
 				break;
 	case CS_ROTATE: {
 		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
 		int r_id = p->roomid;
 		clients[id].yaw = p->yaw;
-
-
-
-
 		clients[id].send_rotate_packet(id);
 		for (auto& pl : clients)
 		{
@@ -439,7 +413,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage) continue;
 			pl->send_change_animate_packet(id);
-			
+
 		}
 
 	}
@@ -507,10 +481,13 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				{
 					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
+
 					if (find(i_m.ingamePlayer.begin(), i_m.ingamePlayer.end(), &clients[id]) != i_m.ingamePlayer.end())
 					{
-						i_m.RemovePlayer(id);
+						i_m.ingamePlayer.erase(i_m.ingamePlayer.begin() + id);
+
 					}
+
 				}
 			}
 		}
@@ -521,10 +498,13 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				{
 					lock_guard<mutex>ll{ n_m.ingamePlayerlock };
+				
 					if (find(n_m.ingamePlayer.begin(), n_m.ingamePlayer.end(), &clients[id]) != n_m.ingamePlayer.end())
 					{
-						n_m.RemovePlayer(id);
+						n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
+
 					}
+					
 				}
 			}
 			// æÛ¿Ω∏ÛΩ∫≈Õ ª—∑¡¡‡æﬂ«‘ 
@@ -598,11 +578,11 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 
 		{
-			lock_guard<mutex>ll{ ingameroom[r_id].r_l};
+			lock_guard<mutex>ll{ ingameroom[r_id].r_l };
 			ingameroom[r_id].readycnt++;
 		}
 		bool all_Start = all_of(ingameroom[r_id].ingamePlayer.begin(), ingameroom[r_id].ingamePlayer.end(), [](Session* s) {return s->_state == STATE::Start; });
-		
+
 		if (all_Start)
 		{
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
@@ -632,8 +612,11 @@ void Server::ProcessPacket(int id, char* packet)
 			TIMER_EVENT ev4{ ingameroom[r_id].start_time ,r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev4);
 
-			TIMER_EVENT ev5{ ingameroom[r_id].start_time + chrono::seconds(6s), r_id,EVENT_TYPE::EV_TRACE_PLAYER };
+			TIMER_EVENT ev5{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_FIRE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev5);
+
+			TIMER_EVENT ev6{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NATURE_NPC_UPDATE };
+			g_Timer.InitTimerQueue(ev6);
 		}
 		else
 			break;
@@ -656,7 +639,7 @@ void Server::ProcessPacket(int id, char* packet)
 			pl->send_attack_packet(id);
 		}
 
-		
+
 
 	}
 				  break;

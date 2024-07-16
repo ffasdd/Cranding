@@ -71,12 +71,19 @@ void Timer::TimerThread()
 					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
 				}
-				case EVENT_TYPE::EV_TRACE_PLAYER: {
+				case EVENT_TYPE::EV_FIRE_NPC_UPDATE: {
 					Over_Exp* ov = new Over_Exp;
-					ov->_comptype = COMP_TYPE::NPC_TRACE;
+					ov->_comptype = COMP_TYPE::FIRE_NPC_UPDATE;
 					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
 				}
+				case EVENT_TYPE::EV_NATURE_NPC_UPDATE: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::NATURE_NPC_UPDATE;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+				}
+	
 
 
 				}

@@ -592,7 +592,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 	if (cl_id == n)
 	{
 		m_pPlayer->SetId(cl_id);
-
+		m_pPlayer->SetPosition(position);
 	}
 	else
 	{
@@ -837,7 +837,7 @@ void CGameFramework::BuildObjects(int nScene)
 	}
 	case 1:
 	{
-		cout << "CLoginScene BuildObjects" << endl;
+		cout << "CLobbyScene BuildObjects" << endl;
 		m_pScene = new CLobbyScene();
 		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
@@ -1068,7 +1068,7 @@ void CGameFramework::ProcessInput()
 				if (fLength > m_pPlayer->GetMaxVelocityY()) temp.y *= (fMaxVelocityY / fLength);
 
 				XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(temp, m_GameTimer.GetTimeElapsed(), false);
-				m_pPlayer->Move(xmf3Velocity, false);
+				m_pPlayer->Move(cl_id,xmf3Velocity, false);
 				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
 				g_sendqueue.push(SENDTYPE::MOVE);
 
@@ -1102,6 +1102,8 @@ void CGameFramework::AnimateObjects()
 
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
+	if(SceneNum> 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+
 	m_pScene->CheckMonsterByMonsterCollisions();
 }
 

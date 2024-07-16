@@ -68,8 +68,8 @@ using Microsoft::WRL::ComPtr;
 
 extern HINSTANCE						ghAppInstance;
 
-//#define _WITH_SWAPCHAIN_FULLSCREEN_STATE
-//#define _FULLSCREEN
+#define _WITH_SWAPCHAIN_FULLSCREEN_STATE
+#define _FULLSCREEN
 
 #ifdef _FULLSCREEN
 #define FRAME_BUFFER_WIDTH				1920

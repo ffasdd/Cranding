@@ -401,6 +401,34 @@ void Network::ProcessPacket(char* buf)
 	}
 	break;
 
+	case SC_FIRE_MONSTER_UPDATE:
+	{
+		FireMonsterUpdate* p = reinterpret_cast<FireMonsterUpdate*>(buf);
+		int npc_id = p->_monster._id;
+
+		g_fire_monsters[npc_id].setId(npc_id);
+		g_fire_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
+		g_fire_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
+		g_fire_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
+
+		g_fire_monsters[npc_id].setUp({ 0.f,1.f,0.f });
+	}
+	break;
+
+	case SC_NATURE_MONSTER_UPDATE:
+	{
+		NatureMonsterUpdate* p = reinterpret_cast<NatureMonsterUpdate*>(buf);
+		int npc_id = p->_monster._id;
+
+		g_nature_monsters[npc_id].setId(npc_id);
+		g_nature_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
+		g_nature_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
+		g_nature_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
+
+		g_nature_monsters[npc_id].setUp({ 0.f,1.f,0.f });
+	}
+	break;
+
 	}
 }
 

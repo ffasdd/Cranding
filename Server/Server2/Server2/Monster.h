@@ -45,6 +45,8 @@ public:
 	void RemovePlayer(int client_id);
 
 	void IceMove();
+	void FireMove();
+	void NatureMove();
 
 	bool CollideCheckToPlayer();
 
