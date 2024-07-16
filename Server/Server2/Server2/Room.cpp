@@ -43,7 +43,7 @@ void Room::UpdateNpc()
 	// ÀüÃ¼ NPC UPDATE 
 	for (auto& npc : NightMonster)
 	{
-		npc.ingamePlayer = ingamePlayer;
+		//npc.ingamePlayer = ingamePlayer;
 
 		if (npc._is_alive == false)
 		{
@@ -333,6 +333,7 @@ void Room::FireNpcInitialized()
 		FireMonster[i]._att = 10;
 		FireMonster[i]._hp = 50;
 		FireMonster[i]._is_alive = true;
+		FireMonster[i]._stagenum = 4;
 	}
 
 	FireMonsterUpdate sendFireMonsterUpdatePacket[10];
@@ -389,6 +390,7 @@ void Room::NatureNpcInitialized()
 		NatureMonster[i]._att = 10;
 		NatureMonster[i]._hp = 50;
 		NatureMonster[i]._is_alive = true;
+		NatureMonster[i]._stagenum = 5;
 	}
 
 	NatureMonsterUpdate sendNatureMonsterUpdatePacket[10];

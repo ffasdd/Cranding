@@ -15,7 +15,7 @@ void Monster::Move()
 	_prevpos = _pos; //이동하기 이전 좌표를 저장 
 	// ID가 아닌 거리와 좌표를 저장? 
 	int id = FindClosePlayer();
-	if (id != -1)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
 	{
 
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
@@ -84,7 +84,7 @@ void Monster::RemovePlayer(int client_id)
 	//오토에는 클라이언트 아이디가 들어가있음
 	if (ingamePlayer.end() != it)
 	{
-		ingamePlayer.erase(it);
+		//ingamePlayer.erase(it);
 	}
 }
 
@@ -96,7 +96,7 @@ void Monster::IceMove()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1)
+	if (id != -1 && _stagenum== ingamePlayer[id]->_stage)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -141,7 +141,7 @@ void Monster::FireMove()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -186,7 +186,7 @@ void Monster::NatureMove()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -259,6 +259,7 @@ int Monster::FindClosePlayer()
 		}
 		idx++;
 	}
+
 	return closestPlayerId;
 }
 
