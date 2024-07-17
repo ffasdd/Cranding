@@ -468,7 +468,10 @@ void Network::ProcessPacket(char* buf)
 		{
 		case MonsterType::Fire: {
 			if (p->is_attack)
+			{
 				cout << "(Fire Attack) " << endl;
+				g_fire_monsters[p->id].setNpcAttack(p->is_attack);
+			}
 			break;
 		}
 		case MonsterType::Ice: {

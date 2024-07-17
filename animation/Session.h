@@ -22,6 +22,7 @@ public:
 	int getCharacterType();
 	STATE getState();
 	bool getAttack();
+	bool getNpcAttack();
 
 
 	void setCharacterType(int type);
@@ -41,6 +42,7 @@ public:
 	void setAttack(bool att);
 	void setState(STATE state);
 	void setPrevPos(XMFLOAT3 prevpos);
+	void setNpcAttack(bool _isattack);
 	void Rotate(float yaw);
 
 	mutex _sessionlock;
