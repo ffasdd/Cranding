@@ -48,7 +48,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
 {
     // 클릭 처리 필요한 ui
     // game start
-    UILayer::GetInstance()->AddUIRect(0, m_GameStart, [this]()-> bool {
+    UILayer::GetInstance()->AddUIRect(SCENEKIND::LOGIN, m_GameStart, [this]()-> bool {
         gGameFramework.sceneManager.SetCurrentScene(SCENEKIND::LOBBY);
         gGameFramework.isready = false;
         gNetwork.SendLoginfo();
@@ -62,11 +62,11 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
         cout << "게임 시작" << endl;
         return true;
         });
-    UILayer::GetInstance()->AddUIRect(0, m_GameRule, [this]()-> bool {
+    UILayer::GetInstance()->AddUIRect(SCENEKIND::LOGIN, m_GameRule, [this]()-> bool {
         cout << "게임 방법" << endl;
         return true;
         });
-    UILayer::GetInstance()->AddUIRect(0, m_GameQuit, [this]()-> bool {
+    UILayer::GetInstance()->AddUIRect(SCENEKIND::LOGIN, m_GameQuit, [this]()-> bool {
         cout << "게임 종료" << endl;
         return true;
         });
@@ -111,7 +111,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     }
 
     //  ingame scene
-    int ingameUI_num = 3;
+    int ingameUI_num = 5;
     WCHAR** pMap = new WCHAR * [ingameUI_num];
     for (int i = 0; i < ingameUI_num; ++i)
     {
@@ -121,6 +121,8 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     wcscpy_s(pMap[0], 256, L"ice map으로 이동하기 위해 F키를 눌러주세요");
     wcscpy_s(pMap[1], 256, L"fire map으로 이동하기 위해 F키를 눌러주세요");
     wcscpy_s(pMap[2], 256, L"grass map으로 이동하기 위해 F키를 눌러주세요");
+    wcscpy_s(pMap[3], 256, L"이동을 위한 원소가 부족합니다");
+    wcscpy_s(pMap[4], 256, L"spaceship map으로 이동하기 위해 F키를 눌러주세요");
     for (int i = 0; i < ingameUI_num; ++i) {
         m_vecIngameScene.push_back(pMap[i]);
     }
@@ -136,7 +138,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     m_textFormats[TEXT_SIZE::SIZE_15] = CreateTextFormat(L"맑은 고딕", 15.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_18] = CreateTextFormat(L"맑은 고딕", 18.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_25] = CreateTextFormat(L"맑은 고딕", 25.0f * 3.35f);
-    m_textFormats[TEXT_SIZE::SIZE_30] = CreateTextFormat(L"맑은 고딕", 30.0f * 3.35f);
+    m_textFormats[TEXT_SIZE::SIZE_40] = CreateTextFormat(L"맑은 고딕", 40.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_50] = CreateTextFormat(L"맑은 고딕", 50.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_60] = CreateTextFormat(L"맑은 고딕", 80.0f * 3.35f);
 
@@ -145,7 +147,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
 
 void UILayer::ProcessMouseClick(SCENEKIND scenekind, POINT clickPos)
 {
-    int index = 0;
+    int index = static_cast<int>(scenekind);
 
     for (UIRect& rect : m_uiRects[index]) {
         if (rect.ClickCollide(clickPos))
@@ -224,7 +226,7 @@ ID2D1SolidColorBrush* UILayer::CreateBrush(D2D1::ColorF d2dColor)
 IDWriteTextFormat* UILayer::CreateTextFormat(WCHAR* pszFontName, float fFontSize)
 {
     IDWriteTextFormat* pdwDefaultTextFormat = NULL;
-    m_pd2dWriteFactory->CreateTextFormat(L"나눔바른펜", nullptr, DWRITE_FONT_WEIGHT_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_EXPANDED, fFontSize, L"en-us", &pdwDefaultTextFormat);
+    m_pd2dWriteFactory->CreateTextFormat(L"맑은 고딕", nullptr, DWRITE_FONT_WEIGHT_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_EXPANDED, fFontSize, L"en-us", &pdwDefaultTextFormat);
 
     pdwDefaultTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     pdwDefaultTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
@@ -241,9 +243,8 @@ void UILayer::UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2
     if (pd2dTextBrush) m_pTextBlocks[nIndex].m_pd2dTextBrush = pd2dTextBrush;
 }
 
-void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay, int curMinute, int curSecond)
+void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay, int curMinute, int curSecond, int IceElement, int FireElement, int NatureElement)
 {
-
     ID3D11Resource* ppResources[] = { m_ppd3d11WrappedRenderTargets[nFrame] };
 
     m_pd2dDeviceContext->SetTarget(m_ppd2dRenderTargets[nFrame]);
@@ -255,9 +256,9 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         // login
         m_pd2dDeviceContext->BeginDraw();
         m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[0], (UINT)wcslen(m_vecLoginSceneMenu[0]), m_textFormats[TEXT_SIZE::SIZE_60], m_Title, m_brushes[BRUSH_COLOR::BLACK]);
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[1], (UINT)wcslen(m_vecLoginSceneMenu[1]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameStart, m_brushes[BRUSH_COLOR::BLACK]);
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[2], (UINT)wcslen(m_vecLoginSceneMenu[2]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameRule, m_brushes[BRUSH_COLOR::BLACK]);
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[3], (UINT)wcslen(m_vecLoginSceneMenu[3]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameQuit, m_brushes[BRUSH_COLOR::BLACK]);
+        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[1], (UINT)wcslen(m_vecLoginSceneMenu[1]), m_textFormats[TEXT_SIZE::SIZE_40], m_GameStart, m_brushes[BRUSH_COLOR::BLACK]);
+        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[2], (UINT)wcslen(m_vecLoginSceneMenu[2]), m_textFormats[TEXT_SIZE::SIZE_40], m_GameRule, m_brushes[BRUSH_COLOR::BLACK]);
+        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[3], (UINT)wcslen(m_vecLoginSceneMenu[3]), m_textFormats[TEXT_SIZE::SIZE_40], m_GameQuit, m_brushes[BRUSH_COLOR::BLACK]);
         m_pd2dDeviceContext->EndDraw();
         break;
     case SCENEKIND::LOBBY:
@@ -265,7 +266,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         m_pd2dDeviceContext->BeginDraw();
         m_pd2dDeviceContext->DrawText(m_vecLobbyScene[0], (UINT)wcslen(m_vecLobbyScene[0]), m_textFormats[TEXT_SIZE::SIZE_25], m_ReadyMent, m_brushes[BRUSH_COLOR::WHITE]);
         if(isready)
-            m_pd2dDeviceContext->DrawText(m_vecLobbyScene[1], (UINT)wcslen(m_vecLobbyScene[1]), m_textFormats[TEXT_SIZE::SIZE_30], m_Ready, m_brushes[BRUSH_COLOR::WHITE]);
+            m_pd2dDeviceContext->DrawText(m_vecLobbyScene[1], (UINT)wcslen(m_vecLobbyScene[1]), m_textFormats[TEXT_SIZE::SIZE_40], m_Ready, m_brushes[BRUSH_COLOR::WHITE]);
         m_pd2dDeviceContext->EndDraw();
         break;
     default:
@@ -284,6 +285,24 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
 
         m_pd2dDeviceContext->FillRectangle(m_HPBar, m_brushes[BRUSH_COLOR::RED]);
 
+        // 원소 개수
+        WCHAR elementText[256];
+
+        // Ice Element 개수 출력
+        swprintf_s(elementText, 256, L"Ice Elements: %d", IceElement);
+        D2D1_RECT_F iceRect = { 10, 800, 400, 830 };  // 텍스트 출력 위치 설정
+        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+
+        // Fire Element 개수 출력
+        swprintf_s(elementText, 256, L"Fire Elements: %d", FireElement);
+        D2D1_RECT_F fireRect = { 10, 840, 400, 870 };  // 텍스트 출력 위치 설정
+        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+
+        // Nature Element 개수 출력
+        swprintf_s(elementText, 256, L"Nature Elements: %d", NatureElement);
+        D2D1_RECT_F natureRect = { 10, 880, 400, 910 };  // 텍스트 출력 위치 설정
+        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+
         // map 이동
         if(gGameFramework.m_pPlayer->isIceMap)
             m_pd2dDeviceContext->DrawText(m_vecIngameScene[0], (UINT)wcslen(m_vecIngameScene[0]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
@@ -291,7 +310,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         if (gGameFramework.m_pPlayer->isFireMap)
             m_pd2dDeviceContext->DrawText(m_vecIngameScene[1], (UINT)wcslen(m_vecIngameScene[1]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
-        if (gGameFramework.m_pPlayer->isGrassMap)
+        if (gGameFramework.m_pPlayer->isNatureMap)
             m_pd2dDeviceContext->DrawText(m_vecIngameScene[2], (UINT)wcslen(m_vecIngameScene[2]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
 
@@ -349,8 +368,10 @@ void UILayer::ReleaseResources()
     if(m_pd3d11On12Device)m_pd3d11On12Device->Release();
 }
 
-void UILayer::AddUIRect(int sceneNum, D2D1_RECT_F rect, std::function<bool()> func)
+void UILayer::AddUIRect(SCENEKIND scenekind, D2D1_RECT_F rect, std::function<bool()> func)
 {
+    int sceneNum = static_cast<int>(scenekind);
+
     if (sceneNum <= m_uiRects.size()) {
         m_uiRects[sceneNum].emplace_back(rect, func);
     }

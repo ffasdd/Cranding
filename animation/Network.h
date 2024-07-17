@@ -72,7 +72,7 @@ public:
 	int stage_num = -1;
 	bool isNight = false;
 
-	
+	int index = 0;
 private:
 	SOCKET clientsocket;
 	 char _buf[BUF_SIZE];

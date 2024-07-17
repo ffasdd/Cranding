@@ -37,9 +37,10 @@ public:
     HRESULT Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets, UINT nWidth, UINT nHeight);
     void ProcessMouseClick(SCENEKIND scenekind, POINT clickPos);
     void UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2dLayoutRect, IDWriteTextFormat* pdwFormat, ID2D1SolidColorBrush* pd2dTextBrush);
-    void Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay, int curMinute, int curSecond);
+    void Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay, int curMinute, int curSecond, int IceElement, int FireElement, int NatureElement);
     void ReleaseResources();
-    void AddUIRect(int sceneNum, D2D1_RECT_F rect, std::function<bool()> func);
+    void AddUIRect(SCENEKIND scenekind, D2D1_RECT_F rect, std::function<bool()> func);
+    //void AddUIRect(int sceneNum, D2D1_RECT_F rect, std::function<bool()> func);
 
     static UILayer* GetInstance() { return s_instance; }
 

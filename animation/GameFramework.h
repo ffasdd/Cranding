@@ -124,6 +124,10 @@ public:
 	bool DayTime = false;
 	bool Night = false;
 
+	int GetIceElementNum() { return m_pPlayer->IceElement; }
+	int GetFireElementNum() { return m_pPlayer->FireElement; }
+	int GetNatureElementNum() { return m_pPlayer->NatureElement; }
+
 	ID3D12Resource* m_pd3dcbTime = NULL;
 	TIME* m_pTime = NULL;
 

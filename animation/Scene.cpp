@@ -50,7 +50,7 @@ void CScene::HandleCollisionEnd(CGameObject* pObject) {
 	std::cout << "Collision ended with object: " << pObject->m_pstrFrameName << std::endl;
 	m_pPlayer->isFireMap = false;
 	m_pPlayer->isIceMap = false;
-	m_pPlayer->isGrassMap = false;
+	m_pPlayer->isNatureMap = false;
 
 	// 필요에 따라 추가 작업 수행
 	pObject->m_bWasColliding = false; // 충돌 종료 후 상태 초기화
@@ -87,7 +87,7 @@ bool CScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObject)
 					}
 					else if (!strcmp(str, "bbgrass"))
 					{
-						m_pPlayer->isGrassMap = true;
+						m_pPlayer->isNatureMap = true;
 						return true;
 					}
 

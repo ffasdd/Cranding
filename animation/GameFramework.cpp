@@ -1103,7 +1103,7 @@ void CGameFramework::AnimateObjects()
 		{
 
 		}
-		else if (m_pPlayer->isGrassMap == true)
+		else if (m_pPlayer->isNatureMap == true)
 		{
 		}
 		else if (m_pPlayer->isIceMap == true)
@@ -1297,7 +1297,7 @@ void CGameFramework::FrameAdvance()
 	SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	if (m_pUILayer)
-		UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
+		UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond, GetIceElementNum(), GetFireElementNum(), GetNatureElementNum());
 
 	// 상태를 PRESENT로 전환
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
