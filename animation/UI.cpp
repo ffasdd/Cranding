@@ -143,9 +143,9 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     return NOERROR;
 }
 
-void UILayer::ProcessMouseClick(int sceneNum, POINT clickPos)
+void UILayer::ProcessMouseClick(SCENEKIND scenekind, POINT clickPos)
 {
-    int index = static_cast<int>(sceneNum);
+    int index = 0;
 
     for (UIRect& rect : m_uiRects[index]) {
         if (rect.ClickCollide(clickPos))
@@ -241,7 +241,7 @@ void UILayer::UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2
     if (pd2dTextBrush) m_pTextBlocks[nIndex].m_pd2dTextBrush = pd2dTextBrush;
 }
 
-void UILayer::Render(UINT nFrame, int scenenum, bool isready, int curDay, int curMinute, int curSecond)
+void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay, int curMinute, int curSecond)
 {
 
     ID3D11Resource* ppResources[] = { m_ppd3d11WrappedRenderTargets[nFrame] };
@@ -249,9 +249,9 @@ void UILayer::Render(UINT nFrame, int scenenum, bool isready, int curDay, int cu
     m_pd2dDeviceContext->SetTarget(m_ppd2dRenderTargets[nFrame]);
     m_pd3d11On12Device->AcquireWrappedResources(ppResources, _countof(ppResources));
 
-    switch (scenenum)
+    switch (scenekind)
     {
-    case 0:
+    case SCENEKIND::LOGIN:
         // login
         m_pd2dDeviceContext->BeginDraw();
         m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[0], (UINT)wcslen(m_vecLoginSceneMenu[0]), m_textFormats[TEXT_SIZE::SIZE_60], m_Title, m_brushes[BRUSH_COLOR::BLACK]);
@@ -260,7 +260,7 @@ void UILayer::Render(UINT nFrame, int scenenum, bool isready, int curDay, int cu
         m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[3], (UINT)wcslen(m_vecLoginSceneMenu[3]), m_textFormats[TEXT_SIZE::SIZE_50], m_GameQuit, m_brushes[BRUSH_COLOR::BLACK]);
         m_pd2dDeviceContext->EndDraw();
         break;
-    case 1:
+    case SCENEKIND::LOBBY:
         // lobby
         m_pd2dDeviceContext->BeginDraw();
         m_pd2dDeviceContext->DrawText(m_vecLobbyScene[0], (UINT)wcslen(m_vecLobbyScene[0]), m_textFormats[TEXT_SIZE::SIZE_25], m_ReadyMent, m_brushes[BRUSH_COLOR::WHITE]);

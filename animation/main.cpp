@@ -92,9 +92,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 										
 					}
 
-					switch (gGameFramework.SceneNum)
+					switch (gGameFramework.sceneManager.GetCurrentScene())
 					{
-					case 2:
+					case SCENEKIND::SPACESHIP:
 					{
 						// spaceship map // 0  ~ 9 fire  10 ~ 19 ice 20  ~ 29 nature
 						
@@ -107,7 +107,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						}
 						break;
 					}
-					case 3:
+					case SCENEKIND::ICE:
 					{
 						// ice map
 						for (int i = 0; i < g_ice_monsters.size(); ++i)
@@ -120,7 +120,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						}
 						break;
 					}
-					case 4: 
+					case SCENEKIND::FIRE: 
 					{
 						// fire map
 						for (int i = 0; i < g_fire_monsters.size(); ++i)
@@ -130,7 +130,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						}
 						break;
 					}
-					case 5:
+					case SCENEKIND::NATURE:
 					{
 						// fire map
 						for (int i = 0; i < g_nature_monsters.size(); ++i)

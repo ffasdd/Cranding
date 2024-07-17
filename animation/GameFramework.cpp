@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "GameFramework.h"
 #include "UI.h"
-#include "Scenemanager.h"
 
 #define monsternum 10
 
@@ -335,7 +334,7 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		::GetCursorPos(&m_ptOldCursorPos);
 		if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN && m_pUILayer != NULL)
 		{
-			UILayer::GetInstance()->ProcessMouseClick(0, m_ptOldCursorPos);
+			UILayer::GetInstance()->ProcessMouseClick(SCENEKIND::LOGIN, m_ptOldCursorPos);
 		}
 		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
 		if (g_clients[cl_id].getCharacterType() == 0)
@@ -995,7 +994,7 @@ void CGameFramework::ProcessInput()
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
-	if (!bProcessedByScene && (SceneNum != 0))
+	if (!bProcessedByScene && sceneManager.GetCurrentScene() != SCENEKIND::LOGIN)
 	{
 		float cxDelta = 0.0f, cyDelta = 0.0f;
 		POINT ptCursorPos;
@@ -1098,7 +1097,7 @@ void CGameFramework::AnimateObjects()
 
 	m_pPlayer->Animate(fTimeElapsed);
 
-	if (SceneNum > 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
 	{
 		if (m_pPlayer->isFireMap == true)
 		{
@@ -1113,7 +1112,7 @@ void CGameFramework::AnimateObjects()
 
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
-	if(SceneNum> 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+	if(sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
 
 	m_pScene->CheckMonsterByMonsterCollisions();
 }
@@ -1209,7 +1208,7 @@ void CGameFramework::FrameAdvance()
 	d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * ::gnRtvDescriptorIncrementSize);
 
 	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera); 
-	if (SceneNum > 1)
+	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && sceneManager.GetCurrentScene() != SCENEKIND::LOBBY)
 		UpdateTime();
 	UpdateShaderVariables();
 
@@ -1298,7 +1297,7 @@ void CGameFramework::FrameAdvance()
 	SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	if (m_pUILayer)
-		UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, SceneNum, isready, curDay, curMinute, curSecond);
+		UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
 
 	// 상태를 PRESENT로 전환
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
