@@ -660,12 +660,29 @@ void CGameFramework::myFunc_SetMonPosition(int n, XMFLOAT3 position)
 	//m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
 }
 
+void CGameFramework::myFunc_SetBossMonPosition( XMFLOAT3 position)
+{
+	m_pScene->m_ppHierarchicalGameObjects[13]->isdraw = true;
+	m_pScene->m_ppHierarchicalGameObjects[13]->SetPosition(position);
+	m_pScene->m_ppHierarchicalGameObjects[13]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Center = position;
+	//m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
+}
+
 void CGameFramework::myFunc_SetMonLookRightUp(int n, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
 {
 	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetLook(Look.x, Look.y, Look.z);
 	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetUp(0, 1, 0);
 	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetRight(Right.x, Right.y, Right.z);
 	m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
+
+}
+
+void CGameFramework::myFunc_SetBossMonLookRightUp(XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
+{
+	m_pScene->m_ppHierarchicalGameObjects[13]->SetLook(Look.x, Look.y, Look.z);
+	m_pScene->m_ppHierarchicalGameObjects[13]->SetUp(0, 1, 0);
+	m_pScene->m_ppHierarchicalGameObjects[13]->SetRight(Right.x, Right.y, Right.z);
+	m_pScene->m_ppHierarchicalGameObjects[13]->SetScale(20, 20, 20);
 
 }
 

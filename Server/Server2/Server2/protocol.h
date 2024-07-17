@@ -52,6 +52,12 @@ constexpr char SC_MONSTER_UPDATE_RIGHT = 27;
 constexpr char SC_ICE_MONSTER_UPDATE = 28;
 constexpr char SC_FIRE_MONSTER_UPDATE = 29;
 constexpr char SC_NATURE_MONSTER_UPDATE = 30;
+constexpr char SC_ICE_BOSS_UPDATE = 31;
+constexpr char SC_FIRE_BOSS_UPDATE = 32;
+constexpr char SC_NATURE_BOSS_UPDATE = 33;
+constexpr char SC_MONSTER_ATTACK = 34;
+
+
 
 
 
@@ -62,6 +68,16 @@ constexpr char SC_TEST = 12;
 
 
 constexpr float VIEW_RANGE = 1000.0f;
+
+enum class MonsterType : char {
+	Fire,
+	Ice,
+	Nature,
+	Night,
+	Fire_Boss,
+	Ice_Boss,
+	Nature_Boss
+};
 
 enum class sceneState :char {
 	LOBBY,
@@ -83,6 +99,14 @@ enum class animateState : int {
 	SWORD_ATTACK_2,
 	HEAL,
 	FREE
+};
+enum class animateState_NPC : char {
+	FIRE_ATTACK,
+	ICE_ATTACK,
+	NATURE_ATTACK,
+	FIRE_BOSS_ATTACK,
+	ICE_BOSS_ATTACK,
+	NATURE_BOSS_ATTACK
 };
 
 #pragma pack (push, 1)
@@ -141,7 +165,28 @@ struct IceMonstersUpdate
 	IceMonster _monster;
 };
 
+struct IceBossMonsterStruct
+{
+	float _x;
+	float _y;
+	float _z;
 
+	float _lx;
+	float _ly;
+	float _lz;
+
+	float _rx;
+	float _ry;
+	float _rz;
+
+	int  _id;
+};
+struct BossUpdate_Ice
+{
+	unsigned char size;
+	char type;
+	IceBossMonsterStruct _boss;
+};
 
 struct Firemonster
 {
@@ -160,11 +205,36 @@ struct Firemonster
 	int  _id;
 };
 
+
 struct FireMonsterUpdate
 {
 	unsigned char size;
 	char type;
 	Firemonster _monster;
+};
+
+struct FireBossMonsterStruct
+{
+	float _x;
+	float _y;
+	float _z;
+
+
+	float _lx;
+	float _ly;
+	float _lz;
+
+	float _rx;
+	float _ry;
+	float _rz;
+
+	int  _id;
+};
+struct BossUpdate_Fire
+{
+	unsigned char size;
+	char type;
+	FireBossMonsterStruct _boss;
 };
 
 struct NatureMonster
@@ -191,6 +261,29 @@ struct NatureMonsterUpdate
 	NatureMonster _monster;
 };
 
+struct NatureBossMonsterStruct
+{
+	float _x;
+	float _y;
+	float _z;
+
+
+	float _lx;
+	float _ly;
+	float _lz;
+
+	float _rx;
+	float _ry;
+	float _rz;
+
+	int  _id;
+};
+struct BossUpdate_Nature
+{
+	unsigned char size;
+	char type;
+	NatureBossMonsterStruct _boss;
+}; 
 struct NightMonsterLook
 {
 	int _id; 
@@ -409,6 +502,14 @@ struct SC_CHAT_PACKET {
 	char	type;
 	int		id;
 	char	mess[CHAT_SIZE];
+};
+struct SC_MONSTER_ATTACK_PACKET {
+	unsigned char size;
+	char type;
+	int id;
+	bool is_attack;
+	MonsterType monstertype;
+	animateState_NPC a_state;
 };
 struct SC_CHANGE_ANIMATION_PACKET {
 	unsigned char size;

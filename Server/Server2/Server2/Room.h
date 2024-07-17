@@ -3,6 +3,11 @@
 #include"Session.h"
 class Session;
 class Monster;
+
+class IceBossMonster;
+class FireBossMonster;
+class NatureBossMonster;
+
 enum class roomState : int { Free, Ingame };
 class Room
 {
@@ -28,6 +33,12 @@ public:
 	array<Monster, 10> IceMonster;
 	array<Monster, 10> FireMonster;
 	array<Monster, 10 > NatureMonster;
+
+
+	FireBossMonster FireBoss;
+	IceBossMonster IceBoss;
+	NatureBossMonster NatureBoss;
+
 	//// Fire Monster
 	//array<Monster, 30> FireMonster;
 	//// Ice Monster
@@ -47,14 +58,22 @@ public:
 	void FireUpdateNpc();
 	void NatureUpdateNpc();
 
+	void IceBossUpdate();
+	void FireBossUpdate();
+	void NatureBossUpdate();
+	
+
 	void DayTimeSend();
 	void NightSend();
+
+	void BossMonsterInitialziedMonster();
 
 	void IceNpcInitialized();
 	void FireNpcInitialized();
 	void NatureNpcInitialized();
 
 	void NightMonsterCollide(Monster& _monster);
+
 	void IceMonsterCollide(Monster& _monster);
 	void FireMonsterCollide(Monster& _monster);
 	void NatureMontserCollide(Monster& _monster);

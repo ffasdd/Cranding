@@ -431,7 +431,70 @@ void Network::ProcessPacket(char* buf)
 		g_nature_monsters[npc_id].setUp({ 0.f,1.f,0.f });
 	}
 	break;
+	case SC_ICE_BOSS_UPDATE:
+	{
+		BossUpdate_Ice* p = reinterpret_cast<BossUpdate_Ice*>(buf);
+		g_IceBossMonster.setPos(p->_boss._x, p->_boss._y, p->_boss._z);
+		g_IceBossMonster.setLook(p->_boss._lx, p->_boss._ly, p->_boss._lz);
+		g_IceBossMonster.setRight(p->_boss._rx, p->_boss._ry, p->_boss._rz);
 
+		g_IceBossMonster.setUp({ 0.f,1.f,0.f });
+	}
+	break;
+
+	case SC_FIRE_BOSS_UPDATE:
+	{
+		BossUpdate_Fire* p = reinterpret_cast<BossUpdate_Fire*>(buf);
+		g_FireBossMonster.setPos(p->_boss._x, p->_boss._y, p->_boss._z);
+		g_FireBossMonster.setLook(p->_boss._lx, p->_boss._ly, p->_boss._lz);
+		g_FireBossMonster.setRight(p->_boss._rx, p->_boss._ry, p->_boss._rz);
+
+		g_FireBossMonster.setUp({ 0.f,1.f,0.f });
+	}
+	break;
+
+	case SC_NATURE_BOSS_UPDATE:
+	{
+		BossUpdate_Nature* p = reinterpret_cast<BossUpdate_Nature*>(buf);
+		g_NatureBossMonster.setPos(p->_boss._x, p->_boss._y, p->_boss._z);
+		g_NatureBossMonster.setLook(p->_boss._lx, p->_boss._ly, p->_boss._lz);
+		g_NatureBossMonster.setRight(p->_boss._rx, p->_boss._ry, p->_boss._rz);
+
+		g_NatureBossMonster.setUp({ 0.f,1.f,0.f });
+	}
+	break;
+	case SC_MONSTER_ATTACK:
+	{	
+		SC_MONSTER_ATTACK_PACKET* p = reinterpret_cast<SC_MONSTER_ATTACK_PACKET*>(buf);
+		
+		switch (p->monstertype)
+		{
+		case MonsterType::Fire: {
+			if (p->is_attack)
+			{
+				cout << "(Fire Attack) " << endl;
+				g_fire_monsters[p->id].setNpcAttack(p->is_attack);
+			}
+			break;
+		}
+		case MonsterType::Ice: {
+			if (p->is_attack)
+				cout << "(Ice Attack) " << endl;
+			break;
+		}
+		case MonsterType::Nature: {
+			if (p->is_attack)
+				cout << "(Nature Attack) " << endl;
+			break;
+		}
+		case MonsterType::Ice_Boss: {
+			if (p->is_attack)
+				cout << " Player Attack " << endl;
+			break;
+		}
+		}
+
+	}
 	}
 }
 

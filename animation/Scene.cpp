@@ -1132,7 +1132,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_nHierarchicalGameObjects = 3 + 10;
+	m_nHierarchicalGameObjects = 3 + 10 + 1 ;
 
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
@@ -1237,7 +1237,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	for (int i = 0; i < 10; ++i) {
 		if (pIceEnemyModels[i]) delete pIceEnemyModels[i];
 	}
-	/*
+	
 	CLoadedModelInfo* pIceBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Ice_Mage.bin", NULL);
 
 	m_ppHierarchicalGameObjects[13] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceBossModel, 6);
@@ -1259,7 +1259,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
 
 	if (pIceBossModel) delete pIceBossModel;
-	*/
+	
 }
 
 void CIceScene::ReleaseUploadBuffers()
@@ -1278,7 +1278,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_nHierarchicalGameObjects = 3 + 10;
+	m_nHierarchicalGameObjects = 3 + 10 + 1;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/firemap.bin", NULL);
@@ -1381,7 +1381,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	for (int i = 0; i < 10; ++i) {
 		if (pFireEnemyModels[i]) delete pFireEnemyModels[i];
 	}
-	/*
+	
 	CLoadedModelInfo* pFireBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shadow.bin", NULL);
 
 	m_ppHierarchicalGameObjects[13] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireBossModel, 7);
@@ -1405,7 +1405,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
 
 	if (pFireBossModel) delete pFireBossModel;
-	*/
+	
 }
 void CFireScene::ReleaseUploadBuffers()
 {
@@ -1423,7 +1423,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_nHierarchicalGameObjects = 3 + 10;
+	m_nHierarchicalGameObjects = 3 + 10 + 1;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/grassmap.bin", NULL);
@@ -1527,7 +1527,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 		if (pGrassEnemyModels[i]) delete pGrassEnemyModels[i];
 	}
 
-	/*CLoadedModelInfo* pGrassBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Monster.bin", NULL);
+	CLoadedModelInfo* pGrassBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Monster.bin", NULL);
 
 	m_ppHierarchicalGameObjects[13] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassBossModel, 6);
 
@@ -1547,7 +1547,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
 
-	if (pGrassBossModel) delete pGrassBossModel;*/
+	if (pGrassBossModel) delete pGrassBossModel;
 }
 void CGrassScene::ReleaseUploadBuffers()
 {

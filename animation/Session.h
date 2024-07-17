@@ -22,6 +22,7 @@ public:
 	int getCharacterType();
 	STATE getState();
 	bool getAttack();
+	bool getNpcAttack();
 
 
 	void setCharacterType(int type);
@@ -41,13 +42,16 @@ public:
 	void setAttack(bool att);
 	void setState(STATE state);
 	void setPrevPos(XMFLOAT3 prevpos);
+	void setNpcAttack(bool _isattack);
 	void Rotate(float yaw);
 
 	mutex _sessionlock;
 	bool m_blind = false;
 	int scene_num = -1;
 	float m_yaw = 0.0f;
+
 private:
+
 	int m_id  = -1;
 	int r_id = -1;
 	int characterType = -1;
@@ -60,11 +64,13 @@ private:
 	XMFLOAT3 m_pos;
 	XMFLOAT3 m_prevPos;
 	bool m_isattack = false;
+	bool monster_isattack = false;
 	// state 
 	STATE m_state = STATE::Free;
 
 	int m_animationstate = 0;
 	int m_prevanimationstate = 0;
+
 
 	
 

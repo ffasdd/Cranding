@@ -85,6 +85,11 @@ bool Session::getAttack()
 	return m_isattack;
 }
 
+bool Session::getNpcAttack()
+{
+	return monster_isattack;
+}
+
 void Session::setCharacterType(int type)
 {
 	characterType = type;
@@ -176,6 +181,11 @@ void Session::setState(STATE state)
 void Session::setPrevPos(XMFLOAT3 prevpos)
 {
 	m_prevPos = prevpos;
+}
+
+void Session::setNpcAttack(bool _isattack)
+{
+	monster_isattack = _isattack;
 }
 
 void Session::Rotate(float yaw)

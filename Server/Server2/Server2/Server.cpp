@@ -271,8 +271,32 @@ void Server::WorkerThread()
 			delete ex_over;
 			break;
 		}
+		case COMP_TYPE::ICE_BOSS_MOVE: {
+			int r_id = static_cast<int>(key);
+			ingameroom[r_id].IceBossUpdate();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_ICE_BOSS_MOVE };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+		}
+		case COMP_TYPE::FIRE_BOSS_MOVE: {
+			int r_id = static_cast<int>(key);
+			ingameroom[r_id].FireBossUpdate();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_FIRE_BOSS_MOVE };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+		}
+		case COMP_TYPE::NATURE_BOSS_MOVE: {
+			int r_id = static_cast<int>(key);
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NATURE_BOSS_MOVE };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+		}
+									 
 
-								
+
 		default:
 			break;
 		}
@@ -299,14 +323,17 @@ void Server::InitialziedMonster(int room_Id)
 			if (i < 10)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+				ingameroom[room_Id].NightMonster[i]._m_type = MonsterType::Fire;
 			}
 			else if (10 <= i && i < 20)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(i_xpos(dre), 10.0f, i_zpos(dre));
+				ingameroom[room_Id].NightMonster[i]._m_type = MonsterType::Ice;
 			}
 			else if (20 <= i && i < 30)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(n_xpos(dre), 10.0f, n_zpos(dre));
+				ingameroom[room_Id].NightMonster[i]._m_type = MonsterType::Nature;
 			}
 			ingameroom[room_Id].NightMonster[i]._id = i;
 			ingameroom[room_Id].NightMonster[i]._att = 10;
@@ -319,6 +346,8 @@ void Server::InitialziedMonster(int room_Id)
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 8.0f;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y = ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
+
+	
 
 		}
 	}
@@ -434,25 +463,31 @@ void Server::ProcessPacket(int id, char* packet)
 		switch (scenenum)
 		{
 		case 2: {
+			clients[id]._stage = scenenum;
 			std::uniform_real_distribution<float> xpos(210, 240);
 			std::uniform_real_distribution<float> zpos(710, 760);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		}
 			  break;
 		case 3: {
+			clients[id]._stage = scenenum;
 			std::uniform_real_distribution<float> xpos(-500, -400);
 			std::uniform_real_distribution<float> zpos(1120, 1200);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		}
 			  break;
 		case 4: {
+			clients[id]._stage = scenenum;
 			std::uniform_real_distribution<float> xpos(-732, -570);
 			std::uniform_real_distribution<float> zpos(531, 580);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		}
 			  break;
 		case 5: {
-
+			clients[id]._stage = scenenum;
+			std::uniform_real_distribution<float> xpos(-732, -570);
+			std::uniform_real_distribution<float> zpos(531, 580);
+			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		}
 			  break;
 		}
@@ -464,107 +499,6 @@ void Server::ProcessPacket(int id, char* packet)
 			pl->send_change_scene(id, clients[id]._stage);
 		}
 
-		// 몬스터가 다시 플레이어를 따라가야 하니까 플레이어 정보를 몬스터에게 넘긴다. 
-
-		if (p->scenenum == 2)
-		{
-			for (auto& n_m : ingameroom[r_id].NightMonster)
-			{
-				if (find(n_m.ingamePlayer.begin(), n_m.ingamePlayer.end(), &clients[id]) == n_m.ingamePlayer.end())
-				{
-					clients[id]._p_lock.lock();
-					n_m.ingamePlayer.emplace_back(&clients[id]);
-					clients[id]._p_lock.unlock();
-				}
-			}
-			for (auto& i_m : ingameroom[r_id].IceMonster)
-			{
-				{
-					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
-
-					if (find(i_m.ingamePlayer.begin(), i_m.ingamePlayer.end(), &clients[id]) != i_m.ingamePlayer.end())
-					{
-						i_m.ingamePlayer.erase(i_m.ingamePlayer.begin() + id);
-
-					}
-
-				}
-			}
-		}
-		// 3번 맵 얼음
-		if (p->scenenum == 3)
-		{
-			for (auto& n_m : ingameroom[r_id].NightMonster)
-			{
-				{
-					lock_guard<mutex>ll{ n_m.ingamePlayerlock };
-				
-					if (find(n_m.ingamePlayer.begin(), n_m.ingamePlayer.end(), &clients[id]) != n_m.ingamePlayer.end())
-					{
-						n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
-
-					}
-					
-				}
-			}
-			// 얼음몬스터 뿌려줘야함 
-		   // 얼음 몬스터는 이미 있음, 얼음 몬스터 들에게 3번스테이지에 들어간 플레이어들의 정보를 입력해줘야 추적 
-			for (auto& i_m : ingameroom[r_id].IceMonster)
-			{
-				if (find(i_m.ingamePlayer.begin(), i_m.ingamePlayer.end(), &clients[id]) == i_m.ingamePlayer.end())
-				{
-					clients[id]._p_lock.lock();
-					i_m.ingamePlayer.emplace_back(&clients[id]);
-					clients[id]._p_lock.unlock();
-				}
-			}
-
-		}
-		// 4번 맵 불 
-		else if (p->scenenum == 4)
-		{
-			// 불몬스터 뿌려줘야함 
-			for (auto& n_m : ingameroom[r_id].NightMonster)
-			{
-
-				{
-					lock_guard<mutex>ll{ clients[id]._p_lock };
-					if (find(n_m.ingamePlayer.begin(), n_m.ingamePlayer.end(), &clients[id]) != n_m.ingamePlayer.end())
-					{
-						n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
-
-					}
-				}
-			}
-
-			for (auto& i_m : ingameroom[r_id].IceMonster)
-			{
-				{
-					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
-					i_m.RemovePlayer(id);
-				}
-			}
-		}
-		// 5번 맵 자연 
-		else if (p->scenenum == 5)
-		{
-			// 자연몬스터 뿌려줘야함 
-			for (auto& n_m : ingameroom[r_id].NightMonster)
-			{
-				{
-					lock_guard<mutex>ll{ clients[id]._p_lock };
-					n_m.ingamePlayer.erase(n_m.ingamePlayer.begin() + id);
-				}
-			}
-
-			for (auto& i_m : ingameroom[r_id].IceMonster)
-			{
-				{
-					lock_guard<mutex>ll{ i_m.ingamePlayerlock };
-					i_m.RemovePlayer(id);
-				}
-			}
-		}
 
 	}
 						break;
@@ -585,23 +519,26 @@ void Server::ProcessPacket(int id, char* packet)
 
 		if (all_Start)
 		{
+			ingameroom[r_id].BossMonsterInitialziedMonster();
+			ingameroom[r_id].IceNpcInitialized();
+			ingameroom[r_id].FireNpcInitialized();
+			ingameroom[r_id].NatureNpcInitialized();
+
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
 				pl->send_ingame_start();
 			}
 
-			ingameroom[r_id].IceNpcInitialized();
-			ingameroom[r_id].FireNpcInitialized();
-			ingameroom[r_id].NatureNpcInitialized();
+	
 			//ingameroom[r_id].IceUpdateNpc();
 
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
-			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
-			g_Timer.InitTimerQueue(ev);
-
 			TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
 			g_Timer.InitTimerQueue(ev1);
+
+			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
+			g_Timer.InitTimerQueue(ev);
 
 			TIMER_EVENT ev2{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NIGHT };
 			g_Timer.InitTimerQueue(ev2);
@@ -617,6 +554,15 @@ void Server::ProcessPacket(int id, char* packet)
 
 			TIMER_EVENT ev6{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NATURE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev6);
+
+			TIMER_EVENT ev7{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_ICE_BOSS_MOVE };
+			g_Timer.InitTimerQueue(ev7);
+
+			TIMER_EVENT ev8{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_FIRE_BOSS_MOVE };
+			g_Timer.InitTimerQueue(ev8);
+
+			TIMER_EVENT ev9{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NATURE_BOSS_MOVE };
+			g_Timer.InitTimerQueue(ev9);
 		}
 		else
 			break;
@@ -739,6 +685,30 @@ void Server::ReadyToStart()
 					player->send_add_info_packet(ingameplayer->_id);
 				}
 			}
+			for (auto& NightMonsters : ingameroom[room_id].NightMonster)
+			{
+				NightMonsters.ingamePlayer[_session->_id] = _session;
+			}
+
+			for (auto& IceMonsters : ingameroom[room_id].IceMonster)
+			{
+				IceMonsters.ingamePlayer[_session->_id] = _session;
+			}
+
+			for (auto& FireMonsters : ingameroom[room_id].FireMonster)
+			{
+				FireMonsters.ingamePlayer[_session->_id] = _session;
+			}
+
+			for (auto& NatureMontsers : ingameroom[room_id].NatureMonster)
+			{
+				NatureMontsers.ingamePlayer[_session->_id] = _session;
+			}
+
+			ingameroom[room_id].FireBoss.ingamePlayer[_session->_id] = _session;
+			ingameroom[room_id].IceBoss.ingamePlayer[_session->_id] = _session;
+			ingameroom[room_id].NatureBoss.ingamePlayer[_session->_id] = _session;
+
 		}
 		else
 			this_thread::sleep_for(1s);

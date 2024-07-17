@@ -19,6 +19,11 @@ unordered_map<int, Session> g_ice_monsters;
 unordered_map<int, Session> g_fire_monsters;
 unordered_map<int, Session> g_nature_monsters;
 
+Session g_IceBossMonster;
+Session g_FireBossMonster;
+Session g_NatureBossMonster;
+
+
 concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 HANDLE loginevent = CreateEvent(NULL, FALSE, FALSE, NULL);
 HANDLE startevent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -63,7 +68,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			if (!::TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 			{
 				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
+				::DispatchMessage(&msg); 
 			}
 			
 		}
@@ -88,8 +93,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
 						gGameFramework.myFunc_SetLookRightUp(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
 						gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
-						gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());
-										
+						gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());						
 					}
 
 					switch (gGameFramework.sceneManager.GetCurrentScene())
@@ -112,12 +116,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						// ice map
 						for (int i = 0; i < g_ice_monsters.size(); ++i)
 						{
-					
 							gGameFramework.myFunc_SetMonPosition(i, g_ice_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_ice_monsters[i].getLook(), g_ice_monsters[i].getUp(), g_ice_monsters[i].getRight());
-
-							
 						}
+
+						gGameFramework.myFunc_SetBossMonPosition( g_IceBossMonster.getPos());
+						gGameFramework.myFunc_SetBossMonLookRightUp(g_IceBossMonster.getLook(),g_IceBossMonster.getUp(),g_IceBossMonster.getRight());
 						break;
 					}
 					case SCENEKIND::FIRE: 
@@ -128,6 +132,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 							gGameFramework.myFunc_SetMonPosition(i, g_fire_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_fire_monsters[i].getLook(), g_fire_monsters[i].getUp(), g_fire_monsters[i].getRight());
 						}
+						gGameFramework.myFunc_SetBossMonPosition( g_FireBossMonster.getPos());
+						gGameFramework.myFunc_SetBossMonLookRightUp(g_FireBossMonster.getLook(),g_FireBossMonster.getUp(),g_FireBossMonster.getRight());
 						break;
 					}
 					case SCENEKIND::NATURE:
@@ -138,6 +144,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 							gGameFramework.myFunc_SetMonPosition(i, g_nature_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_nature_monsters[i].getLook(), g_nature_monsters[i].getUp(), g_nature_monsters[i].getRight());
 						}
+						gGameFramework.myFunc_SetBossMonPosition(g_NatureBossMonster.getPos());
+						gGameFramework.myFunc_SetBossMonLookRightUp(g_NatureBossMonster.getLook(), g_NatureBossMonster.getUp(), g_NatureBossMonster.getRight());
 						break;
 					}
 
