@@ -408,9 +408,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			else break;
 
 		case '2':
-			if (SceneNum == 0) break;
+			//if (SceneNum == 0) break;
 			// spaceship map
 			SceneNum = 2;
+			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 			isready = false;
 			// send ready packet  
 			//if(처음 시작할 때에만 IngameStart() ) {}
@@ -840,25 +841,27 @@ void CGameFramework::BuildObjects(int nScene)
 		break;
 	}
 
+	m_pScene->SetGameFramework(this);
+
 	// shadow
-	/*CObjectsShader* pObjectShader = new CObjectsShader(m_pScene->m_nHierarchicalGameObjects + 1, m_pScene->m_ppHierarchicalGameObjects, m_pScene->m_pPlayer);
-	pObjectShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-	pObjectShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL);
+	//CObjectsShader* pObjectShader = new CObjectsShader(m_pScene->m_nHierarchicalGameObjects + 1, m_pScene->m_ppHierarchicalGameObjects, m_pScene->m_pPlayer);
+	//pObjectShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	//pObjectShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL);
 
-	m_pScene->m_pDepthRenderShader = new CDepthRenderShader(pObjectShader, m_pScene->m_pLights);
-	DXGI_FORMAT pdxgiRtvFormats[1] = { DXGI_FORMAT_R32_FLOAT };
-	m_pScene->m_pDepthRenderShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, pdxgiRtvFormats, DXGI_FORMAT_D32_FLOAT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-	m_pScene->m_pDepthRenderShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL);
+	//m_pScene->m_pDepthRenderShader = new CDepthRenderShader(pObjectShader, m_pScene->m_pLights);
+	//DXGI_FORMAT pdxgiRtvFormats[1] = { DXGI_FORMAT_R32_FLOAT };
+	//m_pScene->m_pDepthRenderShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, pdxgiRtvFormats, DXGI_FORMAT_D32_FLOAT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	//m_pScene->m_pDepthRenderShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL);
 
-	m_pScene->m_pShadowShader = new CShadowMapShader(pObjectShader);
-	m_pScene->m_pShadowShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-	m_pScene->m_pShadowShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->m_pDepthRenderShader->GetDepthTexture());
+	//m_pScene->m_pShadowShader = new CShadowMapShader(pObjectShader);
+	//m_pScene->m_pShadowShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	//m_pScene->m_pShadowShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->m_pDepthRenderShader->GetDepthTexture());
 
-	m_pScene->m_pShadowMapToViewport = new CTextureToViewportShader();
-	m_pScene->m_pShadowMapToViewport->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-	m_pScene->m_pShadowMapToViewport->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->m_pDepthRenderShader->GetDepthTexture());
+	//m_pScene->m_pShadowMapToViewport = new CTextureToViewportShader();
+	//m_pScene->m_pShadowMapToViewport->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	//m_pScene->m_pShadowMapToViewport->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->m_pDepthRenderShader->GetDepthTexture());
 
-*/
+
 
 	m_pPostProcessingShader = new CTextureToFullScreenShader();
 	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
@@ -1098,7 +1101,7 @@ void CGameFramework::FrameAdvance()
 	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera);
 
 	// ** 쉐도우 맵 생성(광원 시점에서의 씬 렌더링 후 그걸 텍스처에 저장)
-	m_pScene->OnPreRender(m_pd3dCommandList, m_pCamera);
+	if (SceneNum > 1) m_pScene->OnPreRender(m_pd3dCommandList, m_pCamera);
 
 	// ** 스왑 체인 백 버퍼의 상태를 D3D12_RESOURCE_STATE_PRESENT에서 D3D12_RESOURCE_STATE_RENDER_TARGET으로 변경 == 렌더링 할 수 있도록 하기 위함
 	D3D12_RESOURCE_BARRIER d3dResourceBarrier;
@@ -1123,8 +1126,6 @@ void CGameFramework::FrameAdvance()
 	//m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH , 1.0f, 0, 0, NULL);
 
 	m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], d3dDsvCPUDescriptorHandle);
-
-
 
 	m_pScene->Render(m_pd3dCommandList, m_pCamera);
 	m_pPlayer->Render(m_pd3dCommandList, m_pCamera);

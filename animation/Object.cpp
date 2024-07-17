@@ -17,18 +17,27 @@ CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers, int nRootPar
 	m_nTextures = nTextures;
 	if (m_nTextures > 0)
 	{
-		m_ppd3dTextureUploadBuffers = new ID3D12Resource * [m_nTextures];
 		m_ppd3dTextures = new ID3D12Resource * [m_nTextures];
+		//** for (int i = 0; i < m_nTextures; i++) m_ppd3dTextures[i] = NULL;
+
+		m_ppd3dTextureUploadBuffers = new ID3D12Resource * [m_nTextures];
 		for (int i = 0; i < m_nTextures; i++) m_ppd3dTextureUploadBuffers[i] = m_ppd3dTextures[i] = NULL;
 
 		m_pd3dSrvGpuDescriptorHandles = new D3D12_GPU_DESCRIPTOR_HANDLE[m_nTextures];
+		//for (int i = 0; i < m_nTextures; i++) m_pd3dSrvGpuDescriptorHandles[i].ptr = NULL;
 
 		m_pnResourceTypes = new UINT[m_nTextures];
+		//for (int i = 0; i < m_nTextures; i++) m_pnResourceTypes[i] = 0;
+
 		m_pdxgiBufferFormats = new DXGI_FORMAT[m_nTextures];
+		for (int i = 0; i < m_nTextures; i++) m_pnResourceTypes[i] = DXGI_FORMAT_UNKNOWN;
+
 		m_pnBufferElements = new int[m_nTextures];
+		for (int i = 0; i < m_nTextures; i++) m_pnBufferElements[i] = 0;
 	}
 	m_nRootParameters = nRootParameters;
 	if (nRootParameters > 0) m_pnRootParameterIndices = new UINT[nRootParameters];
+	//for (int i = 0; i < m_nRootParameters; i++) m_pnRootParameterIndices[i] = -1;
 
 	m_nSamplers = nSamplers;
 	if (m_nSamplers > 0) m_pd3dSamplerGpuDescriptorHandles = new D3D12_GPU_DESCRIPTOR_HANDLE[m_nSamplers];
@@ -808,6 +817,43 @@ CGameObject::~CGameObject()
 
 	ReleaseShaderVariables();
 	if (m_pMaterial) m_pMaterial->Release();
+}
+
+BoundingBox CGameObject::ConvertBoundingOrientedBoxToBoundingBox(const BoundingOrientedBox& obb)
+{
+	BoundingBox mapObjectBB;
+
+	// BoundingOrientedBox의 꼭지점들을 계산
+	XMFLOAT3 corners[BoundingOrientedBox::CORNER_COUNT];
+	obb.GetCorners(corners);
+
+	// 꼭지점들을 이용해 BoundingBox를 생성
+	BoundingBox::CreateFromPoints(mapObjectBB, BoundingOrientedBox::CORNER_COUNT, corners, sizeof(XMFLOAT3));
+
+	return mapObjectBB;
+}
+
+//** 여기부터
+void CGameObject::CalculateBoundingBox()
+{
+	CGameObject* pMapObject = this->m_pChild->m_pChild;
+
+	// 맵의 0번째 바운딩박스
+	m_xmBoundingBoxForShadow = ConvertBoundingOrientedBoxToBoundingBox(pMapObject->m_xmBoundingBox);
+
+	pMapObject = pMapObject->m_pSibling;
+
+	for (int i = 0; i < this->m_pChild->nChilds; i++)
+	{
+		BoundingBox nextBB = ConvertBoundingOrientedBoxToBoundingBox(pMapObject->m_xmBoundingBox);
+
+		BoundingBox::CreateMerged(m_xmBoundingBoxForShadow, m_xmBoundingBoxForShadow, nextBB);
+
+		pMapObject = pMapObject->m_pSibling;
+
+		if (pMapObject == NULL)break;
+	}
+	m_xmBoundingBoxForShadow.Transform(m_xmBoundingBoxForShadow, XMLoadFloat4x4(&m_xmf4x4World));
 }
 
 void CGameObject::UpdateBoundingBox()

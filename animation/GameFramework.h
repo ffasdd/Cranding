@@ -28,7 +28,6 @@
 extern Network							gNetwork;
 
 
-
 class UILayer;
 
 class CGameFramework
@@ -166,3 +165,4 @@ private:
 	_TCHAR						m_pszFrameRate[70];
 };
 
+extern CGameFramework gGameFramework;

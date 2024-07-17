@@ -222,8 +222,9 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGr
 	d3dPipelineStateDesc.PrimitiveTopologyType = d3dPrimitiveTopologyType;
 	//d3dPipelineStateDesc.NumRenderTargets = 1;
 	d3dPipelineStateDesc.NumRenderTargets = nRenderTargets;
-	for (UINT i = 0; i < nRenderTargets; i++) d3dPipelineStateDesc.RTVFormats[i] = (pdxgiRtvFormats) ? pdxgiRtvFormats[i] :
-		DXGI_FORMAT_R8G8B8A8_UNORM;
+	for (UINT i = 0; i < nRenderTargets; i++)
+		d3dPipelineStateDesc.RTVFormats[i] = (pdxgiRtvFormats) ? pdxgiRtvFormats[i] :
+			DXGI_FORMAT_R8G8B8A8_UNORM;
 	//d3dPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	//d3dPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	d3dPipelineStateDesc.DSVFormat = dxgiDsvFormat;
@@ -1140,24 +1141,23 @@ D3D12_SHADER_BYTECODE CIlluminatedShader::CreatePixelShader()
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CObjectsShader::CObjectsShader()
+CObjectsShader::CObjectsShader(CScene* pScene)
 {
-
+	m_pScene = pScene;
 }
 
 CObjectsShader::~CObjectsShader()
 {
 }
 
-//BoundingBox CObjectsShader::CalculateBoundingBox()
-//{
-//	//for (int i = 0; i < m_nObjects; i++) m_ppObjects[i]->CalculateBoundingBox();
-//
-//	BoundingBox xmBoundingBox = m_ppObjects[0]->m_xmBoundingBox;
-//	for (int i = 1; i < m_nObjects; i++)BoundingBox::CreateMerged(xmBoundingBox, xmBoundingBox, m_ppObjects[i]->m_xmBoundingBox);
-//
-//	return(xmBoundingBox);
-//}
+BoundingBox CObjectsShader::CalculateBoundingBox()
+{
+	m_pScene->m_ppHierarchicalGameObjects[0]->CalculateBoundingBox();
+
+	BoundingBox xmBoundingBox = m_pScene->m_ppHierarchicalGameObjects[0]->m_xmBoundingBoxForShadow;
+
+	return(xmBoundingBox);
+}
 
 void CObjectsShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext/*, int m_nObjects, CGameObject** m_ppObjects*/)
 {
@@ -1338,6 +1338,15 @@ void CObjectsShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera*
 			m_ppObjects[j]->Render(pd3dCommandList, pCamera);
 		}
 	}
+
+	//for (int i = 0; i < m_pScene->m_nHierarchicalGameObjects; i++)
+	//{
+	//	if (m_pScene->m_ppHierarchicalGameObjects[i])
+	//	{
+	//		m_ppObjects[i]->UpdateShaderVariables(pd3dCommandList);
+	//		m_ppObjects[i]->Render(pd3dCommandList, pCamera);
+	//	}
+	//}
 }
 
 void CObjectsShader::OnPostRender(ID3D12GraphicsCommandList* pd3dCommandList)
@@ -1346,14 +1355,17 @@ void CObjectsShader::OnPostRender(ID3D12GraphicsCommandList* pd3dCommandList)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CDepthRenderShader::CDepthRenderShader(CObjectsShader* pObjectsShader, LIGHT* pLights)
+CDepthRenderShader::CDepthRenderShader(CObjectsShader* pObjectsShader, LIGHT* pLights, CScene* pScene)
 {
+	m_pScene = pScene;
 	m_pObjectsShader = pObjectsShader;
 
 	m_pLights = pLights;
 	m_pToLightSpaces = new TOLIGHTSPACES;
 
 	XMFLOAT4X4 xmf4x4ToTexture = { 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 0.5f, 0.0f, 1.0f };
+
+	// 클립 공간에서 텍스처 좌표 공간으로 변환하는 행렬
 	m_xmProjectionToTexture = XMLoadFloat4x4(&xmf4x4ToTexture);
 }
 
@@ -1420,11 +1432,15 @@ void CDepthRenderShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	d3dDescriptorHeapDesc.NodeMask = 0;
 	HRESULT hResult = pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dRtvDescriptorHeap);
 
+	// MAX_DEPTH_TEXTURES 크기의 2D 텍스처 배열 생성
 	m_pDepthFromLightTexture = new CTexture(MAX_DEPTH_TEXTURES, RESOURCE_TEXTURE2D_ARRAY, 0, 1);
 
+	// 텍스처 초기화에 사용될 기본값 정의
 	D3D12_CLEAR_VALUE d3dClearValue = { DXGI_FORMAT_R32_FLOAT, { 1.0f, 1.0f, 1.0f, 1.0f } };
+	// 텍스처 생성
 	for (UINT i = 0; i < MAX_DEPTH_TEXTURES; i++) m_pDepthFromLightTexture->CreateTexture(pd3dDevice, _DEPTH_BUFFER_WIDTH, _DEPTH_BUFFER_HEIGHT, DXGI_FORMAT_R32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_COMMON, &d3dClearValue, RESOURCE_TEXTURE2D, i, 1);
 
+	// 생성한 텍스처를 연결해줄 렌더 타겟 뷰 설정
 	D3D12_RENDER_TARGET_VIEW_DESC d3dRenderTargetViewDesc;
 	d3dRenderTargetViewDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 	d3dRenderTargetViewDesc.Texture2D.MipSlice = 0;
@@ -1435,17 +1451,19 @@ void CDepthRenderShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	for (UINT i = 0; i < MAX_DEPTH_TEXTURES; i++)
 	{
 		ID3D12Resource* pd3dTextureResource = m_pDepthFromLightTexture->GetResource(i);
+		// 텍스처 리소스 기반 렌더타겟 뷰 생성 후 d3dRtvCPUDescriptorHandles 배열에 저장
 		pd3dDevice->CreateRenderTargetView(pd3dTextureResource, &d3dRenderTargetViewDesc, d3dRtvCPUDescriptorHandle);
 		m_pd3dRtvCPUDescriptorHandles[i] = d3dRtvCPUDescriptorHandle;
+		// d3dRtvCPUDescriptorHandle.ptr을 증가시켜 다음 텍스처에 대한 핸들을 준비
 		d3dRtvCPUDescriptorHandle.ptr += ::gnRtvDescriptorIncrementSize;
 	}
 
 	// DSV 디스크립터 힙 생성
 	d3dDescriptorHeapDesc.NumDescriptors = 1;	// 1개의 디스크립터를 포함
-	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;		// DSV 저장에 사용
+	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;	// DSV 타입의 힙 생성
 	hResult = pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dDsvDescriptorHeap);
 
-	// depth buffer 리소스 생성
+	// depth buffer 리소스 속성 정의, 깊이/스텐실 버퍼로 사용하기위한 설정
 	D3D12_RESOURCE_DESC d3dResourceDesc;
 	d3dResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	d3dResourceDesc.Alignment = 0;
@@ -1459,6 +1477,7 @@ void CDepthRenderShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	d3dResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	d3dResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 
+	// 디스크립터가 들어갈 힙 설정
 	D3D12_HEAP_PROPERTIES d3dHeapProperties;
 	::ZeroMemory(&d3dHeapProperties, sizeof(D3D12_HEAP_PROPERTIES));
 	d3dHeapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -1471,8 +1490,10 @@ void CDepthRenderShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	d3dClearValue.DepthStencil.Depth = 1.0f;
 	d3dClearValue.DepthStencil.Stencil = 0;
 
+	// 깊이 버퍼 리소스 생성
 	pd3dDevice->CreateCommittedResource(&d3dHeapProperties, D3D12_HEAP_FLAG_NONE, &d3dResourceDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &d3dClearValue, __uuidof(ID3D12Resource), (void**)&m_pd3dDepthBuffer);
 
+	// 깊이 스텐실 뷰 생성
 	D3D12_DEPTH_STENCIL_VIEW_DESC d3dDepthStencilViewDesc;
 	::ZeroMemory(&d3dDepthStencilViewDesc, sizeof(D3D12_DEPTH_STENCIL_VIEW_DESC));
 	d3dDepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
@@ -1500,7 +1521,7 @@ void CDepthRenderShader::ReleaseObjects()
 	{
 		if (m_ppDepthRenderCameras[i])
 		{
-			m_ppDepthRenderCameras[i]->ReleaseShaderVariables();
+			//m_ppDepthRenderCameras[i]->ReleaseShaderVariables();
 			delete m_ppDepthRenderCameras[i];
 		}
 	}
@@ -1551,7 +1572,7 @@ void CDepthRenderShader::ReleaseShaderVariables()
 }
 
 // ** 쉐도우 맵 생성
-void CDepthRenderShader::PrepareShadowMap(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera/*, BoundingBox* pxmSceneBoundingBox*/)
+void CDepthRenderShader::PrepareShadowMap(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, BoundingBox* pxmSceneBoundingBox)
 {
 	for (int j = 0; j < MAX_LIGHTS; j++)
 	{
@@ -1635,21 +1656,21 @@ void CDepthRenderShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCam
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	pCamera->UpdateShaderVariables(pd3dCommandList);
 
-	for (int i = 0; i < m_pObjectsShader->m_nObjects; i++)
+	for (int i = 0; i < m_pScene->m_nHierarchicalGameObjects; i++)
 	{
-		if (m_pObjectsShader->m_ppObjects[i])
+		if (m_pScene->m_ppHierarchicalGameObjects[i])
 		{
-			m_pObjectsShader->m_ppObjects[i]->UpdateShaderVariables(pd3dCommandList);
-			m_pObjectsShader->m_ppObjects[i]->Render(pd3dCommandList, pCamera);
+			m_pScene->m_ppHierarchicalGameObjects[i]->UpdateShaderVariables(pd3dCommandList);
+			m_pScene->m_ppHierarchicalGameObjects[i]->Render(pd3dCommandList, pCamera);
 		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CShadowMapShader::CShadowMapShader(CObjectsShader* pObjectsShader)
+CShadowMapShader::CShadowMapShader(CScene* pScene)
 {
-	m_pObjectsShader = pObjectsShader;
+	m_pScene = pScene;
 }
 
 CShadowMapShader::~CShadowMapShader()
@@ -1670,8 +1691,10 @@ void CShadowMapShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignatur
 	d3dPipelineStateDesc.InputLayout = CreateInputLayout();
 	d3dPipelineStateDesc.SampleMask = UINT_MAX;
 	d3dPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	d3dPipelineStateDesc.NumRenderTargets = 1;
-	d3dPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R32_FLOAT;
+	d3dPipelineStateDesc.NumRenderTargets = nRenderTargets;
+	for (UINT i = 0; i < nRenderTargets; i++)
+		d3dPipelineStateDesc.RTVFormats[i] = (pdxgiRtvFormats) ? pdxgiRtvFormats[i] :
+		DXGI_FORMAT_R8G8B8A8_UNORM;
 	d3dPipelineStateDesc.DSVFormat = dxgiDsvFormat;
 	d3dPipelineStateDesc.SampleDesc.Count = 1;
 	d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
@@ -1738,7 +1761,7 @@ void CShadowMapShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComm
 	m_pDepthFromLightTexture->AddRef();
 
 	CreateCbvSrvDescriptorHeaps(pd3dDevice, 0, m_pDepthFromLightTexture->GetTextures());
-	CreateShaderResourceViews(pd3dDevice, m_pDepthFromLightTexture, 0, 5);
+	CreateShaderResourceViews(pd3dDevice, m_pDepthFromLightTexture, 0, 12);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
@@ -1750,18 +1773,18 @@ void CShadowMapShader::ReleaseObjects()
 
 void CShadowMapShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
-	/*CShader::Render(pd3dCommandList, pCamera);
+	CShader::Render(pd3dCommandList, pCamera);
 
 	UpdateShaderVariables(pd3dCommandList);
 
-	for (int i = 0; i < m_pObjectsShader->m_nObjects; i++)
+	for (int i = 0; i < m_pScene->m_nHierarchicalGameObjects; i++)
 	{
-		if (m_pObjectsShader->m_ppObjects[i])
+		if (m_pScene->m_ppHierarchicalGameObjects[i])
 		{
-			m_pObjectsShader->m_ppObjects[i]->UpdateShaderVariables(pd3dCommandList);
-			m_pObjectsShader->m_ppObjects[i]->Render(pd3dCommandList, pCamera);
+			m_pScene->m_ppHierarchicalGameObjects[i]->UpdateShaderVariables(pd3dCommandList/*, &m_xmf4x4World*/);
+			m_pScene->m_ppHierarchicalGameObjects[i]->Render(pd3dCommandList, pCamera);
 		}
-	}*/
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

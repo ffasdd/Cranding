@@ -81,6 +81,8 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUSrvDescriptorStartHandle() { return(m_d3dSrvGPUDescriptorStartHandle); }
 };
 */
+class CGameFramework;
+
 class CScene
 {
 public:
@@ -131,6 +133,7 @@ protected:
 	ID3D12RootSignature					*m_pd3dGraphicsRootSignature = NULL;
 	ID3D12RootSignature* m_pd3dComputeRootSignature = NULL;
 
+	BoundingBox						m_xmBoundingBox;
 
 	CBoundingBoxShader* m_pBoundingBoxShader = NULL;
 
@@ -144,8 +147,12 @@ protected:
 	static D3D12_CPU_DESCRIPTOR_HANDLE	m_d3dSrvCPUDescriptorNextHandle;
 	static D3D12_GPU_DESCRIPTOR_HANDLE	m_d3dSrvGPUDescriptorNextHandle;
 
+private:
+	CGameFramework* m_pGameFramework;
+
 public:
 	//static CDescriptorHeap* m_pDescriptorHeap;
+	void SetGameFramework(CGameFramework* pGameFramework);
 
 	static void CreateCbvSrvDescriptorHeaps(ID3D12Device *pd3dDevice, int nConstantBufferViews, int nShaderResourceViews);
 

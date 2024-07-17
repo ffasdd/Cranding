@@ -16,10 +16,9 @@ cbuffer cbCameraInfo : register(b1)
 cbuffer cbGameObjectInfo : register(b2)
 {
     matrix gmtxGameObject : packoffset(c0);     // worldmatrix
-    /**/// 여기 gMaterial 지워도 됩ㄴㅣ다. 근데 이거 지우려면 조금 꼬이긴 할듯
     MATERIAL gMaterial : packoffset(c4);
     uint gnTexturesMask : packoffset(c8);
-    uint gnMaterial : packoffset(c9);
+    uint gnMaterial : packoffset(c9);   // reflection
 };
 
 #include "Light.hlsl"
@@ -749,7 +748,7 @@ VS_LIGHTING_OUTPUT VSLighting(VS_LIGHTING_INPUT input)
     return (output);
 }
 
-float4 PSLighting(VS_LIGHTING_OUTPUT input) : SV_TARGET
+float4 PSLighting(VS_LIGHTING_OUTPUT input) : SV_TARGET5
 {
     input.normalW = normalize(input.normalW);
     float4 uvs[MAX_LIGHTS];
@@ -790,30 +789,27 @@ struct VS_SHADOW_MAP_OUTPUT
 
 VS_SHADOW_MAP_OUTPUT VSShadowMapShadow(VS_LIGHTING_INPUT input)
 {
-    VS_SHADOW_MAP_OUTPUT output = (VS_SHADOW_MAP_OUTPUT) 0;
+    VS_SHADOW_MAP_OUTPUT output = (VS_SHADOW_MAP_OUTPUT)0;
 
-    //float4 positionW = mul(float4(input.position, 1.0f), gmtxGameObject);
-    //output.positionW = positionW.xyz;
-    //output.position = mul(mul(positionW, gmtxView), gmtxProjection);
-    //output.normalW = mul(float4(input.normal, 0.0f), gmtxGameObject).xyz;
+    float4 positionW = mul(float4(input.position, 1.0f), gmtxGameObject);
+    output.positionW = positionW.xyz;
+    output.position = mul(mul(positionW, gmtxView), gmtxProjection);
+    output.normalW = mul(float4(input.normal, 0.0f), gmtxGameObject).xyz;
 
-    //for (int i = 0; i < MAX_LIGHTS; i++)
-    //{
-    //    if (gcbToLightSpaces[i].f4Position.w != 0.0f)
-    //        output.uvs[i] = mul(positionW, gcbToLightSpaces[i].mtxToTexture);
-    //}
-
-    float4 posW = mul(float4(input.position, 1.0f), gmtxGameObject);
-    output.position = mul(mul(posW, gmtxView), gmtxProjection);
+    for (int i = 0; i < MAX_LIGHTS; i++)
+    {
+        if (gcbToLightSpaces[i].f4Position.w != 0.0f)
+            output.uvs[i] = mul(positionW, gcbToLightSpaces[i].mtxToTexture);
+    }
     
     return (output);
 }
 
-void PSShadowMapShadow(VS_SHADOW_MAP_OUTPUT input) 
+float4 PSShadowMapShadow(VS_SHADOW_MAP_OUTPUT input) : SV_Target5
 {
-    //float4 cIllumination = ShadowLighting(input.positionW, normalize(input.normalW), true, input.uvs);
+    float4 cIllumination = ShadowLighting(input.positionW, normalize(input.normalW), true, input.uvs);
 
-    //return (cIllumination);
+    return (cIllumination);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -862,51 +858,51 @@ VS_TEXTURED_OUTPUT VSTextureToViewport(uint nVertexID : SV_VertexID)
     return (output);
 }
 
-//float4 GetColorFromDepthShadow(float fDepth)
-//{
-//    float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-
-//    if (fDepth < 0.00625f)
-//        cColor = float4(1.0f, 0.0f, 0.0f, 1.0f);
-//    else if (fDepth < 0.0125f)
-//        cColor = float4(0.0f, 1.0f, 0.0f, 1.0f);
-//    else if (fDepth < 0.025f)
-//        cColor = float4(0.0f, 0.0f, 1.0f, 1.0f);
-//    else if (fDepth < 0.05f)
-//        cColor = float4(1.0f, 1.0f, 0.0f, 1.0f);
-//    else if (fDepth < 0.075f)
-//        cColor = float4(0.0f, 1.0f, 1.0f, 1.0f);
-//    else if (fDepth < 0.1f)
-//        cColor = float4(1.0f, 0.5f, 0.5f, 1.0f);
-//    else if (fDepth < 0.4f)
-//        cColor = float4(0.5f, 1.0f, 1.0f, 1.0f);
-//    else if (fDepth < 0.6f)
-//        cColor = float4(1.0f, 0.0f, 1.0f, 1.0f);
-//    else if (fDepth < 0.8f)
-//        cColor = float4(0.5f, 0.5f, 1.0f, 1.0f);
-//    else if (fDepth < 0.9f)
-//        cColor = float4(0.5f, 1.0f, 0.5f, 1.0f);
-//    else if (fDepth < 0.95f)
-//        cColor = float4(0.5f, 0.0f, 0.5f, 1.0f);
-//    else if (fDepth < 0.99f)
-//        cColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-//    else if (fDepth < 0.999f)
-//        cColor = float4(1.0f, 0.0f, 1.0f, 1.0f);
-//    else if (fDepth == 1.0f)
-//        cColor = float4(0.5f, 0.5f, 0.5f, 1.0f);
-//    else if (fDepth > 1.0f)
-//        cColor = float4(0.0f, 0.0f, 0.5f, 1.0f);
-//    else
-//        cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-
-//    return (cColor);
-//}
-
-SamplerState gssBorder : register(s2);
-
-void PSTextureToViewport(VS_TEXTURED_OUTPUT input) 
+float4 GetColorFromDepthShadow(float fDepth)
 {
-    //float fDepthFromLight0 = gtxtDepthTextures[0].SampleLevel(gssBorder, input.uv, 0).r;
+    float4 cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 
-    //return ((float4) (fDepthFromLight0 * 0.8f));
+    if (fDepth < 0.00625f)
+        cColor = float4(1.0f, 0.0f, 0.0f, 1.0f);
+    else if (fDepth < 0.0125f)
+        cColor = float4(0.0f, 1.0f, 0.0f, 1.0f);
+    else if (fDepth < 0.025f)
+        cColor = float4(0.0f, 0.0f, 1.0f, 1.0f);
+    else if (fDepth < 0.05f)
+        cColor = float4(1.0f, 1.0f, 0.0f, 1.0f);
+    else if (fDepth < 0.075f)
+        cColor = float4(0.0f, 1.0f, 1.0f, 1.0f);
+    else if (fDepth < 0.1f)
+        cColor = float4(1.0f, 0.5f, 0.5f, 1.0f);
+    else if (fDepth < 0.4f)
+        cColor = float4(0.5f, 1.0f, 1.0f, 1.0f);
+    else if (fDepth < 0.6f)
+        cColor = float4(1.0f, 0.0f, 1.0f, 1.0f);
+    else if (fDepth < 0.8f)
+        cColor = float4(0.5f, 0.5f, 1.0f, 1.0f);
+    else if (fDepth < 0.9f)
+        cColor = float4(0.5f, 1.0f, 0.5f, 1.0f);
+    else if (fDepth < 0.95f)
+        cColor = float4(0.5f, 0.0f, 0.5f, 1.0f);
+    else if (fDepth < 0.99f)
+        cColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    else if (fDepth < 0.999f)
+        cColor = float4(1.0f, 0.0f, 1.0f, 1.0f);
+    else if (fDepth == 1.0f)
+        cColor = float4(0.5f, 0.5f, 0.5f, 1.0f);
+    else if (fDepth > 1.0f)
+        cColor = float4(0.0f, 0.0f, 0.5f, 1.0f);
+    else
+        cColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+
+    return (cColor);
+}
+
+SamplerState gssBorder : register(s3);
+
+float4 PSTextureToViewport(VS_TEXTURED_OUTPUT input) : SV_Target5
+{
+    float fDepthFromLight0 = gtxtDepthTextures[0].SampleLevel(gssBorder, input.uv, 0).r;
+
+    return ((float4) (fDepthFromLight0));
 }

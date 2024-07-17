@@ -54,7 +54,7 @@ private:
 
 public:
 	void AddRef() { m_nReferences++; }
-	void Release() { if (--m_nReferences <= 0) delete this; }
+	void Release() { if (this && --m_nReferences <= 0) delete this; }
 
 	void SetSampler(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSamplerGpuDescriptorHandle);
 
@@ -392,6 +392,10 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE		m_d3dCbvGPUDescriptorHandle;
 
 public:	
+	BoundingBox ConvertBoundingOrientedBoxToBoundingBox(const BoundingOrientedBox& obb);
+	void CalculateBoundingBox();
+	BoundingBox						m_xmBoundingBoxForShadow;
+
 	// 바운딩 박스 관련
 	int nChilds = 0;				// 
 	void UpdateBoundingBox();

@@ -368,6 +368,8 @@ protected:
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+class CScene;
+
 class CIlluminatedShader : public CShader
 {
 public:
@@ -383,7 +385,7 @@ public:
 class CObjectsShader : public CIlluminatedShader
 {
 public:
-	CObjectsShader();
+	CObjectsShader(CScene* pScene);
 	virtual ~CObjectsShader();
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext = NULL/*, int m_nObjects, CGameObject** m_ppObjects*/);
@@ -395,12 +397,14 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 	virtual void OnPostRender(ID3D12GraphicsCommandList* pd3dCommandList);
 
-	//BoundingBox CalculateBoundingBox();
-
+	BoundingBox CalculateBoundingBox();
+private:
+	CScene* m_pScene;
 public:
 	CGameObject** m_ppObjects = 0;
 	int								m_nObjects = 0;
 	CGameObject* m_pPlayer = 0;
+	CGameObject* m_pDirectionalLight = NULL;
 };
 
 struct TOOBJECTSPACEINFO
@@ -417,9 +421,8 @@ struct TOLIGHTSPACES
 class CDepthRenderShader : public CIlluminatedShader
 {
 public:
-	CDepthRenderShader(CObjectsShader* pObjectsShader, LIGHT* pLights);
+	CDepthRenderShader(CObjectsShader* pObjectsShader, LIGHT* pLights, CScene* pScene);
 	virtual ~CDepthRenderShader();
-
 
 	virtual D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();
 	virtual D3D12_RASTERIZER_DESC CreateRasterizerState();
@@ -433,9 +436,15 @@ public:
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext = NULL);
 	virtual void ReleaseObjects();
 
-	void PrepareShadowMap(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera/*, BoundingBox* pxmSceneBoundingBox*/);
+	void PrepareShadowMap(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, BoundingBox* pxmSceneBoundingBox);
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+	
+	//CScene* GetScene() const { return m_pScene; }
+
+	//void SetScene(CScene* pScene) { m_pScene = pScene; }
+private:
+	CScene* m_pScene;
 
 protected:
 	CTexture* m_pDepthFromLightTexture = NULL;
@@ -455,7 +464,6 @@ public:
 	CTexture* GetDepthTexture() { return(m_pDepthFromLightTexture); }
 	ID3D12Resource* GetDepthTextureResource(UINT nIndex) { return(m_pDepthFromLightTexture->GetResource(nIndex)); }
 
-public:
 	CObjectsShader* m_pObjectsShader = NULL;
 
 protected:
@@ -470,7 +478,7 @@ protected:
 class CShadowMapShader : public CIlluminatedShader
 {
 public:
-	CShadowMapShader(CObjectsShader* pObjectsShader);
+	CShadowMapShader(CScene* pScene);
 	virtual ~CShadowMapShader();
 
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets, DXGI_FORMAT* pdxgiRtvFormats, DXGI_FORMAT dxgiDsvFormat, D3D12_PRIMITIVE_TOPOLOGY_TYPE d3dPrimitiveTopologyType);
@@ -492,10 +500,10 @@ public:
 	virtual void ReleaseUploadBuffers();
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+private:
+	CScene* m_pScene;
 
 public:
-	CObjectsShader* m_pObjectsShader = NULL;
-
 	CTexture* m_pDepthFromLightTexture = NULL;
 };
 
