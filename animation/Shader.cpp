@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "Shader.h"
+#include "Scenemanager.h"
 
 #define _WITH_SCENE_ROOT_SIGNATURE
 

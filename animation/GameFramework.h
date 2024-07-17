@@ -27,6 +27,7 @@
 #include "Player.h"
 #include "Scene.h"
 #include "Network.h"
+#include "Scenemanager.h"
 
 extern Network							gNetwork;
 
@@ -59,7 +60,8 @@ public:
 	void ChangeSwapChainState();
 
    // void BuildObjects();
-	void BuildObjects(int nScene);
+	//void BuildObjects(int nScene);
+	void BuildObjects(SCENEKIND m_nCurScene);
 	void ReleaseObjects();
 
     void ProcessInput();
@@ -125,9 +127,14 @@ public:
 	bool DayTime = false;
 	bool Night = false;
 
+	int GetIceElementNum() { return m_pPlayer->IceElement; }
+	int GetFireElementNum() { return m_pPlayer->FireElement; }
+	int GetNatureElementNum() { return m_pPlayer->NatureElement; }
+
 	ID3D12Resource* m_pd3dcbTime = NULL;
 	TIME* m_pTime = NULL;
 
+	SceneManager& sceneManager = SceneManager::GetInstance();
 
 	//imgui
 	ID3D12DescriptorHeap* m_pd3dImGuiDescriptorHeap = NULL;

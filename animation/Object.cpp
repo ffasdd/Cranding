@@ -6,6 +6,7 @@
 #include "Object.h"
 #include "Shader.h"
 #include "Scene.h"
+#include "Scenemanager.h"
 
 extern Network gNetwork;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -877,6 +878,11 @@ void CGameObject::SetMesh(CMesh *pMesh)
 	if (m_pMesh) m_pMesh->Release();
 	m_pMesh = pMesh;
 	if (m_pMesh) m_pMesh->AddRef();
+}
+
+void CGameObject::SetMonsType(MONSTERTYPE monstype)
+{
+	m_monstype = monstype;
 }
 
 void CGameObject::SetShader(CShader *pShader)

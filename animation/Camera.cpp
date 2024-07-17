@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "Camera.h"
+#include "Scenemanager.h"
 
 CCamera::CCamera()
 {

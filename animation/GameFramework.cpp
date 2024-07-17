@@ -60,7 +60,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	CoInitialize(NULL);
 
 	
-	BuildObjects(0);
+	BuildObjects(sceneManager.GetCurrentScene());
 
 	return(true);
 }
@@ -332,9 +332,9 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
-		if (SceneNum == 0 && m_pUILayer != NULL)
+		if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN && m_pUILayer != NULL)
 		{
-			UILayer::GetInstance()->ProcessMouseClick(0, m_ptOldCursorPos);
+			UILayer::GetInstance()->ProcessMouseClick(SCENEKIND::LOGIN, m_ptOldCursorPos);
 		}
 		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
 		if (g_clients[cl_id].getCharacterType() == 0)
@@ -406,16 +406,18 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 		case '0':
 			// ������ȭ��
-			SceneNum = 0;
+			//SceneNum = 0;
+			sceneManager.SetCurrentScene(SCENEKIND::LOGIN);
 			ReleaseObjects();
-			BuildObjects(SceneNum);
+			BuildObjects(sceneManager.GetCurrentScene());
 			break;
 
 		case '1':
 			// �κ�ȭ��
-			if (SceneNum == 0) {
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) {
 
-				SceneNum = 1;
+				//SceneNum = 1;
+				sceneManager.SetCurrentScene(SCENEKIND::LOBBY);
 				isready = false;
 
 				gNetwork.SendLoginfo();
@@ -426,19 +428,20 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				m_pPlayer->c_id = gNetwork.Getmyid();
 
 				ReleaseObjects();
-				BuildObjects(SceneNum);
+				BuildObjects(sceneManager.GetCurrentScene());
 
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-				gNetwork.SendChangeScene(SceneNum);
+				//gNetwork.SendChangeScene(sceneManager.GetCurrentScene());
 				break;
 			}
 			else break;
 
 		case '2':
-			if (SceneNum == 0) break;
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// spaceship map
 			isready = true;
-			SceneNum = 2;
+			//SceneNum = 2;
+			sceneManager.SetCurrentScene(SCENEKIND::SPACESHIP);
 			// send ready packet  
 			//if(처음 시작할 때에만 IngameStart() ) {}
 			// bool 을 두면 간단 하지만? bool보단 그냥 클라마다 상태체크하는게 좋을거같긴함 Ingame상태이거나 게임중인 상태에는 보낼 필요가 없으니까? 
@@ -455,34 +458,36 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 
 		case '3':
-			if (SceneNum == 1 || SceneNum == 0) break;
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// ice map
-			SceneNum = 3;
+			//SceneNum = 3;
+			sceneManager.SetCurrentScene(SCENEKIND::ICE);
 			isready = false;
 			ReleaseObjects();
-			BuildObjects(SceneNum);
+			BuildObjects(sceneManager.GetCurrentScene());
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 	
 			break;
 
 		case '4':
-			if (SceneNum == 1 || SceneNum == 0) break;
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// fire map
-			SceneNum = 4;
+			//SceneNum = 4;
+			sceneManager.SetCurrentScene(SCENEKIND::FIRE);
 			ReleaseObjects();
-			BuildObjects(SceneNum);
+			BuildObjects(sceneManager.GetCurrentScene());
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 
 			break;
 
 		case '5':
-			if (SceneNum == 1 || SceneNum == 0) break;
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// grass map
-			SceneNum = 5;
+			//SceneNum = 5;
+			sceneManager.SetCurrentScene(SCENEKIND::NATURE);
 			ReleaseObjects();
-			BuildObjects(SceneNum);
+			BuildObjects(sceneManager.GetCurrentScene());
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-	
 			break;
 
 		case VK_SPACE:
@@ -504,34 +509,37 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			PlayerPosZ = m_pPlayer->GetPosition().z;
 			if (PlayerPosX > 0 && PlayerPosZ > 0)
 			{
-				if (SceneNum == 1 || SceneNum == 0) break;
+				if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 				// ice map
-				SceneNum = 3;
+				//SceneNum = 3;
+				sceneManager.SetCurrentScene(SCENEKIND::ICE);
 				isready = false;
 				ReleaseObjects();
-				BuildObjects(SceneNum);
+				BuildObjects(sceneManager.GetCurrentScene());
 				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 				//gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
 			else if (PlayerPosX > 0 && PlayerPosZ < 0)
 			{
-				if (SceneNum == 1 || SceneNum == 0) break;
+				if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 				// fire map
-				SceneNum = 4;
+				//SceneNum = 4;
+				sceneManager.SetCurrentScene(SCENEKIND::FIRE);
 				ReleaseObjects();
-				BuildObjects(SceneNum);
+				BuildObjects(sceneManager.GetCurrentScene());
 				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 				//gNetwork.SendChangeScene(SceneNum);
 				break;
 			}
 			else if (PlayerPosX < 0 && PlayerPosZ > 0)
 			{
-				if (SceneNum == 1 || SceneNum == 0) break;
+				if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 				// grass map
-				SceneNum = 5;
+				//SceneNum = 5;
+				sceneManager.SetCurrentScene(SCENEKIND::NATURE);
 				ReleaseObjects();
-				BuildObjects(SceneNum);
+				BuildObjects(sceneManager.GetCurrentScene());
 				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 				//gNetwork.SendChangeScene(SceneNum);
 				break;
@@ -827,7 +835,7 @@ void CGameFramework::OnDestroy()
 
 #define _WITH_TERRAIN_PLAYER
 
-void CGameFramework::BuildObjects(int nScene)
+void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 {
 #ifdef _FULLSCREEN
 	m_pUILayer = UILayer::Create(m_nSwapChainBuffers, 0, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
@@ -837,9 +845,11 @@ void CGameFramework::BuildObjects(int nScene)
 	
 
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
-	switch (nScene)
+
+
+	switch (m_nCurScene)
 	{
-	case 0:
+	case SCENEKIND::LOGIN:
 	{
 		cout << "CLoginScene BuildObjects" << endl;
 		m_pScene = new CLoginScene();
@@ -852,7 +862,7 @@ void CGameFramework::BuildObjects(int nScene)
 
 		break;
 	}
-	case 1:
+	case SCENEKIND::LOBBY:
 	{
 		cout << "CLobbyScene BuildObjects" << endl;
 		m_pScene = new CLobbyScene();
@@ -867,7 +877,7 @@ void CGameFramework::BuildObjects(int nScene)
 
 		break;
 	}
-	case 2:
+	case SCENEKIND::SPACESHIP:
 	{
 		cout << "CSpaceShipScene BuildObjects" << endl;
 		//this_thread::sleep_for(10ms);
@@ -883,7 +893,7 @@ void CGameFramework::BuildObjects(int nScene)
 
 		break;
 	}
-	case 3:
+	case SCENEKIND::ICE:
 	{
 		cout << "CIceScene BuildObjects" << endl;
 		// ice map
@@ -899,7 +909,7 @@ void CGameFramework::BuildObjects(int nScene)
 		break;
 
 	}
-	case 4:
+	case SCENEKIND::FIRE:
 	{
 		// fire map
 		m_pScene = new CFireScene();
@@ -914,7 +924,7 @@ void CGameFramework::BuildObjects(int nScene)
 		break;
 	}
 
-	case 5:
+	case SCENEKIND::NATURE:
 	{
 		// grass map
 		m_pScene = new CGrassScene();
@@ -1001,7 +1011,7 @@ void CGameFramework::ProcessInput()
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
-	if (!bProcessedByScene && (SceneNum != 0))
+	if (!bProcessedByScene && sceneManager.GetCurrentScene() != SCENEKIND::LOGIN)
 	{
 		float cxDelta = 0.0f, cyDelta = 0.0f;
 		POINT ptCursorPos;
@@ -1104,13 +1114,13 @@ void CGameFramework::AnimateObjects()
 
 	m_pPlayer->Animate(fTimeElapsed);
 
-	if (SceneNum > 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
 	{
 		if (m_pPlayer->isFireMap == true)
 		{
 
 		}
-		else if (m_pPlayer->isGrassMap == true)
+		else if (m_pPlayer->isNatureMap == true)
 		{
 		}
 		else if (m_pPlayer->isIceMap == true)
@@ -1119,7 +1129,7 @@ void CGameFramework::AnimateObjects()
 
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
-	if(SceneNum> 0 && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+	if(sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
 
 	m_pScene->CheckMonsterByMonsterCollisions();
 }
@@ -1215,7 +1225,7 @@ void CGameFramework::FrameAdvance()
 	d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * ::gnRtvDescriptorIncrementSize);
 
 	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera); 
-	if (SceneNum > 1)
+	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && sceneManager.GetCurrentScene() != SCENEKIND::LOBBY)
 		UpdateTime();
 	UpdateShaderVariables();
 
@@ -1304,7 +1314,7 @@ void CGameFramework::FrameAdvance()
 	SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	if (m_pUILayer)
-		UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, SceneNum, isready, curDay, curMinute, curSecond);
+		UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond, GetIceElementNum(), GetFireElementNum(), GetNatureElementNum());
 
 	// 상태를 PRESENT로 전환
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);

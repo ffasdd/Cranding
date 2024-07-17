@@ -93,6 +93,29 @@ constexpr int DEFERREDNUM = 5;
 
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 
+enum class SCENEKIND
+{
+	NONE,
+	LOGIN = 0,
+	LOBBY = 1,
+	LOADING = 6,
+	SPACESHIP = 2,
+	ICE = 3,
+	FIRE = 4,
+	NATURE = 5,
+	VICTORY = 7,
+	DEFEAT = 8
+};
+
+enum class MONSTERTYPE
+{
+	ICE = 0,
+	FIRE = 1,
+	NATURE = 2,
+	ICEBOSS = 3,
+	FIREBOSS = 4,
+	NATUREBOSS = 5
+};
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 
 extern UINT	gnCbvSrvDescriptorIncrementSize;
@@ -430,7 +453,7 @@ void SafeDelete(T& ptr)
 
 enum BRUSH_COLOR { WHITE, LIME_GREEN, BLACK, RED, BRUSH_COUNT };
 
-enum TEXT_SIZE { SIZE_15, SIZE_18, SIZE_25, SIZE_30, SIZE_50, SIZE_60, TEXT_COUNT };
+enum TEXT_SIZE { SIZE_15, SIZE_18, SIZE_25, SIZE_40, SIZE_50, SIZE_60, TEXT_COUNT };
 
 // imGUI
 

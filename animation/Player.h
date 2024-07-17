@@ -57,9 +57,14 @@ public:
 	virtual ~CPlayer();
 
 	// 충돌시 씬전환 변수들
-	bool isFireMap = false;
-	bool isGrassMap = false;
 	bool isIceMap = false;
+	bool isFireMap = false;
+	bool isNatureMap = false;
+
+	// 원소 개수
+	int IceElement = 0;
+	int FireElement = 0;
+	int NatureElement = 0;
 
 	XMFLOAT3					m_xmf3BeforeCollidedPosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
 

@@ -164,6 +164,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Scenemanager.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -197,6 +198,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="protocol.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Scenemanager.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_sprintf.h" />

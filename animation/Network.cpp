@@ -125,7 +125,10 @@ void Network::SendProcess(SENDTYPE sendtype)
 		break;
 	}
 	case SENDTYPE::CHANGE_STAGE: {
-		SendChangeScene(gGameFramework.SceneNum);
+	
+		index = static_cast<int>(gGameFramework.sceneManager.GetCurrentScene());
+
+		SendChangeScene(index);
 		break;
 	case SENDTYPE::ATTACK_COLLISION:
 	{

@@ -78,7 +78,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			if (gNetwork.IngameStart == true || gNetwork.SpaceshipScene == true)
 			{
 				gGameFramework.ReleaseObjects();
-				gGameFramework.BuildObjects(2);
+				gGameFramework.BuildObjects(SCENEKIND::SPACESHIP);
 				gNetwork.IngameStart = false;
 				gNetwork.SpaceshipScene = false;
 			}
@@ -96,9 +96,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());						
 					}
 
-					switch (gGameFramework.SceneNum)
+					switch (gGameFramework.sceneManager.GetCurrentScene())
 					{
-					case 2:
+					case SCENEKIND::SPACESHIP:
 					{
 						// spaceship map // 0  ~ 9 fire  10 ~ 19 ice 20  ~ 29 nature
 						
@@ -111,7 +111,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						}
 						break;
 					}
-					case 3:
+					case SCENEKIND::ICE:
 					{
 						// ice map
 						for (int i = 0; i < g_ice_monsters.size(); ++i)
@@ -124,7 +124,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						gGameFramework.myFunc_SetBossMonLookRightUp(g_IceBossMonster.getLook(),g_IceBossMonster.getUp(),g_IceBossMonster.getRight());
 						break;
 					}
-					case 4: 
+					case SCENEKIND::FIRE: 
 					{
 						// fire map
 						for (int i = 0; i < g_fire_monsters.size(); ++i)
@@ -136,7 +136,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						gGameFramework.myFunc_SetBossMonLookRightUp(g_FireBossMonster.getLook(),g_FireBossMonster.getUp(),g_FireBossMonster.getRight());
 						break;
 					}
-					case 5:
+					case SCENEKIND::NATURE:
 					{
 						// fire map
 						for (int i = 0; i < g_nature_monsters.size(); ++i)
