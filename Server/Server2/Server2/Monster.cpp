@@ -91,7 +91,7 @@ void Monster::IceMove()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1 && _stagenum== ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -221,14 +221,55 @@ void Monster::NatureMove()
 	}
 }
 
+void Monster::NightAttack(int cl_id)
+{
+	cout << "Attack " << endl;
+	_attackState = true;
+	//this_thread::yield();
+}
+
 bool Monster::CollideCheckToPlayer()
 {
 	for (auto& pl : ingamePlayer)
 	{
 		if (pl->_stage != _stagenum)continue;
+
 		if (m_SPBB.Intersects(pl->m_SPBB) == true)
+		{
+			if (_attackState == true) {
+				return true;
+			}
+			_attackState = true;
+			SC_MONSTER_ATTACK_PACKET p;
+			p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
+			p.type = SC_MONSTER_ATTACK;
+			p.monstertype = _m_type;
+			p.id = _id;
+			p.is_attack = _attackState;
+			cout << " Ice Monster Attack " << endl;
+
+			pl->do_send(&p);
+
 			return true;
+		}
+		else
+		{
+			if (_attackState == false)continue;
+			_attackState = false;
+
+			SC_MONSTER_ATTACK_PACKET p;
+			p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
+			p.type = SC_MONSTER_ATTACK;
+			p.monstertype = MonsterType::Ice_Boss;
+			p.id = _id;
+			p.is_attack = _attackState;
+			cout << " Ice Monster Attack " << endl;
+
+			pl->do_send(&p);
+		}
 	}
+
+
 	return false;
 }
 
@@ -243,24 +284,108 @@ int Monster::FindClosePlayer()
 	int  idx = 0;
 	for (auto& pl : ingamePlayer)
 	{
-		if (_stagenum != pl->_stage)continue;
+		if (_stagenum != pl->_stage) { idx++; continue; }
 		pl->distance = Vector3::Distance(pl->_pos, _pos);
-		if (pl->distance <= _viewRange)
+
+		if (pl->distance < minDistance)
 		{
-			if (pl->distance < minDistance)
-			{
-				minDistance = pl->distance;
-				closestPlayerId = idx;
-			}
+			minDistance = pl->distance;
+			closestPlayerId = idx;
 		}
+
 		idx++;
 	}
 
 	return closestPlayerId;
 }
 
+IceBossMonster::IceBossMonster()
+{
+	_look = { 0.f,0.f,1.f };
+	_right = { 1.f,0.f,0.f };
+	_up = { 0.f,1.f,0.f };
+}
+
 void IceBossMonster::Move()
 {
+	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
+
+	_prevpos = _pos;
+
+	int id = FindClosePlayer();
+
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	{
+		for (auto& cl : ingamePlayer)
+		{
+			XMVECTOR posVec = XMLoadFloat3(&_pos);
+			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
+
+			XMFLOAT3 directionToPlayerFloat3;
+			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+			_look = directionToPlayerFloat3;
+
+			// right 벡터 계산 (look과 up 벡터의 외적)
+			XMVECTOR upVec = XMLoadFloat3(&up);
+			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+			XMFLOAT3 rightFloat3;
+			XMStoreFloat3(&rightFloat3, rightVec);
+
+			// right 벡터를 업데이트
+			_right = rightFloat3;
+
+			//else 
+			if (CollideCheckToPlayer()) _speed = 0;
+
+			//if (cl->distance <= _attackRange)
+			//{
+			//	if (_attackState == true) continue;
+			//	_attackState = true;
+			//	//send 공격 패킷 
+			//	SC_MONSTER_ATTACK_PACKET p;
+			//	p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
+			//	p.type = SC_MONSTER_ATTACK;
+			//	p.monstertype = MonsterType::Ice_Boss;
+			//	p.id = _id;
+			//	p.is_attack = _attackState;
+			//	cout << " Ice Monster Attack " << endl;
+
+			//	cl->do_send(&p);
+			//}
+			//else
+			//{
+			//	if (_attackState == false)continue;
+			//	_attackState = false;
+			//	SC_MONSTER_ATTACK_PACKET p;
+			//	p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
+			//	p.type = SC_MONSTER_ATTACK;
+			//	p.monstertype = MonsterType::Ice_Boss;
+			//	p.id = _id;
+			//	p.is_attack = _attackState;
+
+			//	cl->do_send(&p);
+
+			//}
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+			_speed = 1.0f;
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
+
+		}
+	}
+	else
+	{
+
+	}
+}
+
+FireBossMonster::FireBossMonster()
+{
+	_look = { 0.f,0.f,1.f };
+	_right = { 1.f,0.f,0.f };
+	_up = { 0.f,1.f,0.f };
 }
 
 void FireBossMonster::Move()
@@ -268,8 +393,94 @@ void FireBossMonster::Move()
 	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
 
 	_prevpos = _pos;
+	int id = FindClosePlayer();
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	{
+		for (auto& cl : ingamePlayer)
+		{
+			XMVECTOR posVec = XMLoadFloat3(&_pos);
+			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
+
+			XMFLOAT3 directionToPlayerFloat3;
+			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+			_look = directionToPlayerFloat3;
+
+			// right 벡터 계산 (look과 up 벡터의 외적)
+			XMVECTOR upVec = XMLoadFloat3(&up);
+			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+			XMFLOAT3 rightFloat3;
+			XMStoreFloat3(&rightFloat3, rightVec);
+
+			// right 벡터를 업데이트
+			_right = rightFloat3;
+
+			//else 
+			if (CollideCheckToPlayer()) _speed = 0;
+
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+
+			_speed = 1.0f;
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
+
+		}
+	}
+	else
+	{
+
+	}
+}
+
+NatureBossMonster::NatureBossMonster()
+{
+	_look = { 0.f,0.f,1.f };
+	_right = { 1.f,0.f,0.f };
+	_up = { 0.f,1.f,0.f };
 }
 
 void NatureBossMonster::Move()
 {
+	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
+
+	_prevpos = _pos;
+	int id = FindClosePlayer();
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	{
+		for (auto& cl : ingamePlayer)
+		{
+			XMVECTOR posVec = XMLoadFloat3(&_pos);
+			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
+
+			XMFLOAT3 directionToPlayerFloat3;
+			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+			_look = directionToPlayerFloat3;
+
+			// right 벡터 계산 (look과 up 벡터의 외적)
+			XMVECTOR upVec = XMLoadFloat3(&up);
+			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+			XMFLOAT3 rightFloat3;
+			XMStoreFloat3(&rightFloat3, rightVec);
+
+			// right 벡터를 업데이트
+			_right = rightFloat3;
+
+			//else 
+			if (CollideCheckToPlayer()) _speed = 0;
+
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+
+			_speed = 1.0f;
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
+
+		}
+	}
+	else
+	{
+
+	}
 }

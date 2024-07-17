@@ -14,6 +14,9 @@ extern unordered_map<int, Session> g_ice_monsters;
 extern unordered_map<int, Session> g_fire_monsters;
 extern unordered_map<int, Session> g_nature_monsters;
 
+extern Session g_IceBossMonster;
+extern Session g_FireBossMonster;
+extern Session g_NatureBossMonster;
 extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 extern HANDLE loginevent;
 extern HANDLE startevent;

@@ -1,6 +1,6 @@
 #pragma once
 class Session;
-
+enum class MonsterType : char;
 class Monster
 {
 	//Monster() = delete;
@@ -18,6 +18,8 @@ public:
 
 	float _speed = 1.0f;
 	float _viewRange = 150.0f;
+	float _attackRange = 50.0f;
+
 	int _hp;
 	int _att;
 
@@ -25,6 +27,9 @@ public:
 	int _id;
 	bool _is_active = false;
 	bool _is_alive = false;
+
+	bool _attackState = false;
+	MonsterType _m_type;
 
 	float                           m_fBoundingSize{ 3.0f };
 	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
@@ -47,11 +52,14 @@ public:
 	void FireMove();
 	void NatureMove();
 
+	void NightAttack(int cl_id);
+
 	bool CollideCheckToPlayer();
 
 	// trace
 	int FindClosePlayer();
 
+	
 
 
 };
@@ -59,6 +67,7 @@ public:
 class FireBossMonster : public Monster
 {
 public:
+	FireBossMonster();
 	void Move() override;
 
 };
@@ -66,11 +75,14 @@ public:
 class IceBossMonster : public Monster
 {
 public:
+	IceBossMonster();
 	void Move() override;
 };
 
 class NatureBossMonster : public Monster
 {
+public:
+	NatureBossMonster();
 	void Move() override;
 };
 extern array<Monster, MAX_NPC> Monsters;

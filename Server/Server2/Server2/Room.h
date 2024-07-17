@@ -67,6 +67,7 @@ public:
 	void NightSend();
 
 	void BossMonsterInitialziedMonster();
+
 	void IceNpcInitialized();
 	void FireNpcInitialized();
 	void NatureNpcInitialized();

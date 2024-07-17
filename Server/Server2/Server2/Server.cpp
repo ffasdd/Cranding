@@ -281,11 +281,16 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::FIRE_BOSS_MOVE: {
 			int r_id = static_cast<int>(key);
+			ingameroom[r_id].FireBossUpdate();
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_FIRE_BOSS_MOVE };
+			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
 		}
 		case COMP_TYPE::NATURE_BOSS_MOVE: {
 			int r_id = static_cast<int>(key);
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NATURE_BOSS_MOVE };
+			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
 		}
@@ -318,14 +323,17 @@ void Server::InitialziedMonster(int room_Id)
 			if (i < 10)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+				ingameroom[room_Id].NightMonster[i]._m_type = MonsterType::Fire;
 			}
 			else if (10 <= i && i < 20)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(i_xpos(dre), 10.0f, i_zpos(dre));
+				ingameroom[room_Id].NightMonster[i]._m_type = MonsterType::Ice;
 			}
 			else if (20 <= i && i < 30)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(n_xpos(dre), 10.0f, n_zpos(dre));
+				ingameroom[room_Id].NightMonster[i]._m_type = MonsterType::Nature;
 			}
 			ingameroom[room_Id].NightMonster[i]._id = i;
 			ingameroom[room_Id].NightMonster[i]._att = 10;
@@ -550,11 +558,11 @@ void Server::ProcessPacket(int id, char* packet)
 			TIMER_EVENT ev7{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_ICE_BOSS_MOVE };
 			g_Timer.InitTimerQueue(ev7);
 
-			//TIMER_EVENT ev8{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_FIRE_BOSS_MOVE };
-			//g_Timer.InitTimerQueue(ev8);
+			TIMER_EVENT ev8{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_FIRE_BOSS_MOVE };
+			g_Timer.InitTimerQueue(ev8);
 
-			//TIMER_EVENT ev9{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NATURE_BOSS_MOVE };
-			//g_Timer.InitTimerQueue(ev9);
+			TIMER_EVENT ev9{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NATURE_BOSS_MOVE };
+			g_Timer.InitTimerQueue(ev9);
 		}
 		else
 			break;

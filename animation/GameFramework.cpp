@@ -652,7 +652,7 @@ void CGameFramework::myFunc_SetMonPosition(int n, XMFLOAT3 position)
 	//m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
 }
 
-void CGameFramework::myFunc_SetBossMonPosition(int n, XMFLOAT3 position)
+void CGameFramework::myFunc_SetBossMonPosition( XMFLOAT3 position)
 {
 	m_pScene->m_ppHierarchicalGameObjects[13]->isdraw = true;
 	m_pScene->m_ppHierarchicalGameObjects[13]->SetPosition(position);
@@ -669,7 +669,7 @@ void CGameFramework::myFunc_SetMonLookRightUp(int n, XMFLOAT3 Look, XMFLOAT3 Up,
 
 }
 
-void CGameFramework::myFunc_SetBossMonLookRightUp(int n, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
+void CGameFramework::myFunc_SetBossMonLookRightUp(XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right)
 {
 	m_pScene->m_ppHierarchicalGameObjects[13]->SetLook(Look.x, Look.y, Look.z);
 	m_pScene->m_ppHierarchicalGameObjects[13]->SetUp(0, 1, 0);
