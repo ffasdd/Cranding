@@ -573,13 +573,14 @@ void Network::SendAttack(bool is_attack)
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
-void Network::SendAttackCollision(int npc_id)
+void Network::SendAttackCollision(int npc_id,MonsterType _mtype)
 {
 	CS_ATTACK_COLLISION_PACKET p;
 	p.size = sizeof(CS_ATTACK_COLLISION_PACKET);
 	p.type = CS_ATTACK_COLLISION;
 	p.npc_id = npc_id;
 	p.room_id = my_roomid;
+	p._montype = _mtype;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 

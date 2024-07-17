@@ -585,14 +585,43 @@ void Server::ProcessPacket(int id, char* packet)
 			pl->send_attack_packet(id);
 		}
 
-
-
 	}
 				  break;
 	case CS_ATTACK_COLLISION:
 	{
 		CS_ATTACK_COLLISION_PACKET* p = reinterpret_cast<CS_ATTACK_COLLISION_PACKET*>(packet);
-		ingameroom[p->room_id].NightMonster[p->npc_id]._is_alive = false;
+		switch (p->_montype)
+		{
+		case MonsterType::Night:
+		{
+			
+			ingameroom[p->room_id].NightMonster[p->npc_id].MonsterLock.lock();
+			ingameroom[p->room_id].NightMonster[p->npc_id]._is_alive = false;
+			ingameroom[p->room_id].NightMonster[p->npc_id].MonsterLock.unlock();
+			break;
+		}
+		case MonsterType::Fire:
+		{
+			ingameroom[p->room_id].FireMonster[p->npc_id].MonsterLock.lock();
+			ingameroom[p->room_id].FireMonster[p->npc_id]._is_alive = false;
+			ingameroom[p->room_id].FireMonster[p->npc_id].MonsterLock.unlock();
+			break;
+		}
+		case MonsterType::Ice:
+		{
+			ingameroom[p->room_id].IceMonster[p->npc_id].MonsterLock.lock();
+			ingameroom[p->room_id].IceMonster[p->npc_id]._is_alive = false;
+			ingameroom[p->room_id].IceMonster[p->npc_id].MonsterLock.unlock();
+			break;
+		}
+		case MonsterType::Nature:
+		{
+			ingameroom[p->room_id].NatureMonster[p->npc_id].MonsterLock.lock();
+			ingameroom[p->room_id].NatureMonster[p->npc_id]._is_alive = false;
+			ingameroom[p->room_id].NatureMonster[p->npc_id].MonsterLock.unlock();
+			break;
+		}
+		}
 		break;
 	}
 

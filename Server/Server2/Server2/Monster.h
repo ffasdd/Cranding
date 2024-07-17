@@ -36,6 +36,8 @@ public:
 	
 	mutex ingamePlayerlock;
 
+	mutex MonsterLock;
+
 
 public:
 

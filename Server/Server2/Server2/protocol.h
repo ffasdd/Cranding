@@ -393,6 +393,7 @@ struct CS_ATTACK_PACKET {
 struct CS_ATTACK_COLLISION_PACKET {
 	unsigned char size;
 	char type;
+	MonsterType _montype;
 	int npc_id;
 	int room_id;
 

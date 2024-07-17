@@ -40,6 +40,7 @@ void CScene::CheckMonsterByMonsterCollisions()
 			if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[j]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				// 서버에 i - 3 번 npc가 충돌했다고 보내는 코드 들어가는 부분
+
 			}
 		}
 	}
@@ -716,7 +717,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		{
 			//g_sendqueue.push(SENDTYPE::ATTACK_COLLISION);
 	
-			gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
+			//gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
 			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 			//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			//if (i > 2 && i < 14) 

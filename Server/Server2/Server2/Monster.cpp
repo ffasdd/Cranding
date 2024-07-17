@@ -246,7 +246,6 @@ bool Monster::CollideCheckToPlayer()
 			p.monstertype = _m_type;
 			p.id = _id;
 			p.is_attack = _attackState;
-			cout << " Ice Monster Attack " << endl;
 
 			pl->do_send(&p);
 
@@ -263,7 +262,6 @@ bool Monster::CollideCheckToPlayer()
 			p.monstertype = MonsterType::Ice_Boss;
 			p.id = _id;
 			p.is_attack = _attackState;
-			cout << " Ice Monster Attack " << endl;
 
 			pl->do_send(&p);
 		}
