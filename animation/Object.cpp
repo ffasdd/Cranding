@@ -880,6 +880,11 @@ void CGameObject::SetMesh(CMesh *pMesh)
 	if (m_pMesh) m_pMesh->AddRef();
 }
 
+void CGameObject::SetMonsType(MONSTERTYPE monstype)
+{
+	m_monstype = monstype;
+}
+
 void CGameObject::SetShader(CShader *pShader)
 {
 	m_nMaterials = 1;

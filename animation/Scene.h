@@ -53,8 +53,8 @@ public:
 
 
 	// 충돌체크 함수
-	void HandleCollisionEnd(CGameObject* pObject);
-	virtual bool CheckObjectByObjectCollisions(CGameObject* pGameObject);
+	void HandleCollisionEnd(CGameObject* pObject) {}
+	virtual bool CheckObjectByObjectCollisions(CGameObject* pGameObject) { return true; }
 
 	void CheckMonsterByMonsterCollisions();
 
@@ -176,6 +176,8 @@ public:
 	~CSpaceShipScene() { }
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void HandleCollisionEnd(CGameObject* pObject);
+	bool CheckObjectByObjectCollisions(CGameObject* pTargetGameObject);
 	void ReleaseUploadBuffers();
 	void ReleaseObjects();
 };

@@ -274,11 +274,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         m_pd2dDeviceContext->BeginDraw();
         WCHAR pstrOutputText[256];
         std::wstring DnN[2] = { L"Day", L"Night" };
-        int timenum = 0;
-        if (curMinute == 3)
-            timenum = 1;
-        else if (curMinute == 0)
-            timenum = 0;
+        int timenum = (curMinute == 3) ? 1 : 0;
 
         swprintf_s(pstrOutputText, 256, L"Day: %d  Time:%02d:%02d %s", curDay, curMinute, curSecond, DnN[timenum].c_str());
         m_pd2dDeviceContext->DrawText(pstrOutputText, (UINT)wcslen(pstrOutputText), m_textFormats[TEXT_SIZE::SIZE_18], m_Timer, m_brushes[BRUSH_COLOR::LIME_GREEN]);
@@ -300,22 +296,21 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         swprintf_s(elementText, 256, L"Nature Elements: %d", NatureElement);
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
-        // map 이동
-        if(gGameFramework.m_pPlayer->isIceMap && IceElement > 15)
-            m_pd2dDeviceContext->DrawText(m_vecIngameScene[0], (UINT)wcslen(m_vecIngameScene[0]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
-        else if (gGameFramework.m_pPlayer->isIceMap && IceElement <  15)
-            m_pd2dDeviceContext->DrawText(m_vecIngameScene[3], (UINT)wcslen(m_vecIngameScene[3]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        // Map 이동 메시지
+        std::wstring mapMessage;
+        if (gGameFramework.m_pPlayer->isIceMap) {
+            mapMessage = (IceElement > 15) ? m_vecIngameScene[0] : m_vecIngameScene[3];
+        }
+        else if (gGameFramework.m_pPlayer->isFireMap) {
+            mapMessage = (FireElement > 15) ? m_vecIngameScene[1] : m_vecIngameScene[3];
+        }
+        else if (gGameFramework.m_pPlayer->isNatureMap) {
+            mapMessage = (NatureElement > 15) ? m_vecIngameScene[2] : m_vecIngameScene[3];
+        }
 
-        if (gGameFramework.m_pPlayer->isFireMap && FireElement > 15)
-            m_pd2dDeviceContext->DrawText(m_vecIngameScene[1], (UINT)wcslen(m_vecIngameScene[1]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
-        else if (gGameFramework.m_pPlayer->isIceMap && FireElement < 15)
-            m_pd2dDeviceContext->DrawText(m_vecIngameScene[3], (UINT)wcslen(m_vecIngameScene[3]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
-
-        if (gGameFramework.m_pPlayer->isNatureMap && NatureElement > 15)
-            m_pd2dDeviceContext->DrawText(m_vecIngameScene[2], (UINT)wcslen(m_vecIngameScene[2]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
-        else if (gGameFramework.m_pPlayer->isIceMap && NatureElement < 15)
-            m_pd2dDeviceContext->DrawText(m_vecIngameScene[3], (UINT)wcslen(m_vecIngameScene[3]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
-
+        if (!mapMessage.empty()) {
+            m_pd2dDeviceContext->DrawText(mapMessage.c_str(), (UINT)wcslen(mapMessage.c_str()), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        }
 
         m_pd2dDeviceContext->EndDraw();
         break;

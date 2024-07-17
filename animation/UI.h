@@ -71,7 +71,7 @@ private:
     array<vector<UIRect>, 3> m_uiRects;
 
     // login
-    D2D1_RECT_F m_Title = D2D1::RectF(-FRAME_BUFFER_WIDTH/2.0f +100, -20.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT); 
+    D2D1_RECT_F m_Title = D2D1::RectF(100, -20.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT); 
     D2D1_RECT_F m_GameStart = D2D1::RectF(150, 400, 750, 550);
     D2D1_RECT_F m_GameRule = D2D1::RectF(150, 600.0f, 750, 750);
     D2D1_RECT_F m_GameQuit = D2D1::RectF(150, 800.0f, 750, 950);
@@ -85,9 +85,9 @@ private:
     D2D1_RECT_F m_Timer = D2D1::RectF(1300.0f, 0.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
     D2D1_RECT_F m_HPBar = D2D1::RectF(1300.0f, 930.0f, 1300 + m_playerhp * 6.0, FRAME_BUFFER_HEIGHT - 50.0);
 
-    D2D1_RECT_F iceRect = D2D1::RectF(10, 800, 400, 830);
-    D2D1_RECT_F fireRect = D2D1::RectF(10, 840, 400, 870);
-    D2D1_RECT_F natureRect = D2D1::RectF(10, 880, 400, 910);
+    D2D1_RECT_F iceRect = D2D1::RectF(10, 800, 500, 830);
+    D2D1_RECT_F fireRect = D2D1::RectF(10, 840, 500, 870);
+    D2D1_RECT_F natureRect = D2D1::RectF(10, 880, 500, 910);
 
     D2D1_RECT_F m_Map = D2D1::RectF(-FRAME_BUFFER_WIDTH / 2.0f + 500, -20.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 

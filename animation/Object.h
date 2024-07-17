@@ -424,7 +424,6 @@ public:
 	CGameObject 					*m_pChild = NULL;
 	CGameObject 					*m_pSibling = NULL;
 
-	// 이것만 잘 하면 됩니덩
 	CAnimationController*			m_pSkinnedAnimationController = NULL;
 
 	// 서버에서 그리기 on/off
@@ -433,6 +432,11 @@ public:
 	// 충돌 관련 변수
 	bool m_bIsColliding; // 현재 충돌 상태
 	bool m_bWasColliding; // 이전 프레임에서의 충돌 상태
+
+	// 몬스터 정보 관련
+	MONSTERTYPE m_monstype;
+	void SetMonsType(MONSTERTYPE monstype);
+	MONSTERTYPE GetMonsType() { return m_monstype; }
 
 	void SetMesh(CMesh *pMesh);
 	void SetShader(CShader *pShader);
