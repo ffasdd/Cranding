@@ -290,28 +290,31 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
 
         // Ice Element 개수 출력
         swprintf_s(elementText, 256, L"Ice Elements: %d", IceElement);
-        D2D1_RECT_F iceRect = { 10, 800, 400, 830 };  // 텍스트 출력 위치 설정
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         // Fire Element 개수 출력
         swprintf_s(elementText, 256, L"Fire Elements: %d", FireElement);
-        D2D1_RECT_F fireRect = { 10, 840, 400, 870 };  // 텍스트 출력 위치 설정
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         // Nature Element 개수 출력
         swprintf_s(elementText, 256, L"Nature Elements: %d", NatureElement);
-        D2D1_RECT_F natureRect = { 10, 880, 400, 910 };  // 텍스트 출력 위치 설정
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         // map 이동
-        if(gGameFramework.m_pPlayer->isIceMap)
+        if(gGameFramework.m_pPlayer->isIceMap && IceElement > 15)
             m_pd2dDeviceContext->DrawText(m_vecIngameScene[0], (UINT)wcslen(m_vecIngameScene[0]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        else if (gGameFramework.m_pPlayer->isIceMap && IceElement <  15)
+            m_pd2dDeviceContext->DrawText(m_vecIngameScene[3], (UINT)wcslen(m_vecIngameScene[3]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
-        if (gGameFramework.m_pPlayer->isFireMap)
+        if (gGameFramework.m_pPlayer->isFireMap && FireElement > 15)
             m_pd2dDeviceContext->DrawText(m_vecIngameScene[1], (UINT)wcslen(m_vecIngameScene[1]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        else if (gGameFramework.m_pPlayer->isIceMap && FireElement < 15)
+            m_pd2dDeviceContext->DrawText(m_vecIngameScene[3], (UINT)wcslen(m_vecIngameScene[3]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
-        if (gGameFramework.m_pPlayer->isNatureMap)
+        if (gGameFramework.m_pPlayer->isNatureMap && NatureElement > 15)
             m_pd2dDeviceContext->DrawText(m_vecIngameScene[2], (UINT)wcslen(m_vecIngameScene[2]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        else if (gGameFramework.m_pPlayer->isIceMap && NatureElement < 15)
+            m_pd2dDeviceContext->DrawText(m_vecIngameScene[3], (UINT)wcslen(m_vecIngameScene[3]), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
 
         m_pd2dDeviceContext->EndDraw();
