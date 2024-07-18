@@ -12,8 +12,11 @@ Server& Server::GetInstance()
 
 Server::Server()
 {
+
 	WSADATA wsaData;
 	::WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+	//initialize_DB();
 }
 
 Server::~Server()
@@ -26,6 +29,13 @@ Server::~Server()
 
 void Server::Run()
 {
+	//int _id = -1;
+	//int _password = -1;
+	//cout << " 학번을 입력하시오 " << endl;
+	//cin >> _id;
+	//cout << " 비밀번호를 입력하시오 " << endl;
+	//cin >> _password;
+	//isAllowAccess(_id, _password);
 	NetworkSet();
 	Iocp();
 }
@@ -621,6 +631,7 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
+
 	case CS_MONSTER_DIE: {
 		CS_MONSTER_DIE_PACKET* p = reinterpret_cast<CS_MONSTER_DIE_PACKET*>(packet);
 		// 다른 플레이어들 한테 NPC 타격 상황을 보냄 
