@@ -696,12 +696,16 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							}
 							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
 						}
+						if (fPosition2 > 1.0f)
+							this->m_bIsValidAttack = true;
+
 						if (fPosition2 == 0)
 						{
 							if (m_nAttackAniNum == 8) m_nAttackAniNum = 9;
 							else m_nAttackAniNum = 8;
+							this->m_nCntValidAttack = 0;
 							this->m_bIsAttack = false;
-
+							this->m_bIsValidAttack = false;
 							gNetwork.SendAttack(false);
 						}
 					}
