@@ -1114,7 +1114,7 @@ void CGameFramework::AnimateObjects()
 
 	m_pPlayer->Animate(fTimeElapsed);
 
-	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions())
 	{
 		if (m_pPlayer->isFireMap == true)
 		{
@@ -1129,7 +1129,7 @@ void CGameFramework::AnimateObjects()
 
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 	}
-	if(sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions(m_pPlayer))
+	if(sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions())
 
 	m_pScene->CheckMonsterByMonsterCollisions();
 }
