@@ -432,6 +432,7 @@ public:
 	// 충돌 관련 변수
 	bool m_bIsColliding; // 현재 충돌 상태
 	bool m_bWasColliding; // 이전 프레임에서의 충돌 상태
+	bool m_bHasCollided = false;
 
 	// 몬스터 정보 관련
 	MONSTERTYPE m_monstype;

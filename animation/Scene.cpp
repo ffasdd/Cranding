@@ -597,6 +597,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			//g_sendqueue.push(SENDTYPE::ATTACK_COLLISION);
 	
 			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+			m_ppHierarchicalGameObjects[i]->m_bHasCollided = false;
+
 			switch (m_ppHierarchicalGameObjects[i]->GetMonsType())
 			{
 			case MONSTERTYPE::NIGHT:
@@ -1069,7 +1071,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 {
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
-		// �ʰ� �浹�� ���
+		// 맵 오브젝트와의 충돌 체크
 		if (i == 0)
 		{
 			m_ppHierarchicalGameObjects[i]->m_bWasColliding = m_ppHierarchicalGameObjects[i]->m_bIsColliding;
@@ -1084,6 +1086,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				if (pMapObject->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
 				{
 					m_ppHierarchicalGameObjects[i]->m_bIsColliding = true;
+
 					if (!strcmp(str, "bbfire"))
 					{
 						m_pPlayer->isFireMap = true;
@@ -1100,89 +1103,108 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 						return true;
 					}
 
-					// �ٴ��� �浹 üũ �ȵǵ���
-					/*else */if (!strcmp(str, "Plane"))
+					if (!strcmp(str, "Plane"))
 						pMapObject = pMapObject->m_pSibling;
-
 					else
-						return(true);
+						return true;
 				}
 				pMapObject = pMapObject->m_pSibling;
 
-				if (pMapObject == NULL)break;
+				if (pMapObject == NULL) break;
 			}
 		}
 
-		// collision check with fire monster
+		// fire monster와의 충돌 체크
 		else if (i > 2 && i < 13)
 		{
-			// monster with player(attack mode)
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild
-					->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			// 플레이어가 공격 모드일 때 몬스터와 충돌 체크
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(
+					m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-				//// send  
-				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Night);
-				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->
-					m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
-				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+				if (!m_ppHierarchicalGameObjects[i]->m_bHasCollided) // 이전 프레임에서 충돌하지 않았을 때만 element 증가
+				{
+					// 몬스터 공격 처리
+					CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[
+						m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
+					float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(
+						m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
 
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 
-
-				return(true);
+					m_pPlayer->FireElement += 1; // 플레이어의 element 값 증가
+					m_ppHierarchicalGameObjects[i]->m_bHasCollided = true; // 충돌 상태 설정
+					cout << "fire" << m_pPlayer->FireElement << endl;
+				}
+				return true;
 			}
 		}
-		// collision check with ice monster
+		// grass monster와의 충돌 체크
 		else if (i >= 13 && i < 23)
 		{
-			// monster with player(attack mode)
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			// 플레이어가 공격 모드일 때 몬스터와 충돌 체크
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(
+					m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Night);
-				//send attacked monster num
-				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
-				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+				if (!m_ppHierarchicalGameObjects[i]->m_bHasCollided) // 이전 프레임에서 충돌하지 않았을 때만 element 증가
+				{
+					// 몬스터 공격 처리
+					CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[
+						m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
+					float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(
+						m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
 
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 
-
-				return(true);
+					m_pPlayer->NatureElement += 1; // 플레이어의 element 값 증가
+					m_ppHierarchicalGameObjects[i]->m_bHasCollided = true; // 충돌 상태 설정
+				}
+				return true;
 			}
 		}
-		// collision check with grass monster
+		// ice monster와의 충돌 체크
 		else if (i >= 23 && i < 33)
 		{
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(
+					m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Night);
-				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
-				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+				if (!m_ppHierarchicalGameObjects[i]->m_bHasCollided) // 이전 프레임에서 충돌하지 않았을 때만 element 증가
+				{
+					// 몬스터 공격 처리
+					CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[
+						m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
+					float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(
+						m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
 
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, true);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, true);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 
-
-				return(true);
+					m_pPlayer->IceElement += 1; // 플레이어의 element 값 증가
+					m_ppHierarchicalGameObjects[i]->m_bHasCollided = true; // 충돌 상태 설정
+				}
+				return true;
 			}
-			
 		}
 	}
+	
 
-
-	if (m_ppHierarchicalGameObjects[0]->m_bWasColliding && !m_ppHierarchicalGameObjects[0]->m_bIsColliding) {
-		// 충돌이 종료되었을 때 수행할 작업
+	// 충돌이 종료되었을 때 충돌 상태 초기화
+	if (m_ppHierarchicalGameObjects[0]->m_bWasColliding && !m_ppHierarchicalGameObjects[0]->m_bIsColliding)
+	{
 		HandleCollisionEnd(m_ppHierarchicalGameObjects[0]);
+		m_pPlayer->m_bHasCollided = false; // 충돌 상태 초기화
 	}
-	return(false);
+
+	return false;
 }
+
 
 void CSpaceShipScene::ReleaseUploadBuffers()
 {
