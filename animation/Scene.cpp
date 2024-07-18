@@ -596,24 +596,26 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		{
 			//g_sendqueue.push(SENDTYPE::ATTACK_COLLISION);
 	
-			//gNetwork.SendAttackCollision(g_monsters[i - 3].getId());
 			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 			switch (m_ppHierarchicalGameObjects[i]->GetMonsType())
 			{
 			case MONSTERTYPE::ICE:
 			{
+				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MONSTERTYPE::ICE);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			}
 			break;
 			case MONSTERTYPE::FIRE:
 			{
+				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MONSTERTYPE::FIRE);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			}
 			break;
 			case MONSTERTYPE::NATURE:
 			{
+				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MONSTERTYPE::NATURE);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			}
@@ -1066,7 +1068,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObje
 				return(true);
 			}
 		}
-		// collision check with grass monster
+		// collision check with ice monster
 		else if (i >= 13 && i < 23)
 		{
 			// monster with player(attack mode)
@@ -1085,13 +1087,12 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions(CGameObject* pTargetGameObje
 				return(true);
 			}
 		}
-		// collision check with ice monster
+		// collision check with grass monster
 		else if (i >= 23 && i < 33)
 		{
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-				//send attacked monster num 왜 여길 안타는지 모르겠네
 				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
 				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
 
