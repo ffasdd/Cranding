@@ -19,7 +19,7 @@ void Monster::Move()
 	_prevpos = _pos; //이동하기 이전 좌표를 저장 
 	// ID가 아닌 거리와 좌표를 저장? 
 	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 
 		XMVECTOR posVec = XMLoadFloat3(&_pos);

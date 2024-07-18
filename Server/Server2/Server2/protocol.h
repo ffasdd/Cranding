@@ -24,6 +24,7 @@ constexpr char CS_TIME_CHECK = 12;
 constexpr char CS_MOVE_MONSTER = 13;
 constexpr char CS_ATTACK_COLLISION = 14;
 constexpr char CS_ICE_MONSTER_UPDATE = 15;
+constexpr char CS_MONSTER_DIE = 16;
 
 
 constexpr char SC_LOGIN_INFO = 2;
@@ -56,7 +57,7 @@ constexpr char SC_ICE_BOSS_UPDATE = 31;
 constexpr char SC_FIRE_BOSS_UPDATE = 32;
 constexpr char SC_NATURE_BOSS_UPDATE = 33;
 constexpr char SC_MONSTER_ATTACK = 34;
-
+constexpr char SC_MONSTER_DIE = 35;
 
 
 
@@ -340,14 +341,7 @@ struct CS_LOGOUT_PACKET {
 	unsigned char size;
 	char	type;
 };
-//struct CS_ROTATE_PACKET {
-//	unsigned char size;
-//	char type;
-//	XMFLOAT3 look;
-//	XMFLOAT3 right;
-//	XMFLOAT3 up;
-//	int		roomid;
-//};
+
 
 struct CS_ROTATE_PACKET {
 	unsigned char size;
@@ -397,6 +391,13 @@ struct CS_ATTACK_COLLISION_PACKET {
 	int npc_id;
 	int room_id;
 
+};
+struct CS_MONSTER_DIE_PACKET {
+	unsigned char size;
+	char type;
+	int npc_id;
+	MonsterType _montype;
+	int room_id;
 };
 struct CS_TIME_CHECK_PACKET {
 	unsigned char size;
@@ -555,6 +556,12 @@ struct SC_DAYTIME_PACKET {
 struct SC_NIGHT_PACKET {
 	unsigned char size;
 	char type;
+};
+struct SC_MONSTER_DIE_PACKET {
+	unsigned char size;
+	char type;
+	MonsterType _montype;
+	int npc_id;
 };
 
 

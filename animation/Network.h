@@ -58,6 +58,7 @@ public: // thread send
 	void SendAttackCollision(int npc_id, MonsterType _mtype);
 	void SendReady();
 	void SendTime(int time);
+	void SendMonsterDie(int npc_id, MonsterType _mtype);
 	
 	bool MonsterCollide(Session& _monster);
 	

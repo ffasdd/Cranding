@@ -159,7 +159,7 @@ inline void Swap(float *pfS, float *pfT) { float fTemp = *pfS; *pfS = *pfT; *pfT
 // 보내야되는게 지금 애니메이션이랑 
 // prev 지금 서버에선 지금꺼만, 클라에서는 두칸짜리 배열을 만들어서 
 enum class SENDTYPE : INT { MOVE, ROTATE, ATTACK,CHANGE_ANIMATION,CHANGE_SCENE_LOBBY, CHANGE_SCENE_INGAME_READY,CHANGE_SCENE_INGAME_START,TIME_CHECK,
-	ATTACK_COLLISION, CHANGE_STAGE};
+	ATTACK_COLLISION, CHANGE_STAGE , NPC_DIE};
 
 namespace Vector3
 {
