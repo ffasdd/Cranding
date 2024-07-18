@@ -849,7 +849,7 @@ void CPostProcessingShader::OnPrepareRenderTarget(ID3D12GraphicsCommandList* pd3
 	    // ClearRenderTargetView 함수는 지정된 렌더 타겟의 컬러를 지정된 값으로 클리어합니다.
 		pd3dAllRtvCPUHandles[i] = pd3dRtvCPUHandles[i];
 		/**/// 여기서 클리어 한 색상이 그대로 나오네 왜지 ?
-		pd3dCommandList->ClearRenderTargetView(pd3dRtvCPUHandles[i], Colors::Violet, 0, NULL);
+		pd3dCommandList->ClearRenderTargetView(pd3dRtvCPUHandles[i], Colors::White, 0, NULL);
 	}
 
 	for (int i = 0; i < nResources; i++)
@@ -859,7 +859,7 @@ void CPostProcessingShader::OnPrepareRenderTarget(ID3D12GraphicsCommandList* pd3
 		// 각 리소스의 렌더 타겟 뷰를 얻어 클리어합니다.
 		D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = GetRtvCPUDescriptorHandle(i);
 		FLOAT pfClearColor[4] = {0.0f, 1.0f, 0.0f, 1.0f };
-		pd3dCommandList->ClearRenderTargetView(d3dRtvCPUDescriptorHandle, pfClearColor, 0, NULL);
+		pd3dCommandList->ClearRenderTargetView(d3dRtvCPUDescriptorHandle, Colors::White, 0, NULL);
 		pd3dAllRtvCPUHandles[nRenderTargets + i] = d3dRtvCPUDescriptorHandle;
 	}
 	pd3dCommandList->OMSetRenderTargets(nRenderTargets + nResources, pd3dAllRtvCPUHandles, FALSE, &pd3dDsvCPUHandle);
@@ -1628,7 +1628,7 @@ void CDepthRenderShader::PrepareShadowMap(ID3D12GraphicsCommandList* pd3dCommand
 			// ** 광원 시점에서 씬 렌더링 하기 전에 기존에 있던 렌더 타겟 및 깊이 스텐실 뷰 데이터 지우기
 			float pfClearColor[4] = { 1.0f, 0.0f,0.0f, 1.0f };
 			// ** 렌더 타겟의 모든 픽셀을 흰색으로 초기화
-			pd3dCommandList->ClearRenderTargetView(m_pd3dRtvCPUDescriptorHandles[j], Colors::LightPink, 0, NULL);
+			pd3dCommandList->ClearRenderTargetView(m_pd3dRtvCPUDescriptorHandles[j], Colors::White, 0, NULL);
 			// ** 깊이값도 전부 1.0f로 초기화
 			pd3dCommandList->ClearDepthStencilView(m_d3dDsvDescriptorCPUHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, NULL);
 
