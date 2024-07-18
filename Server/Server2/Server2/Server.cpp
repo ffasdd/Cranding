@@ -391,8 +391,6 @@ void Server::ProcessPacket(int id, char* packet)
 
 		clients[id].m_SPBB.Center = clients[id]._pos;
 		clients[id].m_SPBB.Center.y = clients[id]._pos.y;
-		// view List 
-		//clients[id].send_move_packet(id);
 
 		for (auto& pl : clients)
 		{
@@ -530,7 +528,6 @@ void Server::ProcessPacket(int id, char* packet)
 			}
 
 	
-			//ingameroom[r_id].IceUpdateNpc();
 
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
