@@ -55,6 +55,8 @@ struct TIMER_EVENT
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib,"mswsock.lib")
 
+#include <sqlext.h>  //DB 
+
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
