@@ -135,6 +135,10 @@ void Network::SendProcess(SENDTYPE sendtype)
 		//SendAttackCollision()
 		break;
 	}
+	case SENDTYPE::NPC_DIE:
+	{
+
+	}
 	}
 
 	}
@@ -495,6 +499,13 @@ void Network::ProcessPacket(char* buf)
 		}
 
 	}
+	break;
+	case  SC_MONSTER_DIE:
+	{
+		SC_MONSTER_DIE_PACKET* p = reinterpret_cast<SC_MONSTER_DIE_PACKET*>(buf);
+		cout << " SC_MONSTER_DIE" << endl;
+	}
+	break;
 	}
 }
 
@@ -576,13 +587,14 @@ void Network::SendAttack(bool is_attack)
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
-void Network::SendAttackCollision(int npc_id)
+void Network::SendAttackCollision(int npc_id,MonsterType _mtype)
 {
 	CS_ATTACK_COLLISION_PACKET p;
 	p.size = sizeof(CS_ATTACK_COLLISION_PACKET);
 	p.type = CS_ATTACK_COLLISION;
 	p.npc_id = npc_id;
 	p.room_id = my_roomid;
+	p._montype = _mtype;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
@@ -601,6 +613,18 @@ void Network::SendTime(int time)
 	p.type = CS_TIME_CHECK;
 	p.roomid = my_roomid;
 	p.time = time;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendMonsterDie(int npc_id, MonsterType _mtype)
+{
+	CS_MONSTER_DIE_PACKET p;
+	p.type = CS_MONSTER_DIE;
+	p.size = sizeof(CS_MONSTER_DIE_PACKET);
+	p._montype = _mtype;
+	p.room_id = my_roomid;
+	p.npc_id = npc_id;
+
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 

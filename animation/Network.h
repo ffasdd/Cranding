@@ -55,9 +55,10 @@ public: // thread send
 	void SendChangeScene(int scenenum);
 	void SendIngameStart();
 	void SendAttack(bool is_attack);
-	void SendAttackCollision(int npc_id);
+	void SendAttackCollision(int npc_id, MonsterType _mtype);
 	void SendReady();
 	void SendTime(int time);
+	void SendMonsterDie(int npc_id, MonsterType _mtype);
 	
 	bool MonsterCollide(Session& _monster);
 	

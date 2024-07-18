@@ -53,12 +53,9 @@ void Room::UpdateNpc()
 		{
 			npc.Move();
 		}
-
-
 		sendmonsterupdatePacket[idx].size = sizeof(NightMonstersUpdate);
 		sendmonsterupdatePacket[idx].type = SC_MONSTER_UPDATE_POS;
 		sendmonsterupdatePacket[idx]._monster._id = idx;
-
 
 		sendmonsterupdatePacket[idx]._monster._x = npc._pos.x;
 		sendmonsterupdatePacket[idx]._monster._y = npc._pos.y;

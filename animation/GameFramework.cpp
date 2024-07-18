@@ -738,6 +738,40 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 	}
 }
 
+void CGameFramework::myFunc_SetMonAnimation(int n, int id, bool isAttack)
+{
+	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
+	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);
+	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5);
+	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5);
+	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5);
+	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5);
+	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5);
+	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5);
+	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5);
+	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
+	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
+
+	//if (isAttack)
+	//{
+	//	//m_pScene->m_ppHierarchicalGameObjects[id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
+
+	//	//m_pScene->m_ppHierarchicalGameObjects[id + 1]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
+	//	//m_pScene->m_ppHierarchicalGameObjects[id + 1]->m_pSkinnedAnimationController->m_nAnimationAfter = curAni;
+
+	//	m_pScene->m_ppHierarchicalGameObjects[id + 1]->m_pSkinnedAnimationController->SetTrackEnable(prevAni, false);
+	//	m_pScene->m_ppHierarchicalGameObjects[id + 1]->m_pSkinnedAnimationController->SetTrackEnable(curAni, true);
+
+	//	m_pScene->m_ppHierarchicalGameObjects[id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
+
+	//	g_clients[id + 1].setprevAnimation(curAni);
+	//}
+	//else
+	//{
+
+	//}
+}
+
 void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
 {
 	if (cl_id != n)
@@ -1061,14 +1095,7 @@ void CGameFramework::ProcessInput()
 			if (cxDelta || cyDelta)
 			{
 				if (pKeysBuffer[VK_RBUTTON] & 0xF0) {
-					/*
-					m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
-					g_clients[cl_id].setLook(m_pPlayer->GetLook());
-					g_clients[cl_id].setRight(m_pPlayer->GetRight());
-					g_clients[cl_id].setUp(m_pPlayer->GetUp());					
-					g_sendqueue.push(SENDTYPE::ROTATE);*/
 
-					// 여기서 yaw 값만 있으면 Rotate 함수에서 회전 연산 가능합니당
 					float yaw = cxDelta;
 					m_pPlayer->RotateYaw(yaw);
 					g_clients[gNetwork.Getmyid()].m_yaw = yaw;
