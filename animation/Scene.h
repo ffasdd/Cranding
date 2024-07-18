@@ -54,7 +54,7 @@ public:
 
 	// 충돌체크 함수
 	void HandleCollisionEnd(CGameObject* pObject) {}
-	virtual bool CheckObjectByObjectCollisions(CGameObject* pGameObject) { return true; }
+	virtual bool CheckObjectByObjectCollisions() { return true; }
 
 	void CheckMonsterByMonsterCollisions();
 
@@ -165,6 +165,7 @@ public:
 	~CLobbyScene() { }
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	bool CheckObjectByObjectCollisions();
 	void ReleaseUploadBuffers();
 	void ReleaseObjects();
 };
@@ -177,7 +178,7 @@ public:
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	void HandleCollisionEnd(CGameObject* pObject);
-	bool CheckObjectByObjectCollisions(CGameObject* pTargetGameObject);
+	bool CheckObjectByObjectCollisions();
 	void ReleaseUploadBuffers();
 	void ReleaseObjects();
 };
@@ -189,6 +190,7 @@ public:
 	~CIceScene() { }
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	bool CheckObjectByObjectCollisions();
 	void ReleaseUploadBuffers();
 	void ReleaseObjects();
 };
@@ -200,6 +202,7 @@ public:
 	~CFireScene() { }
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	bool CheckObjectByObjectCollisions();
 	void ReleaseUploadBuffers();
 	void ReleaseObjects();
 };
@@ -211,6 +214,7 @@ public:
 	~CGrassScene() { }
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	bool CheckObjectByObjectCollisions();
 	void ReleaseUploadBuffers();
 	void ReleaseObjects();
 };
