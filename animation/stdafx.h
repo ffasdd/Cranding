@@ -114,7 +114,8 @@ enum class MONSTERTYPE
 	NATURE = 2,
 	ICEBOSS = 3,
 	FIREBOSS = 4,
-	NATUREBOSS = 5
+	NATUREBOSS = 5,
+	NIGHT = 6
 };
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 

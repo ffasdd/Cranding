@@ -599,23 +599,29 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 			switch (m_ppHierarchicalGameObjects[i]->GetMonsType())
 			{
+			case MONSTERTYPE::NIGHT:
+			{
+				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Night);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+			}
 			case MONSTERTYPE::ICE:
 			{
-				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MONSTERTYPE::ICE);
+				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Ice);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			}
 			break;
 			case MONSTERTYPE::FIRE:
 			{
-				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MONSTERTYPE::FIRE);
+				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Fire);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			}
 			break;
 			case MONSTERTYPE::NATURE:
 			{
-				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MONSTERTYPE::NATURE);
+				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Nature);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			}
@@ -952,7 +958,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 				m_ppHierarchicalGameObjects[FireMonsterStartIndex + i]->m_pSkinnedAnimationController->SetTrackEnable(j, !(j == 0 || j == 2 || j == 3 || j == 4 || j == 5 || j == 6));
 			}
 			m_ppHierarchicalGameObjects[FireMonsterStartIndex + i]->SetScale(20.0f, 20.0f, 20.0f);
-			m_ppHierarchicalGameObjects[FireMonsterStartIndex + i]->SetMonsType(MONSTERTYPE::FIRE);
+			m_ppHierarchicalGameObjects[FireMonsterStartIndex + i]->SetMonsType(MONSTERTYPE::NIGHT);
 		}
 		else if (i < FireMonsterNum + IceMonsterNum) {
 			int iceIndex = i - FireMonsterNum;
@@ -962,7 +968,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 				m_ppHierarchicalGameObjects[IceMonsterStartIndex + iceIndex]->m_pSkinnedAnimationController->SetTrackEnable(j, !(j == 0 || j == 2 || j == 3 || j == 4 || j == 5));
 			}
 			m_ppHierarchicalGameObjects[IceMonsterStartIndex + iceIndex]->SetScale(20.0f, 20.0f, 20.0f);
-			m_ppHierarchicalGameObjects[FireMonsterStartIndex + i]->SetMonsType(MONSTERTYPE::ICE);
+			m_ppHierarchicalGameObjects[IceMonsterStartIndex + i]->SetMonsType(MONSTERTYPE::NIGHT);
 		}
 		else {
 			int grassIndex = i - FireMonsterNum - IceMonsterNum;
@@ -972,7 +978,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 				m_ppHierarchicalGameObjects[GrassMonsterStartIndex + grassIndex]->m_pSkinnedAnimationController->SetTrackEnable(j, !(j == 0 || j == 2 || j == 3 || j == 4 || j == 5));
 			}
 			m_ppHierarchicalGameObjects[GrassMonsterStartIndex + grassIndex]->SetScale(20.0f, 20.0f, 20.0f);
-			m_ppHierarchicalGameObjects[FireMonsterStartIndex + i]->SetMonsType(MONSTERTYPE::NATURE);
+			m_ppHierarchicalGameObjects[GrassMonsterStartIndex + i]->SetMonsType(MONSTERTYPE::NIGHT);
 		}
 	}
 
