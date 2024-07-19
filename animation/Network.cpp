@@ -483,17 +483,26 @@ void Network::ProcessPacket(char* buf)
 		}
 		case MonsterType::Ice: {
 			if (p->is_attack)
+			{
 				cout << "(Ice Attack) " << endl;
+				g_ice_monsters[p->id].setNpcAttack(p->is_attack);
+			}
 			break;
 		}
 		case MonsterType::Nature: {
 			if (p->is_attack)
+			{
 				cout << "(Nature Attack) " << endl;
+				g_nature_monsters[p->id].setNpcAttack(p->is_attack);
+			}
 			break;
 		}
 		case MonsterType::Ice_Boss: {
 			if (p->is_attack)
+			{
+				g_IceBossMonster.setNpcAttack(p->is_attack);
 				cout << " Player Attack " << endl;
+			}
 			break;
 		}
 		}
