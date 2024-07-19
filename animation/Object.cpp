@@ -737,7 +737,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
 						}
 						// monster dead
-						if (m_bIsAttacked == true && fPosition == 0.0f)
+						if (m_bIsAttacked == true && fPosition > 1.4f)
 						{
 							m_bIsAttacked = false;
 							m_bIsDead = true;
