@@ -91,7 +91,7 @@ void Monster::IceMove()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -136,7 +136,7 @@ void Monster::FireMove()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -182,7 +182,7 @@ void Monster::NatureMove()
 	_prevpos = _pos;
 	int id = FindClosePlayer();
 
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 		for (auto& cl : ingamePlayer)
 		{

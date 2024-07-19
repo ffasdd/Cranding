@@ -499,7 +499,10 @@ void Network::ProcessPacket(char* buf)
 		}
 		case MonsterType::Ice_Boss: {
 			if (p->is_attack)
+			{
+				g_IceBossMonster.setNpcAttack(p->is_attack);
 				cout << " Player Attack " << endl;
+			}
 			break;
 		}
 		}
