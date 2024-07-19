@@ -604,21 +604,21 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			case MONSTERTYPE::NIGHT:
 			{
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Night);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			}
 			break;
 			case MONSTERTYPE::ICE:
 			{
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Ice);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			}
 			break;
 			case MONSTERTYPE::FIRE:
 			{
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Fire);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			}
 			break;
@@ -1131,7 +1131,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 						m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
 
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 
 					m_pPlayer->FireElement += 1; // 플레이어의 element 값 증가
@@ -1183,7 +1183,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 						m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
 
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, true);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 
 					m_pPlayer->IceElement += 1; // 플레이어의 element 값 증가
