@@ -583,51 +583,53 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		//if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
-
-		if (i > 2 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead)
+		if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController)
 		{
-			//g_sendqueue.push(SENDTYPE::ATTACK_COLLISION);
-	
-			//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
-			m_ppHierarchicalGameObjects[i]->m_bHasCollided = false;
+			if (i > 2 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead)
+			{
+				//g_sendqueue.push(SENDTYPE::ATTACK_COLLISION);
 
-			switch (m_ppHierarchicalGameObjects[i]->GetMonsType())
-			{
-			case MONSTERTYPE::NIGHT:
-			{
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
-				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Night);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
-			}
-			break;
-			case MONSTERTYPE::ICE:
-			{
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
-				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Ice);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
-			}
-			break;
-			case MONSTERTYPE::FIRE:
-			{
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
-				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Fire);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
-			}
-			break;
-			case MONSTERTYPE::NATURE:
-			{
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
-				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Nature);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
-			}
-			break;
+				//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+				m_ppHierarchicalGameObjects[i]->m_bHasCollided = false;
 
-			default:
+				switch (m_ppHierarchicalGameObjects[i]->GetMonsType())
+				{
+				case MONSTERTYPE::NIGHT:
+				{
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+					gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Night);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+				}
 				break;
+				case MONSTERTYPE::ICE:
+				{
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+					gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Ice);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+				}
+				break;
+				case MONSTERTYPE::FIRE:
+				{
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+					gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Fire);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+				}
+				break;
+				case MONSTERTYPE::NATURE:
+				{
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+					gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Nature);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+				}
+				break;
+
+				default:
+					break;
+				}
 			}
 		}
 	}
@@ -1064,19 +1066,19 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 	for (int i = 0; i < TotalMonsters; ++i) {
 		if (i < FireMonsterNum) {
-			m_ppHierarchicalGameObjects[FireElementStartIndex + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireElementModels, 0);
+			m_ppHierarchicalGameObjects[FireElementStartIndex + i] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireElementModels, 0);
 			m_ppHierarchicalGameObjects[FireElementStartIndex + i]->SetPosition(410.0f, -50.0f, 735.0f);
 			m_ppHierarchicalGameObjects[FireElementStartIndex + i]->SetScale(10.0f, 10.0f, 10.0f);
 		}
 		else if (i < FireMonsterNum + IceMonsterNum) {
 			int iceIndex = i - FireMonsterNum;
-			m_ppHierarchicalGameObjects[IceElementStartIndex + iceIndex] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceElementModels, 0);
+			m_ppHierarchicalGameObjects[IceElementStartIndex + iceIndex] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceElementModels, 0);
 			m_ppHierarchicalGameObjects[IceElementStartIndex + iceIndex]->SetPosition(410.0f, -50.0f, 735.0f);
 			m_ppHierarchicalGameObjects[IceElementStartIndex + iceIndex]->SetScale(10.0f, 10.0f, 10.0f);
 		}
 		else {
 			int grassIndex = i - FireMonsterNum - IceMonsterNum;
-			m_ppHierarchicalGameObjects[GrassElementStartIndex + grassIndex] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassElementModels, 0);
+			m_ppHierarchicalGameObjects[GrassElementStartIndex + grassIndex] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassElementModels, 0);
 			m_ppHierarchicalGameObjects[GrassElementStartIndex + grassIndex]->SetPosition(410.0f, -50.0f, 735.0f);
 			m_ppHierarchicalGameObjects[GrassElementStartIndex + grassIndex]->SetScale(10.0f, 10.0f, 10.0f);
 		}
@@ -1149,8 +1151,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild
 					->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-				if (!m_ppHierarchicalGameObjects[i]->m_bHasCollided) // 이전 프레임에서 충돌하지 않았을 때만 element 증가
-				{
+				
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 				//// send  
 				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Night);
@@ -1161,10 +1162,6 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
 				//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
 				//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
-
-					m_pPlayer->FireElement += 1; // 플레이어의 element 값 증가
-					m_ppHierarchicalGameObjects[i]->m_bHasCollided = true; // 충돌 상태 설정
-				}
 				return true;
 			}
 		}
@@ -1176,8 +1173,6 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-				if (!m_ppHierarchicalGameObjects[i]->m_bHasCollided) // 이전 프레임에서 충돌하지 않았을 때만 element 증가
-				{
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
 				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Night);
@@ -1189,9 +1184,6 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
 				//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 
-					m_pPlayer->NatureElement += 1; // 플레이어의 element 값 증가
-					m_ppHierarchicalGameObjects[i]->m_bHasCollided = true; // 충돌 상태 설정
-				}
 				return true;
 			}
 		}
@@ -1201,9 +1193,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
 				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
-			{
-				if (!m_ppHierarchicalGameObjects[i]->m_bHasCollided) // 이전 프레임에서 충돌하지 않았을 때만 element 증가
-				{
+			{			
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
 				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Night);
@@ -1214,9 +1204,6 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, true);
 				//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 
-					m_pPlayer->IceElement += 1; // 플레이어의 element 값 증가
-					m_ppHierarchicalGameObjects[i]->m_bHasCollided = true; // 충돌 상태 설정
-				}
 				return true;
 			}
 		}
@@ -1253,7 +1240,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_nHierarchicalGameObjects = 1 + 2 + 10 + 10 + 1 + 1; // map(1) + another player(2) + monster(10) + element(10) + boss(1) + boss item(1)
+	m_nHierarchicalGameObjects = 1 + 2 + 10 + 1 + 1; // map(1) + another player(2) + monster(10) + boss(1) + boss item(1)
 
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
@@ -1358,47 +1345,35 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	for (int i = 0; i < 10; ++i) {
 		if (pIceEnemyModels[i]) delete pIceEnemyModels[i];
 	}
-	
-
-	CLoadedModelInfo* pIceElementModels = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/IElement.bin", NULL);
-
-	for (int i = 0; i < 10; ++i) {
-		m_ppHierarchicalGameObjects[13 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceElementModels, 0);
-		m_ppHierarchicalGameObjects[13 + i]->SetPosition(410.0f, -50.0f, 735.0f);
-		m_ppHierarchicalGameObjects[13 + i]->SetScale(10.0f, 10.0f, 10.0f);
-
-	}
-
-	if (pIceElementModels) delete pIceElementModels;
 
 	CLoadedModelInfo* pIceBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Ice_Mage.bin", NULL);
 
-	m_ppHierarchicalGameObjects[24] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceBossModel, 6);
+	m_ppHierarchicalGameObjects[13] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceBossModel, 6);
 								
-	m_ppHierarchicalGameObjects[24]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppHierarchicalGameObjects[24]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-	m_ppHierarchicalGameObjects[24]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
-	m_ppHierarchicalGameObjects[24]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
-	m_ppHierarchicalGameObjects[24]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
-	m_ppHierarchicalGameObjects[24]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
 								
-	m_ppHierarchicalGameObjects[24]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-	m_ppHierarchicalGameObjects[24]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-	m_ppHierarchicalGameObjects[24]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-	m_ppHierarchicalGameObjects[24]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
-	m_ppHierarchicalGameObjects[24]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
 								
-	m_ppHierarchicalGameObjects[24]->SetPosition(410.0f, -50.0f, 735.0f);
-	m_ppHierarchicalGameObjects[24]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
+	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
 
 	if (pIceBossModel) delete pIceBossModel;
 	
 	CLoadedModelInfo* pIceItemModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/SteeringWheel.bin", NULL);
 
-	m_ppHierarchicalGameObjects[25] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceItemModel, 0);
+	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceItemModel, 0);
 								
-	m_ppHierarchicalGameObjects[25]->SetPosition(410.0f, -50.0f, 735.0f);
-	m_ppHierarchicalGameObjects[25]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
+	m_ppHierarchicalGameObjects[14]->SetScale(20.0f, 20.0f, 20.0f);
 	if (pIceItemModel) delete pIceItemModel;
 }
 
@@ -1512,7 +1487,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_nHierarchicalGameObjects = 1 + 2 + 10 + 10 + 1 + 1; // map(1) + another player(2) + monster(10) + element(10) + boss(1) + boss item(1)
+	m_nHierarchicalGameObjects = 1 + 2 + 10 + 1 + 1; // map(1) + another player(2) + monster(10) + boss(1) + boss item(1)
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/firemap.bin", NULL);
@@ -1615,48 +1590,37 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	for (int i = 0; i < 10; ++i) {
 		if (pFireEnemyModels[i]) delete pFireEnemyModels[i];
 	}
-	
-	CLoadedModelInfo* pFireElementModels = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/FElement.bin", NULL);
-
-	for (int i = 0; i < 10; ++i) {
-		m_ppHierarchicalGameObjects[13 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireElementModels, 0);
-		m_ppHierarchicalGameObjects[13 + i]->SetPosition(410.0f, -50.0f, 735.0f);
-		m_ppHierarchicalGameObjects[13 + i]->SetScale(10.0f, 10.0f, 10.0f);
-
-	}
-
-	if (pFireElementModels) delete pFireElementModels;
 
 	CLoadedModelInfo* pFireBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Shadow.bin", NULL);
 
-	m_ppHierarchicalGameObjects[23] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireBossModel, 7);
+	m_ppHierarchicalGameObjects[13] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireBossModel, 7);
 								
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
 								
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 								
-	m_ppHierarchicalGameObjects[23]->SetPosition(410.0f, -50.0f, 735.0f);
-	m_ppHierarchicalGameObjects[23]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
+	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
 	
 	if (pFireBossModel) delete pFireBossModel;
 
 	CLoadedModelInfo* pFireItemModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/FuelTank.bin", NULL);
 
-	m_ppHierarchicalGameObjects[24] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireItemModel, 0);
+	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireItemModel, 0);
 								
-	m_ppHierarchicalGameObjects[24]->SetPosition(410.0f, -50.0f, 735.0f);
-	m_ppHierarchicalGameObjects[24]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
+	m_ppHierarchicalGameObjects[14]->SetScale(20.0f, 20.0f, 20.0f);
 	if (pFireItemModel) delete pFireItemModel;
 	
 
@@ -1773,7 +1737,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
-	m_nHierarchicalGameObjects = 1 + 2 + 10 + 10 + 1 + 1; // map(1) + another player(2) + monster(10) + element(10) + boss(1) + boss item(1)
+	m_nHierarchicalGameObjects = 1 + 2 + 10 + 1 + 1; // map(1) + another player(2) + monster(10) + boss(1) + boss item(1)
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/grassmap.bin", NULL);
@@ -1877,45 +1841,34 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 		if (pGrassEnemyModels[i]) delete pGrassEnemyModels[i];
 	}
 
-	CLoadedModelInfo* pGrassElementModels = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/NElement.bin", NULL);
-
-	for (int i = 0; i < 10; ++i) {
-		m_ppHierarchicalGameObjects[13 + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassElementModels, 0);
-		m_ppHierarchicalGameObjects[13 + i]->SetPosition(410.0f, -50.0f, 735.0f);
-		m_ppHierarchicalGameObjects[13 + i]->SetScale(10.0f, 10.0f, 10.0f);
-
-	}
-
-	if (pGrassElementModels) delete pGrassElementModels;
-
 	CLoadedModelInfo* pGrassBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Slime_Monster.bin", NULL);
 
-	m_ppHierarchicalGameObjects[23] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassBossModel, 6);
+	m_ppHierarchicalGameObjects[13] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassBossModel, 6);
 								
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
 								
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
-	m_ppHierarchicalGameObjects[23]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
 								
-	m_ppHierarchicalGameObjects[23]->SetPosition(410.0f, -50.0f, 735.0f);
-	m_ppHierarchicalGameObjects[23]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
+	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
 
 	if (pGrassBossModel) delete pGrassBossModel;
 
 	CLoadedModelInfo* pNatureItemModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Wheel.bin", NULL);
 
-	m_ppHierarchicalGameObjects[24] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pNatureItemModel, 0);
+	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pNatureItemModel, 0);
 								
-	m_ppHierarchicalGameObjects[24]->SetPosition(410.0f, -50.0f, 735.0f);
-	m_ppHierarchicalGameObjects[24]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
+	m_ppHierarchicalGameObjects[14]->SetScale(20.0f, 20.0f, 20.0f);
 	if (pNatureItemModel) delete pNatureItemModel;
 }
 bool CGrassScene::CheckObjectByObjectCollisions()

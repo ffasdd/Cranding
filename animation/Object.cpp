@@ -200,7 +200,7 @@ CMaterial::~CMaterial()
 	}
 
 	if (m_pd3dcbMaterial) {
-		m_pd3dcbMaterial->Unmap(0, NULL);
+		//m_pd3dcbMaterial->Unmap(0, NULL);
 		m_pd3dcbMaterial->Release();
 	}
 }
