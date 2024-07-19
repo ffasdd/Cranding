@@ -312,7 +312,7 @@ void IceBossMonster::Move()
 
 	int id = FindClosePlayer();
 
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -392,7 +392,7 @@ void FireBossMonster::Move()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -444,7 +444,7 @@ void NatureBossMonster::Move()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 		for (auto& cl : ingamePlayer)
 		{

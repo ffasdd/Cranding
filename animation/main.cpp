@@ -14,7 +14,7 @@ CGameFramework					gGameFramework;
 Network							gNetwork;
 
 unordered_map<int, Session> g_clients;
-unordered_map<int, Session> g_monsters; 
+unordered_map<int, Session> g_monsters;
 unordered_map<int, Session> g_ice_monsters;
 unordered_map<int, Session> g_fire_monsters;
 unordered_map<int, Session> g_nature_monsters;
@@ -68,9 +68,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			if (!::TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 			{
 				::TranslateMessage(&msg);
-				::DispatchMessage(&msg); 
+				::DispatchMessage(&msg);
 			}
-			
+
 		}
 		else
 		{
@@ -82,18 +82,24 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				gNetwork.IngameStart = false;
 				gNetwork.SpaceshipScene = false;
 			}
-			
+
 			if (gGameFramework.m_pPlayer != NULL)
 			{
 				if (gNetwork.gamestart)
-				{ 
-				for (int i = 0; i < g_clients.size(); ++i)  
-					{ 
-					if (gNetwork.stage_num != g_clients[i].scene_num)continue;
+				{
+					for (int i = 0; i < g_clients.size(); ++i)
+					{
+						if (gNetwork.stage_num != g_clients[i].scene_num)
+						{
+							gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), false);
+							continue;
+						}else 
+							gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), true);
+							
 						gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
 						gGameFramework.myFunc_SetLookRightUp(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
 						gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
-						gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());						
+						gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());
 					}
 
 					switch (gGameFramework.sceneManager.GetCurrentScene())
@@ -101,10 +107,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 					case SCENEKIND::SPACESHIP:
 					{
 						// spaceship map // 0  ~ 9 fire  10 ~ 19 ice 20  ~ 29 nature
-						
+
 						for (int i = 0; i < g_monsters.size(); ++i)
 						{
-							
+
 							gGameFramework.myFunc_SetMonPosition(i, g_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
 							gGameFramework.myFunc_SetMonAnimation(i, g_monsters[i].setNpcAttacked());
@@ -120,11 +126,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_ice_monsters[i].getLook(), g_ice_monsters[i].getUp(), g_ice_monsters[i].getRight());
 						}
 
-						gGameFramework.myFunc_SetBossMonPosition( g_IceBossMonster.getPos());
-						gGameFramework.myFunc_SetBossMonLookRightUp(g_IceBossMonster.getLook(),g_IceBossMonster.getUp(),g_IceBossMonster.getRight());
+						gGameFramework.myFunc_SetBossMonPosition(g_IceBossMonster.getPos());
+						gGameFramework.myFunc_SetBossMonLookRightUp(g_IceBossMonster.getLook(), g_IceBossMonster.getUp(), g_IceBossMonster.getRight());
 						break;
 					}
-					case SCENEKIND::FIRE: 
+					case SCENEKIND::FIRE:
 					{
 						// fire map
 						for (int i = 0; i < g_fire_monsters.size(); ++i)
@@ -132,8 +138,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 							gGameFramework.myFunc_SetMonPosition(i, g_fire_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_fire_monsters[i].getLook(), g_fire_monsters[i].getUp(), g_fire_monsters[i].getRight());
 						}
-						gGameFramework.myFunc_SetBossMonPosition( g_FireBossMonster.getPos());
-						gGameFramework.myFunc_SetBossMonLookRightUp(g_FireBossMonster.getLook(),g_FireBossMonster.getUp(),g_FireBossMonster.getRight());
+						gGameFramework.myFunc_SetBossMonPosition(g_FireBossMonster.getPos());
+						gGameFramework.myFunc_SetBossMonLookRightUp(g_FireBossMonster.getLook(), g_FireBossMonster.getUp(), g_FireBossMonster.getRight());
 						break;
 					}
 					case SCENEKIND::NATURE:
@@ -152,7 +158,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 					default:
 						break;
 					}
-					
+
 
 				}
 			}

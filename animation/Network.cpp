@@ -281,25 +281,25 @@ void Network::ProcessPacket(char* buf)
 				{
 					IngameScene = true;
 					ClientState = true;
-			
 
 				}
 				else if ( IngameScene == true )
 				{
 					SpaceshipScene = true;
+					
 					for (int i = 0; i < g_clients.size(); ++i)
 					{
 						if (g_clients[i].getId() == my_id)continue;
 						if (g_clients[i].scene_num != g_clients[my_id].scene_num)
 						{
 						
-							gGameFramework.myFunc_SetBlind(i, ob_id, false);
+						//	gGameFramework.myFunc_SetBlind(i, ob_id, false);
 
 						}
-						else
+						//else
 						{
 				
-							gGameFramework.myFunc_SetBlind(i, ob_id, true);
+							//gGameFramework.myFunc_SetBlind(i, ob_id, true);
 
 						}
 					}
@@ -311,21 +311,37 @@ void Network::ProcessPacket(char* buf)
 				for (int i = 0; i < g_clients.size(); ++i)
 				{
 					if (g_clients[i].getId() == my_id)continue;
-					if (g_clients[i].scene_num != g_clients[my_id].scene_num)
-						gGameFramework.myFunc_SetBlind(i, ob_id, false);
-					else
-						gGameFramework.myFunc_SetBlind(i, ob_id, true);
+					//if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+					//	gGameFramework.myFunc_SetBlind(i, ob_id, false);
+				//	else
+					//gGameFramework.myFunc_SetBlind(i, ob_id, true);
 				}
 				g_monsters.clear();
 			}
 				break;
 			case 4 :
 			{
+				for (int i = 0; i < g_clients.size(); ++i)
+				{
+					if (g_clients[i].getId() == my_id)continue;
+					//if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+						//gGameFramework.myFunc_SetBlind(i, ob_id, false);
+					//else
+						//gGameFramework.myFunc_SetBlind(i, ob_id, true);
+				}
 				g_monsters.clear();
 			}
 				break;
 			case 5:
 			{
+				for (int i = 0; i < g_clients.size(); ++i)
+				{
+					if (g_clients[i].getId() == my_id)continue;
+					//if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+						//gGameFramework.myFunc_SetBlind(i, ob_id, false);
+					//else
+					//	gGameFramework.myFunc_SetBlind(i, ob_id, true);
+				}
 				g_monsters.clear();
 			}
 				break;
@@ -337,10 +353,10 @@ void Network::ProcessPacket(char* buf)
 			{
 				if (p->stage == 1)continue;
 				if (g_clients[i].getId() == my_id)continue;
-				if (g_clients[i].scene_num != g_clients[my_id].scene_num)
-					gGameFramework.myFunc_SetBlind(i, ob_id, false);
-				else
-					gGameFramework.myFunc_SetBlind(i, ob_id, true);
+				//if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+				//	gGameFramework.myFunc_SetBlind(i, ob_id, false);
+				//else
+				//	gGameFramework.myFunc_SetBlind(i, ob_id, true);
 			}
 		}
 		// Id가 하나만 ㅁ거음 
@@ -396,6 +412,7 @@ void Network::ProcessPacket(char* buf)
 	}
 	case SC_ICE_MONSTER_UPDATE :
 	{
+		if (stage_num != 3) break;
 		IceMonstersUpdate* p = reinterpret_cast<IceMonstersUpdate*>(buf);
 		int npc_id = p->_monster._id;
 
@@ -410,6 +427,7 @@ void Network::ProcessPacket(char* buf)
 
 	case SC_FIRE_MONSTER_UPDATE:
 	{
+		if (stage_num != 4)break;
 		FireMonsterUpdate* p = reinterpret_cast<FireMonsterUpdate*>(buf);
 		int npc_id = p->_monster._id;
 
@@ -424,6 +442,7 @@ void Network::ProcessPacket(char* buf)
 
 	case SC_NATURE_MONSTER_UPDATE:
 	{
+		if (stage_num != 5)break;
 		NatureMonsterUpdate* p = reinterpret_cast<NatureMonsterUpdate*>(buf);
 		int npc_id = p->_monster._id;
 
@@ -437,6 +456,7 @@ void Network::ProcessPacket(char* buf)
 	break;
 	case SC_ICE_BOSS_UPDATE:
 	{
+		if (stage_num != 3)break;
 		BossUpdate_Ice* p = reinterpret_cast<BossUpdate_Ice*>(buf);
 		g_IceBossMonster.setPos(p->_boss._x, p->_boss._y, p->_boss._z);
 		g_IceBossMonster.setLook(p->_boss._lx, p->_boss._ly, p->_boss._lz);
@@ -448,6 +468,7 @@ void Network::ProcessPacket(char* buf)
 
 	case SC_FIRE_BOSS_UPDATE:
 	{
+		if (stage_num != 4)break;
 		BossUpdate_Fire* p = reinterpret_cast<BossUpdate_Fire*>(buf);
 		g_FireBossMonster.setPos(p->_boss._x, p->_boss._y, p->_boss._z);
 		g_FireBossMonster.setLook(p->_boss._lx, p->_boss._ly, p->_boss._lz);
@@ -459,6 +480,7 @@ void Network::ProcessPacket(char* buf)
 
 	case SC_NATURE_BOSS_UPDATE:
 	{
+		if (stage_num != 5)break;
 		BossUpdate_Nature* p = reinterpret_cast<BossUpdate_Nature*>(buf);
 		g_NatureBossMonster.setPos(p->_boss._x, p->_boss._y, p->_boss._z);
 		g_NatureBossMonster.setLook(p->_boss._lx, p->_boss._ly, p->_boss._lz);
