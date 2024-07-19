@@ -90,7 +90,7 @@ public:
 public:
 	unique_ptr<CBlurShader> m_BlurShader = NULL;
 	ID3D12Resource* m_pBlurBuffer = NULL;
-	bool isBlurRender = true;
+	bool isBlurRender = false;
 
 	CPlayer* m_pPlayer = NULL;
 	float PlayerPosX;

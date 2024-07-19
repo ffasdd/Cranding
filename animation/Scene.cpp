@@ -29,23 +29,6 @@ CScene::~CScene()
 }
 
 
-void CScene::CheckMonsterByMonsterCollisions()
-{
-	for (int i = 3; i < m_nHierarchicalGameObjects; i++)
-	{
-		for (int j = i + 1; j < m_nHierarchicalGameObjects; j++)
-		{
-
-			// monster with monster
-			if (m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[j]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
-			{
-				// 서버에 i - 3 번 npc가 충돌했다고 보내는 코드 들어가는 부분
-
-			}
-		}
-	}
-}
-
 
 void CScene::BuildDefaultLightsAndMaterials()
 {
@@ -713,21 +696,18 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[1]->SetPosition(30.0f, 0.0f, -65.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[1]->Rotate(-20.0f, 170.0f, 00.0f);
-	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.7);
 
 	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_ppHierarchicalGameObjects[2]->SetPosition(50.0f, 0.0f, -85.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[2]->Rotate(-20.0f, 170.0f, 00.0f);
-	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.6);
 
 	m_ppHierarchicalGameObjects[3] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
 	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_ppHierarchicalGameObjects[3]->SetPosition(10.0f, 0.0f, -85.0f);
 	m_ppHierarchicalGameObjects[3]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[3]->Rotate(-20.0f, 170.0f, 0.0f);
-	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.6);
 
 	if (pPlayerModel) delete pPlayerModel;
 
@@ -910,7 +890,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	const int GrassMonsterNum = 10;
 
 	cout << "inside builbobj" << endl;
-	m_nHierarchicalGameObjects = 3 + FireMonsterNum + IceMonsterNum + GrassMonsterNum + 30;
+	m_nHierarchicalGameObjects = 3 + FireMonsterNum + IceMonsterNum + GrassMonsterNum ;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/spaceshipmap.bin", NULL);
@@ -1052,36 +1032,6 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 	for (int i = 0; i < GrassMonsterNum; ++i) {
 		if (pGrassMonModels[i]) delete pGrassMonModels[i];
-	}
-
-	CLoadedModelInfo* pFireElementModels = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/FElement.bin", NULL);
-	CLoadedModelInfo* pIceElementModels = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/IElement.bin", NULL);
-	CLoadedModelInfo* pGrassElementModels = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/NElement.bin", NULL);
-
-	// 원소 객체 배열 초기화
-	const int FireElementStartIndex = 33;
-	const int IceElementStartIndex = FireElementStartIndex + FireMonsterNum;
-	const int GrassElementStartIndex = IceElementStartIndex + IceMonsterNum;
-	const int TotalElements = FireMonsterNum + IceMonsterNum + GrassMonsterNum;
-
-	for (int i = 0; i < TotalMonsters; ++i) {
-		if (i < FireMonsterNum) {
-			m_ppHierarchicalGameObjects[FireElementStartIndex + i] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireElementModels, 0);
-			m_ppHierarchicalGameObjects[FireElementStartIndex + i]->SetPosition(410.0f, -50.0f, 735.0f);
-			m_ppHierarchicalGameObjects[FireElementStartIndex + i]->SetScale(10.0f, 10.0f, 10.0f);
-		}
-		else if (i < FireMonsterNum + IceMonsterNum) {
-			int iceIndex = i - FireMonsterNum;
-			m_ppHierarchicalGameObjects[IceElementStartIndex + iceIndex] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceElementModels, 0);
-			m_ppHierarchicalGameObjects[IceElementStartIndex + iceIndex]->SetPosition(410.0f, -50.0f, 735.0f);
-			m_ppHierarchicalGameObjects[IceElementStartIndex + iceIndex]->SetScale(10.0f, 10.0f, 10.0f);
-		}
-		else {
-			int grassIndex = i - FireMonsterNum - IceMonsterNum;
-			m_ppHierarchicalGameObjects[GrassElementStartIndex + grassIndex] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pGrassElementModels, 0);
-			m_ppHierarchicalGameObjects[GrassElementStartIndex + grassIndex]->SetPosition(410.0f, -50.0f, 735.0f);
-			m_ppHierarchicalGameObjects[GrassElementStartIndex + grassIndex]->SetScale(10.0f, 10.0f, 10.0f);
-		}
 	}
 }
 void CSpaceShipScene::HandleCollisionEnd(CGameObject* pObject) {
@@ -1730,6 +1680,11 @@ void CFireScene::ReleaseObjects()
 {
 	CScene::ReleaseObjects();
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {

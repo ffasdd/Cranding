@@ -1170,8 +1170,6 @@ void CGameFramework::AnimateObjects()
 	
 	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions() && m_pScene)
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
-
-	m_pScene->CheckMonsterByMonsterCollisions();
 }
 
 void CGameFramework::WaitForGpuComplete()

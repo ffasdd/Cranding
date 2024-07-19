@@ -56,7 +56,6 @@ public:
 	void HandleCollisionEnd(CGameObject* pObject) {}
 	virtual bool CheckObjectByObjectCollisions() { return true; }
 
-	void CheckMonsterByMonsterCollisions();
 
 
 	// 바운딩박스
