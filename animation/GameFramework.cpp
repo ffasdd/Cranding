@@ -738,13 +738,18 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 	}
 }
 
-void CGameFramework::myFunc_SetMonAnimation(int n, bool isAttacked)
+void CGameFramework::myFunc_SetMonAnimation(int n, bool isAttacked, bool isAttack)
 {
 	if (isAttacked == true)
 	{
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
+	}
+	else if (isAttack == true)
+	{
+
 	}
 	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
 	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);

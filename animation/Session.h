@@ -23,7 +23,7 @@ public:
 	STATE getState();
 	bool getAttack();
 	bool getNpcAttack();
-	bool setNpcAttacked();
+	bool getNpcAttacked();
 
 
 	void setCharacterType(int type);
