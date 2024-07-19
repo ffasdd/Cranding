@@ -195,7 +195,7 @@ void Room::NatureUpdateNpc()
 	NatureMonsterUpdate sendNatureMontserUpdatePacket[10];
 	int idx = 0;
 
-	for (auto& npc : FireMonster)
+	for (auto& npc : NatureMonster)
 	{
 		if (npc._is_alive == false)
 		{
@@ -367,16 +367,19 @@ void Room::BossMonsterInitialziedMonster()
 	FireBoss._is_alive = true;
 	FireBoss._stagenum = 4;
 	FireBoss._m_type = MonsterType::Fire_Boss;
+	FireBoss._initPos = FireBoss._pos;
 
 	IceBoss._pos = XMFLOAT3(-12.0f, 10.0f, -220.f);
 	IceBoss._is_alive = true;
 	IceBoss._stagenum = 3;
 	IceBoss._m_type = MonsterType::Ice_Boss;
+	IceBoss._initPos = IceBoss._pos;
 
 	NatureBoss._pos = XMFLOAT3(77.0f, 10.0f, -408.0f);
 	NatureBoss._is_alive = true;
 	NatureBoss._stagenum = 5;
 	NatureBoss._m_type = MonsterType::Nature_Boss;
+	NatureBoss._initPos = NatureBoss._pos;
 
 	BossUpdate_Fire sendFireBossMonsterInitialziedpacket;
 	BossUpdate_Ice sendIceBossMonsterInitialziedpacket;
@@ -510,6 +513,7 @@ void Room::FireNpcInitialized()
 		FireMonster[i]._is_alive = true;
 		FireMonster[i]._m_type = MonsterType::Fire;
 		FireMonster[i]._stagenum = 4;
+		FireMonster[i]._initPos = FireMonster[i]._pos;
 	}
 
 	FireMonsterUpdate sendFireMonsterUpdatePacket[10];
@@ -568,12 +572,13 @@ void Room::NatureNpcInitialized()
 		NatureMonster[i]._is_alive = true;
 		NatureMonster[i]._m_type = MonsterType::Nature;
 		NatureMonster[i]._stagenum = 5;
+		NatureMonster[i]._initPos = NatureMonster[i]._pos;
 	}
 
 	NatureMonsterUpdate sendNatureMonsterUpdatePacket[10];
 	int idx = 0;
 
-	for (auto& npc : IceMonster)
+	for (auto& npc : NatureMonster)
 	{
 		sendNatureMonsterUpdatePacket[idx].size = sizeof(NatureMonsterUpdate);
 		sendNatureMonsterUpdatePacket[idx].type = SC_NATURE_MONSTER_UPDATE;

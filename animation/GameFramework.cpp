@@ -6,7 +6,6 @@
 #include "GameFramework.h"
 #include "UI.h"
 
-#define monsternum 10
 
 CGameFramework::CGameFramework()
 {

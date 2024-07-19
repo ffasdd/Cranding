@@ -187,7 +187,7 @@ void Monster::FireMove()
 
 			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
-			_speed = 1.0f;
+			_speed = 1.2f;
 			m_SPBB.Center = _pos;
 			m_SPBB.Center.y = _pos.y;
 
@@ -409,35 +409,6 @@ void IceBossMonster::Move()
 			//else 
 			if (CollideCheckToPlayer()) _speed = 0;
 
-			//if (cl->distance <= _attackRange)
-			//{
-			//	if (_attackState == true) continue;
-			//	_attackState = true;
-			//	//send 공격 패킷 
-			//	SC_MONSTER_ATTACK_PACKET p;
-			//	p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
-			//	p.type = SC_MONSTER_ATTACK;
-			//	p.monstertype = MonsterType::Ice_Boss;
-			//	p.id = _id;
-			//	p.is_attack = _attackState;
-			//	cout << " Ice Monster Attack " << endl;
-
-			//	cl->do_send(&p);
-			//}
-			//else
-			//{
-			//	if (_attackState == false)continue;
-			//	_attackState = false;
-			//	SC_MONSTER_ATTACK_PACKET p;
-			//	p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
-			//	p.type = SC_MONSTER_ATTACK;
-			//	p.monstertype = MonsterType::Ice_Boss;
-			//	p.id = _id;
-			//	p.is_attack = _attackState;
-
-			//	cl->do_send(&p);
-
-			//}
 			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 			_speed = 1.0f;
 			m_SPBB.Center = _pos;
@@ -447,7 +418,31 @@ void IceBossMonster::Move()
 	}
 	else
 	{
+		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
+		{
+			XMVECTOR posVec = XMLoadFloat3(&_pos);
+			XMVECTOR playerVec = XMLoadFloat3(&_initPos);
+			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
+			XMFLOAT3 directionToPlayerFloat3;
+			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+			_look = directionToPlayerFloat3;
+
+			// right 벡터 계산 (look과 up 벡터의 외적)
+			XMVECTOR upVec = XMLoadFloat3(&up);
+			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+			XMFLOAT3 rightFloat3;
+			XMStoreFloat3(&rightFloat3, rightVec);
+
+			// right 벡터를 업데이트
+			_right = rightFloat3;
+
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
+		}
 	}
 }
 
@@ -499,7 +494,31 @@ void FireBossMonster::Move()
 	}
 	else
 	{
+		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
+		{
+			XMVECTOR posVec = XMLoadFloat3(&_pos);
+			XMVECTOR playerVec = XMLoadFloat3(&_initPos);
+			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
+			XMFLOAT3 directionToPlayerFloat3;
+			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+			_look = directionToPlayerFloat3;
+
+			// right 벡터 계산 (look과 up 벡터의 외적)
+			XMVECTOR upVec = XMLoadFloat3(&up);
+			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+			XMFLOAT3 rightFloat3;
+			XMStoreFloat3(&rightFloat3, rightVec);
+
+			// right 벡터를 업데이트
+			_right = rightFloat3;
+
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
+		}
 	}
 }
 
@@ -551,6 +570,30 @@ void NatureBossMonster::Move()
 	}
 	else
 	{
+		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
+		{
+			XMVECTOR posVec = XMLoadFloat3(&_pos);
+			XMVECTOR playerVec = XMLoadFloat3(&_initPos);
+			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
+			XMFLOAT3 directionToPlayerFloat3;
+			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+			_look = directionToPlayerFloat3;
+
+			// right 벡터 계산 (look과 up 벡터의 외적)
+			XMVECTOR upVec = XMLoadFloat3(&up);
+			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+			XMFLOAT3 rightFloat3;
+			XMStoreFloat3(&rightFloat3, rightVec);
+
+			// right 벡터를 업데이트
+			_right = rightFloat3;
+
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
+		}
 	}
 }
