@@ -311,6 +311,8 @@ public:
 
 	// 상하체 분리 변수
 	bool							m_bIsAttack = false;
+	bool							m_bIsValidAttack = false;
+	int								m_nCntValidAttack = 0;
 	int								m_nAttackAniNum = 8;
 
 	// 애니메이션 블렌딩 변수

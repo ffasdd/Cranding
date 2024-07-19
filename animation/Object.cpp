@@ -418,6 +418,7 @@ XMFLOAT4X4 CAnimationSet::GetSRT(int nBone, float fPosition)
 		if ((m_pfKeyFrameTimes[i] <= fPosition) && (fPosition < m_pfKeyFrameTimes[i+1]))
 		{
 			// 1/60 이나 1/120정도는 행렬을 인터폴레이션 해서 해도 괜차나
+			if (m_ppxmf4x4KeyFrameTransforms == nullptr)continue;
 			float t = (fPosition - m_pfKeyFrameTimes[i]) / (m_pfKeyFrameTimes[i+1] - m_pfKeyFrameTimes[i]);
 			xmf4x4Transform = Matrix4x4::Interpolate(m_ppxmf4x4KeyFrameTransforms[i][nBone], m_ppxmf4x4KeyFrameTransforms[i+1][nBone], t);
 			break;
@@ -696,12 +697,16 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							}
 							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
 						}
+						if (fPosition2 > 1.0f)
+							this->m_bIsValidAttack = true;
+
 						if (fPosition2 == 0)
 						{
 							if (m_nAttackAniNum == 8) m_nAttackAniNum = 9;
 							else m_nAttackAniNum = 8;
+							this->m_nCntValidAttack = 0;
 							this->m_bIsAttack = false;
-
+							this->m_bIsValidAttack = false;
 							gNetwork.SendAttack(false);
 						}
 					}
@@ -727,13 +732,14 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							//일반적으로 애니메이션에서 이전 프레임과 현재 프레임 사이의 움직임을 부드럽게 처리하기 위해 사용
 							//xmf4x4TrackTransform : 이전 프레임의 변환 행렬과 현재 프레임의 위치와 방향을 보간하여 새로운 변환 행렬을 반환
 							//fPosition은 다음 애니메이션의 position, j는 현재 boneframe번호
+
 							XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet->GetSRT(j, fPosition);
 
 							xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[k].m_fWeight));
 							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
 						}
 						// monster dead
-						if (m_bIsAttacked == true && fPosition == 0.0f)
+						if (m_bIsAttacked == true && fPosition > 1.0f)
 						{
 							m_bIsAttacked = false;
 							m_bIsDead = true;

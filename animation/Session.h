@@ -23,6 +23,7 @@ public:
 	STATE getState();
 	bool getAttack();
 	bool getNpcAttack();
+	bool getNpcAttacked();
 
 
 	void setCharacterType(int type);
@@ -43,6 +44,7 @@ public:
 	void setState(STATE state);
 	void setPrevPos(XMFLOAT3 prevpos);
 	void setNpcAttack(bool _isattack);
+	void setNpcAttacked(bool _isattacked);
 	void Rotate(float yaw);
 
 	mutex _sessionlock;
@@ -65,6 +67,7 @@ private:
 	XMFLOAT3 m_prevPos;
 	bool m_isattack = false;
 	bool monster_isattack = false;
+	bool monster_isattacked = false;
 	// state 
 	STATE m_state = STATE::Free;
 

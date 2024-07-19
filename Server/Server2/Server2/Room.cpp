@@ -451,6 +451,7 @@ void Room::IceNpcInitialized()
 		IceMonster[i]._is_alive = true;
 		IceMonster[i]._m_type = MonsterType::Ice;
 		IceMonster[i]._stagenum = 3;
+		IceMonster[i]._initPos = IceMonster[i]._pos;
 	}
 
 	IceMonstersUpdate sendIceMonsterUpdatePacket[10];

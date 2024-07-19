@@ -754,8 +754,19 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 	}
 }
 
-void CGameFramework::myFunc_SetMonAnimation(int n, int id, bool isAttack)
+void CGameFramework::myFunc_SetMonAnimation(int n, bool isAttacked, bool isAttack)
 {
+	if (isAttacked == true)
+	{
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
+	}
+	else if (isAttack == true)
+	{
+
+	}
 	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
 	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);
 	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5);
@@ -1156,23 +1167,9 @@ void CGameFramework::AnimateObjects()
 	if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
 	m_pPlayer->Animate(fTimeElapsed);
-
-	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions())
-	{
-		if (m_pPlayer->isFireMap == true)
-		{
-
-		}
-		else if (m_pPlayer->isNatureMap == true)
-		{
-		}
-		else if (m_pPlayer->isIceMap == true)
-		{
-		}
-
+	
+	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions() && m_pScene)
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
-	}
-	//if(sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions())
 
 	m_pScene->CheckMonsterByMonsterCollisions();
 }

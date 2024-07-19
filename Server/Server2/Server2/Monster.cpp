@@ -91,7 +91,7 @@ void Monster::IceMove()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -118,15 +118,39 @@ void Monster::IceMove()
 
 			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
-			_speed = 1.0f;
+			_speed = 0.7f;
 			m_SPBB.Center = _pos;
 			m_SPBB.Center.y = _pos.y;
 
 		}
 	}
-	else
+	else 
 	{
+		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
+		{
+			XMVECTOR posVec = XMLoadFloat3(&_pos);
+			XMVECTOR playerVec = XMLoadFloat3(&_initPos);
+			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
+			XMFLOAT3 directionToPlayerFloat3;
+			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+			_look = directionToPlayerFloat3;
+
+			// right 벡터 계산 (look과 up 벡터의 외적)
+			XMVECTOR upVec = XMLoadFloat3(&up);
+			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+			XMFLOAT3 rightFloat3;
+			XMStoreFloat3(&rightFloat3, rightVec);
+
+			// right 벡터를 업데이트
+			_right = rightFloat3;
+
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
+		}
 	}
 }
 
@@ -136,7 +160,7 @@ void Monster::FireMove()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -171,7 +195,31 @@ void Monster::FireMove()
 	}
 	else
 	{
+		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
+		{
+			XMVECTOR posVec = XMLoadFloat3(&_pos);
+			XMVECTOR playerVec = XMLoadFloat3(&_initPos);
+			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
+			XMFLOAT3 directionToPlayerFloat3;
+			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+			_look = directionToPlayerFloat3;
+
+			// right 벡터 계산 (look과 up 벡터의 외적)
+			XMVECTOR upVec = XMLoadFloat3(&up);
+			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+			XMFLOAT3 rightFloat3;
+			XMStoreFloat3(&rightFloat3, rightVec);
+
+			// right 벡터를 업데이트
+			_right = rightFloat3;
+
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
+		}
 	}
 }
 
@@ -182,7 +230,7 @@ void Monster::NatureMove()
 	_prevpos = _pos;
 	int id = FindClosePlayer();
 
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -217,7 +265,31 @@ void Monster::NatureMove()
 	}
 	else
 	{
+		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
+		{
+			XMVECTOR posVec = XMLoadFloat3(&_pos);
+			XMVECTOR playerVec = XMLoadFloat3(&_initPos);
+			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
+			XMFLOAT3 directionToPlayerFloat3;
+			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+
+			_look = directionToPlayerFloat3;
+
+			// right 벡터 계산 (look과 up 벡터의 외적)
+			XMVECTOR upVec = XMLoadFloat3(&up);
+			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+			XMFLOAT3 rightFloat3;
+			XMStoreFloat3(&rightFloat3, rightVec);
+
+			// right 벡터를 업데이트
+			_right = rightFloat3;
+
+			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
+
+			m_SPBB.Center = _pos;
+			m_SPBB.Center.y = _pos.y;
+		}
 	}
 }
 
@@ -312,7 +384,7 @@ void IceBossMonster::Move()
 
 	int id = FindClosePlayer();
 
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -392,7 +464,7 @@ void FireBossMonster::Move()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 		for (auto& cl : ingamePlayer)
 		{
@@ -444,7 +516,7 @@ void NatureBossMonster::Move()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 		for (auto& cl : ingamePlayer)
 		{
