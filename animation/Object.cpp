@@ -418,6 +418,7 @@ XMFLOAT4X4 CAnimationSet::GetSRT(int nBone, float fPosition)
 		if ((m_pfKeyFrameTimes[i] <= fPosition) && (fPosition < m_pfKeyFrameTimes[i+1]))
 		{
 			// 1/60 이나 1/120정도는 행렬을 인터폴레이션 해서 해도 괜차나
+			if (m_ppxmf4x4KeyFrameTransforms == nullptr)continue;
 			float t = (fPosition - m_pfKeyFrameTimes[i]) / (m_pfKeyFrameTimes[i+1] - m_pfKeyFrameTimes[i]);
 			xmf4x4Transform = Matrix4x4::Interpolate(m_ppxmf4x4KeyFrameTransforms[i][nBone], m_ppxmf4x4KeyFrameTransforms[i+1][nBone], t);
 			break;

@@ -586,12 +586,13 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 		if (i > 2 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead)
 		{
-			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+			//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 
 			switch (m_ppHierarchicalGameObjects[i]->GetMonsType())
 			{
 			case MONSTERTYPE::NIGHT:
 			{
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Night);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
@@ -599,6 +600,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			break;
 			case MONSTERTYPE::ICE:
 			{
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Ice);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
@@ -606,6 +608,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			break;
 			case MONSTERTYPE::FIRE:
 			{
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Fire);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
@@ -613,6 +616,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			break;
 			case MONSTERTYPE::NATURE:
 			{
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Nature);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
@@ -671,6 +675,7 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	{
 		if (m_ppHierarchicalGameObjects[i] && m_ppHierarchicalGameObjects[i]->isdraw == true)
 		{
+			//cout << i << endl;
 			m_ppHierarchicalGameObjects[i]->Animate(m_fElapsedTime);
 			if (!m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController) m_ppHierarchicalGameObjects[i]->UpdateTransform(NULL);
 			m_ppHierarchicalGameObjects[i]->Render(pd3dCommandList, pCamera);

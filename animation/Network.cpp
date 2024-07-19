@@ -18,7 +18,7 @@ Network::Network()
 	LINGER _linger;
 	_linger.l_linger = 0;
 	_linger.l_onoff = 1;
-	setsockopt(clientsocket, SOL_SOCKET, SO_LINGER, (const char*)& _linger, sizeof(_linger));
+	setsockopt(clientsocket, SOL_SOCKET, SO_LINGER, (const char*)&_linger, sizeof(_linger));
 	// Linger option
 
 	if (clientsocket == INVALID_SOCKET)
@@ -40,7 +40,7 @@ bool Network::ReadytoConnect()
 	sockaddrIn.sin_port = htons(PORT_NUM);
 
 	// 사용자로부터 IP 주소 입력 받기
-	string ipAddress = { "127.0.0.1"};
+	string ipAddress = { "127.0.0.1" };
 
 
 	// 문자열 형태의 IP 주소를 네트워크 바이트 순서로 변환하여 설정
@@ -125,7 +125,7 @@ void Network::SendProcess(SENDTYPE sendtype)
 		break;
 	}
 	case SENDTYPE::CHANGE_STAGE: {
-	
+
 		index = static_cast<int>(gGameFramework.sceneManager.GetCurrentScene());
 
 		SendChangeScene(index);
@@ -283,22 +283,22 @@ void Network::ProcessPacket(char* buf)
 					ClientState = true;
 
 				}
-				else if ( IngameScene == true )
+				else if (IngameScene == true)
 				{
 					SpaceshipScene = true;
-					
+
 					for (int i = 0; i < g_clients.size(); ++i)
 					{
 						if (g_clients[i].getId() == my_id)continue;
 						if (g_clients[i].scene_num != g_clients[my_id].scene_num)
 						{
-						
-						//	gGameFramework.myFunc_SetBlind(i, ob_id, false);
+
+							//	gGameFramework.myFunc_SetBlind(i, ob_id, false);
 
 						}
 						//else
 						{
-				
+
 							//gGameFramework.myFunc_SetBlind(i, ob_id, true);
 
 						}
@@ -316,10 +316,10 @@ void Network::ProcessPacket(char* buf)
 				//	else
 					//gGameFramework.myFunc_SetBlind(i, ob_id, true);
 				}
-				g_monsters.clear();
+				//g_monsters.clear();
 			}
-				break;
-			case 4 :
+			break;
+			case 4:
 			{
 				for (int i = 0; i < g_clients.size(); ++i)
 				{
@@ -329,9 +329,9 @@ void Network::ProcessPacket(char* buf)
 					//else
 						//gGameFramework.myFunc_SetBlind(i, ob_id, true);
 				}
-				g_monsters.clear();
+				//g_monsters.clear();
 			}
-				break;
+			break;
 			case 5:
 			{
 				for (int i = 0; i < g_clients.size(); ++i)
@@ -342,9 +342,9 @@ void Network::ProcessPacket(char* buf)
 					//else
 					//	gGameFramework.myFunc_SetBlind(i, ob_id, true);
 				}
-				g_monsters.clear();
+				//g_monsters.clear();
 			}
-				break;
+			break;
 			}
 		}
 		else
@@ -374,26 +374,6 @@ void Network::ProcessPacket(char* buf)
 		g_clients.erase(ob_id);
 		break;
 	}
-
-	case SC_MONSTER_UPDATE_POS: {
-
-		if (stage_num == 2)
-		{
-			// 10 개로 받아줘야한다. 
-			NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
-			int npc_id = p->_monster._id;
-			g_monsters[npc_id].setId(npc_id);
-			g_monsters[npc_id].setPrevPos(g_monsters[npc_id].getPos());
-		
-			g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
-			g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
-			g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
-			g_monsters[npc_id].setUp({ 0.f,1.f,0.f });
-			g_monsters[npc_id].scene_num = 2;
-		}
-	
-		break;
-	}
 	case SC_DAYTIME:
 	{
 		SC_DAYTIME_PACKET* p = reinterpret_cast<SC_DAYTIME_PACKET*>(buf);
@@ -410,7 +390,23 @@ void Network::ProcessPacket(char* buf)
 		cout << " Night " << endl;
 		break;
 	}
-	case SC_ICE_MONSTER_UPDATE :
+	case SC_MONSTER_UPDATE_POS: {
+
+		if (stage_num != 2)break;
+		// 10 개로 받아줘야한다. 
+		NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
+		int npc_id = p->_monster._id;
+		g_monsters[npc_id].setId(npc_id);
+		g_monsters[npc_id].setPrevPos(g_monsters[npc_id].getPos());
+		g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
+		g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
+		g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
+		g_monsters[npc_id].setUp({ 0.f,1.f,0.f });
+		g_monsters[npc_id].scene_num = 2;
+
+		break;
+	}
+	case SC_ICE_MONSTER_UPDATE:
 	{
 		if (stage_num != 3) break;
 		IceMonstersUpdate* p = reinterpret_cast<IceMonstersUpdate*>(buf);
@@ -490,9 +486,9 @@ void Network::ProcessPacket(char* buf)
 	}
 	break;
 	case SC_MONSTER_ATTACK:
-	{	
+	{
 		SC_MONSTER_ATTACK_PACKET* p = reinterpret_cast<SC_MONSTER_ATTACK_PACKET*>(buf);
-		
+
 		switch (p->monstertype)
 		{
 		case MonsterType::Fire: {
@@ -621,7 +617,7 @@ void Network::SendAttack(bool is_attack)
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
-void Network::SendAttackCollision(int npc_id,MonsterType _mtype)
+void Network::SendAttackCollision(int npc_id, MonsterType _mtype)
 {
 	CS_ATTACK_COLLISION_PACKET p;
 	p.size = sizeof(CS_ATTACK_COLLISION_PACKET);

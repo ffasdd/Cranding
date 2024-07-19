@@ -8,11 +8,13 @@ class Monster
 public:
 
 	XMFLOAT3 _pos;
+	XMFLOAT3 _initPos;
 	XMFLOAT3 _prevpos;
 	XMFLOAT3 _right;
 	XMFLOAT3 _up;
 	XMFLOAT3 _look;
 	XMFLOAT3 _velocity;
+
 
 	XMFLOAT3 spaceshippos = { 250.0f,10.0f,750.0f };
 
