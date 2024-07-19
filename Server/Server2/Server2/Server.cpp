@@ -299,6 +299,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::NATURE_BOSS_MOVE: {
 			int r_id = static_cast<int>(key);
+			ingameroom[r_id].NatureBossUpdate();
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NATURE_BOSS_MOVE };
 			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
@@ -499,6 +500,7 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 			  break;
 		}
+
 		clients[id].send_change_scene(id, scenenum); // 나한테 나의 씬넘버를 보냄 
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer) // 나의 씬번호를 다른 플레이어들한테 보냄 
@@ -506,8 +508,6 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == id)continue;
 			pl->send_change_scene(id, clients[id]._stage);
 		}
-
-
 	}
 						break;
 	case CS_INGAME_START: {

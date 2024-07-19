@@ -21,7 +21,7 @@ public:
 
 
     SCENEKIND GetCurrentScene() const { return m_nCurScene; }
-    void SetCurrentScene(SCENEKIND kind) { m_nCurScene = kind; }
+    void SetCurrentScene(const SCENEKIND kind) { m_nCurScene = kind; }
 
 private:
     std::map<SCENEKIND, std::shared_ptr<CScene>> m_scenes;
