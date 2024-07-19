@@ -579,23 +579,13 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
-	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Animate(fTimeElapsed);
-
-	//if (m_nHierarchicalGameObjects > 3)
-	//{
-	//   for (int i = 0; i < 3; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
-	//}
-	//else
-
 	// monster dead
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
-		if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
+		//if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Animate(fTimeElapsed);
 
 		if (i > 2 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead)
 		{
-			//g_sendqueue.push(SENDTYPE::ATTACK_COLLISION);
-	
 			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 			switch (m_ppHierarchicalGameObjects[i]->GetMonsType())
 			{
@@ -609,14 +599,14 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			case MONSTERTYPE::ICE:
 			{
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Ice);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			}
 			break;
 			case MONSTERTYPE::FIRE:
 			{
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Fire);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			}
 			break;
@@ -633,6 +623,9 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			}
 		}
 	}
+
+	for (int i = 1; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Animate(fTimeElapsed);
+
 
 	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->AnimateObjects(fTimeElapsed);
 

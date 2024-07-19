@@ -90,7 +90,7 @@ bool Session::getNpcAttack()
 	return monster_isattack;
 }
 
-bool Session::setNpcAttacked()
+bool Session::getNpcAttacked()
 {
 	return monster_isattacked;
 }
