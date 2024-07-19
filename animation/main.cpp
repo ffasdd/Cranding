@@ -107,7 +107,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 							
 							gGameFramework.myFunc_SetMonPosition(i, g_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
-							
+							gGameFramework.myFunc_SetMonAnimation(i, g_monsters[i].setNpcAttacked());
 						}
 						break;
 					}

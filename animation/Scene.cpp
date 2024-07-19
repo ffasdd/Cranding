@@ -602,7 +602,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			case MONSTERTYPE::NIGHT:
 			{
 				gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Night);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 			}
 			break;

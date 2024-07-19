@@ -504,6 +504,9 @@ void Network::ProcessPacket(char* buf)
 	{
 		SC_MONSTER_DIE_PACKET* p = reinterpret_cast<SC_MONSTER_DIE_PACKET*>(buf);
 		cout << " SC_MONSTER_DIE" << endl;
+
+		int npc_id = p->npc_id;
+		g_monsters[npc_id].setNpcAttacked(true);
 	}
 	break;
 	}
