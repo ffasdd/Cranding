@@ -604,6 +604,12 @@ void Server::ProcessPacket(int id, char* packet)
 			ingameroom[p->room_id].NightMonster[p->npc_id].MonsterLock.lock();
 			ingameroom[p->room_id].NightMonster[p->npc_id]._is_alive = false;
 			ingameroom[p->room_id].NightMonster[p->npc_id].MonsterLock.unlock();
+			if (p->npc_id >= 0 && p->npc_id < 10)
+				clients[id]._fireMonstercnt++;
+			else if (p->npc_id >= 10 && p->npc_id < 20)
+				clients[id]._iceMontsercnt++;
+			else
+				clients[id]._natureMonstercnt++;
 
 			break;
 		}

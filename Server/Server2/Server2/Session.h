@@ -18,6 +18,11 @@ public:
 	int _id;
 	int _hp;
 	int _maxhp;
+
+	int _fireMonstercnt = 0;
+	int _natureMonstercnt= 0;
+	int _iceMontsercnt = 0;
+
 	bool _isAttack = false;
 	SOCKET _socket;
 	XMFLOAT3 _pos;
