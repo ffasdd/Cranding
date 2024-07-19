@@ -97,6 +97,7 @@ public:
 	float PlayerPosZ;
 
 	int cl_id;
+	void ChangeScene(SCENEKIND nSceneKind);
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
 	void myFunc_SetMonPosition(int n, XMFLOAT3 position);
 	void myFunc_SetBossMonPosition(XMFLOAT3 position);

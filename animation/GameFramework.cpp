@@ -595,6 +595,22 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 	return(0);
 }
 
+
+void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
+{
+	if (nSceneKind != sceneManager.GetCurrentScene())
+	{
+
+		switch (nSceneKind)
+		{
+		
+
+		}
+
+		
+	}
+}
+
 void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
 {
 	if (cl_id == n)
