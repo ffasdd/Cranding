@@ -382,6 +382,7 @@ class CGameObject
 private:
 	int								m_nReferences = 0;
 
+	int m_mhealth = 100;
 public:
 	void AddRef();
 	void Release();
@@ -440,6 +441,10 @@ public:
 	MONSTERTYPE m_monstype;
 	void SetMonsType(MONSTERTYPE monstype);
 	MONSTERTYPE GetMonsType() { return m_monstype; }
+
+	float GetHealth() const { return m_mhealth; }
+	void SetHealth(const float health) { m_mhealth = health; }
+
 
 	void SetMesh(CMesh *pMesh);
 	void SetShader(CShader *pShader);
@@ -540,6 +545,7 @@ private:
 	int							m_nLength;
 
 	XMFLOAT3					m_xmf3Scale;
+
 
 public:
 	float GetHeight(float x, float z, bool bReverseQuad = false) { return(m_pHeightMapImage->GetHeight(x, z, bReverseQuad) * m_xmf3Scale.y); } //World

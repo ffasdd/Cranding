@@ -407,6 +407,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			// ������ȭ��
 			//SceneNum = 0;
 			sceneManager.SetCurrentScene(SCENEKIND::LOGIN);
+			cout << int(sceneManager.GetCurrentScene()) << endl;
 			ReleaseObjects();
 			BuildObjects(sceneManager.GetCurrentScene());
 			break;
@@ -417,6 +418,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 				//SceneNum = 1;
 				sceneManager.SetCurrentScene(SCENEKIND::LOBBY);
+				cout << int(sceneManager.GetCurrentScene()) << endl;
 				isready = false;
 
 				gNetwork.SendLoginfo();
@@ -433,7 +435,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				//gNetwork.SendChangeScene(sceneManager.GetCurrentScene());
 				break;
 			}
-			else break;
+			break;
 
 		case '2':
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
@@ -441,6 +443,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isready = true;
 			//SceneNum = 2;
 			sceneManager.SetCurrentScene(SCENEKIND::SPACESHIP);
+			cout << int(sceneManager.GetCurrentScene()) << endl;
 			// send ready packet  
 			//if(처음 시작할 때에만 IngameStart() ) {}
 			// bool 을 두면 간단 하지만? bool보단 그냥 클라마다 상태체크하는게 좋을거같긴함 Ingame상태이거나 게임중인 상태에는 보낼 필요가 없으니까? 
@@ -461,6 +464,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			// ice map
 			//SceneNum = 3;
 			sceneManager.SetCurrentScene(SCENEKIND::ICE);
+			cout << int(sceneManager.GetCurrentScene()) << endl;
 			isready = false;
 			ReleaseObjects();
 			BuildObjects(sceneManager.GetCurrentScene());
@@ -473,6 +477,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			// fire map
 			//SceneNum = 4;
 			sceneManager.SetCurrentScene(SCENEKIND::FIRE);
+			cout << int(sceneManager.GetCurrentScene()) << endl;
 			ReleaseObjects();
 			BuildObjects(sceneManager.GetCurrentScene());
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
@@ -484,6 +489,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			// grass map
 			//SceneNum = 5;
 			sceneManager.SetCurrentScene(SCENEKIND::NATURE);
+			cout << int(sceneManager.GetCurrentScene()) << endl;
 			ReleaseObjects();
 			BuildObjects(sceneManager.GetCurrentScene());
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
@@ -848,6 +854,18 @@ void CGameFramework::myFunc_SetBlind(int n, int id, bool _isblind)
 		if (m_pScene->m_ppHierarchicalGameObjects[others_id + 1])m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->isdraw = _isblind;
 	}
 
+}
+
+void CGameFramework::myFunc_SetStatus(int FCnt, int ICnt, int NCnt)
+{
+	int attack = m_pPlayer->GetAttackPower() + (FCnt * 5);
+	m_pPlayer->SetAttackPower(attack);
+
+	int speed = m_pPlayer->GetSpeed() + (ICnt * 3);
+	m_pPlayer->SetSpeed(speed);
+
+	int health = m_pPlayer->GetHealth() + (NCnt * 5);
+	m_pPlayer->SetHealth(health);
 }
 
 
