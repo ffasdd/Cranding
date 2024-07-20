@@ -757,45 +757,15 @@ void CGameFramework::myFunc_SetMonAnimation(int n, bool isAttacked, bool isAttac
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
 	}
-	//else if (isAttack == false && m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bWasMonsterAttack)
-	//{
-	//	m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bIsMonsterAttack = false;
-	//	m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bWasMonsterAttack = false;
-	//	m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
-	//	m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-	//	m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
-	//	m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
-	//}
-	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
-	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);
-	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5);
-	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5);
-	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5);
-	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5);
-	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5);
-	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5);
-	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5);
-	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
-	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
-
-	//if (isAttack)
-	//{
-	//	//m_pScene->m_ppHierarchicalGameObjects[id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
-
-	//	//m_pScene->m_ppHierarchicalGameObjects[id + 1]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
-	//	//m_pScene->m_ppHierarchicalGameObjects[id + 1]->m_pSkinnedAnimationController->m_nAnimationAfter = curAni;
-
-	//	m_pScene->m_ppHierarchicalGameObjects[id + 1]->m_pSkinnedAnimationController->SetTrackEnable(prevAni, false);
-	//	m_pScene->m_ppHierarchicalGameObjects[id + 1]->m_pSkinnedAnimationController->SetTrackEnable(curAni, true);
-
-	//	m_pScene->m_ppHierarchicalGameObjects[id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
-
-	//	g_clients[id + 1].setprevAnimation(curAni);
-	//}
-	//else
-	//{
-
-	//}
+	else if (isAttack == false && m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bWasMonsterAttack)
+	{
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bIsMonsterAttack = false;
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bWasMonsterAttack = false;
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+	}
 }
 
 void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
