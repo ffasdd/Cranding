@@ -743,12 +743,26 @@ void CGameFramework::myFunc_SetMonAnimation(int n, bool isAttacked, bool isAttac
 	{
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
 	}
 	else if (isAttack == true)
 	{
-
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bIsMonsterAttack = true;
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
+	}
+	else if (isAttack == false)
+	{
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bIsMonsterAttack = false;
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 	}
 	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
 	//m_pScene->m_ppHierarchicalGameObjects[id + 3]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);
