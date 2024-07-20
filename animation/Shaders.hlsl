@@ -748,7 +748,7 @@ VS_LIGHTING_OUTPUT VSLighting(VS_LIGHTING_INPUT input)
     return (output);
 }
 
-float4 PSLighting(VS_LIGHTING_OUTPUT input) : SV_TARGET5
+float4 PSLighting(VS_LIGHTING_OUTPUT input) : SV_TARGET
 {
     input.normalW = normalize(input.normalW);
     float4 uvs[MAX_LIGHTS];
@@ -762,7 +762,7 @@ float4 PSLighting(VS_LIGHTING_OUTPUT input) : SV_TARGET5
 //
 struct PS_DEPTH_OUTPUT
 {
-    float fzPosition : SV_Target5;
+    float fzPosition : SV_Target;
     float fDepth : SV_Depth;
 };
 
@@ -805,7 +805,7 @@ VS_SHADOW_MAP_OUTPUT VSShadowMapShadow(VS_LIGHTING_INPUT input)
     return (output);
 }
 
-float4 PSShadowMapShadow(VS_SHADOW_MAP_OUTPUT input) : SV_Target5
+float4 PSShadowMapShadow(VS_SHADOW_MAP_OUTPUT input) : SV_Target
 {
     float4 cIllumination = ShadowLighting(input.positionW, normalize(input.normalW), true, input.uvs);
 
@@ -900,7 +900,7 @@ float4 GetColorFromDepthShadow(float fDepth)
 
 SamplerState gssBorder : register(s3);
 
-float4 PSTextureToViewport(VS_TEXTURED_OUTPUT input) : SV_Target5
+float4 PSTextureToViewport(VS_TEXTURED_OUTPUT input) : SV_Target
 {
     float fDepthFromLight0 = gtxtDepthTextures[0].SampleLevel(gssBorder, input.uv, 0).r;
 

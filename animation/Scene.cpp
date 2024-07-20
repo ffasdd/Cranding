@@ -1439,17 +1439,17 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_ppShaders[0] = pObjectShader;
 
 	m_pDepthRenderShader = new CDepthRenderShader(pObjectShader, m_pLights, this);
-	DXGI_FORMAT pdxgiRtvFormats[6] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R32_FLOAT };
+	DXGI_FORMAT pdxgiRtvFormat[1] = { DXGI_FORMAT_R32_FLOAT };
 	//DXGI_FORMAT pdxgiDSVFormats[6] = { DXGI_FORMAT_D32_FLOAT};
-	m_pDepthRenderShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 6, pdxgiRtvFormats, DXGI_FORMAT_D32_FLOAT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	m_pDepthRenderShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 1, pdxgiRtvFormat, DXGI_FORMAT_D32_FLOAT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	m_pDepthRenderShader->BuildObjects(pd3dDevice, pd3dCommandList, NULL);
 
 	m_pShadowShader = new CShadowMapShader(this);
-	m_pShadowShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 6, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	m_pShadowShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	m_pShadowShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pDepthRenderShader->GetDepthTexture());
 
 	m_pShadowMapToViewport = new CTextureToViewportShader();
-	m_pShadowMapToViewport->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 6, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	m_pShadowMapToViewport->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	m_pShadowMapToViewport->BuildObjects(pd3dDevice, pd3dCommandList, m_pDepthRenderShader->GetDepthTexture());
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);

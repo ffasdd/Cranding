@@ -241,6 +241,7 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGr
 void CShader::OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, int nPipelineState)
 {
 	if (m_pd3dPipelineState) pd3dCommandList->SetPipelineState(m_pd3dPipelineState);
+	// 이거 해야되나?
 	//if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 }
 
@@ -1108,10 +1109,12 @@ void CBlurShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 //
 CIlluminatedShader::CIlluminatedShader()
 {
+
 }
 
 CIlluminatedShader::~CIlluminatedShader()
 {
+
 }
 
 D3D12_INPUT_LAYOUT_DESC CIlluminatedShader::CreateInputLayout()
@@ -1438,7 +1441,16 @@ void CDepthRenderShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	// 텍스처 초기화에 사용될 기본값 정의
 	D3D12_CLEAR_VALUE d3dClearValue = { DXGI_FORMAT_R32_FLOAT, { 1.0f, 1.0f, 1.0f, 1.0f } };
 	// 텍스처 생성
-	for (UINT i = 0; i < MAX_DEPTH_TEXTURES; i++) m_pDepthFromLightTexture->CreateTexture(pd3dDevice, _DEPTH_BUFFER_WIDTH, _DEPTH_BUFFER_HEIGHT, DXGI_FORMAT_R32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_COMMON, &d3dClearValue, RESOURCE_TEXTURE2D, i, 1);
+	for (UINT i = 0; i < MAX_DEPTH_TEXTURES; i++)
+	{
+		m_pDepthFromLightTexture->CreateTexture(pd3dDevice, _DEPTH_BUFFER_WIDTH, _DEPTH_BUFFER_HEIGHT, DXGI_FORMAT_R32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_COMMON, &d3dClearValue, RESOURCE_TEXTURE2D, i, 1);
+		ID3D12Resource* pTextureResource = m_pDepthFromLightTexture->GetResource(i);
+		if (pTextureResource)
+		{
+			std::wstring textureName = L"m_pDepthFromLightTexture" + std::to_wstring(i);
+			pTextureResource->SetName(textureName.c_str());
+		}
+	}
 
 	// 생성한 텍스처를 연결해줄 렌더 타겟 뷰 설정
 	D3D12_RENDER_TARGET_VIEW_DESC d3dRenderTargetViewDesc;
@@ -1492,6 +1504,7 @@ void CDepthRenderShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 
 	// 깊이 버퍼 리소스 생성
 	pd3dDevice->CreateCommittedResource(&d3dHeapProperties, D3D12_HEAP_FLAG_NONE, &d3dResourceDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &d3dClearValue, __uuidof(ID3D12Resource), (void**)&m_pd3dDepthBuffer);
+	m_pd3dDepthBuffer->SetName(L"DepthBufferResource");
 
 	// 깊이 스텐실 뷰 생성
 	D3D12_DEPTH_STENCIL_VIEW_DESC d3dDepthStencilViewDesc;
