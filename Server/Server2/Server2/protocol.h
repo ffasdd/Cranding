@@ -550,7 +550,10 @@ struct SC_TIME_CHECK_PACKET {
 };
 struct SC_DAYTIME_PACKET {
 	unsigned char size;
-	char type;
+	char type;; 
+	int firecnt;
+	int icecnt;
+	int naturecnt;
 
 };
 struct SC_NIGHT_PACKET {

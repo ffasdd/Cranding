@@ -52,6 +52,10 @@ public:
 	int scene_num = -1;
 	float m_yaw = 0.0f;
 
+	int m_firecnt = 0;
+	int m_icencnt = 0;
+	int m_naturecnt = 0;
+
 private:
 
 	int m_id  = -1;
@@ -59,6 +63,8 @@ private:
 	int characterType = -1;
 	char m_name[20];
 	int m_hp;
+
+
 
 	XMFLOAT3 m_right;
 	XMFLOAT3 m_up;

@@ -344,8 +344,13 @@ void Room::DayTimeSend()
 	SC_DAYTIME_PACKET p;
 	p.size = sizeof(SC_DAYTIME_PACKET);
 	p.type = SC_DAYTIME;
+
 	for (auto& pl : ingamePlayer)
 	{
+		p.firecnt = pl->_fireMonstercnt;
+		p.icecnt = pl->_iceMontsercnt;
+		p.naturecnt = pl->_natureMonstercnt;
+
 		pl->do_send(&p);
 	}
 }
