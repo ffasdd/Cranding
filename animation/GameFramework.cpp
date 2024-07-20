@@ -763,7 +763,7 @@ void CGameFramework::myFunc_SetMonAnimation(int n, bool isAttacked, bool isAttac
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bWasMonsterAttack = false;
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
-		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 	}
 }
