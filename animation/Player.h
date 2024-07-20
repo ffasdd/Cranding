@@ -61,10 +61,22 @@ public:
 	bool isFireMap = false;
 	bool isNatureMap = false;
 
-	// 원소 개수
-	int IceElement = 0;
-	int FireElement = 0;
-	int NatureElement = 0;
+	// 스탯 관련
+private:
+	float m_speed;
+	float m_attackPower;
+	float m_health;
+
+public: 
+	// 스탯 접근자 및 설정자 메서드
+	float GetSpeed() const { return m_speed; }
+	void SetSpeed(const float speed) { m_speed = speed; }
+
+	float GetAttackPower() const { return m_attackPower; }
+	void SetAttackPower(const  float attackPower) { m_attackPower = attackPower; }
+
+	float GetHealth() const { return m_health; }
+	void SetHealth(const float health) { m_health = health; }
 
 	XMFLOAT3					m_xmf3BeforeCollidedPosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
@@ -128,7 +140,6 @@ public:
 	void SetLook(const XMFLOAT3& xmf3Look) { m_xmf3Look = xmf3Look; }
 	void SetRight(const XMFLOAT3& xmf3Right) { m_xmf3Right = xmf3Right; }
 	void SetUp(const XMFLOAT3& xmf3Up) { m_xmf3Up = xmf3Up; }
-	int m_hp;
 
 protected:
 	ID3D12Resource* m_pd3dcbPlayer = NULL;

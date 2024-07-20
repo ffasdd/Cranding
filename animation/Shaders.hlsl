@@ -368,16 +368,16 @@ float4 BlendSkyTextures(float3 direction)
 
     // Calculate the blend factor based on the total time
     float blendFactor = 0.0f;
-    if (totalSeconds <= 180.0) // First 3 minutes
+    if (totalSeconds <= 30.0) // First 30 sec
     {
-        blendFactor = totalSeconds / 180.0; // Blend from 0 to 1
+        blendFactor = totalSeconds / 30.0; // Blend from 0 to 1
     }
-    else // Last 2 minutes
+    else // Last 1 minutes
     {
-        blendFactor = (300.0 - totalSeconds) / 120.0; // Blend from 1 to 0
+        blendFactor = (90.0 - totalSeconds) / 60.0; // Blend from 1 to 0
     }
 
-    return lerp(dayColor, nightColor, blendFactor);
+    return lerp(nightColor, dayColor, blendFactor);
 }
 
 VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)

@@ -93,7 +93,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						{
 							gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), false);
 							continue;
-						}else 
+						}
+						else 
 							gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), true);
 							
 						gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());

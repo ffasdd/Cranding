@@ -37,7 +37,7 @@ public:
     HRESULT Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets, UINT nWidth, UINT nHeight);
     void ProcessMouseClick(SCENEKIND scenekind, POINT clickPos);
     void UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2dLayoutRect, IDWriteTextFormat* pdwFormat, ID2D1SolidColorBrush* pd2dTextBrush);
-    void Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay, int curMinute, int curSecond, int IceElement, int FireElement, int NatureElement);
+    void Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay, int curMinute, int curSecond);
     void ReleaseResources();
     void AddUIRect(SCENEKIND scenekind, D2D1_RECT_F rect, std::function<bool()> func);
     //void AddUIRect(int sceneNum, D2D1_RECT_F rect, std::function<bool()> func);
@@ -66,6 +66,10 @@ public:
 
     UINT                            m_nTextBlocks = 0;
     TextBlock* m_pTextBlocks = NULL;
+    // 플레이어의 체력 설정 메서드
+    void SetPlayerHP();
+
+    void UpdateHPBar();
 
 private:
     array<vector<UIRect>, 3> m_uiRects;
@@ -82,8 +86,8 @@ private:
 
     // ingame
     float m_playerhp = 100.0;
+    D2D1_RECT_F m_HPBar;
     D2D1_RECT_F m_Timer = D2D1::RectF(1300.0f, 0.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
-    D2D1_RECT_F m_HPBar = D2D1::RectF(1300.0f, 930.0f, 1300 + m_playerhp * 6.0, FRAME_BUFFER_HEIGHT - 50.0);
 
     D2D1_RECT_F iceRect = D2D1::RectF(10, 800, 500, 830);
     D2D1_RECT_F fireRect = D2D1::RectF(10, 840, 500, 870);

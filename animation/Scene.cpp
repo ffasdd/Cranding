@@ -985,9 +985,9 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 	// 몬스터 객체 배열 초기화
 	const int FireMonsterStartIndex = 3;
-	const int IceMonsterStartIndex = FireMonsterStartIndex + FireMonsterNum;
-	const int GrassMonsterStartIndex = IceMonsterStartIndex + IceMonsterNum;
-	const int TotalMonsters = FireMonsterNum + IceMonsterNum + GrassMonsterNum;
+	const int IceMonsterStartIndex = FireMonsterStartIndex + FireMonsterNum; // 13
+	const int GrassMonsterStartIndex = IceMonsterStartIndex + IceMonsterNum; // 23
+	const int TotalMonsters = FireMonsterNum + IceMonsterNum + GrassMonsterNum; // 30
 
 	for (int i = 0; i < TotalMonsters; ++i) {
 		if (i < FireMonsterNum) {

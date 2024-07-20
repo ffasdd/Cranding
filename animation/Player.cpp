@@ -33,7 +33,7 @@ CPlayer::CPlayer()
 	m_pPlayerUpdatedContext = NULL;
 	m_pCameraUpdatedContext = NULL;
 
-	m_hp = 100;
+	SetHealth(100);
 }
 
 CPlayer::~CPlayer()
@@ -398,7 +398,7 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	SetPosition(XMFLOAT3(100.0f, 10.0f, 300.0f));
 	SetScale(XMFLOAT3(20.0f, 20.0f, 20.0f));
 
-	m_hp = 100;
+	SetHealth(100);
 
 	if (pAngrybotModel) delete pAngrybotModel;
 }
