@@ -385,7 +385,7 @@ private:
 	int m_mhealth = 100;
 public:
 	void AddRef();
-	void Release();
+	int Release();
 
 public:
 	CGameObject();

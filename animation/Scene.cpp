@@ -562,11 +562,11 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
-	for (int i = 2; i < m_nHierarchicalGameObjects; i++)
+	/*for (int i = 2; i < m_nHierarchicalGameObjects; i++)
 	{
 		if (m_ppHierarchicalGameObjects[i]->GetHealth() <= 0)
 			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = true;
-	}
+	}*/
 
 	// monster dead
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)

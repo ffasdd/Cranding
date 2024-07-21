@@ -64,6 +64,8 @@ public:
 	void BuildObjects(SCENEKIND m_nCurScene);
 	void ReleaseObjects();
 
+	void ChangeSceneReleaseObject();
+
     void ProcessInput();
     void AnimateObjects();
     void FrameAdvance();
@@ -121,6 +123,11 @@ public:
 
 	int SceneNum = 0;
 	bool isready = false;
+	bool isSceneChange = false;
+
+	bool isSceneChangetoFire = false;
+	bool isSceneChangetoIce = false;
+	bool isSceneChangetoNature = false;
 
 	// ½Ã°è
 	int total = 0;

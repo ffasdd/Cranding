@@ -853,14 +853,26 @@ void CGameObject::AddRef()
 	if (m_pChild) m_pChild->AddRef();
 }
 
-void CGameObject::Release() 
-{ 
-	if (m_pChild) m_pChild->Release();
-	if (m_pSibling) m_pSibling->Release();
+int CGameObject::Release()
+{
+	int childRelease = 0;
+	int siblingRelease = 0;
 
-	if (--m_nReferences <= 0) delete this; 
+	if (m_pChild) {
+		childRelease = m_pChild->Release();
+	}
+	if (m_pSibling) {
+		siblingRelease = m_pSibling->Release();
+	}
+
+	if (--m_nReferences <= 0) {
+		delete this;
+		return 0;
+	}
+	else {
+		return m_nReferences;
+	}
 }
-
 void CGameObject::SetChild(CGameObject *pChild, bool bReferenceUpdate)
 {
 	if (pChild)
