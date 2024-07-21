@@ -586,6 +586,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 		if (i > 2 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead)
 		{
+			//cout << " err " << endl;
 			//m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 
 			switch (m_ppHierarchicalGameObjects[i]->GetMonsType())

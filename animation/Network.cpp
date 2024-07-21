@@ -554,7 +554,7 @@ void Network::ProcessPacket(char* buf)
 		cout << " SC_MONSTER_DIE" << endl;
 
 		int npc_id = p->npc_id;
-		g_monsters[npc_id].setNpcAttacked(true);
+		g_monsters[npc_id].setNpcAttacked(p->_isattacked);
 	}
 	break;
 	}

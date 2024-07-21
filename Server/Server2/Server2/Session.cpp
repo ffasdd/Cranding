@@ -193,6 +193,16 @@ void Session::send_add_monster(int npc_id)
 	do_send(&p);
 }
 
+void Session::send_player_attack_mosnter(int npc_id, bool isattack)
+{
+	SC_MONSTER_DIE_PACKET p;
+	p.size = sizeof(SC_MONSTER_DIE_PACKET);
+	p.type = SC_MONSTER_DIE;
+	p.npc_id = npc_id;
+	p._isattacked = isattack;
+	do_send(&p);
+}
+
 void Session::Rotate()
 {
 	float radian = XMConvertToRadians(yaw);

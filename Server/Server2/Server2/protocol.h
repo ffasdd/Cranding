@@ -565,6 +565,7 @@ struct SC_MONSTER_DIE_PACKET {
 	char type;
 	MonsterType _montype;
 	int npc_id;
+	bool _isattacked;
 };
 
 

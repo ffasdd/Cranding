@@ -299,6 +299,7 @@ void Monster::NightAttack(int cl_id)
 bool Monster::CollideCheckToPlayer(Session* _player)
 {
 	if (_player->_stage != _stagenum)return false;
+
 	if (m_SPBB.Intersects(_player->m_SPBB) == true)
 	{
 		if (_attackState == true) {
