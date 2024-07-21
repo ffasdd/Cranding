@@ -386,6 +386,9 @@ void Network::ProcessPacket(char* buf)
 
 	
 		cout << " Day Time " << endl;
+		cout << " Fire Mosnter : " << g_clients[my_id].m_firecnt << endl;
+		cout << " Ice Mosnter : " << g_clients[my_id].m_icencnt << endl;
+		cout << " Nature Mosnter : " << g_clients[my_id].m_naturecnt << endl;
 		break;
 	}
 	case SC_NIGHT:
@@ -494,9 +497,21 @@ void Network::ProcessPacket(char* buf)
 	case SC_MONSTER_ATTACK:
 	{
 		SC_MONSTER_ATTACK_PACKET* p = reinterpret_cast<SC_MONSTER_ATTACK_PACKET*>(buf);
-
 		switch (p->monstertype)
 		{
+		case MonsterType::Night: {
+			if (p->is_attack)
+			{
+				g_monsters[p->id].setNpcAttack(p->is_attack);
+				cout << " Night Attack " << endl;
+			}
+			else
+			{
+				g_monsters[p->id].setNpcAttack(p->is_attack);
+				cout << " Plaer run " << endl;
+			}
+				break;
+		}
 		case MonsterType::Fire: {
 			if (p->is_attack)
 			{

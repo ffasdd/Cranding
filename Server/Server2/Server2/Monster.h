@@ -58,7 +58,7 @@ public:
 
 	void NightAttack(int cl_id);
 
-	bool CollideCheckToPlayer();
+	bool CollideCheckToPlayer(Session* _player);
 
 	// trace
 	int FindClosePlayer();

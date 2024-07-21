@@ -334,17 +334,17 @@ void Server::InitialziedMonster(int room_Id)
 			if (i < 10)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
-				ingameroom[room_Id].NightMonster[i]._m_type = MonsterType::Fire;
+				ingameroom[room_Id].NightMonster[i]._m_type = MonsterType::Night;
 			}
 			else if (10 <= i && i < 20)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(i_xpos(dre), 10.0f, i_zpos(dre));
-				ingameroom[room_Id].NightMonster[i]._m_type = MonsterType::Ice;
+				ingameroom[room_Id].NightMonster[i]._m_type = MonsterType::Night;
 			}
 			else if (20 <= i && i < 30)
 			{
 				ingameroom[room_Id].NightMonster[i]._pos = XMFLOAT3(n_xpos(dre), 10.0f, n_zpos(dre));
-				ingameroom[room_Id].NightMonster[i]._m_type = MonsterType::Nature;
+				ingameroom[room_Id].NightMonster[i]._m_type = MonsterType::Night;
 			}
 			ingameroom[room_Id].NightMonster[i]._id = i;
 			ingameroom[room_Id].NightMonster[i]._att = 10;
@@ -388,7 +388,7 @@ void Server::ProcessPacket(int id, char* packet)
 
 		while (clients[id].room_id == -1)
 		{
-			this_thread::sleep_for(1s);
+			this_thread::yield();
 		}
 		clients[id].send_login_info_packet();
 	}
@@ -523,8 +523,9 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ ingameroom[r_id].r_l };
 			ingameroom[r_id].readycnt++;
 		}
+		if (ingameroom[r_id].readycnt < 2) break;
 		bool all_Start = all_of(ingameroom[r_id].ingamePlayer.begin(), ingameroom[r_id].ingamePlayer.end(), [](Session* s) {return s->_state == STATE::Start; });
-
+ 
 		if (all_Start)
 		{
 			ingameroom[r_id].BossMonsterInitialziedMonster();

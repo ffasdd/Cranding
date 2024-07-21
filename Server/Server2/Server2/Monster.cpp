@@ -41,7 +41,7 @@ void Monster::Move()
 		_right = rightFloat3;
 
 		//else 
-		if (CollideCheckToPlayer()) _speed = 0;
+		if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
 		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
@@ -93,8 +93,7 @@ void Monster::IceMove()
 	int id = FindClosePlayer();
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
-		for (auto& cl : ingamePlayer)
-		{
+		
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
 			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
 			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
@@ -114,17 +113,16 @@ void Monster::IceMove()
 			_right = rightFloat3;
 
 			//else 
-			if (CollideCheckToPlayer()) _speed = 0;
+			if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
 			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
 			_speed = 0.7f;
 			m_SPBB.Center = _pos;
 			m_SPBB.Center.y = _pos.y;
-
-		}
+		
 	}
-	else 
+	else
 	{
 		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
 		{
@@ -162,8 +160,7 @@ void Monster::FireMove()
 	int id = FindClosePlayer();
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
-		for (auto& cl : ingamePlayer)
-		{
+		
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
 			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
 			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
@@ -183,7 +180,7 @@ void Monster::FireMove()
 			_right = rightFloat3;
 
 			//else 
-			if (CollideCheckToPlayer()) _speed = 0;
+			if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
 			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
@@ -191,7 +188,7 @@ void Monster::FireMove()
 			m_SPBB.Center = _pos;
 			m_SPBB.Center.y = _pos.y;
 
-		}
+		
 	}
 	else
 	{
@@ -232,8 +229,7 @@ void Monster::NatureMove()
 
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
-		for (auto& cl : ingamePlayer)
-		{
+		
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
 			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
 			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
@@ -253,7 +249,7 @@ void Monster::NatureMove()
 			_right = rightFloat3;
 
 			//else 
-			if (CollideCheckToPlayer()) _speed = 0;
+			if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
 			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
@@ -261,7 +257,7 @@ void Monster::NatureMove()
 			m_SPBB.Center = _pos;
 			m_SPBB.Center.y = _pos.y;
 
-		}
+		
 	}
 	else
 	{
@@ -300,18 +296,32 @@ void Monster::NightAttack(int cl_id)
 	//this_thread::yield();
 }
 
-bool Monster::CollideCheckToPlayer()
+bool Monster::CollideCheckToPlayer(Session* _player)
 {
-	for (auto& pl : ingamePlayer)
+	if (_player->_stage != _stagenum)return false;
+	if (m_SPBB.Intersects(_player->m_SPBB) == true)
 	{
-		if (pl->_stage != _stagenum)continue;
+		if (_attackState == true) {
+			return true;
+		}
+		_attackState = true;
+		SC_MONSTER_ATTACK_PACKET p;
+		p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
+		p.type = SC_MONSTER_ATTACK;
+		p.monstertype = _m_type;
+		p.id = _id;
+		p.is_attack = _attackState;
 
-		if (m_SPBB.Intersects(pl->m_SPBB) == true)
+		_player->do_send(&p);
+
+		return true;
+	}
+	else
+	{
+		if (_attackState != false)
 		{
-			if (_attackState == true) {
-				return true;
-			}
-			_attackState = true;
+			_attackState = false;
+
 			SC_MONSTER_ATTACK_PACKET p;
 			p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
 			p.type = SC_MONSTER_ATTACK;
@@ -319,27 +329,9 @@ bool Monster::CollideCheckToPlayer()
 			p.id = _id;
 			p.is_attack = _attackState;
 
-			pl->do_send(&p);
-
-			return true;
-		}
-		else
-		{
-			if (_attackState == false)continue;
-			_attackState = false;
-
-			SC_MONSTER_ATTACK_PACKET p;
-			p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
-			p.type = SC_MONSTER_ATTACK;
-			p.monstertype = MonsterType::Ice_Boss;
-			p.id = _id;
-			p.is_attack = _attackState;
-
-			pl->do_send(&p);
+			_player->do_send(&p);
 		}
 	}
-
-
 	return false;
 }
 
@@ -386,8 +378,7 @@ void IceBossMonster::Move()
 
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
-		for (auto& cl : ingamePlayer)
-		{
+		
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
 			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
 			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
@@ -407,14 +398,14 @@ void IceBossMonster::Move()
 			_right = rightFloat3;
 
 			//else 
-			if (CollideCheckToPlayer()) _speed = 0;
+			if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
 			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 			_speed = 1.0f;
 			m_SPBB.Center = _pos;
 			m_SPBB.Center.y = _pos.y;
 
-		}
+		
 	}
 	else
 	{
@@ -461,8 +452,7 @@ void FireBossMonster::Move()
 	int id = FindClosePlayer();
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
-		for (auto& cl : ingamePlayer)
-		{
+
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
 			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
 			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
@@ -482,7 +472,7 @@ void FireBossMonster::Move()
 			_right = rightFloat3;
 
 			//else 
-			if (CollideCheckToPlayer()) _speed = 0;
+			if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
 			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
@@ -490,7 +480,7 @@ void FireBossMonster::Move()
 			m_SPBB.Center = _pos;
 			m_SPBB.Center.y = _pos.y;
 
-		}
+		
 	}
 	else
 	{
@@ -537,8 +527,7 @@ void NatureBossMonster::Move()
 	int id = FindClosePlayer();
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
-		for (auto& cl : ingamePlayer)
-		{
+		
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
 			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
 			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
@@ -558,7 +547,7 @@ void NatureBossMonster::Move()
 			_right = rightFloat3;
 
 			//else 
-			if (CollideCheckToPlayer()) _speed = 0;
+			if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
 			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
@@ -566,7 +555,7 @@ void NatureBossMonster::Move()
 			m_SPBB.Center = _pos;
 			m_SPBB.Center.y = _pos.y;
 
-		}
+		
 	}
 	else
 	{
