@@ -64,6 +64,8 @@ public:
 	void BuildObjects(SCENEKIND m_nCurScene);
 	void ReleaseObjects();
 
+	void ChangeSceneReleaseObject();
+
     void ProcessInput();
     void AnimateObjects();
     void FrameAdvance();
@@ -86,38 +88,46 @@ public:
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
 
-	// 서버로부터 받은 좌표 렌더링
 public:
 	unique_ptr<CBlurShader> m_BlurShader = NULL;
 	ID3D12Resource* m_pBlurBuffer = NULL;
-	bool isBlurRender = true;
+	bool isBlurRender = false;
 
 	CPlayer* m_pPlayer = NULL;
 	float PlayerPosX;
 	float PlayerPosZ;
 
 	int cl_id;
+	void ChangeScene(SCENEKIND nSceneKind);
+
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
 	void myFunc_SetMonPosition(int n, XMFLOAT3 position);
 	void myFunc_SetBossMonPosition(XMFLOAT3 position);
-	// **함수명 LookRightUp으로 바꿔야 될 듯
+	
 	void myFunc_SetLookRightUp(int n, int id, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right);
 	void myFunc_SetMonLookRightUp(int n, XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right);
-
 	void myFunc_SetBossMonLookRightUp( XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right);
 
 	// 다른 클라들 애니메이션 변경해주는 함수
 	void myFunc_SetAnimation(int n, int id, int prevAni, int curAni);
 	void myFunc_SetMonAnimation(int n, bool isAttacked, bool isAttack);
+
 	// 다른 클라들 공격 설정해주는 함수
 	void myFunc_SetAttack(int n, int id, bool isAttack);
 
 	void myFunc_SetBlind(int n, int id, bool _isblind);
 
+	void myFunc_SetStatus(int FCnt, int ICnt, int NCnt);
+
 	CScene* m_pScene = NULL;
 
 	int SceneNum = 0;
 	bool isready = false;
+	bool isSceneChange = false;
+
+	bool isSceneChangetoFire = false;
+	bool isSceneChangetoIce = false;
+	bool isSceneChangetoNature = false;
 
 	// 시계
 	int total = 0;
@@ -128,9 +138,6 @@ public:
 	bool DayTime = false;
 	bool Night = false;
 
-	int GetIceElementNum() { return m_pPlayer->IceElement; }
-	int GetFireElementNum() { return m_pPlayer->FireElement; }
-	int GetNatureElementNum() { return m_pPlayer->NatureElement; }
 
 	ID3D12Resource* m_pd3dcbTime = NULL;
 	TIME* m_pTime = NULL;

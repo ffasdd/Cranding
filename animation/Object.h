@@ -383,9 +383,10 @@ class CGameObject
 private:
 	int								m_nReferences = 0;
 
+	int m_mhealth = 100;
 public:
 	void AddRef();
-	void Release();
+	int Release();
 
 public:
 	CGameObject();
@@ -435,11 +436,16 @@ public:
 	// 충돌 관련 변수
 	bool m_bIsColliding; // 현재 충돌 상태
 	bool m_bWasColliding; // 이전 프레임에서의 충돌 상태
+	bool m_bHasCollided = false;
 
 	// 몬스터 정보 관련
 	MONSTERTYPE m_monstype;
 	void SetMonsType(MONSTERTYPE monstype);
 	MONSTERTYPE GetMonsType() { return m_monstype; }
+
+	float GetHealth() const { return m_mhealth; }
+	void SetHealth(const float health) { m_mhealth = health; }
+
 
 	void SetMesh(CMesh *pMesh);
 	void SetShader(CShader *pShader);
@@ -540,6 +546,7 @@ private:
 	int							m_nLength;
 
 	XMFLOAT3					m_xmf3Scale;
+
 
 public:
 	float GetHeight(float x, float z, bool bReverseQuad = false) { return(m_pHeightMapImage->GetHeight(x, z, bReverseQuad) * m_xmf3Scale.y); } //World

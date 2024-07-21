@@ -807,7 +807,7 @@ CBoundingBoxMesh::CBoundingBoxMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 CBoundingBoxMesh::~CBoundingBoxMesh()
 {
-	if (m_pd3dPositionBuffer) m_pd3dPositionBuffer->Unmap(0, NULL);
+	//if (m_pd3dPositionBuffer) m_pd3dPositionBuffer->Unmap(0, NULL);
 }
 
 void CBoundingBoxMesh::UpdateVertexPosition(BoundingOrientedBox* pxmBoundingBox)

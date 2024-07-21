@@ -215,6 +215,15 @@ void UILayer::InitializeDevice(ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3
     }
 }
 
+void UILayer::SetPlayerHP()
+{
+    m_playerhp = gGameFramework.m_pPlayer->GetHealth();
+    UpdateHPBar();
+}
+void UILayer::UpdateHPBar()
+{
+    m_HPBar = D2D1::RectF(1300.0f, 930.0f, 1300 + m_playerhp * 6.0f, FRAME_BUFFER_HEIGHT - 50.0f);
+}
 ID2D1SolidColorBrush* UILayer::CreateBrush(D2D1::ColorF d2dColor)
 {
     ID2D1SolidColorBrush* pd2dDefaultTextBrush = NULL;
@@ -243,7 +252,7 @@ void UILayer::UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2
     if (pd2dTextBrush) m_pTextBlocks[nIndex].m_pd2dTextBrush = pd2dTextBrush;
 }
 
-void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay, int curMinute, int curSecond, int IceElement, int FireElement, int NatureElement)
+void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay, int curMinute, int curSecond)
 {
     ID3D11Resource* ppResources[] = { m_ppd3d11WrappedRenderTargets[nFrame] };
 
@@ -274,43 +283,42 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         m_pd2dDeviceContext->BeginDraw();
         WCHAR pstrOutputText[256];
         std::wstring DnN[2] = { L"Day", L"Night" };
-        int timenum = (curMinute == 3) ? 1 : 0;
-
+        int timenum = gGameFramework.Night;
         swprintf_s(pstrOutputText, 256, L"Day: %d  Time:%02d:%02d %s", curDay, curMinute, curSecond, DnN[timenum].c_str());
         m_pd2dDeviceContext->DrawText(pstrOutputText, (UINT)wcslen(pstrOutputText), m_textFormats[TEXT_SIZE::SIZE_18], m_Timer, m_brushes[BRUSH_COLOR::LIME_GREEN]);
-
+        SetPlayerHP();
         m_pd2dDeviceContext->FillRectangle(m_HPBar, m_brushes[BRUSH_COLOR::RED]);
 
         // 원소 개수
         WCHAR elementText[256];
 
         // Ice Element 개수 출력
-        swprintf_s(elementText, 256, L"Ice Elements: %d", IceElement);
+        swprintf_s(elementText, 256, L"HP: %d", gGameFramework.m_pPlayer->GetHealth());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         // Fire Element 개수 출력
-        swprintf_s(elementText, 256, L"Fire Elements: %d", FireElement);
+        swprintf_s(elementText, 256, L"Attack Power: %d", gGameFramework.m_pPlayer->GetAttackPower());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         // Nature Element 개수 출력
-        swprintf_s(elementText, 256, L"Nature Elements: %d", NatureElement);
+        swprintf_s(elementText, 256, L"Speed: %d", gGameFramework.m_pPlayer->GetSpeed());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
-        // Map 이동 메시지
-        std::wstring mapMessage;
-        if (gGameFramework.m_pPlayer->isIceMap) {
-            mapMessage = (IceElement > 15) ? m_vecIngameScene[0] : m_vecIngameScene[3];
-        }
-        else if (gGameFramework.m_pPlayer->isFireMap) {
-            mapMessage = (FireElement > 15) ? m_vecIngameScene[1] : m_vecIngameScene[3];
-        }
-        else if (gGameFramework.m_pPlayer->isNatureMap) {
-            mapMessage = (NatureElement > 15) ? m_vecIngameScene[2] : m_vecIngameScene[3];
-        }
+        //// Map 이동 메시지
+        //std::wstring mapMessage;
+        //if (gGameFramework.m_pPlayer->isIceMap) {
+        //    mapMessage = (IceElement > 15) ? m_vecIngameScene[0] : m_vecIngameScene[3];
+        //}
+        //else if (gGameFramework.m_pPlayer->isFireMap) {
+        //    mapMessage = (FireElement > 15) ? m_vecIngameScene[1] : m_vecIngameScene[3];
+        //}
+        //else if (gGameFramework.m_pPlayer->isNatureMap) {
+        //    mapMessage = (NatureElement > 15) ? m_vecIngameScene[2] : m_vecIngameScene[3];
+        //}
 
-        if (!mapMessage.empty()) {
-            m_pd2dDeviceContext->DrawText(mapMessage.c_str(), (UINT)wcslen(mapMessage.c_str()), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
-        }
+        //if (!mapMessage.empty()) {
+        //    m_pd2dDeviceContext->DrawText(mapMessage.c_str(), (UINT)wcslen(mapMessage.c_str()), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        //}
 
         m_pd2dDeviceContext->EndDraw();
         break;

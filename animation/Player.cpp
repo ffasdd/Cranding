@@ -33,7 +33,9 @@ CPlayer::CPlayer()
 	m_pPlayerUpdatedContext = NULL;
 	m_pCameraUpdatedContext = NULL;
 
-	m_hp = 100;
+	SetHealth(100);
+	SetSpeed(70);
+	SetAttackPower(5);
 }
 
 CPlayer::~CPlayer()
@@ -398,7 +400,9 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	SetPosition(XMFLOAT3(100.0f, 10.0f, 300.0f));
 	SetScale(XMFLOAT3(20.0f, 20.0f, 20.0f));
 
-	m_hp = 100;
+	SetHealth(100);
+	SetSpeed(70);
+	SetAttackPower(5);
 
 	if (pAngrybotModel) delete pAngrybotModel;
 }
@@ -440,7 +444,7 @@ CCamera* CTerrainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 	case THIRD_PERSON_CAMERA:
 		SetFriction(250.0f);
 		SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
-		SetMaxVelocityXZ(90.0f);
+		SetMaxVelocityXZ(GetSpeed());
 		SetMaxVelocityY(40.0f);
 		m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.5f);
@@ -452,7 +456,7 @@ CCamera* CTerrainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 	case INGAME_SCENE_CAMERA:
 		SetFriction(250.0f);
 		SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
-		SetMaxVelocityXZ(90.0f);
+		SetMaxVelocityXZ(GetSpeed());
 		SetMaxVelocityY(40.0f);
 		m_pCamera = OnChangeCamera(INGAME_SCENE_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(1.0f);

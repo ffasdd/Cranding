@@ -416,7 +416,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) {
 
 				//SceneNum = 1;
-				sceneManager.SetCurrentScene(SCENEKIND::LOBBY);
+				isSceneChange = true;
+				//sceneManager.SetCurrentScene(SCENEKIND::LOBBY);
 				isready = false;
 
 				gNetwork.SendLoginfo();
@@ -426,21 +427,21 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				cl_id = gNetwork.Getmyid();
 				m_pPlayer->c_id = gNetwork.Getmyid();
 
-				ReleaseObjects();
-				BuildObjects(sceneManager.GetCurrentScene());
+				//ReleaseObjects();
+				//BuildObjects(sceneManager.GetCurrentScene());
 
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 				//gNetwork.SendChangeScene(sceneManager.GetCurrentScene());
 				break;
 			}
-			else break;
+			break;
 
 		case '2':
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// spaceship map
 			isready = true;
 			//SceneNum = 2;
-			sceneManager.SetCurrentScene(SCENEKIND::SPACESHIP);
+			//sceneManager.SetCurrentScene(SCENEKIND::SPACESHIP);
 			// send ready packet  
 			//if(처음 시작할 때에만 IngameStart() ) {}
 			// bool 을 두면 간단 하지만? bool보단 그냥 클라마다 상태체크하는게 좋을거같긴함 Ingame상태이거나 게임중인 상태에는 보낼 필요가 없으니까? 
@@ -452,18 +453,18 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			}
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			//gNetwork.SendChangeScene(SceneNum);
-
-	
 			break;
 
 		case '3':
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// ice map
 			//SceneNum = 3;
-			sceneManager.SetCurrentScene(SCENEKIND::ICE);
+			//isSceneChange = true;
+			isSceneChangetoIce = true;
+			//sceneManager.SetCurrentScene(SCENEKIND::ICE);
 			isready = false;
-			ReleaseObjects();
-			BuildObjects(sceneManager.GetCurrentScene());
+			//ReleaseObjects();
+			//BuildObjects(sceneManager.GetCurrentScene());
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 	
 			break;
@@ -472,9 +473,11 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// fire map
 			//SceneNum = 4;
-			sceneManager.SetCurrentScene(SCENEKIND::FIRE);
-			ReleaseObjects();
-			BuildObjects(sceneManager.GetCurrentScene());
+			//sceneManager.SetCurrentScene(SCENEKIND::FIRE);
+			//ReleaseObjects();
+			//BuildObjects(sceneManager.GetCurrentScene());
+			//isSceneChange = true;
+			isSceneChangetoFire = true;
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 
 			break;
@@ -483,9 +486,11 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// grass map
 			//SceneNum = 5;
-			sceneManager.SetCurrentScene(SCENEKIND::NATURE);
+		/*	sceneManager.SetCurrentScene(SCENEKIND::NATURE);
 			ReleaseObjects();
-			BuildObjects(sceneManager.GetCurrentScene());
+			BuildObjects(sceneManager.GetCurrentScene());*/
+			//isSceneChange = true;
+			isSceneChangetoNature = true; 
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 
@@ -494,12 +499,14 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 
 		case '9':
-			m_pPlayer->m_hp -= 5.0f;
+			m_pPlayer->SetHealth(m_pPlayer->GetHealth() -5.0f);
 			isready = true;
 			break;
 
 		case 'B':
-			m_bRenderBoundingBox = !m_bRenderBoundingBox;
+			//m_bRenderBoundingBox = !m_bRenderBoundingBox;
+			isSceneChange = true;
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 
 		case 'F':
@@ -592,6 +599,167 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 		break;
 	}
 	return(0);
+}
+
+
+void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
+{
+	
+	
+
+	if (nSceneKind != sceneManager.GetCurrentScene())
+	{
+		ChangeSceneReleaseObject();
+
+
+		switch (nSceneKind)
+		{
+
+		case SCENEKIND::LOBBY:
+		{
+			if (S_OK != m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL)) {
+				cout << "CommandList Reset Fail" << endl;
+			}
+
+			sceneManager.SetCurrentScene(nSceneKind);
+			isSceneChange = false;
+			cout << "CLobbyScene BuildObjects" << endl;
+			m_pScene = new CLobbyScene();
+			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+			CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 2);
+
+
+			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+			m_pCamera = m_pPlayer->GetCamera();
+			
+			break;
+		}
+		case SCENEKIND::SPACESHIP:
+		{
+			if (S_OK != m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL)) {
+				cout << "CommandList Reset Fail" << endl;
+			}
+			isSceneChange = false;
+			sceneManager.SetCurrentScene(nSceneKind);
+			cout << "CSpaceShipScene BuildObjects" << endl;
+			//this_thread::sleep_for(10ms);
+			m_pScene = new CSpaceShipScene();
+			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+			CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 1);
+
+			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+			m_pCamera = m_pPlayer->GetCamera();
+
+
+
+			break;
+		}
+		case SCENEKIND::ICE:
+		{
+			if (S_OK != m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL)) {
+				cout << "CommandList Reset Fail" << endl;
+			}
+			
+			isSceneChangetoIce = false;
+			sceneManager.SetCurrentScene(nSceneKind);
+			cout << "CIceScene BuildObjects" << endl;
+			// ice map
+			m_pScene = new CIceScene();
+			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+
+			CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+
+			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+			m_pCamera = m_pPlayer->GetCamera();
+
+			break;
+
+		}
+		case SCENEKIND::FIRE:
+		{
+			if (S_OK != m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL)) {
+				cout << "CommandList Reset Fail" << endl;
+			}
+			isSceneChangetoFire = false;
+			sceneManager.SetCurrentScene(nSceneKind);
+			// fire map
+			m_pScene = new CFireScene();
+			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+
+			CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+
+			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+			m_pCamera = m_pPlayer->GetCamera();
+
+			break;
+		}
+
+		case SCENEKIND::NATURE:
+		{
+			if (S_OK != m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL)) {
+				cout << "CommandList Reset Fail" << endl;
+			}
+			isSceneChangetoNature = false;
+
+			sceneManager.SetCurrentScene(nSceneKind);
+			// grass map
+			m_pScene = new CGrassScene();
+			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+
+			CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+
+			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+			m_pCamera = m_pPlayer->GetCamera();
+
+
+			break;
+		}
+		default:
+			break;
+		}
+
+
+		//m_pPostProcessingShader = new CTextureToFullScreenShader();
+		//m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
+		//m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
+
+		//D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		//d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
+
+		//DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+		//m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle, 6); //SRV to (Render Targets) + (Depth Buffer)
+
+		//// ���� SRV ��¼��..
+		////D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
+
+		//DXGI_FORMAT pdxgiDepthSrvFormats[1] = { DXGI_FORMAT_R32_FLOAT };
+		//m_pPostProcessingShader->CreateShaderResourceViews(m_pd3dDevice, 1, &m_pd3dDepthStencilBuffer, pdxgiDepthSrvFormats);
+
+		//CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0, 1);
+		//m_pBlurBuffer = pTexture->CreateTexture(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_COMMON, NULL, RESOURCE_TEXTURE2D, 0, 1);
+		//m_pBlurBuffer->AddRef();
+
+		//m_BlurShader = make_unique<CBlurShader>();
+		//m_BlurShader->CreateShader(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
+		//m_BlurShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), NULL, pTexture);
+
+
+		m_pd3dCommandList->Close();
+		ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
+		m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
+
+		WaitForGpuComplete();
+
+		if (m_pScene) m_pScene->ReleaseUploadBuffers();
+		if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
+
+		m_GameTimer.Reset();
+	}
 }
 
 void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position)
@@ -820,6 +988,18 @@ void CGameFramework::myFunc_SetBlind(int n, int id, bool _isblind)
 
 }
 
+void CGameFramework::myFunc_SetStatus(int FCnt, int ICnt, int NCnt)
+{
+	int attack = m_pPlayer->GetAttackPower() + (FCnt * 5);
+	m_pPlayer->SetAttackPower(attack);
+
+	int speed = m_pPlayer->GetSpeed() + (ICnt * 3);
+	m_pPlayer->SetSpeed(speed);
+
+	int health = m_pPlayer->GetHealth() + (NCnt * 5);
+	m_pPlayer->SetHealth(health);
+}
+
 
 
 void CGameFramework::OnDestroy()
@@ -876,102 +1056,15 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
+	cout << "CLoginScene BuildObjects" << endl;
+	m_pScene = new CLoginScene();
+	m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-	switch (m_nCurScene)
-	{
-	case SCENEKIND::LOGIN:
-	{
-		cout << "CLoginScene BuildObjects" << endl;
-		m_pScene = new CLoginScene();
-		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+	CLoginPlayer* pPlayer = new CLoginPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
-		CLoginPlayer* pPlayer = new CLoginPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
-
-		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
-		m_pCamera = m_pPlayer->GetCamera();
-
-		break;
-	}
-	case SCENEKIND::LOBBY:
-	{
-		cout << "CLobbyScene BuildObjects" << endl;
-		m_pScene = new CLobbyScene();
-		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
-
-		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 2);
-
-
-		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
-		m_pCamera = m_pPlayer->GetCamera();
-
-
-		break;
-	}
-	case SCENEKIND::SPACESHIP:
-	{
-		cout << "CSpaceShipScene BuildObjects" << endl;
-		//this_thread::sleep_for(10ms);
-		m_pScene = new CSpaceShipScene();
-		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
-
-		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 1);
-
-		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
-		m_pCamera = m_pPlayer->GetCamera();
-
-
-
-		break;
-	}
-	case SCENEKIND::ICE:
-	{
-		cout << "CIceScene BuildObjects" << endl;
-		// ice map
-		m_pScene = new CIceScene();
-		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
-
-
-		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
-
-		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
-		m_pCamera = m_pPlayer->GetCamera();
-
-		break;
-
-	}
-	case SCENEKIND::FIRE:
-	{
-		// fire map
-		m_pScene = new CFireScene();
-		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
-
-
-		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
-
-		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
-		m_pCamera = m_pPlayer->GetCamera();
-
-		break;
-	}
-
-	case SCENEKIND::NATURE:
-	{
-		// grass map
-		m_pScene = new CGrassScene();
-		m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
-
-
-		CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
-
-		m_pScene->m_pPlayer = m_pPlayer = pPlayer;
-		m_pCamera = m_pPlayer->GetCamera();
-
-
-		break;
-	}
-	default:
-		break;
-	}
+	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+	m_pCamera = m_pPlayer->GetCamera();
+	
 
 	CreateShaderVariables();
 
@@ -1032,6 +1125,20 @@ void CGameFramework::ReleaseObjects()
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseShaderVariables();
 	if (m_pPostProcessingShader) m_pPostProcessingShader->Release();
 	m_pPostProcessingShader = nullptr;
+}
+
+void CGameFramework::ChangeSceneReleaseObject()
+{
+	if (m_pPlayer) {
+		if (!m_pPlayer->Release())
+			m_pPlayer = nullptr;
+	}
+
+	if (m_pScene) m_pScene->ReleaseObjects();
+	if (m_pScene) {
+		delete m_pScene;
+		m_pScene = nullptr;
+	}
 }
 
 void CGameFramework::ProcessInput()
@@ -1139,8 +1246,6 @@ void CGameFramework::AnimateObjects()
 	
 	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions() && m_pScene)
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
-
-	m_pScene->CheckMonsterByMonsterCollisions();
 }
 
 void CGameFramework::WaitForGpuComplete()
@@ -1194,172 +1299,239 @@ void CGameFramework::UpdateShaderVariables()
 
 void CGameFramework::UpdateTime()
 {
-	static float accumulatedTime = 0.0f;  // 누적된 시간
-	float fTimeElapsed = m_GameTimer.GetTimeElapsed();  // 경과 시간 가져오기
+	//static float accumulatedTime = 0.0f;  // 누적된 시간
+	//float fTimeElapsed = m_GameTimer.GetTimeElapsed();  // 경과 시간 가져오기
+	//accumulatedTime += fTimeElapsed;  // 누적 시간 업데이트
+
+	//// 누적 시간이 초 단위 이상인 경우
+	//int totalSeconds = static_cast<int>(accumulatedTime);  // 누적 시간을 초 단위로 변환
+
+	//// 분과 초 계산
+	//curMinute = totalSeconds / 60;
+	//curSecond = totalSeconds % 60;
+
+	//// 5분이 지나면 curDay를 증가시키고, 시간 초기화
+	//if (curMinute >= 5) {
+	//	curDay++;
+	//	accumulatedTime -= (5 * 60);  // 5분(300초)을 뺌으로써 초기화
+	//	totalSeconds = static_cast<int>(accumulatedTime);  // 갱신된 누적 시간을 초 단위로 변환
+	//	curMinute = totalSeconds / 60;
+	//	curSecond = totalSeconds % 60;
+	//}
+
+	// 서버에서 제공하는 낮과 밤의 시간 (초 단위)
+	float serverDayTime = 60.0f;  // 예: 낮 시간 300초 (5분)
+	float serverNightTime = 30.0f;  // 예: 밤 시간 300초 (5분)
+
+	// 클라이언트에서 관리하는 누적 시간 변수 초기화
+	static float accumulatedTime = 0.0f;  // 현재 누적 시간
+	static int curDay = 0;  // 현재 날 수
+
+	// 경과 시간 가져오기
+	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 	accumulatedTime += fTimeElapsed;  // 누적 시간 업데이트
 
-	// 누적 시간이 초 단위 이상인 경우
-	int totalSeconds = static_cast<int>(accumulatedTime);  // 누적 시간을 초 단위로 변환
+	// 서버에서 낮과 밤 전환 여부에 따른 시간 조정
+	if (DayTime && !Night) {
+		if (accumulatedTime >= serverDayTime) {
+			accumulatedTime = 0.0f;  // 밤 시간 초기화
+		}
+	}
+	else if (!DayTime && Night) {
+		if (accumulatedTime >= serverNightTime) {
+			accumulatedTime = 0.0f;  // 낮 시간 초기화
+		}
+	}
 
-	// 분과 초 계산
+	// 누적 시간이 초 단위 이상인 경우 분과 초 계산
+	int totalSeconds = static_cast<int>(accumulatedTime);  // 누적 시간을 초 단위로 변환
 	curMinute = totalSeconds / 60;
 	curSecond = totalSeconds % 60;
 
 	// 5분이 지나면 curDay를 증가시키고, 시간 초기화
-	if (curMinute >= 5) {
+	int day = (totalSeconds % int(serverDayTime + serverNightTime));
+	if (day == 0) {
 		curDay++;
-		accumulatedTime -= (5 * 60);  // 5분(300초)을 뺌으로써 초기화
-		totalSeconds = static_cast<int>(accumulatedTime);  // 갱신된 누적 시간을 초 단위로 변환
+		//totalSeconds = static_cast<int>(accumulatedTime);  // 갱신된 누적 시간을 초 단위로 변환
 		curMinute = totalSeconds / 60;
 		curSecond = totalSeconds % 60;
 	}
+
 }
 
 
 void CGameFramework::FrameAdvance()
 {
-	m_GameTimer.Tick(60.0f);
-	ProcessInput();
+	// Scene Change 변경
+	try {
+		if (isSceneChange)
+		{
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
+			{
+				ChangeScene(SCENEKIND::LOBBY);
+				// 
+			}
+			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::FIRE || sceneManager.GetCurrentScene() == SCENEKIND::ICE || sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
+			{
+				ChangeScene(SCENEKIND::SPACESHIP);
+			}	
+		}
+		if (isSceneChangetoFire) {
+			ChangeScene(SCENEKIND::FIRE);
+		}
+		if (isSceneChangetoIce) {
+			ChangeScene(SCENEKIND::ICE);
+		}
+		if (isSceneChangetoNature) {
+			ChangeScene(SCENEKIND::NATURE);
+		}
 
-	AnimateObjects();
-	HRESULT hResult = m_pd3dCommandAllocator->Reset();
-	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
+		m_GameTimer.Tick(60.0f);
+		ProcessInput();
 
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		AnimateObjects();
+		HRESULT hResult = m_pd3dCommandAllocator->Reset();
+		hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
-	//D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	//d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * ::gnRtvDescriptorIncrementSize);
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * ::gnRtvDescriptorIncrementSize);
+		//D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		//d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * ::gnRtvDescriptorIncrementSize);
 
-	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera); 
-	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && sceneManager.GetCurrentScene() != SCENEKIND::LOBBY)
-		UpdateTime();
-	UpdateShaderVariables();
+		D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * ::gnRtvDescriptorIncrementSize);
 
-
-	// 사용
-	D3D12_CPU_DESCRIPTOR_HANDLE d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-
-	m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH , 1.0f, 0, 0, NULL);
-
-	m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], d3dDsvCPUDescriptorHandle);
-
-	// imgui
-	bool isActive = false;
-
-	//if (ImGui::Begin("chat", &isActive))
-	//{
-	//	static char serverAddress[256] = "";
-
-	//	
-	//	ImGui::InputText("Server Address", serverAddress, sizeof(serverAddress));
-
-	//	if (ImGui::Button("Connect"))
-	//	{
-	//		// Connect to server logic can be added here
-	//		std::cout << "Connecting to server at: " << serverAddress << std::endl;
-	//		// Example: gNetwork.Connect(serverAddress);
-	//	}
-
-	//	ImGui::End();
-	//}
-	//ImGui::Render();
-	//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_pd3dCommandList);
+		m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera);
+		if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && sceneManager.GetCurrentScene() != SCENEKIND::LOBBY)
+			UpdateTime();
+		UpdateShaderVariables();
 
 
-	m_pScene->Render(m_pd3dCommandList, m_pCamera);
-	m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+		// 사용
+		D3D12_CPU_DESCRIPTOR_HANDLE d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
-	//if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
+		m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, NULL);
 
-	m_pPostProcessingShader->OnPostRenderTarget(m_pd3dCommandList);
+		m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], d3dDsvCPUDescriptorHandle);
 
-	d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		// imgui
+		bool isActive = false;
 
-	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], TRUE, &d3dDsvCPUDescriptorHandle);
+		//if (ImGui::Begin("chat", &isActive))
+		//{
+		//	static char serverAddress[256] = "";
 
-	d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		//	
+		//	ImGui::InputText("Server Address", serverAddress, sizeof(serverAddress));
 
-	m_pd3dCommandList->SetDescriptorHeaps(1, &m_pPostProcessingShader->m_pd3dCbvSrvDescriptorHeap);
-	//d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		//	if (ImGui::Button("Connect"))
+		//	{
+		//		// Connect to server logic can be added here
+		//		std::cout << "Connecting to server at: " << serverAddress << std::endl;
+		//		// Example: gNetwork.Connect(serverAddress);
+		//	}
 
-	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera, &m_nDrawOption);
+		//	ImGui::End();
+		//}
+		//ImGui::Render();
+		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_pd3dCommandList);
 
-	//m_pScene->Render(m_pd3dCommandList, m_pCamera);
 
-	if (isBlurRender)
-	{
-		// Render Target Resource Copy to BlurBuffer(For Blur Process)
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_pBlurBuffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+		m_pScene->Render(m_pd3dCommandList, m_pCamera);
+		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
-		m_pd3dCommandList->CopyResource(m_pBlurBuffer, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex]);
+		//if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_pBlurBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON);
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		m_pPostProcessingShader->OnPostRenderTarget(m_pd3dCommandList);
 
-		m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
-		m_pd3dCommandList->ClearRenderTargetView(m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], Colors::Red, 0, NULL);
+		d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+
 		m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], TRUE, &d3dDsvCPUDescriptorHandle);
-		m_pd3dCommandList->SetDescriptorHeaps(1, &m_BlurShader->m_pd3dCbvSrvDescriptorHeap);
-		m_BlurShader->Render(m_pd3dCommandList, m_pCamera);
-	}
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
-	hResult = m_pd3dCommandList->Close();
+		d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
-	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
-	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
+		m_pd3dCommandList->SetDescriptorHeaps(1, &m_pPostProcessingShader->m_pd3dCbvSrvDescriptorHeap);
+		//d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
-	WaitForGpuComplete();
+		m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera, &m_nDrawOption);
+
+		//m_pScene->Render(m_pd3dCommandList, m_pCamera);
+
+		if (isBlurRender)
+		{
+			// Render Target Resource Copy to BlurBuffer(For Blur Process)
+			::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COPY_SOURCE);
+			::SynchronizeResourceTransition(m_pd3dCommandList, m_pBlurBuffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+
+			m_pd3dCommandList->CopyResource(m_pBlurBuffer, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex]);
+
+			::SynchronizeResourceTransition(m_pd3dCommandList, m_pBlurBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON);
+			::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+			m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
+			m_pd3dCommandList->ClearRenderTargetView(m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], Colors::Red, 0, NULL);
+			m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], TRUE, &d3dDsvCPUDescriptorHandle);
+			m_pd3dCommandList->SetDescriptorHeaps(1, &m_BlurShader->m_pd3dCbvSrvDescriptorHeap);
+			m_BlurShader->Render(m_pd3dCommandList, m_pCamera);
+		}
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+
+		hResult = m_pd3dCommandList->Close();
+
+		ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
+		m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
+
+		WaitForGpuComplete();
 #ifdef _FULLSCREEN
-	// 명령 리스트 기록 시작
-	hResult = m_pd3dCommandAllocator->Reset();
-	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
+		// 명령 리스트 기록 시작
+		hResult = m_pd3dCommandAllocator->Reset();
+		hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
-	// 렌더 타겟으로 전환
-	SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		// 렌더 타겟으로 전환
+		SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-	if (m_pUILayer)
-		UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond, GetIceElementNum(), GetFireElementNum(), GetNatureElementNum());
+		if (m_pUILayer)
+			UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
 
-	// 상태를 PRESENT로 전환
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+		// 상태를 PRESENT로 전환
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
-	hResult = m_pd3dCommandList->Close();
+		hResult = m_pd3dCommandList->Close();
 
-	// 명령 목록 실행
-	ID3D12CommandList* pd3dCommandLists[] = { m_pd3dCommandList };
-	m_pd3dCommandQueue->ExecuteCommandLists(1, pd3dCommandLists);
+		// 명령 목록 실행
+		ID3D12CommandList* pd3dCommandLists[] = { m_pd3dCommandList };
+		m_pd3dCommandQueue->ExecuteCommandLists(1, pd3dCommandLists);
 
-	// GPU가 명령을 처리할 때까지 기다림
-	WaitForGpuComplete();
+		// GPU가 명령을 처리할 때까지 기다림
+		WaitForGpuComplete();
 
 #endif // _FULLSCREEN
 
 #ifdef _WITH_PRESENT_PARAMETERS
-	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;
-	dxgiPresentParameters.DirtyRectsCount = 0;
-	dxgiPresentParameters.pDirtyRects = NULL;
-	dxgiPresentParameters.pScrollRect = NULL;
-	dxgiPresentParameters.pScrollOffset = NULL;
-	m_pdxgiSwapChain->Present1(1, 0, &dxgiPresentParameters);
+		DXGI_PRESENT_PARAMETERS dxgiPresentParameters;
+		dxgiPresentParameters.DirtyRectsCount = 0;
+		dxgiPresentParameters.pDirtyRects = NULL;
+		dxgiPresentParameters.pScrollRect = NULL;
+		dxgiPresentParameters.pScrollOffset = NULL;
+		m_pdxgiSwapChain->Present1(1, 0, &dxgiPresentParameters);
 #else
 #ifdef _WITH_SYNCH_SWAPCHAIN
-	m_pdxgiSwapChain->Present(1, 0);
+		m_pdxgiSwapChain->Present(1, 0);
 #else
-	m_pdxgiSwapChain->Present(0, 0);
+		m_pdxgiSwapChain->Present(0, 0);
 #endif
 #endif
 
-	MoveToNextFrame();
+		MoveToNextFrame();
 
-	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
-	size_t nLength = _tcslen(m_pszFrameRate);
-	XMFLOAT3 xmf3Position = m_pPlayer->GetPosition();
-	_stprintf_s(m_pszFrameRate + nLength, 70 - nLength, _T("(%4f, %4f, %4f)"), xmf3Position.x, xmf3Position.y, xmf3Position.z);
-	::SetWindowText(m_hWnd, m_pszFrameRate);
+		m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
+		size_t nLength = _tcslen(m_pszFrameRate);
+		XMFLOAT3 xmf3Position = m_pPlayer->GetPosition();
+		_stprintf_s(m_pszFrameRate + nLength, 70 - nLength, _T("(%4f, %4f, %4f)"), xmf3Position.x, xmf3Position.y, xmf3Position.z);
+		::SetWindowText(m_hWnd, m_pszFrameRate);
+	}
+	catch (exception ex) {
+		cout << "Err: " << ex.what() << endl;
+	}
 }
 

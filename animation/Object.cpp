@@ -200,7 +200,7 @@ CMaterial::~CMaterial()
 	}
 
 	if (m_pd3dcbMaterial) {
-		m_pd3dcbMaterial->Unmap(0, NULL);
+		//m_pd3dcbMaterial->Unmap(0, NULL);
 		m_pd3dcbMaterial->Release();
 	}
 }
@@ -728,7 +728,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							//현재 플레이어의 뼈 변환 정보들
 							XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
 
-							//getsrt  해당 프레임의 행렬 가져옴
+							//getsrt  해당 프레임의 행렬 가져옴sd
 							//일반적으로 애니메이션에서 이전 프레임과 현재 프레임 사이의 움직임을 부드럽게 처리하기 위해 사용
 							//xmf4x4TrackTransform : 이전 프레임의 변환 행렬과 현재 프레임의 위치와 방향을 보간하여 새로운 변환 행렬을 반환
 							//fPosition은 다음 애니메이션의 position, j는 현재 boneframe번호
@@ -738,12 +738,12 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[k].m_fWeight));
 							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
 						}
-						// monster dead
+						// monster dead animation
 						if (m_bIsAttacked == true && fPosition > 1.0f)
 						{
 							//cout << "m_d" << endl;
 							m_bIsAttacked = false;
-							m_bIsDead = true;
+							//m_bIsDead = true;
 						}
 					}
 					m_pAnimationTracks[k].HandleCallback();
@@ -854,14 +854,26 @@ void CGameObject::AddRef()
 	if (m_pChild) m_pChild->AddRef();
 }
 
-void CGameObject::Release() 
-{ 
-	if (m_pChild) m_pChild->Release();
-	if (m_pSibling) m_pSibling->Release();
+int CGameObject::Release()
+{
+	int childRelease = 0;
+	int siblingRelease = 0;
 
-	if (--m_nReferences <= 0) delete this; 
+	if (m_pChild) {
+		childRelease = m_pChild->Release();
+	}
+	if (m_pSibling) {
+		siblingRelease = m_pSibling->Release();
+	}
+
+	if (--m_nReferences <= 0) {
+		delete this;
+		return 0;
+	}
+	else {
+		return m_nReferences;
+	}
 }
-
 void CGameObject::SetChild(CGameObject *pChild, bool bReferenceUpdate)
 {
 	if (pChild)

@@ -77,8 +77,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 			if (gNetwork.IngameStart == true || gNetwork.SpaceshipScene == true)
 			{
-				gGameFramework.ReleaseObjects();
-				gGameFramework.BuildObjects(SCENEKIND::SPACESHIP);
+				//gGameFramework.ReleaseObjects();
+				//gGameFramework.BuildObjects(SCENEKIND::SPACESHIP);
+				gGameFramework.isSceneChange = true;
 				gNetwork.IngameStart = false;
 				gNetwork.SpaceshipScene = false;
 			}
@@ -93,9 +94,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						{
 							gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), false);
 							continue;
-						}else 
+						}
+						else 
 							gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), true);
-							
+						
+						if (gGameFramework.DayTime)
+						{
+							gGameFramework.myFunc_SetStatus(g_clients[i].m_firecnt, g_clients[i].m_icencnt, g_clients[i].m_naturecnt);
+						}
 						gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
 						gGameFramework.myFunc_SetLookRightUp(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
 						gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
