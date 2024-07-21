@@ -1369,6 +1369,7 @@ void CGameFramework::FrameAdvance()
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
 				ChangeScene(SCENEKIND::LOBBY);
+				// 
 			}
 			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::FIRE || sceneManager.GetCurrentScene() == SCENEKIND::ICE || sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
 			{
