@@ -289,20 +289,20 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         SetPlayerHP();
         m_pd2dDeviceContext->FillRectangle(m_HPBar, m_brushes[BRUSH_COLOR::RED]);
 
-        //// 원소 개수
-        //WCHAR elementText[256];
+        // 원소 개수
+        WCHAR elementText[256];
 
-        //// Ice Element 개수 출력
-        //swprintf_s(elementText, 256, L"Ice Elements: %d", IceElement);
-        //m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        // Ice Element 개수 출력
+        swprintf_s(elementText, 256, L"HP: %d", gGameFramework.m_pPlayer->GetHealth());
+        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
-        //// Fire Element 개수 출력
-        //swprintf_s(elementText, 256, L"Fire Elements: %d", FireElement);
-        //m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        // Fire Element 개수 출력
+        swprintf_s(elementText, 256, L"Attack Power: %d", gGameFramework.m_pPlayer->GetAttackPower());
+        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
-        //// Nature Element 개수 출력
-        //swprintf_s(elementText, 256, L"Nature Elements: %d", NatureElement);
-        //m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        // Nature Element 개수 출력
+        swprintf_s(elementText, 256, L"Speed: %d", gGameFramework.m_pPlayer->GetSpeed());
+        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         //// Map 이동 메시지
         //std::wstring mapMessage;

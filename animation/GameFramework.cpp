@@ -504,7 +504,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 
 		case 'B':
-			m_bRenderBoundingBox = !m_bRenderBoundingBox;
+			//m_bRenderBoundingBox = !m_bRenderBoundingBox;
+			isSceneChange = true;
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 
 		case 'F':
@@ -602,7 +604,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 
 void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 {
-	isSceneChange = false;
+	
 	
 
 	if (nSceneKind != sceneManager.GetCurrentScene())
@@ -620,7 +622,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			}
 
 			sceneManager.SetCurrentScene(nSceneKind);
-
+			isSceneChange = false;
 			cout << "CLobbyScene BuildObjects" << endl;
 			m_pScene = new CLobbyScene();
 			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
@@ -638,7 +640,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			if (S_OK != m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL)) {
 				cout << "CommandList Reset Fail" << endl;
 			}
-
+			isSceneChange = false;
 			sceneManager.SetCurrentScene(nSceneKind);
 			cout << "CSpaceShipScene BuildObjects" << endl;
 			//this_thread::sleep_for(10ms);
