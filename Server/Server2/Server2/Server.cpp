@@ -436,8 +436,6 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl._stage != clients[id]._stage)continue;
 			pl.send_rotate_packet(id);
 		}
-
-
 		break;
 	}
 	case CS_CHANGE_ANIMATION: {
@@ -448,8 +446,6 @@ void Server::ProcessPacket(int id, char* packet)
 
 		clients[id].animationstate = (animateState)p->a_state;
 		clients[id].prevanimationstate = (animateState)p->prev_a_state;
-
-
 
 		clients[id].send_change_animate_packet(id);
 
@@ -663,19 +659,38 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
+
+	
 	}
 }
 
 void Server::disconnect(int id)
 {
-	for (auto& pl : clients)
+	for (auto& pl : ingameroom[clients[id].room_id].ingamePlayer)
 	{
-		if (pl._id == id) continue;
-		pl.send_remove_packet(id);
+		if (pl->_id == id) continue;
+		pl->send_remove_packet(id);
 	}
+
+	Session* _session = &clients[id];
+
+	ingameroom[clients[id].room_id].ingamePlayer.erase(std::remove_if(ingameroom[clients[id].room_id].ingamePlayer.begin(),
+		ingameroom[clients[id].room_id].ingamePlayer.end(), [id](Session* _session) {
+			return _session->_id == clients[id]._id; }), ingameroom[clients[id].room_id].ingamePlayer.end());
+
+	//auto it = std::find_if(ingameroom[clients[id].room_id].NightMonster)
+
+	//for (auto& npc : ingameroom[clients[id].room_id].NightMonster)
+	//{
+	//	auto it = find_if(npc.ingamePlayer.begin(),npc.ingamePlayer.end(), [id](Session* _session) {
+	//		return _session->_id == id; });
+	//	if(it != npc.ingamePlayer.end())
+	//}
+
+	ingameroom[clients[id].room_id]._state = roomState::Free;
+
 	closesocket(clients[id]._socket);
 
-	lock_guard<mutex>ll(clients[id]._s_lock);
 }
 
 bool Server::can_see(int to, int from)
@@ -717,25 +732,7 @@ int Server::get_new_room_id(unordered_map<int, Room>& rooms)
 	return -1;
 }
 
-int Server::get_client_id_formonster(int client_id)
-{
-	int id = client_id;
-	if (client_id < 2)
-	{
-		return id;
-	}
-	else if (client_id % 2 == 0)
-	{
-		id = 0;
-		return id;
-	}
-	else if (client_id % 2 == 1)
-	{
-		id = 1;
-		return id;
-	}
-	return 0;
-}
+
 
 void Server::ReadyToStart()
 {
