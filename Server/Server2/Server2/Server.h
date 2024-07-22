@@ -36,6 +36,7 @@ public:
 	int get_new_client_id();
 	int get_new_room_id(unordered_map<int, Room>& rooms);
 
+	int get_client_id_formonster(int client_id);
 
 
 	void ReadyToStart(); // 로비 관찰 스레드 함수 

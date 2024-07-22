@@ -4,6 +4,7 @@
 #include "Room.h"
 #include"protocol.h"
 enum class STATE: unsigned int {Free, Alloc , Ingame ,Start};
+enum class INGAMESTATE : unsigned char { Ingame, Free };
 
 class Session
 {
@@ -14,6 +15,7 @@ public:
 	bool isReady = false;
 	mutex _s_lock;
 	STATE _state;
+	INGAMESTATE _i_state;
 	atomic_bool _is_active;
 	int _id;
 	int _hp;

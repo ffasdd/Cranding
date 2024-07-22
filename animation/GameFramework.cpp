@@ -417,10 +417,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 1;
 				isSceneChange = true;
 				isready = false;
-				gNetwork.SendLoginfo();
-
-				while (cl_id == -1)
-					this_thread::yield();
+		
 
 				break;
 			}
@@ -1344,6 +1341,12 @@ void CGameFramework::FrameAdvance()
 		{
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
+
+				gNetwork.SendLoginfo();
+
+				while (cl_id == -1)
+					this_thread::yield();
+
 				ChangeScene(SCENEKIND::LOBBY);
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			}

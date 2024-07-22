@@ -56,12 +56,6 @@ void Session::send_login_info_packet()
 		p.a_state = animateState::SWORD_IDLE;
 		p.prev_state = animateState::SWORD_IDLE;
 	}
-	else if (clients[_id].characterType == 1)
-	{
-		p.a_state = animateState::GUN_IDLE;
-		p.prev_state = animateState::GUN_IDLE;
-
-	}
 
 	do_send(&p);
 }
@@ -85,12 +79,7 @@ void Session::send_add_info_packet(int client_id)
 		p.a_state = animateState::SWORD_IDLE;
 		p.prev_state = animateState::SWORD_IDLE;
 	}
-	else if (clients[_id].characterType == 1)
-	{
-		p.a_state = animateState::GUN_IDLE;
-		p.prev_state = animateState::GUN_IDLE;
 
-	}
 
 	strcpy_s(p.name, clients[client_id]._name);
 

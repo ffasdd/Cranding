@@ -8,6 +8,22 @@ FireBossMonster _FireBoss;
 IceBossMonster _IceBoss;
 NatureBossMonster _NatureBoss;
 
+Monster::Monster() : ingamePlayer { nullptr,nullptr}
+{
+	_pos = { 0.f,-150.0f,0.f };
+	_initPos = { 0.f,-150.0f,0.f };
+	_prevpos = { 0.f,-150.0f,0.f };
+	_right = { 1.f,0.0f,0.f };
+	_up = { 0.f,1.0f,0.f };
+	_look = { 0.f,0.0f,1.f };
+
+	_hp = -1;
+	_att = -1;
+	_stagenum = -1;
+	_id = -1;
+	
+}
+
 void Monster::Move()
 {
 	// Look 방향을우주선 방향으로 설정 

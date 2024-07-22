@@ -4,7 +4,7 @@ constexpr int NAME_SIZE = 20;
 constexpr int CHAT_SIZE = 100;
 
 constexpr int MAX_USER = 10;
-constexpr int MAX_ROOM = 2;
+constexpr int MAX_ROOM = 5;
 
 constexpr int MAX_ROOM_USER = 2;
 
@@ -88,17 +88,14 @@ enum class sceneState :char {
 	NATURE
 };
 enum class animateState : int {
-	GUN_IDLE,
 	SWORD_IDLE,
-	GUN_MOVE,
 	SWORD_MOVE,
 	TAKE_DAMAGE,
 	BLACKOUT,
 	STAND_UP,
-	SHOOTING,
+	HEAL,
 	SWORD_ATTACK_1,
 	SWORD_ATTACK_2,
-	HEAL,
 	FREE
 };
 enum class animateState_NPC : char {

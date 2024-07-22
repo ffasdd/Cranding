@@ -172,6 +172,8 @@ void Server::WorkerThread()
 					clients[c_id]._pos = { 220.0f,10.0f,760.0f };
 				else if (c_id % 2 == 0)
 					clients[c_id]._pos = { 210.0f, 10.0f,710.0f };
+				else if (c_id % 2 == 1)
+					clients[c_id]._pos = { 240.0f,10.0f,730.0f };
 
 				clients[c_id]._id = c_id;
 				clients[c_id]._name[0] = 0;
@@ -364,7 +366,7 @@ void Server::InitialziedMonster(int room_Id)
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 8.0f;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y = ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
 
-	
+
 
 		}
 	}
@@ -377,7 +379,7 @@ void Server::ProcessPacket(int id, char* packet)
 	{
 	case CS_READY_GAME: {
 		CS_READY_PACKET* p = reinterpret_cast<CS_READY_PACKET*>(packet);
-	
+
 	}
 					  break;
 	case CS_LOGIN: {
@@ -532,7 +534,7 @@ void Server::ProcessPacket(int id, char* packet)
 		if (ingameroom[r_id].readycnt < 2) break;
 
 		bool all_Start = all_of(ingameroom[r_id].ingamePlayer.begin(), ingameroom[r_id].ingamePlayer.end(), [](Session* s) {return s->_state == STATE::Start; });
- 
+
 		if (all_Start)
 		{
 			ingameroom[r_id].BossMonsterInitialziedMonster();
@@ -545,7 +547,7 @@ void Server::ProcessPacket(int id, char* packet)
 				pl->send_ingame_start();
 			}
 
-	
+
 
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
@@ -715,6 +717,26 @@ int Server::get_new_room_id(unordered_map<int, Room>& rooms)
 	return -1;
 }
 
+int Server::get_client_id_formonster(int client_id)
+{
+	int id = client_id;
+	if (client_id < 2)
+	{
+		return id;
+	}
+	else if (client_id % 2 == 0)
+	{
+		id = 0;
+		return id;
+	}
+	else if (client_id % 2 == 1)
+	{
+		id = 1;
+		return id;
+	}
+	return 0;
+}
+
 void Server::ReadyToStart()
 {
 	while (true)
@@ -729,7 +751,7 @@ void Server::ReadyToStart()
 			int room_id = get_new_room_id(ingameroom); // room ID를 부여받음 ;
 
 			{
-				lock_guard<mutex> rl{ ingameroom[room_id].r_l};
+				lock_guard<mutex> rl{ ingameroom[room_id].r_l };
 				ingameroom[room_id]._state = roomState::Ingame; // 상태를 Ingame상태로 바꿔준다 
 				ingameroom[room_id].ingamePlayer.emplace_back(_session);
 				clients[_session->_id].room_id = room_id;
@@ -741,6 +763,10 @@ void Server::ReadyToStart()
 				}
 			}
 
+			// 접속하는 클라이언트 순서대로 array에 집어넣어야함, 
+			// id를 맞춰야하나? 
+
+
 			for (auto& ingameplayer : ingameroom[room_id].ingamePlayer)
 			{
 				for (auto& player : ingameroom[room_id].ingamePlayer)
@@ -749,29 +775,83 @@ void Server::ReadyToStart()
 					player->send_add_info_packet(ingameplayer->_id);
 				}
 			}
+
 			for (auto& NightMonsters : ingameroom[room_id].NightMonster)
 			{
-				NightMonsters.ingamePlayer[_session->_id] = _session;
+				for (int i = 0; i < MAX_ROOM_USER; ++i)
+				{
+					if (NightMonsters.ingamePlayer[i] == nullptr)
+					{
+						NightMonsters.ingamePlayer[i] = _session;
+						break;
+					}
+					
+				}
 			}
 
-			for (auto& IceMonsters : ingameroom[room_id].IceMonster)
+			for (auto& IceMontsers : ingameroom[room_id].IceMonster)
 			{
-				IceMonsters.ingamePlayer[_session->_id] = _session;
+				for (int i = 0; i < MAX_ROOM_USER; ++i)
+				{
+					if (IceMontsers.ingamePlayer[i] == nullptr)
+					{
+						IceMontsers.ingamePlayer[i] = _session;
+						break;
+					}
+				}
 			}
 
-			for (auto& FireMonsters : ingameroom[room_id].FireMonster)
+			for (auto& FireMontsers : ingameroom[room_id].FireMonster)
 			{
-				FireMonsters.ingamePlayer[_session->_id] = _session;
+				for (int i = 0; i < MAX_ROOM_USER; ++i)
+				{
+					if (FireMontsers.ingamePlayer[i] == nullptr)
+					{
+						FireMontsers.ingamePlayer[i] = _session;
+						break;
+					}
+				}
 			}
 
 			for (auto& NatureMontsers : ingameroom[room_id].NatureMonster)
 			{
-				NatureMontsers.ingamePlayer[_session->_id] = _session;
+				for (int i = 0; i < MAX_ROOM_USER; ++i)
+				{
+					if (NatureMontsers.ingamePlayer[i] == nullptr)
+					{
+						NatureMontsers.ingamePlayer[i] = _session;
+						break;
+					}
+				}
+			}
+			for (int i = 0; i < MAX_ROOM_USER; ++i)
+			{
+				if (ingameroom[room_id].FireBoss.ingamePlayer[i] == nullptr)
+				{
+				ingameroom[room_id].FireBoss.ingamePlayer[i] = _session;
+					break;
+				}
+			}
+			for (int i = 0; i < MAX_ROOM_USER; ++i)
+			{
+				if (ingameroom[room_id].IceBoss.ingamePlayer[i] == nullptr)
+				{
+					ingameroom[room_id].IceBoss.ingamePlayer[i] = _session;
+					break;
+				}
+			}
+			for (int i = 0; i < MAX_ROOM_USER; ++i)
+			{
+				if (ingameroom[room_id].NatureBoss.ingamePlayer[i] == nullptr)
+				{
+					ingameroom[room_id].NatureBoss.ingamePlayer[i] = _session;
+					break;
+				}
 			}
 
-			ingameroom[room_id].FireBoss.ingamePlayer[_session->_id] = _session;
-			ingameroom[room_id].IceBoss.ingamePlayer[_session->_id] = _session;
-			ingameroom[room_id].NatureBoss.ingamePlayer[_session->_id] = _session;
+			//ingameroom[room_id].FireBoss.ingamePlayer[getidformonster] = _session;
+			//ingameroom[room_id].IceBoss.ingamePlayer[getidformonster] = _session;
+			//ingameroom[room_id].NatureBoss.ingamePlayer[getidformonster] = _session;
 
 		}
 		else
