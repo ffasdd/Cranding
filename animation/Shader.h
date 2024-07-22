@@ -439,10 +439,7 @@ public:
 	void PrepareShadowMap(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, BoundingBox* pxmSceneBoundingBox);
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
-	
-	//CScene* GetScene() const { return m_pScene; }
 
-	//void SetScene(CScene* pScene) { m_pScene = pScene; }
 private:
 	CScene* m_pScene;
 
@@ -453,6 +450,7 @@ protected:
 
 	ID3D12DescriptorHeap* m_pd3dRtvDescriptorHeap = NULL;
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_pd3dRtvCPUDescriptorHandles[MAX_DEPTH_TEXTURES];
+	D3D12_CPU_DESCRIPTOR_HANDLE		m_pd3dRtvCPUDescriptorHandlesSS[MAX_DEPTH_TEXTURES];
 
 	ID3D12DescriptorHeap* m_pd3dDsvDescriptorHeap = NULL;
 	ID3D12Resource* m_pd3dDepthBuffer = NULL;

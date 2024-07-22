@@ -242,7 +242,7 @@ void CShader::OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, int nP
 {
 	if (m_pd3dPipelineState) pd3dCommandList->SetPipelineState(m_pd3dPipelineState);
 	// 이거 해야되나?
-	//if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
+	if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 }
 
 void CShader::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, void* pContext)
@@ -1123,7 +1123,7 @@ D3D12_INPUT_LAYOUT_DESC CIlluminatedShader::CreateInputLayout()
 	D3D12_INPUT_ELEMENT_DESC* pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
 
 	pd3dInputElementDescs[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
-	pd3dInputElementDescs[1] = { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[1] = { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
 
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
 	d3dInputLayoutDesc.pInputElementDescs = pd3dInputElementDescs;
@@ -1469,7 +1469,7 @@ void CDepthRenderShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 		// d3dRtvCPUDescriptorHandle.ptr을 증가시켜 다음 텍스처에 대한 핸들을 준비
 		d3dRtvCPUDescriptorHandle.ptr += ::gnRtvDescriptorIncrementSize;
 	}
-
+	m_pd3dRtvCPUDescriptorHandlesSS[0] = m_pd3dRtvCPUDescriptorHandles[0];
 	// DSV 디스크립터 힙 생성
 	d3dDescriptorHeapDesc.NumDescriptors = 1;	// 1개의 디스크립터를 포함
 	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;	// DSV 타입의 힙 생성
@@ -1525,6 +1525,8 @@ void CDepthRenderShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 		m_ppDepthRenderCameras[i]->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	}
 
+	CreateCbvSrvDescriptorHeaps(pd3dDevice, 0, m_pDepthFromLightTexture->GetTextures());
+	CreateShaderResourceViews(pd3dDevice, m_pDepthFromLightTexture, 0, 12);
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -1641,13 +1643,13 @@ void CDepthRenderShader::PrepareShadowMap(ID3D12GraphicsCommandList* pd3dCommand
 			// ** 광원 시점에서 씬 렌더링 하기 전에 기존에 있던 렌더 타겟 및 깊이 스텐실 뷰 데이터 지우기
 			float pfClearColor[4] = { 1.0f, 0.0f,0.0f, 1.0f };
 			// ** 렌더 타겟의 모든 픽셀을 흰색으로 초기화
-			pd3dCommandList->ClearRenderTargetView(m_pd3dRtvCPUDescriptorHandles[j], Colors::White, 0, NULL);
+			pd3dCommandList->ClearRenderTargetView(m_pd3dRtvCPUDescriptorHandlesSS[j], Colors::White, 0, NULL);
 			// ** 깊이값도 전부 1.0f로 초기화
 			pd3dCommandList->ClearDepthStencilView(m_d3dDsvDescriptorCPUHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, NULL);
 
 			// ** OM 단계에서 사용할 렌더타겟과 깊이/스텐실 버퍼 설정
 			// ** 세 번째 인자 값이 true인건 m_pd3dRtvCPUDescriptorHandles[j]에서 연속된 RTV를 1(첫 번째 인자)개 사용한다는걸 의미
-			pd3dCommandList->OMSetRenderTargets(1, &m_pd3dRtvCPUDescriptorHandles[j], TRUE, &m_d3dDsvDescriptorCPUHandle);
+			pd3dCommandList->OMSetRenderTargets(1, &m_pd3dRtvCPUDescriptorHandlesSS[j], TRUE, &m_d3dDsvDescriptorCPUHandle);
 
 			// ** 광원 시점 카메라의 장면을 렌더링
 			Render(pd3dCommandList, m_ppDepthRenderCameras[j]);
