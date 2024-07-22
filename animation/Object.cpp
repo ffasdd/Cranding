@@ -745,6 +745,19 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							m_bIsAttacked = false;
 							m_bIsDead = true;
 						}
+						if (m_bWasMonsterAttack == true && fPosition > 0.5f)
+						{
+							m_bMonsterValidAttack = true;
+						}
+						if (m_bMonsterValidAttack == true && fPosition == 0.0f)
+						{
+							m_nMonsterAttackCnt = 0;
+							m_bMonsterValidAttack = false;
+						}
+						if (m_bIsPlayerAttacked && fPosition == 0.0f)
+						{
+							m_bIsPlayerAttacked = false;
+						}
 					}
 					m_pAnimationTracks[k].HandleCallback();
 				}
