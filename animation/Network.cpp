@@ -375,7 +375,6 @@ void Network::ProcessPacket(char* buf)
 	case SC_REMOVE_OBJECT: {
 		SC_REMOVE_OBJECT_PACKET* p = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(buf);
 		int ob_id = p->id;
-		g_clients[ob_id].setState(STATE::Free);
 		g_clients.erase(ob_id);
 		break;
 	}
@@ -562,7 +561,10 @@ void Network::ProcessPacket(char* buf)
 		g_monsters[npc_id].setNpcAttacked(p->_isattacked);
 	}
 	break;
+
+
 	}
+
 }
 
 void Network::SendLoginfo()
