@@ -413,7 +413,7 @@ XMFLOAT4X4 CAnimationSet::GetSRT(int nBone, float fPosition)
 	XMStoreFloat4x4(&xmf4x4Transform, XMMatrixAffineTransformation(S, XMVectorZero(), R, T));
 #else   
 	// 현재 읽어야 할 포지션이 어디인지 체크
-	for (int i = 0; i < (m_nKeyFrames - 1); i++) 
+  	for (int i = 0; i < (m_nKeyFrames - 1); i++) 
 	{
 		if ((m_pfKeyFrameTimes[i] <= fPosition) && (fPosition < m_pfKeyFrameTimes[i+1]))
 		{
@@ -702,8 +702,8 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 
 						if (fPosition2 == 0)
 						{
-							if (m_nAttackAniNum == 8) m_nAttackAniNum = 9;
-							else m_nAttackAniNum = 8;
+							if (m_nAttackAniNum == 6) m_nAttackAniNum = 7;
+							else m_nAttackAniNum = 6;
 							this->m_nCntValidAttack = 0;
 							this->m_bIsAttack = false;
 							this->m_bIsValidAttack = false;

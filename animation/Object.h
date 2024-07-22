@@ -314,12 +314,12 @@ public:
 	bool							m_bIsAttack = false;
 	bool							m_bIsValidAttack = false;
 	int								m_nCntValidAttack = 0;
-	int								m_nAttackAniNum = 8;
+	int								m_nAttackAniNum = 6;
 
 	// 애니메이션 블렌딩 변수
 	// m_nAnimationBefore, after -> 칼 쓰는애 : 1, 총 쓰는 애 : 0
-	int								m_nAnimationBefore = 1;
-	int								m_nAnimationAfter = 1;
+	int								m_nAnimationBefore = 0;
+	int								m_nAnimationAfter = 0;
 
 	int								m_nMoveCnt = 0;
 	
