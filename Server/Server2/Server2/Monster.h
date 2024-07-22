@@ -4,7 +4,8 @@ enum class MonsterType : char;
 class Monster
 {
 	//Monster() = delete;
-
+public:
+	Monster();
 public:
 
 	XMFLOAT3 _pos;
