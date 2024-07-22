@@ -377,7 +377,7 @@ void Server::ProcessPacket(int id, char* packet)
 	{
 	case CS_READY_GAME: {
 		CS_READY_PACKET* p = reinterpret_cast<CS_READY_PACKET*>(packet);
-		clients[id].isReady = true;
+	
 	}
 					  break;
 	case CS_LOGIN: {
@@ -388,6 +388,7 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Ingame;
+			clients[id]._stage = 1;
 		}
 
 		matchingqueue.push(&clients[id]);
@@ -524,12 +525,12 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Start;
 		}
-
 		{
 			lock_guard<mutex>ll{ ingameroom[r_id].r_l };
 			ingameroom[r_id].readycnt++;
 		}
 		if (ingameroom[r_id].readycnt < 2) break;
+
 		bool all_Start = all_of(ingameroom[r_id].ingamePlayer.begin(), ingameroom[r_id].ingamePlayer.end(), [](Session* s) {return s->_state == STATE::Start; });
  
 		if (all_Start)
@@ -728,7 +729,7 @@ void Server::ReadyToStart()
 			int room_id = get_new_room_id(ingameroom); // room ID를 부여받음 ;
 
 			{
-				lock_guard<mutex> rl{ r_l };
+				lock_guard<mutex> rl{ ingameroom[room_id].r_l};
 				ingameroom[room_id]._state = roomState::Ingame; // 상태를 Ingame상태로 바꿔준다 
 				ingameroom[room_id].ingamePlayer.emplace_back(_session);
 				clients[_session->_id].room_id = room_id;

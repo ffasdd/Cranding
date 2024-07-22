@@ -58,7 +58,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	CoInitialize(NULL);
 
-	
+
 	BuildObjects(sceneManager.GetCurrentScene());
 
 	return(true);
@@ -414,84 +414,64 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case '1':
 			// �κ�ȭ��
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) {
-
-				//SceneNum = 1;
+				SceneNum = 1;
 				isSceneChange = true;
-				//sceneManager.SetCurrentScene(SCENEKIND::LOBBY);
 				isready = false;
-
 				gNetwork.SendLoginfo();
 
-				WaitForSingleObject(loginevent, INFINITE);
+				while (cl_id == -1)
+					this_thread::yield();
 
-				cl_id = gNetwork.Getmyid();
-				m_pPlayer->c_id = gNetwork.Getmyid();
-
-				//ReleaseObjects();
-				//BuildObjects(sceneManager.GetCurrentScene());
-
-				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-				//gNetwork.SendChangeScene(sceneManager.GetCurrentScene());
 				break;
 			}
 			break;
 
-		case '2':
+		case '2': {
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// spaceship map
+			SceneNum = 2;
 			isready = true;
-			//SceneNum = 2;
-			//sceneManager.SetCurrentScene(SCENEKIND::SPACESHIP);
-			// send ready packet  
-			//if(처음 시작할 때에만 IngameStart() ) {}
-			// bool 을 두면 간단 하지만? bool보단 그냥 클라마다 상태체크하는게 좋을거같긴함 Ingame상태이거나 게임중인 상태에는 보낼 필요가 없으니까? 
-			// bool로 일단 해보자 
-			if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
-			{
-				g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-		
-			}
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-			//gNetwork.SendChangeScene(SceneNum);
-			break;
+			isSceneChange = true;
+		}
+				break;
 
 		case '3':
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// ice map
-			//SceneNum = 3;
+			SceneNum = 3;
 			//isSceneChange = true;
 			isSceneChangetoIce = true;
 			//sceneManager.SetCurrentScene(SCENEKIND::ICE);
 			isready = false;
 			//ReleaseObjects();
 			//BuildObjects(sceneManager.GetCurrentScene());
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-	
+
+
 			break;
 
 		case '4':
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// fire map
-			//SceneNum = 4;
+			SceneNum = 4;
 			//sceneManager.SetCurrentScene(SCENEKIND::FIRE);
 			//ReleaseObjects();
 			//BuildObjects(sceneManager.GetCurrentScene());
 			//isSceneChange = true;
 			isSceneChangetoFire = true;
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 
 			break;
 
 		case '5':
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// grass map
-			//SceneNum = 5;
+			SceneNum = 5;
 		/*	sceneManager.SetCurrentScene(SCENEKIND::NATURE);
 			ReleaseObjects();
 			BuildObjects(sceneManager.GetCurrentScene());*/
 			//isSceneChange = true;
-			isSceneChangetoNature = true; 
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			isSceneChangetoNature = true;
+			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 
 		case VK_SPACE:
@@ -499,14 +479,15 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 
 		case '9':
-			m_pPlayer->SetHealth(m_pPlayer->GetHealth() -5.0f);
+			m_pPlayer->SetHealth(m_pPlayer->GetHealth() - 5.0f);
 			isready = true;
 			break;
 
 		case 'B':
 			//m_bRenderBoundingBox = !m_bRenderBoundingBox;
-			isSceneChange = true;
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//isSceneChange = true;
+			g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 
 		case 'F':
@@ -604,8 +585,6 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 
 void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 {
-	
-	
 
 	if (nSceneKind != sceneManager.GetCurrentScene())
 	{
@@ -632,7 +611,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-			
+
 			break;
 		}
 		case SCENEKIND::SPACESHIP:
@@ -661,7 +640,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			if (S_OK != m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL)) {
 				cout << "CommandList Reset Fail" << endl;
 			}
-			
+
 			isSceneChangetoIce = false;
 			sceneManager.SetCurrentScene(nSceneKind);
 			cout << "CIceScene BuildObjects" << endl;
@@ -813,7 +792,7 @@ void CGameFramework::myFunc_SetLookRightUp(int n, int id, XMFLOAT3 Look, XMFLOAT
 			break;
 		}
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetLook(Look.x, Look.y, Look.z);
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(Up.x,Up.y,Up.z);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetUp(Up.x, Up.y, Up.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetRight(Right.x, Right.y, Right.z);
 		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->SetScale(20.0f, 20.0f, 20.0f);
 	}
@@ -827,7 +806,7 @@ void CGameFramework::myFunc_SetMonPosition(int n, XMFLOAT3 position)
 	//m_pScene->m_ppHierarchicalGameObjects[n + 3]->SetScale(20, 20, 20);
 }
 
-void CGameFramework::myFunc_SetBossMonPosition( XMFLOAT3 position)
+void CGameFramework::myFunc_SetBossMonPosition(XMFLOAT3 position)
 {
 	m_pScene->m_ppHierarchicalGameObjects[13]->isdraw = true;
 	m_pScene->m_ppHierarchicalGameObjects[13]->SetPosition(position);
@@ -899,7 +878,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
 
-	
+
 			g_clients[others_id + 1].setprevAnimation(curAni);
 		}
 	}
@@ -1052,7 +1031,7 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 
 #endif // _FULLSCREEN
 
-	
+
 
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
@@ -1064,7 +1043,7 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 
 	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 	m_pCamera = m_pPlayer->GetCamera();
-	
+
 
 	CreateShaderVariables();
 
@@ -1118,7 +1097,7 @@ void CGameFramework::ReleaseObjects()
 	if (m_pScene) {
 		delete m_pScene;
 		m_pScene = nullptr;
-	}
+}
 	if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseObjects();
@@ -1225,7 +1204,7 @@ void CGameFramework::ProcessInput()
 				if (fLength > m_pPlayer->GetMaxVelocityY()) temp.y *= (fMaxVelocityY / fLength);
 
 				XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(temp, m_GameTimer.GetTimeElapsed(), false);
-				m_pPlayer->Move(cl_id,xmf3Velocity, false);
+				m_pPlayer->Move(cl_id, xmf3Velocity, false);
 				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
 				g_sendqueue.push(SENDTYPE::MOVE);
 
@@ -1243,7 +1222,7 @@ void CGameFramework::AnimateObjects()
 	if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
 	m_pPlayer->Animate(fTimeElapsed);
-	
+
 	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions() && m_pScene)
 		m_pPlayer->SetPosition(m_pPlayer->m_xmf3BeforeCollidedPosition);
 }
@@ -1364,26 +1343,40 @@ void CGameFramework::FrameAdvance()
 {
 	// Scene Change 변경
 	try {
-		if (isSceneChange)
+		if (isSceneChange &&  SceneNum < 3 )
 		{
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
 				ChangeScene(SCENEKIND::LOBBY);
-				// 
+				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			}
 			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::FIRE || sceneManager.GetCurrentScene() == SCENEKIND::ICE || sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
 			{
 				ChangeScene(SCENEKIND::SPACESHIP);
-			}	
+				//
+				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+
+				if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
+				{
+					g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+
+				}
+			}
 		}
-		if (isSceneChangetoFire) {
+		else if (isSceneChangetoFire) {
 			ChangeScene(SCENEKIND::FIRE);
+			//
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
-		if (isSceneChangetoIce) {
+		else if (isSceneChangetoIce) {
 			ChangeScene(SCENEKIND::ICE);
+			//
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
-		if (isSceneChangetoNature) {
+		else if (isSceneChangetoNature) {
 			ChangeScene(SCENEKIND::NATURE);
+			//
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 
 		m_GameTimer.Tick(60.0f);

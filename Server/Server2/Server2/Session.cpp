@@ -49,6 +49,7 @@ void Session::send_login_info_packet()
 	p.right = { 1.0f,0.0f,0.0f };
 	p.charactertype = clients[_id].characterType;
 	p.room_id = clients[_id].room_id;
+	p.stage_num = clients[_id]._stage;
 
 	if (clients[_id].characterType == 0)
 	{
@@ -78,7 +79,7 @@ void Session::send_add_info_packet(int client_id)
 	p.right = clients[client_id]._right;
 	p.up = clients[client_id]._up;
 	p.charactertype = clients[client_id].characterType;
-
+	p.stage_num = clients[client_id]._stage;
 	if (clients[_id].characterType == 0)
 	{
 		p.a_state = animateState::SWORD_IDLE;

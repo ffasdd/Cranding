@@ -56,6 +56,7 @@ public:
 	int m_icencnt = 0;
 	int m_naturecnt = 0;
 
+	bool is_ready = false;
 private:
 
 	int m_id  = -1;

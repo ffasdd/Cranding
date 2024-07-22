@@ -75,14 +75,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		else
 		{
 
-			if (gNetwork.IngameStart == true || gNetwork.SpaceshipScene == true)
-			{
-				//gGameFramework.ReleaseObjects();
-				//gGameFramework.BuildObjects(SCENEKIND::SPACESHIP);
-				gGameFramework.isSceneChange = true;
-				gNetwork.IngameStart = false;
-				gNetwork.SpaceshipScene = false;
-			}
+			//if (gNetwork.IngameStart == true || gNetwork.SpaceshipScene == true)
+			//{
+			//	//gGameFramework.ReleaseObjects();
+			//	//gGameFramework.BuildObjects(SCENEKIND::SPACESHIP);
+			//	gGameFramework.isSceneChange = true;
+			//	gNetwork.IngameStart = false;
+			//	gNetwork.SpaceshipScene = false;
+			//}
 
 			if (gGameFramework.m_pPlayer != NULL && gGameFramework.m_pScene->m_ppHierarchicalGameObjects != NULL)
 			{

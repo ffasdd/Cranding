@@ -743,7 +743,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						{
 							//cout << "m_d" << endl;
 							m_bIsAttacked = false;
-							//m_bIsDead = true;
+							m_bIsDead = true;
 						}
 					}
 					m_pAnimationTracks[k].HandleCallback();
