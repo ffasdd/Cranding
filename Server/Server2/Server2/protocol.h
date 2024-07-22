@@ -88,17 +88,14 @@ enum class sceneState :char {
 	NATURE
 };
 enum class animateState : int {
-	GUN_IDLE,
 	SWORD_IDLE,
-	GUN_MOVE,
 	SWORD_MOVE,
 	TAKE_DAMAGE,
 	BLACKOUT,
 	STAND_UP,
-	SHOOTING,
+	HEAL,
 	SWORD_ATTACK_1,
 	SWORD_ATTACK_2,
-	HEAL,
 	FREE
 };
 enum class animateState_NPC : char {
