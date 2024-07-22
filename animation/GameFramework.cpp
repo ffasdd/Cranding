@@ -881,9 +881,6 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5);
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5);
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5);
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(8, 0.5);
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 0.5);
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(10, 0.5);
 		}
 
 		if (prevAni != curAni)
@@ -954,8 +951,8 @@ void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
 			break;
 		}
 
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(8, 1.0);
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(9, 1.0);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 1.0);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 1.0);
 
 		if (isAttack == true)
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsAttack = true;
