@@ -347,7 +347,7 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 11, pAngrybotModel);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 8, pAngrybotModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
@@ -356,23 +356,17 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkinnedAnimationController->SetTrackAnimationSet(5, 5);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(6, 6);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(7, 7);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(8, 8);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(9, 9);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(10, 10);
 
-	m_pSkinnedAnimationController->SetTrackSpeed(8, 1.5);
-	m_pSkinnedAnimationController->SetTrackSpeed(9, 1.5);
+	m_pSkinnedAnimationController->SetTrackSpeed(6, 1.5);
+	m_pSkinnedAnimationController->SetTrackSpeed(7, 1.5);
 
-	m_pSkinnedAnimationController->SetTrackEnable(0, false);
+	m_pSkinnedAnimationController->SetTrackEnable(1, false);
 	m_pSkinnedAnimationController->SetTrackEnable(2, false);
 	m_pSkinnedAnimationController->SetTrackEnable(3, false);
 	m_pSkinnedAnimationController->SetTrackEnable(4, false);
 	m_pSkinnedAnimationController->SetTrackEnable(5, false);
 	m_pSkinnedAnimationController->SetTrackEnable(6, false);
 	m_pSkinnedAnimationController->SetTrackEnable(7, false);
-	m_pSkinnedAnimationController->SetTrackEnable(8, false);
-	m_pSkinnedAnimationController->SetTrackEnable(9, false);
-	m_pSkinnedAnimationController->SetTrackEnable(10, false);
 
 	//m_pSkinnedAnimationController->SetCallbackKeys(1, 2);
 #ifdef _WITH_SOUND_RESOURCE
@@ -537,12 +531,12 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 		if (m_pSkinnedAnimationController->m_bIsMove == true)
 		{                                                                    
 			// run���� ��ȭ
-			if (m_pSkinnedAnimationController->m_nAnimationBefore != 2
+			if (m_pSkinnedAnimationController->m_nAnimationBefore != 1
 				&& m_pSkinnedAnimationController->m_bIsDead == false)
 			{
-				m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+				m_pSkinnedAnimationController->m_nAnimationAfter = 1;
 				m_pSkinnedAnimationController->m_bIsBlending = true;
-				m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 
 				if (g_clients[c_id].getCharacterType() == 0)
@@ -625,16 +619,16 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 
 		// ���� �κ�
 		if (m_pSkinnedAnimationController->m_bIsDead == true
-			&& m_pSkinnedAnimationController->m_nAnimationBefore != 5)
+			&& m_pSkinnedAnimationController->m_nAnimationBefore != 3)
 		{
-			m_pSkinnedAnimationController->m_nAnimationAfter = 5;
+			m_pSkinnedAnimationController->m_nAnimationAfter = 3;
 			m_pSkinnedAnimationController->m_bIsBlending = true;
 
 			// ���� ���¿����� ����, ��ȣ�ۿ� x
 			m_pSkinnedAnimationController->m_bIsAttack = false;
 			m_pSkinnedAnimationController->m_bIsHeal = false;
 
-			m_pSkinnedAnimationController->SetTrackEnable(5, true);
+			m_pSkinnedAnimationController->SetTrackEnable(3, true);
 			m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 		}
 
@@ -651,13 +645,13 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 
 		// ��ȣ�ۿ� ����
 		else if (m_pSkinnedAnimationController->m_bIsHeal == true
-			&& m_pSkinnedAnimationController->m_nAnimationAfter != 10)
+			&& m_pSkinnedAnimationController->m_nAnimationAfter != 5)
 		{
- 			m_pSkinnedAnimationController->m_nAnimationAfter = 10;
+     			m_pSkinnedAnimationController->m_nAnimationAfter = 5;
 			m_pSkinnedAnimationController->m_bIsBlending = true;
 
 			m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
-			m_pSkinnedAnimationController->SetTrackEnable(10, true);
+			m_pSkinnedAnimationController->SetTrackEnable(5, true);
 		}
 
 		//// ��ȣ�ۿ� �� + ���ÿ� run ����Ǵ� ���

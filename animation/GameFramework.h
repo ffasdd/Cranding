@@ -97,7 +97,7 @@ public:
 	float PlayerPosX = 0.0f;
 	float PlayerPosZ = 0.0f;
 
-	int cl_id = 0;
+	int cl_id = -1;
 	void ChangeScene(SCENEKIND nSceneKind);
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);

@@ -247,6 +247,8 @@ public:
 
 	void send_add_monster(int npc_id);
 
+	void send_player_attack_mosnter(int npc_id,bool isattack);
+
 	void Rotate();
 };
 extern array<Session, MAX_USER> clients;

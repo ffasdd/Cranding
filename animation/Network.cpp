@@ -192,16 +192,20 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setCharacterType(p->charactertype);
 		g_clients[my_id].setAnimation(int(p->a_state));
 		g_clients[my_id].setprevAnimation(int(p->prev_state));
+		g_clients[my_id].scene_num = p->stage_num;
 		gamestart = true;
 
-		SetEvent(loginevent);
+		gGameFramework.m_pPlayer->c_id = my_id;
+		gGameFramework.cl_id = my_id;
+
+		//SetEvent(loginevent);
 
 		break;
 	}
 
 	case SC_ADD_OBJECT: {
 
-		this_thread::sleep_for(10ms);
+		//this_thread::sleep_for(10ms);
 
 		SC_ADD_OBJECT_PACKET* p = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		//int ob_id = getmyid(p->id);
@@ -217,6 +221,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setCharacterType(p->charactertype);
 		g_clients[ob_id].setAnimation(int(p->a_state));
 		g_clients[ob_id].setprevAnimation(int(p->prev_state));
+		g_clients[ob_id].scene_num = p->stage_num;
 
 		break;
 	}
@@ -281,28 +286,27 @@ void Network::ProcessPacket(char* buf)
 				{
 					IngameScene = true;
 					ClientState = true;
-
 				}
 				else if (IngameScene == true)
 				{
-					SpaceshipScene = true;
+					//SpaceshipScene = true;
+					gGameFramework.isSceneChange = true;
+					//for (int i = 0; i < g_clients.size(); ++i)
+					//{
+					//	if (g_clients[i].getId() == my_id)continue;
+					//	if (g_clients[i].scene_num != g_clients[my_id].scene_num)
+					//	{
 
-					for (int i = 0; i < g_clients.size(); ++i)
-					{
-						if (g_clients[i].getId() == my_id)continue;
-						if (g_clients[i].scene_num != g_clients[my_id].scene_num)
-						{
+					//		//	gGameFramework.myFunc_SetBlind(i, ob_id, false);
 
-							//	gGameFramework.myFunc_SetBlind(i, ob_id, false);
+					//	}
+					//	//else
+					//	{
 
-						}
-						//else
-						{
+					//		//gGameFramework.myFunc_SetBlind(i, ob_id, true);
 
-							//gGameFramework.myFunc_SetBlind(i, ob_id, true);
-
-						}
-					}
+					//	}
+					//}
 				}
 				break;
 
@@ -364,7 +368,8 @@ void Network::ProcessPacket(char* buf)
 		break;
 	}
 	case SC_INGAME_STRAT: {
-		IngameStart = true;
+		gGameFramework.isSceneChange = true;
+		//IngameStart = true;
 		break;
 	}
 	case SC_REMOVE_OBJECT: {
@@ -379,12 +384,12 @@ void Network::ProcessPacket(char* buf)
 		SC_DAYTIME_PACKET* p = reinterpret_cast<SC_DAYTIME_PACKET*>(buf);
 		gGameFramework.DayTime = true;
 		gGameFramework.Night = false;
-		
+
 		g_clients[my_id].m_firecnt = p->firecnt;
 		g_clients[my_id].m_icencnt = p->icecnt;
 		g_clients[my_id].m_naturecnt = p->naturecnt;
 
-	
+
 		cout << " Day Time " << endl;
 		cout << " Fire Mosnter : " << g_clients[my_id].m_firecnt << endl;
 		cout << " Ice Mosnter : " << g_clients[my_id].m_icencnt << endl;
@@ -510,7 +515,7 @@ void Network::ProcessPacket(char* buf)
 				g_monsters[p->id].setNpcAttack(p->is_attack);
 				cout << " Plaer run " << endl;
 			}
-				break;
+			break;
 		}
 		case MonsterType::Fire: {
 			if (p->is_attack)
@@ -554,7 +559,7 @@ void Network::ProcessPacket(char* buf)
 		cout << " SC_MONSTER_DIE" << endl;
 
 		int npc_id = p->npc_id;
-		g_monsters[npc_id].setNpcAttacked(true);
+		g_monsters[npc_id].setNpcAttacked(p->_isattacked);
 	}
 	break;
 	}

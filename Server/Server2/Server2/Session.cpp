@@ -49,6 +49,7 @@ void Session::send_login_info_packet()
 	p.right = { 1.0f,0.0f,0.0f };
 	p.charactertype = clients[_id].characterType;
 	p.room_id = clients[_id].room_id;
+	p.stage_num = clients[_id]._stage;
 
 	if (clients[_id].characterType == 0)
 	{
@@ -78,7 +79,7 @@ void Session::send_add_info_packet(int client_id)
 	p.right = clients[client_id]._right;
 	p.up = clients[client_id]._up;
 	p.charactertype = clients[client_id].characterType;
-
+	p.stage_num = clients[client_id]._stage;
 	if (clients[_id].characterType == 0)
 	{
 		p.a_state = animateState::SWORD_IDLE;
@@ -190,6 +191,16 @@ void Session::send_add_monster(int npc_id)
 	p.look = XMFLOAT3(0.f, 0.f, 1.0f);
 	p.up = XMFLOAT3(0.f, 1.f, 0.0f);
 	p.right = XMFLOAT3(1.f, 0.f, 0.0f);
+	do_send(&p);
+}
+
+void Session::send_player_attack_mosnter(int npc_id, bool isattack)
+{
+	SC_MONSTER_DIE_PACKET p;
+	p.size = sizeof(SC_MONSTER_DIE_PACKET);
+	p.type = SC_MONSTER_DIE;
+	p.npc_id = npc_id;
+	p._isattacked = isattack;
 	do_send(&p);
 }
 

@@ -425,7 +425,7 @@ struct SC_LOGIN_INFO_PACKET {
 	int		level;
 	int		charactertype;
 	int		room_id;
-
+	int		stage_num;
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 right;
@@ -441,6 +441,7 @@ struct SC_ADD_OBJECT_PACKET {
 	int		hp;
 	int		Max_hp;
 	int		charactertype;
+	int		stage_num;
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 right;
@@ -565,6 +566,7 @@ struct SC_MONSTER_DIE_PACKET {
 	char type;
 	MonsterType _montype;
 	int npc_id;
+	bool _isattacked;
 };
 
 

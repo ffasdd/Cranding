@@ -17,7 +17,7 @@ Timer::~Timer()
 	isRunning = false;
 	if (m_timerthread.joinable())
 		m_timerthread.join();
-	 
+
 }
 
 void Timer::TimerThread()
@@ -38,11 +38,11 @@ void Timer::TimerThread()
 				}
 				switch (ev.eventId)
 				{
-			
+
 				case EVENT_TYPE::EV_NPC_UPDATE: {
 					Over_Exp* ov = new Over_Exp;
-					ov->_comptype = COMP_TYPE::NPC_UPDATE;	
-					PostQueuedCompletionStatus(_IocpHandle, 1,ev.roomId, &ov->_over);
+					ov->_comptype = COMP_TYPE::NPC_UPDATE;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
 					//att true 
 				}
@@ -88,7 +88,7 @@ void Timer::TimerThread()
 					ov->_comptype = COMP_TYPE::ICE_BOSS_MOVE;
 					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
-					
+
 				}
 				case EVENT_TYPE::EV_FIRE_BOSS_MOVE: {
 					Over_Exp* ov = new Over_Exp;
@@ -102,9 +102,15 @@ void Timer::TimerThread()
 					ov->_comptype = COMP_TYPE::NATURE_BOSS_MOVE;
 					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
+				}
+				case EVENT_TYPE::EV_PLAYER_ATTACK_NPC: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::PLAYER_ATTACKED_NPC;
+					ov->_ai_target_obj = ev.targetId;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
 
 				}
-	
 
 
 				}
