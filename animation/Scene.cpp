@@ -1102,7 +1102,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_xmBoundingBox))
 			{
-				// 여기에 hp 닳는 코드 넣어주랑
+				m_pPlayer->SetHealth(m_pPlayer->GetHealth() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
 				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);

@@ -971,12 +971,22 @@ void CGameFramework::myFunc_SetStatus(int FCnt, int ICnt, int NCnt)
 {
 	cout << "myFunc_SetStatus" << endl;
 	int attack = m_pPlayer->GetAttackPower() + (FCnt * 5);
+	if (attack > 100) {
+		attack = 100;
+	}
+
 	m_pPlayer->SetAttackPower(attack);
 
 	int speed = m_pPlayer->GetSpeed() + (ICnt * 3);
+	if (speed > 90) {
+		speed = 90;
+	}
 	m_pPlayer->SetSpeed(speed);
 
 	int health = m_pPlayer->GetHealth() + (NCnt * 5);
+	if (health > 100) {
+		health = 100;
+	}
 	m_pPlayer->SetHealth(health);
 }
 
