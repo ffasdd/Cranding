@@ -547,14 +547,14 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 						g_clients[c_id].setAnimation((int)animateState::SWORD_MOVE);
 					}
 				}
-				else if (g_clients[c_id].getCharacterType() == 1)
-				{
-					if (g_clients[c_id].getAnimation() != (int)animateState::GUN_MOVE)
-					{
-						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation()); // ���� �ִϸ��̼��� ��� 
-						g_clients[c_id].setAnimation((int)animateState::GUN_MOVE);
-					}
-				}
+				//else if (g_clients[c_id].getCharacterType() == 1)
+				//{
+				//	if (g_clients[c_id].getAnimation() != (int)animateState::GUN_MOVE)
+				//	{
+				//		g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation()); // ���� �ִϸ��̼��� ��� 
+				//		g_clients[c_id].setAnimation((int)animateState::GUN_MOVE);
+				//	}
+				//}
 			}
 			gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 		}
@@ -603,14 +603,14 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				}
 
 				// �÷��̾� ���Ⱑ ���̶�� ��idle
-				else if (g_clients[c_id].getCharacterType() == 1)
+				/*else if (g_clients[c_id].getCharacterType() == 1)
 				{
 					if (g_clients[c_id].getAnimation() != (int)animateState::GUN_IDLE)
 					{
 						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
 						g_clients[c_id].setAnimation((int)animateState::GUN_IDLE);
 					}
-				}
+				}*/
 
 				// �������� ������ ����� �ִ�num, ���� �ִ� num send
 				gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
