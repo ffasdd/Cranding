@@ -33,8 +33,8 @@ extern Network							gNetwork;
 
 struct TIME
 {
-	float fCurrentMin;
-	float fCurrentSec;
+	int fCurrentMin;
+	int fCurrentSec;
 };
 
 class UILayer;
@@ -94,10 +94,10 @@ public:
 	bool isBlurRender = false;
 
 	CPlayer* m_pPlayer = NULL;
-	float PlayerPosX;
-	float PlayerPosZ;
+	float PlayerPosX = 0.0f;
+	float PlayerPosZ = 0.0f;
 
-	int cl_id;
+	int cl_id = 0;
 	void ChangeScene(SCENEKIND nSceneKind);
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
@@ -128,6 +128,8 @@ public:
 	bool isSceneChangetoFire = false;
 	bool isSceneChangetoIce = false;
 	bool isSceneChangetoNature = false;
+
+	bool isLoginwindow = false;
 
 	// ½Ã°è
 	int total = 0;
@@ -192,8 +194,6 @@ private:
 
 	CCamera						*m_pCamera = NULL;
 
-	UILayer* m_pUILayer1 = NULL;
-	UILayer* m_pUILayer2 = NULL;
 	UILayer* m_pUILayer = NULL;
 
 

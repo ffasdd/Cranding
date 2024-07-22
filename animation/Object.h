@@ -103,6 +103,8 @@ public:
 	CMaterial(int nTextures);
 	virtual ~CMaterial();
 
+	virtual void ReleaseShaderVariables();
+
 private:
 	int								m_nReferences = 0;
 
@@ -386,7 +388,7 @@ private:
 	int m_mhealth = 100;
 public:
 	void AddRef();
-	int Release();
+	void Release();
 
 public:
 	CGameObject();
@@ -408,7 +410,7 @@ public:
 	// 상하체 분리 변수
 	bool							m_bUpperBody = false;
 
-	char							m_pstrFrameName[64];
+	char							m_pstrFrameName[64] = { '\0' };
 
 	CMesh							*m_pMesh = NULL;
 	CMesh							*m_pNoSkinMesh = NULL;
@@ -434,17 +436,17 @@ public:
 	bool isdraw = true;
 
 	// 충돌 관련 변수
-	bool m_bIsColliding; // 현재 충돌 상태
-	bool m_bWasColliding; // 이전 프레임에서의 충돌 상태
+	bool m_bIsColliding = false; // 현재 충돌 상태
+	bool m_bWasColliding = false; // 이전 프레임에서의 충돌 상태
 	bool m_bHasCollided = false;
 
 	// 몬스터 정보 관련
-	MONSTERTYPE m_monstype;
+	MONSTERTYPE m_monstype = MONSTERTYPE::NIGHT;
 	void SetMonsType(MONSTERTYPE monstype);
 	MONSTERTYPE GetMonsType() { return m_monstype; }
 
-	float GetHealth() const { return m_mhealth; }
-	void SetHealth(const float health) { m_mhealth = health; }
+	int GetHealth() const { return m_mhealth; }
+	void SetHealth(const int health) { m_mhealth = health; }
 
 
 	void SetMesh(CMesh *pMesh);

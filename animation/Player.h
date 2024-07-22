@@ -63,20 +63,20 @@ public:
 
 	// 스탯 관련
 private:
-	float m_speed;
-	float m_attackPower;
-	float m_health;
+	int m_speed;
+	int m_attackPower;
+	int m_health;
 
 public: 
 	// 스탯 접근자 및 설정자 메서드
-	float GetSpeed() const { return m_speed; }
-	void SetSpeed(const float speed) { m_speed = speed; }
+	int GetSpeed() const { return m_speed; }
+	void SetSpeed(const int speed) { m_speed = speed; }
 
-	float GetAttackPower() const { return m_attackPower; }
-	void SetAttackPower(const  float attackPower) { m_attackPower = attackPower; }
+	int GetAttackPower() const { return m_attackPower; }
+	void SetAttackPower(const  int attackPower) { m_attackPower = attackPower; }
 
-	float GetHealth() const { return m_health; }
-	void SetHealth(const float health) { m_health = health; }
+	int GetHealth() const { return m_health; }
+	void SetHealth(const int health) { m_health = health; }
 
 	XMFLOAT3					m_xmf3BeforeCollidedPosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
 

@@ -132,7 +132,11 @@ void CScene::ReleaseObjects()
 
 	if (m_ppHierarchicalGameObjects)
 	{
-		for (int i = 0; i < m_nHierarchicalGameObjects; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Release();
+		for (int i = 0; i < m_nHierarchicalGameObjects; i++)
+			if (m_ppHierarchicalGameObjects[i]) {
+				m_ppHierarchicalGameObjects[i]->Release();
+				cout << "=========================================" << endl;
+			}
 		delete[] m_ppHierarchicalGameObjects;
 	}
 
@@ -523,6 +527,8 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 		//	// send 
 		//	g_sendqueue.push(SENDTYPE::MOVE);
 		//	break;
+		default:
+			break;
 		}
 		break;
 	default:
@@ -1293,8 +1299,8 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 		// 초기 속성 설정
 		m_ppHierarchicalGameObjects[3 + i]->isdraw = false;
 
-		float posX = (rand() % 2000) / 10.0;
-		float posY = (rand() % 2000) / 10.0;
+		float posX = float((rand() % 2000) / 10.0);
+		float posY = float((rand() % 2000) / 10.0);
 
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);

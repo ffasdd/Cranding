@@ -199,7 +199,13 @@ CMaterial::~CMaterial()
 		if (m_ppstrTextureNames) delete[] m_ppstrTextureNames;
 	}
 
-	if (m_pd3dcbMaterial) {
+	ReleaseShaderVariables();
+}
+
+void CMaterial::ReleaseShaderVariables()
+{
+	if (m_pd3dcbMaterial)
+	{
 		//m_pd3dcbMaterial->Unmap(0, NULL);
 		m_pd3dcbMaterial->Release();
 	}
@@ -234,13 +240,21 @@ void CMaterial::PrepareShaders(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLi
 {
 	//DXGI_FORMAT pdxgiRtvFormats[4] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R32_FLOAT  };
 
-	m_pStandardShader = new CStandardShader();
-	m_pStandardShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature,1, NULL , DXGI_FORMAT_D32_FLOAT);
-	m_pStandardShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	if (!m_pStandardShader) {
+		m_pStandardShader = new CStandardShader(); 
+		
+		m_pStandardShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 1, NULL, DXGI_FORMAT_D32_FLOAT);
 
-	m_pSkinnedAnimationShader = new CSkinnedAnimationStandardShader();
-	m_pSkinnedAnimationShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 1, NULL, DXGI_FORMAT_D32_FLOAT);
-	m_pSkinnedAnimationShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+		m_pStandardShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+		m_pStandardShader->AddRef();
+	}
+
+	if (!m_pSkinnedAnimationShader) {
+		m_pSkinnedAnimationShader = new CSkinnedAnimationStandardShader();
+		m_pSkinnedAnimationShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 1, NULL, DXGI_FORMAT_D32_FLOAT);
+		m_pSkinnedAnimationShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+		m_pSkinnedAnimationShader->AddRef();
+	}
 }
 
 void CMaterial::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -548,12 +562,24 @@ CAnimationController::CAnimationController(ID3D12Device *pd3dDevice, ID3D12Graph
 
 CAnimationController::~CAnimationController()
 {
-	if (m_pAnimationTracks) delete[] m_pAnimationTracks;
-
-	for (int i = 0; i < m_nSkinnedMeshes; i++)
+	if (m_pAnimationTracks)
 	{
-		m_ppd3dcbSkinningBoneTransforms[i]->Unmap(0, NULL);
-		m_ppd3dcbSkinningBoneTransforms[i]->Release();
+		delete[] m_pAnimationTracks;
+		m_pAnimationTracks = nullptr;
+	}
+
+	// Code for releasing
+	if (m_nSkinnedMeshes > 0)
+	{
+		for (int i = 0; i < m_nSkinnedMeshes; i++)
+		{
+			if (m_ppd3dcbSkinningBoneTransforms[i]) {
+				std::cout << "Unmapping and releasing skinning bone transform " << i << std::endl;
+				m_ppd3dcbSkinningBoneTransforms[i]->Unmap(0, NULL);
+				m_ppd3dcbSkinningBoneTransforms[i]->Release();
+				m_ppd3dcbSkinningBoneTransforms[i] = nullptr;
+			}
+		}
 	}
 	if (m_ppd3dcbSkinningBoneTransforms) delete[] m_ppd3dcbSkinningBoneTransforms;
 	if (m_ppcbxmf4x4MappedSkinningBoneTransforms) delete[] m_ppcbxmf4x4MappedSkinningBoneTransforms;
@@ -799,14 +825,13 @@ CGameObject::~CGameObject()
 {
 	if (m_pMesh) m_pMesh->Release();
 
-	if (m_pBoundingBoxMesh) m_pBoundingBoxMesh->Release();
-	m_pBoundingBoxMesh = NULL;
 
 	if (m_nMaterials > 0)
 	{
 		for (int i = 0; i < m_nMaterials; i++)
 		{
 			if (m_ppMaterials[i]) {
+				std::cout << "Releasing material " << i << std::endl;
 				m_ppMaterials[i]->Release();
 				m_ppMaterials[i] = nullptr;
 			}
@@ -853,25 +878,12 @@ void CGameObject::AddRef()
 	if (m_pChild) m_pChild->AddRef();
 }
 
-int CGameObject::Release()
+void CGameObject::Release()
 {
-	int childRelease = 0;
-	int siblingRelease = 0;
+	if (m_pChild) m_pChild->Release();
+	if (m_pSibling) m_pSibling->Release();
 
-	if (m_pChild) {
-		childRelease = m_pChild->Release();
-	}
-	if (m_pSibling) {
-		siblingRelease = m_pSibling->Release();
-	}
-
-	if (--m_nReferences <= 0) {
-		delete this;
-		return 0;
-	}
-	else {
-		return m_nReferences;
-	}
+	if (--m_nReferences <= 0) delete this;
 }
 void CGameObject::SetChild(CGameObject *pChild, bool bReferenceUpdate)
 {

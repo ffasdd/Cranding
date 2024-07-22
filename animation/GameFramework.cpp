@@ -31,8 +31,15 @@ CGameFramework::CGameFramework()
 	m_nWndClientWidth = FRAME_BUFFER_WIDTH;
 	m_nWndClientHeight = FRAME_BUFFER_HEIGHT;
 
-	m_pScene = NULL;
-	m_pPlayer = NULL;
+	m_pScene = new CScene;
+	m_pPlayer = new CPlayer;
+	m_pTime = new TIME;
+	m_pCamera = new CCamera;
+	m_pUILayer = new UILayer;
+
+	m_hInstance = nullptr;
+	m_hWnd = nullptr;
+	m_ptOldCursorPos = {};
 
 	_tcscpy_s(m_pszFrameRate, _T("Cranding ("));
 }
@@ -56,7 +63,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	CreateDepthStencilView();
 
-	CoInitialize(NULL);
+	HRESULT res = CoInitialize(NULL);
 
 	
 	BuildObjects(sceneManager.GetCurrentScene());
@@ -370,6 +377,10 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	DWORD dwDirection = 0;
+	if (m_pScene)
+	{
+		m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+	}
 
 	switch (nMessageID)
 	{
@@ -508,7 +519,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isSceneChange = true;
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
-
+		case 'L':
+			isLoginwindow = !isLoginwindow;
+			break;
 		case 'F':
 			// 맵 이동 관련
 			PlayerPosX = m_pPlayer->GetPosition().x;
@@ -583,10 +596,12 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			m_GameTimer.Start();
 		break;
 	}
+	break;
 	case WM_SIZE:
 		break;
 	case WM_LBUTTONDOWN:
 		OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+		break;
 	case WM_RBUTTONDOWN:
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
@@ -604,13 +619,10 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 
 void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 {
-	
-	
-
 	if (nSceneKind != sceneManager.GetCurrentScene())
 	{
-		ChangeSceneReleaseObject();
-
+		if(m_pPlayer)
+			ChangeSceneReleaseObject();
 
 		switch (nSceneKind)
 		{
@@ -1130,8 +1142,7 @@ void CGameFramework::ReleaseObjects()
 void CGameFramework::ChangeSceneReleaseObject()
 {
 	if (m_pPlayer) {
-		if (!m_pPlayer->Release())
-			m_pPlayer = nullptr;
+		m_pPlayer->Release();
 	}
 
 	if (m_pScene) m_pScene->ReleaseObjects();
@@ -1369,22 +1380,28 @@ void CGameFramework::FrameAdvance()
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
 				ChangeScene(SCENEKIND::LOBBY);
-				// 
 			}
-			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::FIRE || sceneManager.GetCurrentScene() == SCENEKIND::ICE || sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
+			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ||
+				sceneManager.GetCurrentScene() == SCENEKIND::FIRE ||
+				sceneManager.GetCurrentScene() == SCENEKIND::ICE ||
+				sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
 			{
 				ChangeScene(SCENEKIND::SPACESHIP);
-			}	
+			}
 		}
-		if (isSceneChangetoFire) {
+		else if (isSceneChangetoFire)
+		{
 			ChangeScene(SCENEKIND::FIRE);
 		}
-		if (isSceneChangetoIce) {
+		else if (isSceneChangetoIce)
+		{
 			ChangeScene(SCENEKIND::ICE);
 		}
-		if (isSceneChangetoNature) {
+		else if (isSceneChangetoNature)
+		{
 			ChangeScene(SCENEKIND::NATURE);
 		}
+
 
 		m_GameTimer.Tick(60.0f);
 		ProcessInput();
