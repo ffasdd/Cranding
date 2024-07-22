@@ -303,12 +303,15 @@ public:
 public:
 	bool m_bIsAttacked = false;
 	bool m_bIsMonsterAttack = false;
+	int m_nMonsterAttackCnt = 0;
 	bool m_bWasMonsterAttack = false;
+	bool m_bMonsterValidAttack = false;
 	bool m_bisRotate = false;
 
 	// 치료 키 -> spacebar 누르면 치료
 	bool							m_bIsHeal = false;
 
+	bool							m_bIsPlayerAttacked = false;
 	// hp == 0 (기절상태 변수) -> 현재 임시로 f1 누르면 기절, f2 누르면 다시 살아남
 	bool							m_bIsDead = false;
 

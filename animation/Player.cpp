@@ -528,7 +528,8 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 		// m_nAnimationBefore = 1, m_nAnimationAfter = 3
 
 		// ��ȣ�ۿ� ���� �ƴ� ��
-		if (m_pSkinnedAnimationController->m_bIsMove == true)
+		if (m_pSkinnedAnimationController->m_bIsMove == true
+			&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false)
 		{                                                                    
 			// run���� ��ȭ
 			if (m_pSkinnedAnimationController->m_nAnimationBefore != 1
@@ -538,6 +539,7 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 				m_pSkinnedAnimationController->m_bIsBlending = true;
 				m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
+				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
 				if (g_clients[c_id].getCharacterType() == 0)
 				{
@@ -559,15 +561,9 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 void CTerrainPlayer::Update(float fTimeElapsed)
 {
 	CPlayer::Update(fTimeElapsed);
-	//if (m_pSkinnedAnimationController->m_bIsAttack == true)
-	//{
-
-	//
-	//}
 
 	if (m_pSkinnedAnimationController)
 	{
-		//if(m_pSkinnedAnimationController->m_bIsHeal == false && ) 
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
 
 		// �̵��ϴ� �Ÿ��� 0�� ���
@@ -575,15 +571,26 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 		{
 			m_pSkinnedAnimationController->m_bIsMove = false;
 
+			//if (m_pSkinnedAnimationController->m_bIsPlayerAttacked
+			//	&& m_pSkinnedAnimationController->m_bIsDead == false
+			//	&& m_pSkinnedAnimationController->m_nAnimationBefore != 2)
+			//{
+			//	m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+			//	m_pSkinnedAnimationController->m_bIsBlending = true;
+			//	m_pSkinnedAnimationController->SetTrackEnable(2, true);
+			//	m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
+			//}
 			// �� �ϴٰ� idle �� ��� -> ������ �ؾ��ϴ� ���
-			if (m_pSkinnedAnimationController->m_nAnimationBefore != 0
+/*			else */if (m_pSkinnedAnimationController->m_nAnimationBefore != 0
 				&& m_pSkinnedAnimationController->m_bIsHeal == false
-				&& m_pSkinnedAnimationController->m_bIsDead == false)
+				&& m_pSkinnedAnimationController->m_bIsDead == false
+				&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false)
 			{
 				m_pSkinnedAnimationController->m_nAnimationAfter = 0;
 				m_pSkinnedAnimationController->m_bIsBlending = true;
 				m_pSkinnedAnimationController->SetTrackEnable(0, true);
 				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
+				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
 				// �÷��̾� ���Ⱑ Į�̶�� Į idle
 				if (g_clients[c_id].getCharacterType() == 0)
@@ -628,7 +635,8 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 
 		// ��ȣ�ۿ� ����
 		else if (m_pSkinnedAnimationController->m_bIsHeal == true
-			&& m_pSkinnedAnimationController->m_nAnimationAfter != 5)
+			&& m_pSkinnedAnimationController->m_nAnimationAfter != 5
+			&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false)
 		{
      			m_pSkinnedAnimationController->m_nAnimationAfter = 5;
 			m_pSkinnedAnimationController->m_bIsBlending = true;
