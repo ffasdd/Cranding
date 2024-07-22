@@ -400,6 +400,7 @@ void Network::ProcessPacket(char* buf)
 		SC_NIGHT_PACKET* p = reinterpret_cast<SC_NIGHT_PACKET*>(buf);
 		gGameFramework.DayTime = false;
 		gGameFramework.Night = true;
+		gGameFramework.isDayTimeProcessed = false;
 		cout << " Night " << endl;
 		break;
 	}

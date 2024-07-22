@@ -338,7 +338,7 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
-		if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN && m_pUILayer != NULL)
+		if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN && FRAME_BUFFER_HEIGHT > 1000)
 		{
 			UILayer::GetInstance()->ProcessMouseClick(SCENEKIND::LOGIN, m_ptOldCursorPos);
 		}
@@ -508,37 +508,28 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			{
 				if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 				// ice map
-				//SceneNum = 3;
-				sceneManager.SetCurrentScene(SCENEKIND::ICE);
+				SceneNum = 3;
+				isSceneChangetoIce = true;
 				isready = false;
-				ReleaseObjects();
-				BuildObjects(sceneManager.GetCurrentScene());
-				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-				//gNetwork.SendChangeScene(SceneNum);
+				
 				break;
 			}
 			else if (PlayerPosX > 0 && PlayerPosZ < 0)
 			{
 				if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 				// fire map
-				//SceneNum = 4;
-				sceneManager.SetCurrentScene(SCENEKIND::FIRE);
-				ReleaseObjects();
-				BuildObjects(sceneManager.GetCurrentScene());
-				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-				//gNetwork.SendChangeScene(SceneNum);
+				SceneNum = 4;
+				isSceneChangetoFire = true;
+				isready = false;
 				break;
 			}
 			else if (PlayerPosX < 0 && PlayerPosZ > 0)
 			{
 				if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 				// grass map
-				//SceneNum = 5;
-				sceneManager.SetCurrentScene(SCENEKIND::NATURE);
-				ReleaseObjects();
-				BuildObjects(sceneManager.GetCurrentScene());
-				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-				//gNetwork.SendChangeScene(SceneNum);
+				SceneNum = 5;
+				isSceneChangetoNature = true;
+				isready = false;
 				break;
 			}
 			else
@@ -978,6 +969,7 @@ void CGameFramework::myFunc_SetBlind(int n, int id, bool _isblind)
 
 void CGameFramework::myFunc_SetStatus(int FCnt, int ICnt, int NCnt)
 {
+	cout << "myFunc_SetStatus" << endl;
 	int attack = m_pPlayer->GetAttackPower() + (FCnt * 5);
 	m_pPlayer->SetAttackPower(attack);
 
