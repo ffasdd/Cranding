@@ -322,14 +322,19 @@ bool Monster::CollideCheckToPlayer(Session* _player)
 			return true;
 		}
 		_attackState = true;
+
 		SC_MONSTER_ATTACK_PACKET p;
 		p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
 		p.type = SC_MONSTER_ATTACK;
 		p.monstertype = _m_type;
 		p.id = _id;
 		p.is_attack = _attackState;
-
-		_player->do_send(&p);
+		for (auto& pl : ingamePlayer)
+		{
+			if (pl->_stage != _player->_stage)continue;
+			pl->do_send(&p);
+		}
+		//_player->do_send(&p);
 
 		return true;
 	}
@@ -346,7 +351,12 @@ bool Monster::CollideCheckToPlayer(Session* _player)
 			p.id = _id;
 			p.is_attack = _attackState;
 
-			_player->do_send(&p);
+			for (auto& pl : ingamePlayer)
+			{
+				if (pl->_stage != _player->_stage)continue;
+				pl->do_send(&p);
+			}
+			//_player->do_send(&p);
 		}
 	}
 	return false;

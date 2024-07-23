@@ -190,8 +190,8 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setUp(p->up);
 		g_clients[my_id].setRight(p->right);
 		g_clients[my_id].setCharacterType(p->charactertype);
-		g_clients[my_id].setAnimation(int(p->a_state));
-		g_clients[my_id].setprevAnimation(int(p->prev_state));
+		g_clients[my_id].setAnimation((p->a_state));
+		g_clients[my_id].setprevAnimation((p->prev_state));
 		g_clients[my_id].scene_num = p->stage_num;
 		gamestart = true;
 
@@ -219,8 +219,8 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setUp(p->up);
 		g_clients[ob_id].setRight(p->right);
 		g_clients[ob_id].setCharacterType(p->charactertype);
-		g_clients[ob_id].setAnimation(int(p->a_state));
-		g_clients[ob_id].setprevAnimation(int(p->prev_state));
+		g_clients[ob_id].setAnimation(p->a_state);
+		g_clients[ob_id].setprevAnimation(p->prev_state);
 		g_clients[ob_id].scene_num = p->stage_num;
 
 		break;
@@ -245,9 +245,8 @@ void Network::ProcessPacket(char* buf)
 	case SC_CHANGE_ANIMATION: {
 		SC_CHANGE_ANIMATION_PACKET* p = reinterpret_cast<SC_CHANGE_ANIMATION_PACKET*>(buf);
 		int ob_id = (p->id);
-		//int ob_id = getmyid(p->id);
-		g_clients[ob_id].setAnimation((int)p->a_state);
-		g_clients[ob_id].setprevAnimation((int)p->prev_a_state);
+		g_clients[ob_id].setAnimation(p->a_state);
+		g_clients[ob_id].setprevAnimation(p->prev_a_state);  
 	}
 							break;
 	case SC_START_GAME: {
@@ -588,8 +587,8 @@ void Network::SendTest()
 
 void Network::SendMovePlayer(XMFLOAT3 _pos)
 {
-	p.size = sizeof(CS_MOVE_PACKET);
 	CS_MOVE_PACKET p;
+	p.size = sizeof(CS_MOVE_PACKET);
 	p.type = CS_MOVE;
 	p.pos = _pos;
 	p.roomid = my_roomid;
@@ -605,7 +604,7 @@ void Network::SendRotatePlayer(float _yaw)
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
-void Network::SendChangeAnimation(int curanimate, int prevanimate)
+void Network::SendChangeAnimation(animateState curanimate, animateState prevanimate)
 {
 	CS_CHANGE_ANIMATION_PACKET p;
 	p.size = sizeof(CS_CHANGE_ANIMATION_PACKET);

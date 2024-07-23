@@ -349,8 +349,8 @@ struct CS_ROTATE_PACKET {
 struct CS_CHANGE_ANIMATION_PACKET {
 	unsigned char size;
 	char type;
-	int a_state;
-	int prev_a_state;
+	animateState a_state;
+	animateState prev_a_state;
 	int		roomid;
 };
 struct CS_READY_PACKET {

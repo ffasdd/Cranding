@@ -60,12 +60,12 @@ XMFLOAT3 Session::getPrevPos()
 	return m_prevPos;
 }
 
-int Session::getAnimation()
+animateState Session::getAnimation()
 {
 	return m_animationstate;
 }
 
-int Session::getprevAnimation()
+animateState Session::getprevAnimation()
 {
 	return m_prevanimationstate;
 }
@@ -162,15 +162,14 @@ void Session::setUp(XMFLOAT3 up)
 	m_up = up;
 }
 
-void Session::setAnimation(int ani)
+void Session::setAnimation(animateState ani)
 {
 	m_animationstate = ani;
 }
 
-void Session::setprevAnimation(int ani)
+void Session::setprevAnimation(animateState ani)
 {
 	m_prevanimationstate = ani;
-
 }
 
 void Session::setAttack(bool att)

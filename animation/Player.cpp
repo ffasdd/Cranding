@@ -87,7 +87,7 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 		//if (dwDirection & DIR_UP) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, fDistance);
 		//if (dwDirection & DIR_DOWN) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, -fDistance);
 
-		Move(c_id,xmf3Shift, bUpdateVelocity);
+		Move(c_id, xmf3Shift, bUpdateVelocity);
 	}
 }
 
@@ -144,7 +144,7 @@ void CPlayer::RotateYaw(float yaw) {
 	}
 }
 
-void CPlayer::Move(int c_id,const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
+void CPlayer::Move(int c_id, const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 {
 	if (bUpdateVelocity)
 	{
@@ -232,7 +232,7 @@ void CPlayer::Update(float fTimeElapsed)
 	if (fLength > m_fMaxVelocityY) m_xmf3Velocity.y *= (fMaxVelocityY / fLength);
 
 	XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(m_xmf3Velocity, fTimeElapsed, false);
-	Move(c_id,xmf3Velocity, false);
+	Move(c_id, xmf3Velocity, false);
 
 	if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
 
@@ -516,22 +516,15 @@ void CTerrainPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 	}
 }
 
-// �÷��̾ �����̸� �ִϸ��̼� �ٲ��ִ� �κ�
+
 void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 {
-	// ����Ű ���� ���
 	if (dwDirection)
 	{
-		// �� ����ϴ� �÷��̾��� ��� idle, run
-		// m_nAnimationBefore = 0, m_nAnimationAfter = 2
-		// �� ����ϴ� �÷��̾��� ��� idle, run
-		// m_nAnimationBefore = 1, m_nAnimationAfter = 3
 
-		// ��ȣ�ۿ� ���� �ƴ� ��
 		if (m_pSkinnedAnimationController->m_bIsMove == true
 			&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false)
-		{                                                                    
-			// run���� ��ȭ
+		{
 			if (m_pSkinnedAnimationController->m_nAnimationBefore != 1
 				&& m_pSkinnedAnimationController->m_bIsDead == false)
 			{
@@ -541,17 +534,14 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
-				if (g_clients[c_id].getCharacterType() == 0)
+				if (g_clients[c_id].getAnimation() != animateState::SWORD_MOVE)
 				{
-					if (g_clients[c_id].getAnimation() != (int)animateState::SWORD_MOVE)
-					{
-						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation()); // ���� �ִϸ��̼��� ��� 
-						g_clients[c_id].setAnimation((int)animateState::SWORD_MOVE);
-					}
+					g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
+					g_clients[c_id].setAnimation(animateState::SWORD_MOVE);
 				}
-
+				g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
 			}
-			gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
+			//gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 		}
 	}
 	CPlayer::Move(dwDirection, fDistance, bUpdateVelocity);
@@ -581,7 +571,7 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 			//	m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 			//}
 			// �� �ϴٰ� idle �� ��� -> ������ �ؾ��ϴ� ���
-/*			else */if (m_pSkinnedAnimationController->m_nAnimationBefore != 0
+			/*			else */if (m_pSkinnedAnimationController->m_nAnimationBefore != 0
 				&& m_pSkinnedAnimationController->m_bIsHeal == false
 				&& m_pSkinnedAnimationController->m_bIsDead == false
 				&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false)
@@ -595,10 +585,10 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				// �÷��̾� ���Ⱑ Į�̶�� Į idle
 				if (g_clients[c_id].getCharacterType() == 0)
 				{
-					if (g_clients[c_id].getAnimation() != (int)animateState::SWORD_IDLE)
+					if (g_clients[c_id].getAnimation() != animateState::SWORD_IDLE)
 					{
 						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
-						g_clients[c_id].setAnimation((int)animateState::SWORD_IDLE);
+						g_clients[c_id].setAnimation(animateState::SWORD_IDLE);
 					}
 				}
 
@@ -638,7 +628,7 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 			&& m_pSkinnedAnimationController->m_nAnimationAfter != 5
 			&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false)
 		{
-     			m_pSkinnedAnimationController->m_nAnimationAfter = 5;
+			m_pSkinnedAnimationController->m_nAnimationAfter = 5;
 			m_pSkinnedAnimationController->m_bIsBlending = true;
 
 			m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);

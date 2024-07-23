@@ -438,6 +438,7 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
+
 	case CS_CHANGE_ANIMATION: {
 
 		CS_CHANGE_ANIMATION_PACKET* p = reinterpret_cast<CS_CHANGE_ANIMATION_PACKET*>(packet);
@@ -447,11 +448,9 @@ void Server::ProcessPacket(int id, char* packet)
 		clients[id].animationstate = (animateState)p->a_state;
 		clients[id].prevanimationstate = (animateState)p->prev_a_state;
 
-		clients[id].send_change_animate_packet(id);
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-
 			if (pl->_state == STATE::Alloc || pl->_state == STATE::Free) continue;
 			if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage) continue;
@@ -587,7 +586,7 @@ void Server::ProcessPacket(int id, char* packet)
 
 		clients[id]._isAttack = p->isAttack;
 
-		clients[id].send_attack_packet(id); // 내가 나한테, 나의 공격을 알림 
+		std::chrono::system_clock::time_point attackTime = std::chrono::system_clock::now();
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
@@ -595,8 +594,9 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == id) continue;
 			if (pl->_stage != clients[id]._stage)continue;
 			pl->send_attack_packet(id);
-		}
 
+		
+		}
 	}
 				  break;
 	case CS_ATTACK_COLLISION:

@@ -15,8 +15,8 @@ std::uniform_real_distribution<float> p_zpos(-312, 455);
 Session::Session()
 {
 	characterType = -1;
-	animationstate = animateState::FREE;
-	prevanimationstate = animateState::FREE;
+	animationstate = animateState::SWORD_IDLE;
+	prevanimationstate = animateState::SWORD_IDLE;
 	_id = -1;
 	_socket = 0;
 	_pos = { 0.0f,0.0f,0.0f };

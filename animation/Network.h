@@ -4,7 +4,7 @@
 
 #include"Session.h"
 #include"Player.h"
-#include"../Server/Server2/Server2/protocol.h"
+//#include"../Server/Server2/Server2/protocol.h"
 #pragma comment(lib,"WS2_32.lib")
 
 #define SERVER_IP "121.170.72.178"
@@ -51,7 +51,7 @@ public: // thread send
 	void SendMovePlayer(XMFLOAT3 _pos);
 	//void SendRotatePlayer(XMFLOAT3 _look,XMFLOAT3 _right, XMFLOAT3 _up);
 	void SendRotatePlayer(float _yaw);
-	void SendChangeAnimation(int curanimate, int prevanimate);
+	void SendChangeAnimation(animateState curanimate, animateState prevanimate);
 	void SendChangeScene(int scenenum);
 	void SendIngameStart();
 	void SendAttack(bool is_attack);

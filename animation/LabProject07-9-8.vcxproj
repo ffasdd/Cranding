@@ -196,7 +196,6 @@
     <ClInclude Include="Network.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="protocol.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Scenemanager.h" />
     <ClInclude Include="Session.h" />
