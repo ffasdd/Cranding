@@ -96,7 +96,7 @@ void Network::SendThreadFunc()
 				SendProcess(_sendtype);
 		}
 		else
-			std::this_thread::sleep_for(std::chrono::milliseconds(3ms));
+			std::this_thread::sleep_for(std::chrono::milliseconds(30ms));
 	}
 }
 
@@ -588,8 +588,8 @@ void Network::SendTest()
 
 void Network::SendMovePlayer(XMFLOAT3 _pos)
 {
-	CS_MOVE_PACKET p;
 	p.size = sizeof(CS_MOVE_PACKET);
+	CS_MOVE_PACKET p;
 	p.type = CS_MOVE;
 	p.pos = _pos;
 	p.roomid = my_roomid;

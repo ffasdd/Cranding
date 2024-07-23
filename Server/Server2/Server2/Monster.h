@@ -45,7 +45,7 @@ public:
 public:
 
 	//vector<Session*> ingamePlayer;
-	array<Session*, 3> ingamePlayer;
+	array<Session*, 2> ingamePlayer;
 	vector<pair<float, XMFLOAT3>> playerdisPos;
 public:
 
