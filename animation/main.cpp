@@ -74,9 +74,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
-
-
-
 			if (gGameFramework.m_pPlayer != NULL && gGameFramework.m_pScene->m_ppHierarchicalGameObjects != NULL)
 			{
 				if (gNetwork.gamestart)

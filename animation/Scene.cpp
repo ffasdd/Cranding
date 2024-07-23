@@ -593,7 +593,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 				case MONSTERTYPE::ICE:
 				{
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
-					gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Ice);
+					gNetwork.SendAttackCollision(g_ice_monsters[i - 3].getId(), MonsterType::Ice);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
