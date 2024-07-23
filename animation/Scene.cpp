@@ -849,7 +849,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 void CScene::OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
-	m_pDepthRenderShader->PrepareShadowMap(pd3dCommandList, pCamera, &m_xmBoundingBox);
+	m_pDepthRenderShader->PrepareShadowMap(pd3dCommandList, pCamera);
 }
 
 void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
@@ -971,6 +971,30 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.6);
 	m_ppHierarchicalGameObjects[3]->SetReflection(3);
 	if (pPlayerModel) delete pPlayerModel;
+
+	m_nShaders = 1;
+	m_ppShaders = new CShader * [m_nShaders];
+
+	// shadow
+	CObjectsShader* pObjectShader = new CObjectsShader(this);
+	pObjectShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	pObjectShader->BuildObjects(pd3dDevice, pd3dCommandList, NULL);
+
+	m_ppShaders[0] = pObjectShader;
+
+	m_pDepthRenderShader = new CDepthRenderShader(pObjectShader, m_pLights, this);
+	DXGI_FORMAT pdxgiRtvFormat[1] = { DXGI_FORMAT_R32_FLOAT };
+	//DXGI_FORMAT pdxgiDSVFormats[6] = { DXGI_FORMAT_D32_FLOAT};
+	m_pDepthRenderShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 1, pdxgiRtvFormat, DXGI_FORMAT_D32_FLOAT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	m_pDepthRenderShader->BuildObjects(pd3dDevice, pd3dCommandList, NULL);
+
+	m_pShadowShader = new CShadowMapShader(this);
+	m_pShadowShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	m_pShadowShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pDepthRenderShader->GetDepthTexture());
+
+	m_pShadowMapToViewport = new CTextureToViewportShader();
+	m_pShadowMapToViewport->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	m_pShadowMapToViewport->BuildObjects(pd3dDevice, pd3dCommandList, m_pDepthRenderShader->GetDepthTexture());
 }
 
 void CLoginScene::ReleaseUploadBuffers()
@@ -1382,7 +1406,6 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	pObjectShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	pObjectShader->BuildObjects(pd3dDevice, pd3dCommandList, NULL);
 
-	m_xmBoundingBox = pObjectShader->CalculateBoundingBox();
 
 	m_ppShaders[0] = pObjectShader;
 
@@ -1532,7 +1555,6 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	pObjectShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	pObjectShader->BuildObjects(pd3dDevice, pd3dCommandList, NULL);
 
-	m_xmBoundingBox = pObjectShader->CalculateBoundingBox();
 
 	m_ppShaders[0] = pObjectShader;
 
@@ -1676,8 +1698,6 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	CObjectsShader* pObjectShader = new CObjectsShader(this);
 	pObjectShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	pObjectShader->BuildObjects(pd3dDevice, pd3dCommandList, NULL);
-
-	m_xmBoundingBox = pObjectShader->CalculateBoundingBox();
 
 	m_ppShaders[0] = pObjectShader;
 
@@ -1823,7 +1843,6 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	pObjectShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D24_UNORM_S8_UINT, D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	pObjectShader->BuildObjects(pd3dDevice, pd3dCommandList, NULL);
 
-	m_xmBoundingBox = pObjectShader->CalculateBoundingBox();
 
 	m_ppShaders[0] = pObjectShader;
 

@@ -1101,7 +1101,7 @@ void CGameFramework::FrameAdvance()
 	m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera);
 
 	// ** 쉐도우 맵 생성(광원 시점에서의 씬 렌더링 후 그걸 텍스처에 저장)
-	if (SceneNum > 1) m_pScene->OnPreRender(m_pd3dCommandList, m_pCamera);
+	 m_pScene->OnPreRender(m_pd3dCommandList, m_pCamera);
 
 	// ** 스왑 체인 백 버퍼의 상태를 D3D12_RESOURCE_STATE_PRESENT에서 D3D12_RESOURCE_STATE_RENDER_TARGET으로 변경 == 렌더링 할 수 있도록 하기 위함
 	D3D12_RESOURCE_BARRIER d3dResourceBarrier;
