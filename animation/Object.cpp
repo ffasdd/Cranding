@@ -745,7 +745,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							m_bIsAttacked = false;
 							m_bIsDead = true;
 						}
-						if (m_bWasMonsterAttack == true && fPosition > 0.5f)
+						if (m_bWasMonsterAttack == true && fPosition > 0.3f)
 						{
 							m_bMonsterValidAttack = true;
 						}
