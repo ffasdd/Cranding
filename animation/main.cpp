@@ -120,10 +120,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						{
 							gGameFramework.myFunc_SetMonPosition(i, g_ice_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_ice_monsters[i].getLook(), g_ice_monsters[i].getUp(), g_ice_monsters[i].getRight());
+							gGameFramework.myFunc_SetMonAnimation(i, g_monsters[i].getNpcAttacked(), g_monsters[i].getNpcAttack());
 						}
 
 						gGameFramework.myFunc_SetBossMonPosition(g_IceBossMonster.getPos());
 						gGameFramework.myFunc_SetBossMonLookRightUp(g_IceBossMonster.getLook(), g_IceBossMonster.getUp(), g_IceBossMonster.getRight());
+
+
 						break;
 					}
 					case SCENEKIND::FIRE:
@@ -133,9 +136,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						{
 							gGameFramework.myFunc_SetMonPosition(i, g_fire_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_fire_monsters[i].getLook(), g_fire_monsters[i].getUp(), g_fire_monsters[i].getRight());
+							gGameFramework.myFunc_SetMonAnimation(i, g_monsters[i].getNpcAttacked(), g_monsters[i].getNpcAttack());
 						}
 						gGameFramework.myFunc_SetBossMonPosition(g_FireBossMonster.getPos());
 						gGameFramework.myFunc_SetBossMonLookRightUp(g_FireBossMonster.getLook(), g_FireBossMonster.getUp(), g_FireBossMonster.getRight());
+
+
 						break;
 					}
 					case SCENEKIND::NATURE:
@@ -145,9 +151,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						{
 							gGameFramework.myFunc_SetMonPosition(i, g_nature_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_nature_monsters[i].getLook(), g_nature_monsters[i].getUp(), g_nature_monsters[i].getRight());
+							gGameFramework.myFunc_SetMonAnimation(i, g_monsters[i].getNpcAttacked(), g_monsters[i].getNpcAttack());
+
 						}
 						gGameFramework.myFunc_SetBossMonPosition(g_NatureBossMonster.getPos());
 						gGameFramework.myFunc_SetBossMonLookRightUp(g_NatureBossMonster.getLook(), g_NatureBossMonster.getUp(), g_NatureBossMonster.getRight());
+
 						break;
 					}
 

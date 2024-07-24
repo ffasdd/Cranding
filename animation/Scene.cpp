@@ -1355,7 +1355,6 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
 				m_ppHierarchicalGameObjects[i]->SetHealth(m_ppHierarchicalGameObjects[i]->GetHealth() - m_pPlayer->GetAttackPower());
-
 				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Ice);
 
 				return true;
@@ -1593,7 +1592,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 				m_ppHierarchicalGameObjects[i]->SetHealth(m_ppHierarchicalGameObjects[i]->GetHealth() - m_pPlayer->GetAttackPower());
 				//// send  
-				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Night);
+				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Fire);
 
 				return true;
 			}
@@ -1829,7 +1828,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
 				m_ppHierarchicalGameObjects[i]->SetHealth(m_ppHierarchicalGameObjects[i]->GetHealth() - m_pPlayer->GetAttackPower());
-				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Night);
+				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Nature);
 
 				return true;
 			}
