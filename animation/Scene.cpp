@@ -999,6 +999,10 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		}
 	}
 
+	// spaceship boundingsphere
+	SpaceshipBS.Center = { 250.0f, 10.0f, 750.0f };
+	SpaceshipBS.Radius = 50.0f;
+
 	// 메모리 해제
 	for (int i = 0; i < FireMonsterNum; ++i) {
 		if (pFireMonModels[i]) delete pFireMonModels[i];
@@ -1089,13 +1093,9 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 			// fire monster's hand with player (when firemonster attack)
 			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
-				// 왼손
 				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_xmBoundingBox)
 				||
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
-				// 왼손
-				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
+				 m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
@@ -1105,6 +1105,24 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 
 				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
 				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
+				return false;
+			}
+			// fire monster's hand with spaceship
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& (this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_xmBoundingBox)
+					||
+					this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+
+				//m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				//m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+				////m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
+
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				return false;
 			}
 		}
@@ -1140,6 +1158,24 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				return false;
 			}
+			// ice monster's hand with spaceship
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& (this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)
+					||
+					this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+
+				//m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				//m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+				////m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
+
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
+				return false;
+			}
 		}
 		// grass monster와의 충돌 체크
 		else if (i >= 23 && i < 33)
@@ -1168,6 +1204,22 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 
 				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
 				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
+				return false;
+			}
+			// grass monster's head with spaceship
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+
+				//m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				//m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+				////m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
+
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				return false;
 			}
 		}
@@ -1659,10 +1711,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 				// 왼손
 				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_xmBoundingBox)
 					||
-					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
-					&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
-					// 왼손
-					&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
+					m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;

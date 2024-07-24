@@ -758,6 +758,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						{
 							m_bIsPlayerAttacked = false;
 						}
+
 					}
 					m_pAnimationTracks[k].HandleCallback();
 				}

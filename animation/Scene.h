@@ -180,6 +180,9 @@ public:
 	bool CheckObjectByObjectCollisions();
 	void ReleaseUploadBuffers();
 	void ReleaseObjects();
+
+public:
+	BoundingSphere SpaceshipBS;
 };
 
 class CIceScene : public CScene
