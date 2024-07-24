@@ -1355,7 +1355,8 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
 				m_ppHierarchicalGameObjects[i]->SetHealth(m_ppHierarchicalGameObjects[i]->GetHealth() - m_pPlayer->GetAttackPower());
-				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Night);
+
+				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Ice);
 
 				return true;
 			}

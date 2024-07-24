@@ -526,7 +526,7 @@ void Network::ProcessPacket(char* buf)
 		case MonsterType::Ice: {
 			if (p->is_attack)
 			{
-				g_fire_monsters[p->id].setNpcAttack(p->is_attack);
+				g_ice_monsters[p->id].setNpcAttack(p->is_attack);
 				cout << "(Ice Attack) " << endl;
 			}
 			break;
@@ -534,7 +534,7 @@ void Network::ProcessPacket(char* buf)
 		case MonsterType::Nature: {
 			if (p->is_attack)
 			{
-				g_fire_monsters[p->id].setNpcAttack(p->is_attack);
+				g_nature_monsters[p->id].setNpcAttack(p->is_attack);
 				cout << "(Nature Attack) " << endl;
 			}
 			break;
@@ -556,8 +556,34 @@ void Network::ProcessPacket(char* buf)
 		SC_MONSTER_DIE_PACKET* p = reinterpret_cast<SC_MONSTER_DIE_PACKET*>(buf);
 		cout << " SC_MONSTER_DIE" << endl;
 
-		int npc_id = p->npc_id;
-		g_monsters[npc_id].setNpcAttacked(p->_isattacked);
+		switch (p->_montype)
+		{
+		case MonsterType::Fire:
+		{
+			int npc_id = p->npc_id;
+			g_fire_monsters[npc_id].setNpcAttacked(p->_isattacked);
+			break;
+		}
+		case MonsterType::Ice:
+		{
+			int npc_id = p->npc_id;
+			g_ice_monsters[npc_id].setNpcAttacked(p->_isattacked);
+			break;
+		}
+		case MonsterType::Nature:
+		{
+			int npc_id = p->npc_id;
+			g_nature_monsters[npc_id].setNpcAttacked(p->_isattacked);
+			break;
+		}
+		case MonsterType::Night:
+		{
+			int npc_id = p->npc_id;
+			g_monsters[npc_id].setNpcAttacked(p->_isattacked);
+			break;
+		}
+		}
+
 	}
 	break;
 

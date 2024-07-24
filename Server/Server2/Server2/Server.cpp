@@ -311,7 +311,7 @@ void Server::WorkerThread()
 			int r_id = static_cast<int>(key);
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
-				pl->send_player_attack_mosnter(ex_over->_ai_target_obj, false);
+				pl->send_player_attack_mosnter(ex_over->_ai_target_obj, false, ex_over->_monstertype);
 			}
 			delete ex_over;
 			break;
@@ -651,10 +651,10 @@ void Server::ProcessPacket(int id, char* packet)
 			//if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage)continue;
 			// 무슨 몬스터가 죽었는지 다른 클라이언트 들한테 정보를 보내야함 
-			pl->send_player_attack_mosnter(p->npc_id, true);
+			pl->send_player_attack_mosnter(p->npc_id, true,p->_montype);
 
 			std::chrono::system_clock::time_point attacktime = chrono::system_clock::now();
-			TIMER_EVENT ev{ attacktime + 1s ,p->room_id,EVENT_TYPE::EV_PLAYER_ATTACK_NPC,p->npc_id };
+			TIMER_EVENT ev{ attacktime + 1s ,p->room_id,EVENT_TYPE::EV_PLAYER_ATTACK_NPC,p->npc_id,p->_montype };
 			g_Timer.InitTimerQueue(ev);
 		}
 		break;

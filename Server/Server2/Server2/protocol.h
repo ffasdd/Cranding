@@ -558,6 +558,7 @@ struct SC_NIGHT_PACKET {
 	unsigned char size;
 	char type;
 };
+
 struct SC_MONSTER_DIE_PACKET {
 	unsigned char size;
 	char type;

@@ -183,13 +183,14 @@ void Session::send_add_monster(int npc_id)
 	do_send(&p);
 }
 
-void Session::send_player_attack_mosnter(int npc_id, bool isattack)
+void Session::send_player_attack_mosnter(int npc_id, bool isattack , MonsterType montype)
 {
 	SC_MONSTER_DIE_PACKET p;
 	p.size = sizeof(SC_MONSTER_DIE_PACKET);
 	p.type = SC_MONSTER_DIE;
 	p.npc_id = npc_id;
 	p._isattacked = isattack;
+	p._montype = montype;
 	do_send(&p);
 }
 
