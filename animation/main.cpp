@@ -120,7 +120,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						{
 							gGameFramework.myFunc_SetMonPosition(i, g_ice_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_ice_monsters[i].getLook(), g_ice_monsters[i].getUp(), g_ice_monsters[i].getRight());
-							gGameFramework.myFunc_SetMonAnimation(i, g_monsters[i].getNpcAttacked(), g_monsters[i].getNpcAttack());
+							gGameFramework.myFunc_SetMonAnimation(i, g_ice_monsters[i].getNpcAttacked(), g_ice_monsters[i].getNpcAttack());
 						}
 
 						gGameFramework.myFunc_SetBossMonPosition(g_IceBossMonster.getPos());
@@ -136,7 +136,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						{
 							gGameFramework.myFunc_SetMonPosition(i, g_fire_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_fire_monsters[i].getLook(), g_fire_monsters[i].getUp(), g_fire_monsters[i].getRight());
-							gGameFramework.myFunc_SetMonAnimation(i, g_monsters[i].getNpcAttacked(), g_monsters[i].getNpcAttack());
+							gGameFramework.myFunc_SetMonAnimation(i, g_fire_monsters[i].getNpcAttacked(), g_fire_monsters[i].getNpcAttack());
 						}
 						gGameFramework.myFunc_SetBossMonPosition(g_FireBossMonster.getPos());
 						gGameFramework.myFunc_SetBossMonLookRightUp(g_FireBossMonster.getLook(), g_FireBossMonster.getUp(), g_FireBossMonster.getRight());
@@ -151,7 +151,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						{
 							gGameFramework.myFunc_SetMonPosition(i, g_nature_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_nature_monsters[i].getLook(), g_nature_monsters[i].getUp(), g_nature_monsters[i].getRight());
-							gGameFramework.myFunc_SetMonAnimation(i, g_monsters[i].getNpcAttacked(), g_monsters[i].getNpcAttack());
+							gGameFramework.myFunc_SetMonAnimation(i, g_nature_monsters[i].getNpcAttacked(), g_nature_monsters[i].getNpcAttack());
 
 						}
 						gGameFramework.myFunc_SetBossMonPosition(g_NatureBossMonster.getPos());

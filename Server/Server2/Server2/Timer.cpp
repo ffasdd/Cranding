@@ -107,6 +107,7 @@ void Timer::TimerThread()
 					Over_Exp* ov = new Over_Exp;
 					ov->_comptype = COMP_TYPE::PLAYER_ATTACKED_NPC;
 					ov->_ai_target_obj = ev.targetId;
+					ov->_monstertype = ev.monsterType;
 					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
 

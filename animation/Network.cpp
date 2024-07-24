@@ -511,7 +511,7 @@ void Network::ProcessPacket(char* buf)
 			else
 			{
 				g_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << " Plaer run " << endl;
+				cout << " Player run " << endl;
 			}
 			break;
 		}
@@ -521,6 +521,11 @@ void Network::ProcessPacket(char* buf)
 				g_fire_monsters[p->id].setNpcAttack(p->is_attack);
 				cout << "(Fire Attack) " << endl;
 			}
+			else
+			{
+				g_fire_monsters[p->id].setNpcAttack(p->is_attack);
+				cout << " Player run " << endl;
+			}
 			break;
 		}
 		case MonsterType::Ice: {
@@ -529,6 +534,11 @@ void Network::ProcessPacket(char* buf)
 				g_ice_monsters[p->id].setNpcAttack(p->is_attack);
 				cout << "(Ice Attack) " << endl;
 			}
+			else
+			{
+				g_ice_monsters[p->id].setNpcAttack(p->is_attack);
+				cout << " Player run " << endl;
+			}
 			break;
 		}
 		case MonsterType::Nature: {
@@ -536,6 +546,11 @@ void Network::ProcessPacket(char* buf)
 			{
 				g_nature_monsters[p->id].setNpcAttack(p->is_attack);
 				cout << "(Nature Attack) " << endl;
+			}
+			else
+			{
+				g_nature_monsters[p->id].setNpcAttack(p->is_attack);
+				cout << " Player run " << endl;
 			}
 			break;
 		}
