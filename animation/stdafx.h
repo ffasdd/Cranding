@@ -69,7 +69,7 @@ using Microsoft::WRL::ComPtr;
 extern HINSTANCE						ghAppInstance;
 
 #define _WITH_SWAPCHAIN_FULLSCREEN_STATE
-#define _FULLSCREEN
+//#define _FULLSCREEN
 
 #ifdef _FULLSCREEN
 #define FRAME_BUFFER_WIDTH				1920
@@ -135,6 +135,8 @@ extern ID3D12Resource* CreateTextureResourceFromWICFile(ID3D12Device* pd3dDevice
 extern BYTE ReadStringFromFile(FILE *pInFile, char *pstrToken);
 extern int ReadIntegerFromFile(FILE *pInFile);
 extern float ReadFloatFromFile(FILE *pInFile);
+
+D3D12_SHADER_BYTECODE CompileShaderFromFile(const WCHAR* pszFileName, LPCSTR pszShaderName, LPCSTR pszShaderProfile, ID3DBlob** ppd3dShaderBlob);
 
 #define RANDOM_COLOR			XMFLOAT4(rand() / float(RAND_MAX), rand() / float(RAND_MAX), rand() / float(RAND_MAX), rand() / float(RAND_MAX))
 

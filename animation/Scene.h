@@ -82,8 +82,10 @@ public:
 	bool ProcessInput(UCHAR *pKeysBuffer);
     void AnimateObjects(float fTimeElapsed);
 
-	void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
-    void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
+	void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, bool bIsAnimate = true);
+    void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL, bool bIsAnimate = true);
+
+	ID3D12RootSignature* GetRootSignature() { return m_pd3dGraphicsRootSignature; }
 
 	void ReleaseUploadBuffers();
 

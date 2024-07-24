@@ -28,6 +28,8 @@
 #include "Scene.h"
 #include "Network.h"
 #include "Scenemanager.h"
+#include "shadowMap.h"
+
 
 extern Network							gNetwork;
 
@@ -56,6 +58,10 @@ public:
 
 	void CreateSwapChainRenderTargetViews();
 	void CreateDepthStencilView();
+
+	void CreateShadowMap();
+
+	void CreateShadowMapCamera();
 
 	void ChangeSwapChainState();
 
@@ -205,5 +211,12 @@ private:
 	POINT						m_ptOldCursorPos;
 
 	_TCHAR						m_pszFrameRate[70];
+
+	//Shadow
+	unique_ptr<ShadowMap> m_ShadowMap = NULL;
+	ID3D12PipelineState* m_pPipelineState;
+	ID3D12Resource* m_pShadowCamera = NULL;
+	VS_CB_CAMERA_INFO* m_pShadowMappedCamera = NULL;
+	bool isShadowRender = true;
 };
 

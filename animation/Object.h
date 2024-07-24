@@ -466,8 +466,10 @@ public:
 
 	void SetRootParameter(ID3D12GraphicsCommandList* pd3dCommandList);
 
+	void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int SharedNum =0, int nPipelineState=0);
+
 	virtual void OnPrepareRender() { }
-	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
+	//virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
 
 	virtual void OnLateUpdate() { }
 

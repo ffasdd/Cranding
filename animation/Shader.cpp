@@ -38,25 +38,6 @@ D3D12_SHADER_BYTECODE CShader::CreatePixelShader()
 	return(d3dShaderByteCode);
 }
 
-D3D12_SHADER_BYTECODE CShader::CompileShaderFromFile(WCHAR *pszFileName, LPCSTR pszShaderName, LPCSTR pszShaderProfile, ID3DBlob **ppd3dShaderBlob)
-{
-	UINT nCompileFlags = 0;
-#if defined(_DEBUG)
-	nCompileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-#endif
-
-	ID3DBlob *pd3dErrorBlob = NULL;
-	HRESULT hResult = ::D3DCompileFromFile(pszFileName, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, pszShaderName, pszShaderProfile, nCompileFlags, 0, ppd3dShaderBlob, &pd3dErrorBlob);
-	char *pErrorString = NULL;
-	if (pd3dErrorBlob) pErrorString = (char *)pd3dErrorBlob->GetBufferPointer();
-
-	D3D12_SHADER_BYTECODE d3dShaderByteCode;
-	d3dShaderByteCode.BytecodeLength = (*ppd3dShaderBlob)->GetBufferSize();
-	d3dShaderByteCode.pShaderBytecode = (*ppd3dShaderBlob)->GetBufferPointer();
-
-	return(d3dShaderByteCode);
-}
-
 #define _WITH_WFOPEN
 //#define _WITH_STD_STREAM
 
@@ -227,7 +208,7 @@ void CShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGr
 		DXGI_FORMAT_R8G8B8A8_UNORM;
 	//d3dPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	//d3dPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	d3dPipelineStateDesc.DSVFormat = dxgiDsvFormat;
+	d3dPipelineStateDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	d3dPipelineStateDesc.SampleDesc.Count = 1;
 	d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_pd3dPipelineState);
@@ -245,10 +226,9 @@ void CShader::OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, int nP
 }
 
 
-void CShader::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, void* pContext)
+void CShader::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera , int m_nPipelineStates)
 {
-	OnPrepareRender(pd3dCommandList);
-	//UpdateShaderVariables(pd3dCommandList, pContext);
+	if (m_nPipelineStates != -1) OnPrepareRender(pd3dCommandList);
 }
 
 void CShader::CreateShaderResourceViews(ID3D12Device* pd3dDevice, int nResources, ID3D12Resource** ppd3dResources, DXGI_FORMAT* pdxgiSrvFormats)
@@ -368,12 +348,12 @@ D3D12_DEPTH_STENCIL_DESC CSkyBoxShader::CreateDepthStencilState()
 
 D3D12_SHADER_BYTECODE CSkyBoxShader::CreateVertexShader()
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSSkyBox", "vs_5_1", &m_pd3dVertexShaderBlob));
+	return(CompileShaderFromFile(L"Shaders.hlsl", "VSSkyBox", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE CSkyBoxShader::CreatePixelShader()
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSSkyBox", "ps_5_1", &m_pd3dPixelShaderBlob));
+	return(CompileShaderFromFile(L"Shaders.hlsl", "PSSkyBox", "ps_5_1", &m_pd3dPixelShaderBlob));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -403,7 +383,7 @@ void CStandardShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature
 	d3dPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	d3dPipelineStateDesc.NumRenderTargets = 5;
 	for (UINT i = 0; i < 5; i++) d3dPipelineStateDesc.RTVFormats[i] = pdxgiResourceFormats[i];
-	d3dPipelineStateDesc.DSVFormat = dxgiDsvFormat;
+	d3dPipelineStateDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	d3dPipelineStateDesc.SampleDesc.Count = 1;
 	d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_pd3dPipelineState);
@@ -434,12 +414,12 @@ D3D12_INPUT_LAYOUT_DESC CStandardShader::CreateInputLayout()
 
 D3D12_SHADER_BYTECODE CStandardShader::CreateVertexShader()
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSStandard", "vs_5_1", &m_pd3dVertexShaderBlob));
+	return(CompileShaderFromFile(L"Shaders.hlsl", "VSStandard", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE CStandardShader::CreatePixelShader()
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSTexturedStandardMultipleRTs", "ps_5_1", &m_pd3dPixelShaderBlob));
+	return(CompileShaderFromFile(L"Shaders.hlsl", "PSTexturedStandardMultipleRTs", "ps_5_1", &m_pd3dPixelShaderBlob));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -469,7 +449,7 @@ void CSkinnedAnimationStandardShader::CreateShader(ID3D12Device* pd3dDevice, ID3
 	d3dPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	d3dPipelineStateDesc.NumRenderTargets = 5;
 	for (UINT i = 0; i < 5; i++) d3dPipelineStateDesc.RTVFormats[i] = pdxgiResourceFormats[i];
-	d3dPipelineStateDesc.DSVFormat = dxgiDsvFormat;
+	d3dPipelineStateDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	d3dPipelineStateDesc.SampleDesc.Count = 1;
 	d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_pd3dPipelineState);
@@ -502,7 +482,7 @@ D3D12_INPUT_LAYOUT_DESC CSkinnedAnimationStandardShader::CreateInputLayout()
 
 D3D12_SHADER_BYTECODE CSkinnedAnimationStandardShader::CreateVertexShader()
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSSkinnedAnimationStandard", "vs_5_1", &m_pd3dVertexShaderBlob));
+	return(CompileShaderFromFile(L"Shaders.hlsl", "VSSkinnedAnimationStandard", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE CSkinnedAnimationStandardShader::CreatePixelShader()
@@ -544,7 +524,7 @@ void CStandardObjectsShader::ReleaseUploadBuffers()
 
 void CStandardObjectsShader::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, void* pContext)
 {
-	CStandardShader::Render(pd3dCommandList, pCamera, pContext);
+	CStandardShader::Render(pd3dCommandList, pCamera);
 
 	for (int j = 0; j < m_nObjects; j++)
 	{
@@ -679,12 +659,12 @@ ID3D12RootSignature* CPostProcessingShader::CreateGraphicsRootSignature(ID3D12De
 
 D3D12_SHADER_BYTECODE CPostProcessingShader::CreateVertexShader()
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSScreenRectSamplingTextured", "vs_5_1", &m_pd3dVertexShaderBlob));
+	return(CompileShaderFromFile(L"Shaders.hlsl", "VSScreenRectSamplingTextured", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE CPostProcessingShader::CreatePixelShader()
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSScreenRectSamplingTextured", "ps_5_1", &m_pd3dPixelShaderBlob));
+	return(CompileShaderFromFile(L"Shaders.hlsl", "PSScreenRectSamplingTextured", "ps_5_1", &m_pd3dPixelShaderBlob));
 }
 
 void CPostProcessingShader::ReleaseShaderVariables()
@@ -696,20 +676,20 @@ void CPostProcessingShader::ReleaseShaderVariables()
 		delete[] m_pd3dRtvCPUDescriptorHandles;
 }
 
-void CPostProcessingShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets, DXGI_FORMAT* pdxgiRtvFormats, DXGI_FORMAT dxgiDsvFormat)
-{
-#ifdef _WITH_SCENE_ROOT_SIGNATURE
-	m_pd3dGraphicsRootSignature = pd3dGraphicsRootSignature;
-	m_pd3dGraphicsRootSignature->AddRef();
-#else
-	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
-#endif
-
-	CShader::CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, nRenderTargets, pdxgiRtvFormats, dxgiDsvFormat);
-
-	if (m_pd3dVertexShaderBlob) m_pd3dVertexShaderBlob->Release();
-	if (m_pd3dPixelShaderBlob) m_pd3dPixelShaderBlob->Release();
-}
+//void CPostProcessingShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets, DXGI_FORMAT* pdxgiRtvFormats, DXGI_FORMAT dxgiDsvFormat)
+//{
+//#ifdef _WITH_SCENE_ROOT_SIGNATURE
+//	m_pd3dGraphicsRootSignature = pd3dGraphicsRootSignature;
+//	m_pd3dGraphicsRootSignature->AddRef();
+//#else
+//	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
+//#endif
+//
+//	CShader::CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, nRenderTargets, pdxgiRtvFormats, dxgiDsvFormat);
+//
+//	if (m_pd3dVertexShaderBlob) m_pd3dVertexShaderBlob->Release();
+//	if (m_pd3dPixelShaderBlob) m_pd3dPixelShaderBlob->Release();
+//}
 
 void CPostProcessingShader::CreateResourcesAndRtvsSrvs(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, UINT nRenderTargets, DXGI_FORMAT* pdxgiFormats, D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle, UINT nShaderResources)
 {
@@ -783,7 +763,7 @@ void CPostProcessingShader::OnPostRenderTarget(ID3D12GraphicsCommandList* pd3dCo
 void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, void* pContext)
 {
 	// CShader::Render function call
-	CShader::Render(pd3dCommandList, pCamera, pContext);
+	CShader::Render(pd3dCommandList, pCamera);
 
 	pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
 
@@ -808,12 +788,12 @@ CTextureToFullScreenShader::~CTextureToFullScreenShader()
 
 D3D12_SHADER_BYTECODE CTextureToFullScreenShader::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSScreenRectSamplingTextured", "vs_5_1", ppd3dShaderBlob));
+	return(CompileShaderFromFile(L"Shaders.hlsl", "VSScreenRectSamplingTextured", "vs_5_1", ppd3dShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE CTextureToFullScreenShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSScreenRectSamplingTextured", "ps_5_1", ppd3dShaderBlob));
+	return(CompileShaderFromFile(L"Shaders.hlsl", "PSScreenRectSamplingTextured", "ps_5_1", ppd3dShaderBlob));
 }
 
 void CTextureToFullScreenShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -923,12 +903,12 @@ void CBoundingBoxShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 
 D3D12_SHADER_BYTECODE CBoundingBoxShader::CreateVertexShader()
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSBoundingBox", "vs_5_1", &m_pd3dVertexShaderBlob));
+	return(CompileShaderFromFile(L"Shaders.hlsl", "VSBoundingBox", "vs_5_1", &m_pd3dVertexShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE CBoundingBoxShader::CreatePixelShader()
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSBoundingBox", "ps_5_1", &m_pd3dPixelShaderBlob));
+	return(CompileShaderFromFile(L"Shaders.hlsl", "PSBoundingBox", "ps_5_1", &m_pd3dPixelShaderBlob));
 }
 
 void CBoundingBoxShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)

@@ -198,7 +198,7 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 
 	pd3dDescriptorRanges[7].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dDescriptorRanges[7].NumDescriptors = 1;
-	pd3dDescriptorRanges[7].BaseShaderRegister = 2; //t2: gtxtTerrainDetailTexture
+	pd3dDescriptorRanges[7].BaseShaderRegister = 2; //t2: shadow
 	pd3dDescriptorRanges[7].RegisterSpace = 0;
 	pd3dDescriptorRanges[7].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
@@ -644,19 +644,19 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 }
 
-void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera,bool bIsAnimate )
 {
 	if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 	if (m_pd3dCbvSrvDescriptorHeap) pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
 
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
-	pCamera->UpdateShaderVariables(pd3dCommandList);
+	if(bIsAnimate) pCamera->UpdateShaderVariables(pd3dCommandList);
 
 	UpdateShaderVariables(pd3dCommandList);
 
 }
 
-void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
+void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, bool bIsAnimate)
 {
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Light
@@ -672,7 +672,7 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 		if (m_ppHierarchicalGameObjects[i] && m_ppHierarchicalGameObjects[i]->isdraw == true)
 		{
 			//cout << i << endl;
-			m_ppHierarchicalGameObjects[i]->Animate(m_fElapsedTime);
+			if(bIsAnimate) m_ppHierarchicalGameObjects[i]->Animate(m_fElapsedTime);
 			if (!m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController) m_ppHierarchicalGameObjects[i]->UpdateTransform(NULL);
 			m_ppHierarchicalGameObjects[i]->Render(pd3dCommandList, pCamera);
 		}
@@ -729,7 +729,7 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 bool CLoginScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-
+	return 0;
 }
 
 void CLoginScene::ReleaseUploadBuffers()
