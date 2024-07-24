@@ -69,7 +69,7 @@ void Monster::Move()
 	{
 		// 플레이어와의 최대거리가 가시거리 밖이라면 우주선을 향해 간다. 
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
-		XMVECTOR spaceshipVec = XMLoadFloat3(&spaceshippos);
+		XMVECTOR spaceshipVec = XMLoadFloat3(&_spaceship.getPos());
 		XMVECTOR dirToSpaceship = XMVector3Normalize(spaceshipVec - posVec);
 
 		XMFLOAT3 directionToSpaceshipFloat3;
@@ -83,7 +83,7 @@ void Monster::Move()
 		XMStoreFloat3(&rightFloat3, rightVec);
 
 		_right = rightFloat3;
-
+		if (CollideCheckToSpaceship()) _speed = 0;
 		_pos = Vector3::Add(_pos, directionToSpaceshipFloat3, _speed);
 		m_SPBB.Center = _pos;
 		m_SPBB.Center.y = _pos.y;
@@ -342,6 +342,10 @@ bool Monster::CollideCheckToPlayer(Session* _player)
 	{
 		if (_attackState != false)
 		{
+			if (_attackState == false)
+			{
+				return false;
+			}
 			_attackState = false;
 
 			SC_MONSTER_ATTACK_PACKET p;
@@ -386,6 +390,56 @@ int Monster::FindClosePlayer()
 	}
 
 	return closestPlayerId;
+}
+
+bool Monster::CollideCheckToSpaceship()
+{
+	if (m_SPBB.Intersects(_spaceship.getBoundingBox()) == true)
+	{
+		if (_spaceshipattackState == true) {
+			return true;
+		}
+		_spaceshipattackState = true;
+
+		SC_MONSTER_ATTACK_PACKET p;
+		p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
+		p.type = SC_MONSTER_ATTACK;
+		p.monstertype = _m_type;
+		p.id = _id;
+		p.is_attack = _spaceshipattackState;
+		for (auto& pl : ingamePlayer)
+		{
+			if (pl->_stage != 2)continue;
+			pl->do_send(&p);
+		}
+		//_player->do_send(&p);
+
+		cout << " 우주선 충돌 " << endl; 
+		return true;
+	
+	}
+	else
+	{
+		if (_spaceshipattackState != false)
+		{
+			_spaceshipattackState = false;
+
+			SC_MONSTER_ATTACK_PACKET p;
+			p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
+			p.type = SC_MONSTER_ATTACK;
+			p.monstertype = _m_type;
+			p.id = _id;
+			p.is_attack = _spaceshipattackState;
+
+			for (auto& pl : ingamePlayer)
+			{
+				if (pl->_stage != 2)continue;
+				pl->do_send(&p);
+			}
+		}
+	}
+	return false;
+
 }
 
 IceBossMonster::IceBossMonster()

@@ -60,6 +60,9 @@
     <ClCompile Include="NatureMonster.cpp">
       <Filter>Object\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="Spaceship.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Room.h">
@@ -97,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="NatureMonster.h">
       <Filter>Object\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Spaceship.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

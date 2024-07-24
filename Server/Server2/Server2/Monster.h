@@ -1,6 +1,8 @@
 #pragma once
+#include "Spaceship.h"
 class Session;
 enum class MonsterType : char;
+
 class Monster
 {
 	//Monster() = delete;
@@ -16,6 +18,7 @@ public:
 	XMFLOAT3 _look;
 	XMFLOAT3 _velocity;
 
+	Spaceship _spaceship;
 
 	XMFLOAT3 spaceshippos = { 250.0f,10.0f,750.0f };
 
@@ -32,6 +35,7 @@ public:
 	bool _is_alive = false;
 
 	bool _attackState = false;
+	bool _spaceshipattackState = false;
 	MonsterType _m_type;
 
 	float                           m_fBoundingSize{ 3.0f };
@@ -60,7 +64,7 @@ public:
 	void NightAttack(int cl_id);
 
 	bool CollideCheckToPlayer(Session* _player);
-
+	bool CollideCheckToSpaceship();
 	// trace
 	int FindClosePlayer();
 
