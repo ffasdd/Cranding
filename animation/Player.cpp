@@ -561,20 +561,9 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 		{
 			m_pSkinnedAnimationController->m_bIsMove = false;
 
-			//if (m_pSkinnedAnimationController->m_bIsPlayerAttacked
-			//	&& m_pSkinnedAnimationController->m_bIsDead == false
-			//	&& m_pSkinnedAnimationController->m_nAnimationBefore != 2)
-			//{
-			//	m_pSkinnedAnimationController->m_nAnimationAfter = 2;
-			//	m_pSkinnedAnimationController->m_bIsBlending = true;
-			//	m_pSkinnedAnimationController->SetTrackEnable(2, true);
-			//	m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
-			//}
-			// �� �ϴٰ� idle �� ��� -> ������ �ؾ��ϴ� ���
-			/*			else */if (m_pSkinnedAnimationController->m_nAnimationBefore != 0
+			if (m_pSkinnedAnimationController->m_nAnimationBefore != 0
 				&& m_pSkinnedAnimationController->m_bIsHeal == false
-				&& m_pSkinnedAnimationController->m_bIsDead == false
-				&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false)
+				&& m_pSkinnedAnimationController->m_bIsDead == false)
 			{
 				m_pSkinnedAnimationController->m_nAnimationAfter = 0;
 				m_pSkinnedAnimationController->m_bIsBlending = true;
@@ -625,8 +614,7 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 
 		// ��ȣ�ۿ� ����
 		else if (m_pSkinnedAnimationController->m_bIsHeal == true
-			&& m_pSkinnedAnimationController->m_nAnimationAfter != 5
-			&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false)
+			&& m_pSkinnedAnimationController->m_nAnimationAfter != 5)
 		{
 			m_pSkinnedAnimationController->m_nAnimationAfter = 5;
 			m_pSkinnedAnimationController->m_bIsBlending = true;

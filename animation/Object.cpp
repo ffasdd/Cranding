@@ -664,8 +664,8 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 			{
 				if (m_pAnimationTracks[k].m_bEnable)
 				{
-					// 상하체 분리 o일때
-					if (this->m_bIsAttack == true)
+					// 상하체 분리 o일때 + 공격할 때
+					if (m_bIsAttack)
 					{
 						CAnimationSet* pAnimationSet = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[k].m_nAnimationSet];
 						CAnimationSet* pAnimationSet2 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[m_nAttackAniNum].m_nAnimationSet];
@@ -711,6 +711,45 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						}
 					}
 
+					else if (m_bIsPlayerAttacked)
+					{
+						// 상하체 분리 o일때 + 공격 당할 때
+						CAnimationSet* pAnimationSet = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[k].m_nAnimationSet];
+						CAnimationSet* pAnimationSet2 = m_pAnimationSets->m_pAnimationSets[m_pAnimationTracks[2].m_nAnimationSet];
+
+						// animationtrack의 m_fPosition을 업데이트
+						float fPosition = m_pAnimationTracks[k].UpdatePosition(m_pAnimationTracks[k].m_fPosition, fTimeElapsed, pAnimationSet->m_fLength);
+
+						float fPosition2 = m_pAnimationTracks[2].UpdatePosition(m_pAnimationTracks[2].m_fPosition, fTimeElapsed, pAnimationSet2->m_fLength);
+						for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
+						{
+							XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
+
+							if (m_pAnimationSets->m_ppBoneFrameCaches[j]->m_bUpperBody == true)
+							{
+								// 현재 플레이어의 뼈 변환 정보들
+								// Astronaut_0 - Gravity_Idle Astronaut_Run_01
+								if (m_pAnimationSets->m_nAnimationSets)
+									m_pAnimationSets->m_nAnimationSets;
+
+								XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet2->GetSRT(j, fPosition2);
+
+								xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[2].m_fWeight));
+							}
+							// 현재 플레이어의 뼈 변환 정보들
+							else
+							{
+								XMFLOAT4X4 xmf4x4TrackTransform = pAnimationSet->GetSRT(j, fPosition);
+								xmf4x4Transform = Matrix4x4::Add(xmf4x4Transform, Matrix4x4::Scale(xmf4x4TrackTransform, m_pAnimationTracks[k].m_fWeight));
+							}
+							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
+						}
+						if (m_bIsPlayerAttacked && fPosition == 0.0f)
+						{
+							m_bIsPlayerAttacked = false;
+						}
+					}
+
 					// 상하체 분리 x일때
 					else
 					{
@@ -753,10 +792,6 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						{
 							m_nMonsterAttackCnt = 0;
 							m_bMonsterValidAttack = false;
-						}
-						if (m_bIsPlayerAttacked && fPosition == 0.0f)
-						{
-							m_bIsPlayerAttacked = false;
 						}
 
 					}
