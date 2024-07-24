@@ -69,7 +69,7 @@ void Monster::Move()
 	{
 		// 플레이어와의 최대거리가 가시거리 밖이라면 우주선을 향해 간다. 
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
-		XMVECTOR spaceshipVec = XMLoadFloat3(&_spaceship.getPos());
+		XMVECTOR spaceshipVec = XMLoadFloat3(&_spaceship->getPos());
 		XMVECTOR dirToSpaceship = XMVector3Normalize(spaceshipVec - posVec);
 
 		XMFLOAT3 directionToSpaceshipFloat3;
@@ -394,7 +394,7 @@ int Monster::FindClosePlayer()
 
 bool Monster::CollideCheckToSpaceship()
 {
-	if (m_SPBB.Intersects(_spaceship.getBoundingBox()) == true)
+	if (m_SPBB.Intersects(_spaceship->getBoundingBox()) == true)
 	{
 		if (_spaceshipattackState == true) {
 			return true;
@@ -414,7 +414,7 @@ bool Monster::CollideCheckToSpaceship()
 		}
 		//_player->do_send(&p);
 
-		cout << " 우주선 충돌 " << endl; 
+		//cout << " 우주선 충돌 " << endl; 
 		return true;
 	
 	}

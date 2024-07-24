@@ -601,7 +601,12 @@ void Network::ProcessPacket(char* buf)
 
 	}
 	break;
-
+	case SC_SPACESHIP_UPDATE:
+	{
+		SC_SPACESHIP_PACKET* p = reinterpret_cast<SC_SPACESHIP_PACKET*>(buf);
+		cout << " HP : " << p->hp << endl;
+		break;
+	}
 
 	}
 
@@ -720,6 +725,17 @@ void Network::SendMonsterDie(int npc_id, MonsterType _mtype)
 	p.type = CS_MONSTER_DIE;
 	p.size = sizeof(CS_MONSTER_DIE_PACKET);
 	p._montype = _mtype;
+	p.room_id = my_roomid;
+	p.npc_id = npc_id;
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendMonsterHitSpaceship(int npc_id)
+{
+	CS_MONSTER_ATTACK_SPACESHIP_PACKET p;
+	p.size = sizeof(CS_MONSTER_ATTACK_SPACESHIP_PACKET);
+	p.type = CS_MONSTER_HIT_SPACESHIP;
 	p.room_id = my_roomid;
 	p.npc_id = npc_id;
 

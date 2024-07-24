@@ -59,7 +59,8 @@ public: // thread send
 	void SendReady();
 	void SendTime(int time);
 	void SendMonsterDie(int npc_id, MonsterType _mtype);
-	
+	void SendMonsterHitSpaceship(int npc_id);
+
 	bool MonsterCollide(Session& _monster);
 	
 public: // utils

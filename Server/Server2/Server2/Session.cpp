@@ -194,6 +194,15 @@ void Session::send_player_attack_mosnter(int npc_id, bool isattack , MonsterType
 	do_send(&p);
 }
 
+void Session::send_spaceship_hp(int hp)
+{
+	SC_SPACESHIP_PACKET p;
+	p.size = sizeof(SC_SPACESHIP_PACKET);
+	p.type = SC_SPACESHIP_UPDATE;
+	p.hp = hp;
+	do_send(&p);
+}
+
 void Session::Rotate()
 {
 	float radian = XMConvertToRadians(yaw);

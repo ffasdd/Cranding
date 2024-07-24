@@ -18,7 +18,7 @@ public:
 	XMFLOAT3 _look;
 	XMFLOAT3 _velocity;
 
-	Spaceship _spaceship;
+	Spaceship* _spaceship = nullptr;
 
 	XMFLOAT3 spaceshippos = { 250.0f,10.0f,750.0f };
 

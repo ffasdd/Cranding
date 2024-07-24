@@ -365,7 +365,7 @@ void Server::InitialziedMonster(int room_Id)
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 8.0f;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y = ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
-
+			ingameroom[room_Id].NightMonster[i]._spaceship = &ingameroom[room_Id]._spaceship;
 
 
 		}
@@ -656,6 +656,19 @@ void Server::ProcessPacket(int id, char* packet)
 			std::chrono::system_clock::time_point attacktime = chrono::system_clock::now();
 			TIMER_EVENT ev{ attacktime + 1s ,p->room_id,EVENT_TYPE::EV_PLAYER_ATTACK_NPC,p->npc_id,p->_montype };
 			g_Timer.InitTimerQueue(ev);
+		}
+		break;
+	}
+	case CS_MONSTER_HIT_SPACESHIP: {
+		CS_MONSTER_ATTACK_SPACESHIP_PACKET* p = reinterpret_cast<CS_MONSTER_ATTACK_SPACESHIP_PACKET*>(packet);
+		int space_shiphp = ingameroom[p->room_id]._spaceship.getHp();
+		space_shiphp -= 1;
+		ingameroom[p->room_id]._spaceship.setHp(space_shiphp);
+
+		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+		{
+			// 우주선 체력
+			pl->send_spaceship_hp(space_shiphp);
 		}
 		break;
 	}

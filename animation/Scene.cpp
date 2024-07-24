@@ -1116,7 +1116,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
-
+				gNetwork.SendMonsterHitSpaceship(g_monsters[i - 3].getId());
 				//m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
 				//m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
 				////m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;

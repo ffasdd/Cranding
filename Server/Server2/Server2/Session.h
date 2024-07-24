@@ -251,6 +251,8 @@ public:
 
 	void send_player_attack_mosnter(int npc_id,bool isattack, MonsterType montype);
 
+	void send_spaceship_hp(int hp);
+	
 	void Rotate();
 };
 extern array<Session, MAX_USER> clients;

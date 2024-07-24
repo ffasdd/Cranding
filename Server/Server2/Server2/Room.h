@@ -40,6 +40,9 @@ public:
 	IceBossMonster IceBoss;
 	NatureBossMonster NatureBoss;
 
+
+	Spaceship _spaceship;
+
 	//// Fire Monster
 	//array<Monster, 30> FireMonster;
 	//// Ice Monster

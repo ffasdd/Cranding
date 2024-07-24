@@ -25,6 +25,7 @@ constexpr char CS_MOVE_MONSTER = 13;
 constexpr char CS_ATTACK_COLLISION = 14;
 constexpr char CS_ICE_MONSTER_UPDATE = 15;
 constexpr char CS_MONSTER_DIE = 16;
+constexpr char CS_MONSTER_HIT_SPACESHIP = 17;
 
 
 constexpr char SC_LOGIN_INFO = 2;
@@ -58,6 +59,8 @@ constexpr char SC_FIRE_BOSS_UPDATE = 32;
 constexpr char SC_NATURE_BOSS_UPDATE = 33;
 constexpr char SC_MONSTER_ATTACK = 34;
 constexpr char SC_MONSTER_DIE = 35;
+constexpr char SC_SPACESHIP_UPDATE = 36;
+
 
 
 
@@ -389,6 +392,13 @@ struct CS_ATTACK_COLLISION_PACKET {
 	int room_id;
 
 };
+struct CS_MONSTER_ATTACK_SPACESHIP_PACKET {
+	unsigned char size;
+	char type;
+	int npc_id;
+	int room_id;
+};
+
 struct CS_MONSTER_DIE_PACKET {
 	unsigned char size;
 	char type;
@@ -566,7 +576,12 @@ struct SC_MONSTER_DIE_PACKET {
 	int npc_id;
 	bool _isattacked;
 };
+struct SC_SPACESHIP_PACKET {
+	unsigned char size;
+	char type;
+	int hp;
 
+};
 
 struct CS_TEST_PACKET {
 	unsigned char size;
