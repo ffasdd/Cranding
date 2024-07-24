@@ -1258,6 +1258,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
+		m_ppHierarchicalGameObjects[3 + i]->SetMonsType(MONSTERTYPE::ICE);
 	}
 
 	// 로드된 모든 모델 해제
@@ -1491,6 +1492,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
+		m_ppHierarchicalGameObjects[3 + i]->SetMonsType(MONSTERTYPE::FIRE);
 	}
 
 	// 로드된 모든 모델 해제
@@ -1733,6 +1735,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
+		m_ppHierarchicalGameObjects[3 + i]->SetMonsType(MONSTERTYPE::NATURE);
 	}
 
 	// 로드된 모든 모델 해제
