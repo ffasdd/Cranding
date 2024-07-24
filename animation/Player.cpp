@@ -523,7 +523,7 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 	{
 
 		if (m_pSkinnedAnimationController->m_bIsMove == true
-			&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false)
+			/*&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false*/)
 		{
 			if (m_pSkinnedAnimationController->m_nAnimationBefore != 1
 				&& m_pSkinnedAnimationController->m_bIsDead == false)
