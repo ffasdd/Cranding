@@ -1100,11 +1100,11 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
-				//m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
+				//m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+				////m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
 
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				return false;
 			}
 			// fire monster's hand with spaceship
@@ -1151,11 +1151,11 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
-				//m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
+				//m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+				////m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
 
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				return false;
 			}
 			// ice monster's hand with spaceship
@@ -1199,11 +1199,11 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
-				//m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
+				//m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+				////m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
 
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				return false;
 			}
 			// grass monster's head with spaceship
@@ -1460,11 +1460,11 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
-				//m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
+				//m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+				////m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
 
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				return false;
 			}
 		}
@@ -1716,11 +1716,11 @@ bool CFireScene::CheckObjectByObjectCollisions()
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
-				//m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
+				//m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+				////m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
 
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				return false;
 			}
 		}
@@ -1968,11 +1968,11 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
-				//m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
+				//m_pPlayer->m_pSkinnedAnimationController->m_nAnimationAfter = 2;
+				////m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
 
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
+				//m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				return false;
 			}
 		}
