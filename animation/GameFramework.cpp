@@ -908,6 +908,39 @@ void CGameFramework::myFunc_SetMonAnimation(int n, bool isAttacked, bool isAttac
 	}
 }
 
+void CGameFramework::myFunc_SetBossMonAnimation(bool isAttacked, bool isAttack, int attackAniNum)
+{
+	if (isAttacked == true)
+	{
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+
+		for (int i = 0; i < m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_nAnimationTracks; i++)
+			m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(i, false);
+
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
+	}
+	else if (isAttack == true)
+	{
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bIsMonsterAttack = true;
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bWasMonsterAttack = true;
+
+		for(int i = 0; i < m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_nAnimationTracks; i++)
+			m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(i, false);
+
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(attackAniNum, true);
+	}
+	else if (isAttack == false && m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bWasMonsterAttack)
+	{
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bIsMonsterAttack = false;
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bWasMonsterAttack = false;
+
+		for (int i = 0; i < m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_nAnimationTracks; i++)
+			m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(i, false);
+
+		m_pScene->m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+	}
+}
+
 void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
 {
 	if (cl_id != n)
