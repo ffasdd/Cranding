@@ -359,7 +359,6 @@ int Monster::FindClosePlayer()
 
 	float minDistance = 50000.0f;
 	float maxDistance = 0.0f;
-
 	int  idx = 0;
 	for (auto& pl : ingamePlayer)
 	{

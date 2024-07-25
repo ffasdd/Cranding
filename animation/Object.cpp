@@ -1030,6 +1030,7 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 
 	if (m_pMesh)
 	{
+
 		UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 
 		m_pMesh->OnPreRender(pd3dCommandList, NULL);
@@ -1049,8 +1050,8 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 		}
 	}
 
-	if (m_pSibling) m_pSibling->Render(pd3dCommandList, pCamera);
-	if (m_pChild) m_pChild->Render(pd3dCommandList, pCamera);
+	if (m_pSibling) m_pSibling->Render(pd3dCommandList, pCamera, SharedNum, nPipelineState);
+	if (m_pChild) m_pChild->Render(pd3dCommandList, pCamera, SharedNum, nPipelineState);
 }
 
 void CGameObject::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)

@@ -217,6 +217,5 @@ private:
 	ID3D12PipelineState* m_pPipelineState;
 	ID3D12Resource* m_pShadowCamera = NULL;
 	VS_CB_CAMERA_INFO* m_pShadowMappedCamera = NULL;
-	bool isShadowRender = true;
 };
 

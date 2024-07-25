@@ -219,20 +219,20 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	::UpdateWindow(hMainWnd);
 
 	//imgui
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	//IMGUI_CHECKVERSION();
+	//ImGui::CreateContext();
+	//ImGuiIO& io = ImGui::GetIO();
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsDark();
 
-	// 플랫폼/렌더러 바인딩 설정
-	ImGui_ImplWin32_Init(hMainWnd);
-	ImGui_ImplDX12_Init(gGameFramework.GetDevice(), 3,
-		DXGI_FORMAT_R8G8B8A8_UNORM, gGameFramework.m_pd3dImGuiDescriptorHeap,
-		gGameFramework.m_pd3dImGuiDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-		gGameFramework.m_pd3dImGuiDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+	//// 플랫폼/렌더러 바인딩 설정
+	//ImGui_ImplWin32_Init(hMainWnd);
+	//ImGui_ImplDX12_Init(gGameFramework.GetDevice(), 3,
+	//	DXGI_FORMAT_R8G8B8A8_UNORM, gGameFramework.m_pd3dImGuiDescriptorHeap,
+	//	gGameFramework.m_pd3dImGuiDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+	//	gGameFramework.m_pd3dImGuiDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 
 
 	return(TRUE);

@@ -32,7 +32,7 @@ public:
 
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets = 0, DXGI_FORMAT* pdxgiRtvFormats = NULL, DXGI_FORMAT dxgiDsvFormat= DXGI_FORMAT_D32_FLOAT);
 
-	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets, DXGI_FORMAT* pdxgiRtvFormats, DXGI_FORMAT dxgiDsvFormat, D3D12_PRIMITIVE_TOPOLOGY_TYPE d3dPrimitiveTopologyType);
+	//virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets, DXGI_FORMAT* pdxgiRtvFormats, DXGI_FORMAT dxgiDsvFormat, D3D12_PRIMITIVE_TOPOLOGY_TYPE d3dPrimitiveTopologyType);
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) {}
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, void* pContext) { }
@@ -42,7 +42,7 @@ public:
 
 	virtual void OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, int nPipelineState=0);
 	
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int m_nPipelineStates=0);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int m_nPipelineStates);
 
 	void CreateShaderResourceViews(ID3D12Device* pd3dDevice, int nResources, ID3D12Resource** ppd3dResources, DXGI_FORMAT* pdxgiSrvFormats);
 
@@ -66,7 +66,7 @@ public:
 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUSrvDescriptorNextHandle() { return(m_d3dSrvCPUDescriptorNextHandle); }
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUSrvDescriptorNextHandle() { return(m_d3dSrvGPUDescriptorNextHandle); }
-
+	ID3D12PipelineState* GetPipelineState() const { return m_pd3dPipelineState; }
 protected:
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_d3dCbvCPUDescriptorStartHandle;
 	D3D12_GPU_DESCRIPTOR_HANDLE		m_d3dCbvGPUDescriptorStartHandle;
@@ -330,4 +330,65 @@ public:
 
 protected:
 	CTexture* m_pTexture = NULL;
+};
+
+class ShadowMap : public CShader
+{
+public:
+	ShadowMap(ID3D12Device* device, UINT width, UINT height);
+
+	ShadowMap(const ShadowMap& rhs) = delete;
+	ShadowMap& operator=(const ShadowMap& rhs) = delete;
+	~ShadowMap() = default;
+
+	UINT Width()const;
+	UINT Height()const;
+	ID3D12Resource* Resource();
+	D3D12_GPU_DESCRIPTOR_HANDLE Srv()const;
+	D3D12_CPU_DESCRIPTOR_HANDLE Dsv()const;
+
+	D3D12_VIEWPORT Viewport()const;
+	D3D12_RECT ScissorRect()const;
+
+	void BuildDescriptors(
+		D3D12_CPU_DESCRIPTOR_HANDLE hCpuSrv,
+		D3D12_GPU_DESCRIPTOR_HANDLE hGpuSrv,
+		D3D12_CPU_DESCRIPTOR_HANDLE hCpuDsv);
+
+	void OnResize(UINT newWidth, UINT newHeight);
+
+	void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets, DXGI_FORMAT* pdxgiRtvFormats, DXGI_FORMAT dxgiDsvFormat);
+
+	D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+
+	D3D12_RASTERIZER_DESC CreateRasterizerState();
+
+	D3D12_BLEND_DESC CreateBlendState();
+
+	D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();
+
+	D3D12_SHADER_BYTECODE CreateVertexShader();
+
+	D3D12_SHADER_BYTECODE CreatePixelShader();
+
+private:
+	void BuildDescriptors();
+	void BuildResource();
+
+private:
+
+	ID3D12Device* md3dDevice = nullptr;
+
+	D3D12_VIEWPORT mViewport;
+	D3D12_RECT mScissorRect;
+
+	UINT mWidth = 0;
+	UINT mHeight = 0;
+	DXGI_FORMAT mFormat = DXGI_FORMAT_R24G8_TYPELESS;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE mhCpuSrv;
+	D3D12_GPU_DESCRIPTOR_HANDLE mhGpuSrv;
+	D3D12_CPU_DESCRIPTOR_HANDLE mhCpuDsv;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> mShadowMap = nullptr;
 };
