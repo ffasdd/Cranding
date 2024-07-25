@@ -937,7 +937,7 @@ void CGameFramework::myFunc_SetBossMonAnimation(bool isAttacked, bool isAttack, 
 		for (int i = 0; i < m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_nAnimationTracks; i++)
 			m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(i, false);
 
-		m_pScene->m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 	}
 }
 
