@@ -558,7 +558,12 @@ void Network::ProcessPacket(char* buf)
 			if (p->is_attack)
 			{
 				g_IceBossMonster.setNpcAttack(p->is_attack);
-				cout << " Player Attack " << endl;
+				cout << " IceBoss Player Attack " << endl;
+			}
+			else 
+			{
+				g_IceBossMonster.setNpcAttack(p->is_attack);
+				cout << " IceBoss Run  " << endl;
 			}
 			break;
 		}
