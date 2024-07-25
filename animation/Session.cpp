@@ -95,6 +95,11 @@ bool Session::getNpcAttacked()
 	return monster_isattacked;
 }
 
+int Session::getBossAttackType()
+{
+	return attack_type_num;
+}
+
 void Session::setCharacterType(int type)
 {
 	characterType = type;
@@ -195,6 +200,11 @@ void Session::setNpcAttack(bool _isattack)
 void Session::setNpcAttacked(bool _isattacked)
 {
 	monster_isattacked = _isattacked;
+}
+
+void Session::setBossAttackType(int _typenum)
+{
+	attack_type_num = _typenum;
 }
 
 void Session::Rotate(float yaw)

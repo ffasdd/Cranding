@@ -8,7 +8,7 @@ FireBossMonster _FireBoss;
 IceBossMonster _IceBoss;
 NatureBossMonster _NatureBoss;
 
-Monster::Monster() : ingamePlayer { nullptr,nullptr}
+Monster::Monster() : ingamePlayer{ nullptr,nullptr }
 {
 	_pos = { 0.f,-150.0f,0.f };
 	_initPos = { 0.f,-150.0f,0.f };
@@ -21,7 +21,7 @@ Monster::Monster() : ingamePlayer { nullptr,nullptr}
 	_att = -1;
 	_stagenum = -1;
 	_id = -1;
-	
+
 }
 
 void Monster::Move()
@@ -109,34 +109,34 @@ void Monster::IceMove()
 	int id = FindClosePlayer();
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
-		
-			XMVECTOR posVec = XMLoadFloat3(&_pos);
-			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
-			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
-			XMFLOAT3 directionToPlayerFloat3;
-			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+		XMVECTOR posVec = XMLoadFloat3(&_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
-			_look = directionToPlayerFloat3;
+		XMFLOAT3 directionToPlayerFloat3;
+		XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
 
-			// right º¤ÅÍ °è»ê (look°ú up º¤ÅÍÀÇ ¿ÜÀû)
-			XMVECTOR upVec = XMLoadFloat3(&up);
-			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
-			XMFLOAT3 rightFloat3;
-			XMStoreFloat3(&rightFloat3, rightVec);
+		_look = directionToPlayerFloat3;
 
-			// right º¤ÅÍ¸¦ ¾÷µ¥ÀÌÆ®
-			_right = rightFloat3;
+		// right º¤ÅÍ °è»ê (look°ú up º¤ÅÍÀÇ ¿ÜÀû)
+		XMVECTOR upVec = XMLoadFloat3(&up);
+		XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+		XMFLOAT3 rightFloat3;
+		XMStoreFloat3(&rightFloat3, rightVec);
 
-			//else 
-			if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
+		// right º¤ÅÍ¸¦ ¾÷µ¥ÀÌÆ®
+		_right = rightFloat3;
 
-			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ÀÌµ¿ , 
+		//else 
+		if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
-			_speed = 0.7f;
-			m_SPBB.Center = _pos;
-			m_SPBB.Center.y = _pos.y;
-		
+		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ÀÌµ¿ , 
+
+		_speed = 0.7f;
+		m_SPBB.Center = _pos;
+		m_SPBB.Center.y = _pos.y;
+
 	}
 	else
 	{
@@ -176,35 +176,35 @@ void Monster::FireMove()
 	int id = FindClosePlayer();
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
-		
-			XMVECTOR posVec = XMLoadFloat3(&_pos);
-			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
-			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
-			XMFLOAT3 directionToPlayerFloat3;
-			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+		XMVECTOR posVec = XMLoadFloat3(&_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
-			_look = directionToPlayerFloat3;
+		XMFLOAT3 directionToPlayerFloat3;
+		XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
 
-			// right º¤ÅÍ °è»ê (look°ú up º¤ÅÍÀÇ ¿ÜÀû)
-			XMVECTOR upVec = XMLoadFloat3(&up);
-			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
-			XMFLOAT3 rightFloat3;
-			XMStoreFloat3(&rightFloat3, rightVec);
+		_look = directionToPlayerFloat3;
 
-			// right º¤ÅÍ¸¦ ¾÷µ¥ÀÌÆ®
-			_right = rightFloat3;
+		// right º¤ÅÍ °è»ê (look°ú up º¤ÅÍÀÇ ¿ÜÀû)
+		XMVECTOR upVec = XMLoadFloat3(&up);
+		XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+		XMFLOAT3 rightFloat3;
+		XMStoreFloat3(&rightFloat3, rightVec);
 
-			//else 
-			if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
+		// right º¤ÅÍ¸¦ ¾÷µ¥ÀÌÆ®
+		_right = rightFloat3;
 
-			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ÀÌµ¿ , 
+		//else 
+		if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
-			_speed = 1.2f;
-			m_SPBB.Center = _pos;
-			m_SPBB.Center.y = _pos.y;
+		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ÀÌµ¿ , 
 
-		
+		_speed = 1.2f;
+		m_SPBB.Center = _pos;
+		m_SPBB.Center.y = _pos.y;
+
+
 	}
 	else
 	{
@@ -245,35 +245,35 @@ void Monster::NatureMove()
 
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
-		
-			XMVECTOR posVec = XMLoadFloat3(&_pos);
-			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
-			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
-			XMFLOAT3 directionToPlayerFloat3;
-			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+		XMVECTOR posVec = XMLoadFloat3(&_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
-			_look = directionToPlayerFloat3;
+		XMFLOAT3 directionToPlayerFloat3;
+		XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
 
-			// right º¤ÅÍ °è»ê (look°ú up º¤ÅÍÀÇ ¿ÜÀû)
-			XMVECTOR upVec = XMLoadFloat3(&up);
-			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
-			XMFLOAT3 rightFloat3;
-			XMStoreFloat3(&rightFloat3, rightVec);
+		_look = directionToPlayerFloat3;
 
-			// right º¤ÅÍ¸¦ ¾÷µ¥ÀÌÆ®
-			_right = rightFloat3;
+		// right º¤ÅÍ °è»ê (look°ú up º¤ÅÍÀÇ ¿ÜÀû)
+		XMVECTOR upVec = XMLoadFloat3(&up);
+		XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+		XMFLOAT3 rightFloat3;
+		XMStoreFloat3(&rightFloat3, rightVec);
 
-			//else 
-			if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
+		// right º¤ÅÍ¸¦ ¾÷µ¥ÀÌÆ®
+		_right = rightFloat3;
 
-			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ÀÌµ¿ , 
+		//else 
+		if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
-			_speed = 1.0f;
-			m_SPBB.Center = _pos;
-			m_SPBB.Center.y = _pos.y;
+		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ÀÌµ¿ , 
 
-		
+		_speed = 1.0f;
+		m_SPBB.Center = _pos;
+		m_SPBB.Center.y = _pos.y;
+
+
 	}
 	else
 	{
@@ -329,6 +329,16 @@ bool Monster::CollideCheckToPlayer(Session* _player)
 		p.monstertype = _m_type;
 		p.id = _id;
 		p.is_attack = _attackState;
+
+		// ·£´ý attack_type »ý¼º
+		if (_m_type == MonsterType::Ice_Boss)
+		{
+			unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+			std::default_random_engine generator(seed);
+			std::uniform_int_distribution<int> distribution(4, 5); // 0ºÎÅÍ 10±îÁöÀÇ Á¤¼ö Áß ÇÏ³ª
+
+			p.attack_type = distribution(generator);
+		}
 		for (auto& pl : ingamePlayer)
 		{
 			if (pl->_stage != _player->_stage)continue;
@@ -416,7 +426,7 @@ bool Monster::CollideCheckToSpaceship()
 
 		//cout << " ¿ìÁÖ¼± Ãæµ¹ " << endl; 
 		return true;
-	
+
 	}
 	else
 	{
@@ -459,34 +469,34 @@ void IceBossMonster::Move()
 
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
-		
-			XMVECTOR posVec = XMLoadFloat3(&_pos);
-			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
-			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
-			XMFLOAT3 directionToPlayerFloat3;
-			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+		XMVECTOR posVec = XMLoadFloat3(&_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
-			_look = directionToPlayerFloat3;
+		XMFLOAT3 directionToPlayerFloat3;
+		XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
 
-			// right º¤ÅÍ °è»ê (look°ú up º¤ÅÍÀÇ ¿ÜÀû)
-			XMVECTOR upVec = XMLoadFloat3(&up);
-			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
-			XMFLOAT3 rightFloat3;
-			XMStoreFloat3(&rightFloat3, rightVec);
+		_look = directionToPlayerFloat3;
 
-			// right º¤ÅÍ¸¦ ¾÷µ¥ÀÌÆ®
-			_right = rightFloat3;
+		// right º¤ÅÍ °è»ê (look°ú up º¤ÅÍÀÇ ¿ÜÀû)
+		XMVECTOR upVec = XMLoadFloat3(&up);
+		XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+		XMFLOAT3 rightFloat3;
+		XMStoreFloat3(&rightFloat3, rightVec);
 
-			//else 
-			if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
+		// right º¤ÅÍ¸¦ ¾÷µ¥ÀÌÆ®
+		_right = rightFloat3;
 
-			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ÀÌµ¿ , 
-			_speed = 1.0f;
-			m_SPBB.Center = _pos;
-			m_SPBB.Center.y = _pos.y;
+		//else 
+		if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
-		
+		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ÀÌµ¿ , 
+		_speed = 1.0f;
+		m_SPBB.Center = _pos;
+		m_SPBB.Center.y = _pos.y;
+
+
 	}
 	else
 	{
@@ -534,34 +544,34 @@ void FireBossMonster::Move()
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
 
-			XMVECTOR posVec = XMLoadFloat3(&_pos);
-			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
-			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
+		XMVECTOR posVec = XMLoadFloat3(&_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
-			XMFLOAT3 directionToPlayerFloat3;
-			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+		XMFLOAT3 directionToPlayerFloat3;
+		XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
 
-			_look = directionToPlayerFloat3;
+		_look = directionToPlayerFloat3;
 
-			// right º¤ÅÍ °è»ê (look°ú up º¤ÅÍÀÇ ¿ÜÀû)
-			XMVECTOR upVec = XMLoadFloat3(&up);
-			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
-			XMFLOAT3 rightFloat3;
-			XMStoreFloat3(&rightFloat3, rightVec);
+		// right º¤ÅÍ °è»ê (look°ú up º¤ÅÍÀÇ ¿ÜÀû)
+		XMVECTOR upVec = XMLoadFloat3(&up);
+		XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+		XMFLOAT3 rightFloat3;
+		XMStoreFloat3(&rightFloat3, rightVec);
 
-			// right º¤ÅÍ¸¦ ¾÷µ¥ÀÌÆ®
-			_right = rightFloat3;
+		// right º¤ÅÍ¸¦ ¾÷µ¥ÀÌÆ®
+		_right = rightFloat3;
 
-			//else 
-			if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
+		//else 
+		if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
-			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ÀÌµ¿ , 
+		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ÀÌµ¿ , 
 
-			_speed = 1.0f;
-			m_SPBB.Center = _pos;
-			m_SPBB.Center.y = _pos.y;
+		_speed = 1.0f;
+		m_SPBB.Center = _pos;
+		m_SPBB.Center.y = _pos.y;
 
-		
+
 	}
 	else
 	{
@@ -608,35 +618,35 @@ void NatureBossMonster::Move()
 	int id = FindClosePlayer();
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
-		
-			XMVECTOR posVec = XMLoadFloat3(&_pos);
-			XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
-			XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
-			XMFLOAT3 directionToPlayerFloat3;
-			XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
+		XMVECTOR posVec = XMLoadFloat3(&_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
-			_look = directionToPlayerFloat3;
+		XMFLOAT3 directionToPlayerFloat3;
+		XMStoreFloat3(&directionToPlayerFloat3, directionToPlayer);
 
-			// right º¤ÅÍ °è»ê (look°ú up º¤ÅÍÀÇ ¿ÜÀû)
-			XMVECTOR upVec = XMLoadFloat3(&up);
-			XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
-			XMFLOAT3 rightFloat3;
-			XMStoreFloat3(&rightFloat3, rightVec);
+		_look = directionToPlayerFloat3;
 
-			// right º¤ÅÍ¸¦ ¾÷µ¥ÀÌÆ®
-			_right = rightFloat3;
+		// right º¤ÅÍ °è»ê (look°ú up º¤ÅÍÀÇ ¿ÜÀû)
+		XMVECTOR upVec = XMLoadFloat3(&up);
+		XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
+		XMFLOAT3 rightFloat3;
+		XMStoreFloat3(&rightFloat3, rightVec);
 
-			//else 
-			if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
+		// right º¤ÅÍ¸¦ ¾÷µ¥ÀÌÆ®
+		_right = rightFloat3;
 
-			_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ÀÌµ¿ , 
+		//else 
+		if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
 
-			_speed = 1.0f;
-			m_SPBB.Center = _pos;
-			m_SPBB.Center.y = _pos.y;
+		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ÀÌµ¿ , 
 
-		
+		_speed = 1.0f;
+		m_SPBB.Center = _pos;
+		m_SPBB.Center.y = _pos.y;
+
+
 	}
 	else
 	{

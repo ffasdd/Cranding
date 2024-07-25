@@ -125,7 +125,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 						gGameFramework.myFunc_SetBossMonPosition(g_IceBossMonster.getPos());
 						gGameFramework.myFunc_SetBossMonLookRightUp(g_IceBossMonster.getLook(), g_IceBossMonster.getUp(), g_IceBossMonster.getRight());
-						//gGameFramework.myFunc_SetBossMonAnimation();
+						gGameFramework.myFunc_SetBossMonAnimation(g_IceBossMonster.getNpcAttacked(),g_IceBossMonster.getNpcAttack(),g_IceBossMonster.getBossAttackType());
 
 						break;
 					}

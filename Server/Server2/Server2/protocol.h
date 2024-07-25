@@ -519,7 +519,7 @@ struct SC_MONSTER_ATTACK_PACKET {
 	int id;
 	bool is_attack;
 	MonsterType monstertype;
-	animateState_NPC a_state;
+	int attack_type;
 };
 struct SC_CHANGE_ANIMATION_PACKET {
 	unsigned char size;

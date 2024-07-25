@@ -25,6 +25,7 @@ public:
 	bool getAttack();
 	bool getNpcAttack();
 	bool getNpcAttacked();
+	int	 getBossAttackType();
 
 
 	void setCharacterType(int type);
@@ -46,6 +47,7 @@ public:
 	void setPrevPos(XMFLOAT3 prevpos);
 	void setNpcAttack(bool _isattack);
 	void setNpcAttacked(bool _isattacked);
+	void setBossAttackType(int _typenum);
 	void Rotate(float yaw);
 
 	mutex _sessionlock;
@@ -65,7 +67,7 @@ private:
 	int characterType = -1;
 	char m_name[20];
 	int m_hp;
-
+	int attack_type_num = -1;
 
 
 	XMFLOAT3 m_right;
