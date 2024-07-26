@@ -88,10 +88,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						else 
 							gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), true);
 						
-						if (gGameFramework.DayTime)
+						if (gGameFramework.DayTime && gGameFramework.beforeTimeState == 0)
 						{
 							gGameFramework.myFunc_SetStatus(g_clients[i].m_firecnt, g_clients[i].m_icencnt, g_clients[i].m_naturecnt);
 						}
+						if (gGameFramework.DayTime) gGameFramework.beforeTimeState = 1;
+						else if(gGameFramework.Night) gGameFramework.beforeTimeState = 0;
+
 						gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
 						gGameFramework.myFunc_SetLookRightUp(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
 						gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());

@@ -119,7 +119,7 @@ public:
 
 	void myFunc_SetBlind(int n, int id, bool _isblind);
 
-	void myFunc_SetStatus(int FCnt, int ICnt, int NCnt);
+	void myFunc_SetStatus(int FireCnt, int IceCnt, int NatureCnt);
 
 	CScene* m_pScene = NULL;
 
@@ -139,6 +139,7 @@ public:
 	
 	bool DayTime = false;
 	bool Night = false;
+	int beforeTimeState = 1;
 
 
 	ID3D12Resource* m_pd3dcbTime = NULL;
