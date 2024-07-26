@@ -326,7 +326,7 @@ void Server::WorkerThread()
 				pl->send_iceboss_skill(true);
 				// 스킬 send 
 			}
-			
+
 			TIMER_EVENT ev1{ std::chrono::system_clock::now() + std::chrono::milliseconds(2s), r_id , EVENT_TYPE::EV_ICE_BOSS_SKILL_CANCLE };
 			g_Timer.InitTimerQueue(ev1);
 
@@ -493,6 +493,7 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			this_thread::yield();
 		}
+
 		clients[id].send_login_info_packet();
 	}
 				 break;
@@ -720,6 +721,7 @@ void Server::ProcessPacket(int id, char* packet)
 			ingameroom[p->room_id].NightMonster[p->npc_id].MonsterLock.lock();
 			ingameroom[p->room_id].NightMonster[p->npc_id]._is_alive = false;
 			ingameroom[p->room_id].NightMonster[p->npc_id].MonsterLock.unlock();
+
 			if (p->npc_id >= 0 && p->npc_id < 10)
 				clients[id]._fireMonstercnt++;
 			else if (p->npc_id >= 10 && p->npc_id < 20)
@@ -752,7 +754,7 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		}
 	}
-		break;
+	break;
 	case CS_MONSTER_DIE: {
 		CS_MONSTER_DIE_PACKET* p = reinterpret_cast<CS_MONSTER_DIE_PACKET*>(packet);
 		// 다른 플레이어들 한테 NPC 타격 상황을 보냄 
@@ -786,7 +788,7 @@ void Server::ProcessPacket(int id, char* packet)
 
 	case CS_PLAYER_HIT: {
 		CS_PLAYER_HIT_PACKET* p = reinterpret_cast<CS_PLAYER_HIT_PACKET*>(packet);
-		
+		clients[p->id]._isDamaged = p->isdamaged;
 		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
 		{
 			if (pl->_stage != clients[p->id]._stage)continue;
@@ -885,11 +887,8 @@ void Server::ReadyToStart()
 				ingameroom[room_id].ingamePlayer.emplace_back(_session);
 				clients[_session->_id].room_id = room_id;
 
-				if (ingameroom[room_id].ingamePlayer.size() == MAX_ROOM_USER)
-				{
-					ingameroom[room_id].fullcheck = true;
-
-				}
+				if (ingameroom[room_id].ingamePlayer.size() != MAX_ROOM_USER)continue;
+				else ingameroom[room_id].fullcheck = true;
 			}
 
 			// 접속하는 클라이언트 순서대로 array에 집어넣어야함, 
@@ -984,7 +983,7 @@ void Server::ReadyToStart()
 
 		}
 		else
-			this_thread::sleep_for(1s);
+			this_thread::sleep_for(500ms);
 
 	}
 }

@@ -247,6 +247,7 @@ void Session::send_player_hit(int client_id)
 	p.size = sizeof(SC_PLAYER_HIT_PACKET);
 	p.type = SC_PLAYER_HIT;
 	p.id = client_id;
+	p.isdamaged = clients[client_id]._isDamaged;
 	do_send(&p);
 }
 

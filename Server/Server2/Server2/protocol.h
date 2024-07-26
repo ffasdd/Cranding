@@ -407,6 +407,7 @@ struct CS_PLAYER_HIT_PACKET {
 	char type;
 	int id;
 	int room_id;
+	bool isdamaged;
 };
 
 struct CS_MONSTER_DIE_PACKET {
@@ -615,6 +616,7 @@ struct SC_PLAYER_HIT_PACKET {
 	unsigned char size;
 	char type;
 	int id;
+	bool isdamaged;
 };
 struct CS_TEST_PACKET {
 	unsigned char size;
