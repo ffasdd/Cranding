@@ -116,6 +116,8 @@ public:
 
 	// 다른 클라들 공격 설정해주는 함수
 	void myFunc_SetAttack(int n, int id, bool isAttack);
+	void myFunc_SetAttacked(int n, int id, bool isAttacked);
+
 
 	void myFunc_SetBlind(int n, int id, bool _isblind);
 
