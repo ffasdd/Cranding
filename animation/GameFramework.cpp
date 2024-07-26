@@ -993,15 +993,15 @@ void CGameFramework::myFunc_SetBlind(int n, int id, bool _isblind)
 
 }
 
-void CGameFramework::myFunc_SetStatus(int FCnt, int ICnt, int NCnt)
+void CGameFramework::myFunc_SetStatus(int FireCnt, int IceCnt, int NatureCnt)
 {
-	int attack = m_pPlayer->GetAttackPower() + (FCnt * 5);
+	int attack = m_pPlayer->GetAttackPower() + (FireCnt * 5);
 	m_pPlayer->SetAttackPower(attack);
 
-	int speed = m_pPlayer->GetSpeed() + (ICnt * 3);
+	int speed = m_pPlayer->GetSpeed() + (IceCnt * 3);
 	m_pPlayer->SetSpeed(speed);
 
-	int health = m_pPlayer->GetHealth() + (NCnt * 5);
+	int health = m_pPlayer->GetHealth() + (NatureCnt * 5);
 	m_pPlayer->SetHealth(health);
 }
 
