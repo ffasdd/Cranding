@@ -130,18 +130,16 @@ void Network::SendProcess(SENDTYPE sendtype)
 
 		SendChangeScene(index);
 		break;
-	case SENDTYPE::ATTACK_COLLISION:
+	}
+	case SENDTYPE::PLAYER_HIT:
 	{
-		//SendAttackCollision()
+		SendPlayerHIt();
 		break;
 	}
-	case SENDTYPE::NPC_DIE:
-	{
 
 	}
-	}
 
-	}
+
 }
 
 void Network::ProcessData(size_t _size)
@@ -288,24 +286,7 @@ void Network::ProcessPacket(char* buf)
 				}
 				else if (IngameScene == true)
 				{
-					//SpaceshipScene = true;
 					gGameFramework.isSceneChange = true;
-					//for (int i = 0; i < g_clients.size(); ++i)
-					//{
-					//	if (g_clients[i].getId() == my_id)continue;
-					//	if (g_clients[i].scene_num != g_clients[my_id].scene_num)
-					//	{
-
-					//		//	gGameFramework.myFunc_SetBlind(i, ob_id, false);
-
-					//	}
-					//	//else
-					//	{
-
-					//		//gGameFramework.myFunc_SetBlind(i, ob_id, true);
-
-					//	}
-					//}
 				}
 				break;
 
@@ -314,12 +295,8 @@ void Network::ProcessPacket(char* buf)
 				for (int i = 0; i < g_clients.size(); ++i)
 				{
 					if (g_clients[i].getId() == my_id)continue;
-					//if (g_clients[i].scene_num != g_clients[my_id].scene_num)
-					//	gGameFramework.myFunc_SetBlind(i, ob_id, false);
-				//	else
-					//gGameFramework.myFunc_SetBlind(i, ob_id, true);
 				}
-				//g_monsters.clear();
+
 			}
 			break;
 			case 4:
@@ -327,12 +304,8 @@ void Network::ProcessPacket(char* buf)
 				for (int i = 0; i < g_clients.size(); ++i)
 				{
 					if (g_clients[i].getId() == my_id)continue;
-					//if (g_clients[i].scene_num != g_clients[my_id].scene_num)
-						//gGameFramework.myFunc_SetBlind(i, ob_id, false);
-					//else
-						//gGameFramework.myFunc_SetBlind(i, ob_id, true);
 				}
-				//g_monsters.clear();
+
 			}
 			break;
 			case 5:
@@ -340,12 +313,7 @@ void Network::ProcessPacket(char* buf)
 				for (int i = 0; i < g_clients.size(); ++i)
 				{
 					if (g_clients[i].getId() == my_id)continue;
-					//if (g_clients[i].scene_num != g_clients[my_id].scene_num)
-						//gGameFramework.myFunc_SetBlind(i, ob_id, false);
-					//else
-					//	gGameFramework.myFunc_SetBlind(i, ob_id, true);
 				}
-				//g_monsters.clear();
 			}
 			break;
 			}
@@ -356,10 +324,6 @@ void Network::ProcessPacket(char* buf)
 			{
 				if (p->stage == 1)continue;
 				if (g_clients[i].getId() == my_id)continue;
-				//if (g_clients[i].scene_num != g_clients[my_id].scene_num)
-				//	gGameFramework.myFunc_SetBlind(i, ob_id, false);
-				//else
-				//	gGameFramework.myFunc_SetBlind(i, ob_id, true);
 			}
 		}
 		// Id가 하나만 ㅁ거음 
@@ -368,7 +332,7 @@ void Network::ProcessPacket(char* buf)
 	}
 	case SC_INGAME_STRAT: {
 		gGameFramework.isSceneChange = true;
-		//IngameStart = true;
+
 		break;
 	}
 	case SC_REMOVE_OBJECT: {
@@ -382,6 +346,7 @@ void Network::ProcessPacket(char* buf)
 		SC_DAYTIME_PACKET* p = reinterpret_cast<SC_DAYTIME_PACKET*>(buf);
 		gGameFramework.DayTime = true;
 		gGameFramework.Night = false;
+
 
 		g_clients[my_id].m_firecnt = p->firecnt;
 		g_clients[my_id].m_icencnt = p->icecnt;
@@ -662,6 +627,12 @@ void Network::ProcessPacket(char* buf)
 		}
 		break;
 	}
+	case SC_PLAYER_HIT:
+	{
+		SC_PLAYER_HIT_PACKET* p = reinterpret_cast<SC_PLAYER_HIT_PACKET*>(buf);
+		cout << p->id << " < - Player Hit " << endl; 
+		break;
+	}
 
 	}
 
@@ -793,6 +764,18 @@ void Network::SendMonsterHitSpaceship(int npc_id)
 	p.type = CS_MONSTER_HIT_SPACESHIP;
 	p.room_id = my_roomid;
 	p.npc_id = npc_id;
+
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendPlayerHIt()
+{
+	CS_PLAYER_HIT_PACKET p;
+	p.size = sizeof(CS_PLAYER_HIT_PACKET);
+	p.type = CS_PLAYER_HIT;
+	p.id = my_id;
+	p.room_id = my_roomid;
 
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }

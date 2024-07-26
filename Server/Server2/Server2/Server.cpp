@@ -335,7 +335,6 @@ void Server::WorkerThread()
 			delete ex_over;
 			break;
 		}
-
 		case COMP_TYPE::ICE_BOSS_CANCLE_SKILL: {
 			int r_id = static_cast<int>(key);
 			if (ingameroom[r_id].IceBoss._is_alive == false)break;
@@ -348,7 +347,6 @@ void Server::WorkerThread()
 			delete ex_over;
 			break;
 		}
-
 		case COMP_TYPE::FIRE_BOSS_SKILL: {
 			int r_id = static_cast<int>(key);
 			if (ingameroom[r_id].FireBoss._is_alive == false)break;
@@ -786,6 +784,16 @@ void Server::ProcessPacket(int id, char* packet)
 		break;
 	}
 
+	case CS_PLAYER_HIT: {
+		CS_PLAYER_HIT_PACKET* p = reinterpret_cast<CS_PLAYER_HIT_PACKET*>(packet);
+		
+		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+		{
+			if (pl->_stage != clients[p->id]._stage)continue;
+			if (pl->_id == p->id)continue;
+			pl->send_player_hit(p->id);
+		}
+	}
 
 	}
 }
@@ -857,8 +865,6 @@ int Server::get_new_room_id(unordered_map<int, Room>& rooms)
 	}
 	return -1;
 }
-
-
 
 void Server::ReadyToStart()
 {

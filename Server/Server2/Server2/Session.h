@@ -207,7 +207,7 @@ public:
 	}
 	~Session() { closesocket(_socket); }
 
-
+	void Rotate();
 
 	void do_recv()
 	{
@@ -261,6 +261,7 @@ public:
 
 	void send_monster_attack(int npc_id,MonsterType monstertype, bool _attack);
 	
-	void Rotate();
+	void send_player_hit(int client_id);
+
 };
 extern array<Session, MAX_USER> clients;

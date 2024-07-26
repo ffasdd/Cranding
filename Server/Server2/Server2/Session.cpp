@@ -241,6 +241,15 @@ void Session::send_monster_attack(int npc_id, MonsterType monstertype, bool _att
 	do_send(&p);
 }
 
+void Session::send_player_hit(int client_id)
+{
+	SC_PLAYER_HIT_PACKET p;
+	p.size = sizeof(SC_PLAYER_HIT_PACKET);
+	p.type = SC_PLAYER_HIT;
+	p.id = client_id;
+	do_send(&p);
+}
+
 void Session::Rotate()
 {
 	float radian = XMConvertToRadians(yaw);
