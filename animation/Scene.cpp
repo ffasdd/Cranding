@@ -4,6 +4,8 @@
 
 #include "stdafx.h"
 #include "Scene.h"
+#pragma comment(lib, "winmm.lib")
+
 extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 extern Network							gNetwork;
 ID3D12DescriptorHeap *CScene::m_pd3dCbvSrvDescriptorHeap = NULL;
@@ -1010,7 +1012,9 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	SpaceshipBS.Center = { 250.0f, 10.0f, 750.0f };
 	SpaceshipBS.Radius = 50.0f;
 
-	PlayBGM(L"Sound/Day.wav");
+	//if (!PlaySound(L"Sound/Day.wav", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP)) {
+	//	MessageBox(NULL, L"사운드 재생 실패", L"오류", MB_OK | MB_ICONERROR);
+	//}
 
 	// 메모리 해제
 	for (int i = 0; i < FireMonsterNum; ++i) {
@@ -1025,6 +1029,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		if (pGrassMonModels[i]) delete pGrassMonModels[i];
 	}
 }
+
 void CSpaceShipScene::HandleCollisionEnd(CGameObject* pObject) {
 	// 충돌 종료 시 수행할 작업 구현
 	std::cout << "Collision ended with object: " << pObject->m_pstrFrameName << std::endl;
