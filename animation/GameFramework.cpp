@@ -1468,7 +1468,7 @@ void CGameFramework::FrameAdvance()
 		if (m_ShadowMap->GetPipelineState())m_pd3dCommandList->SetPipelineState(m_ShadowMap->GetPipelineState());
 
 		XMFLOAT3 pos;
-		XMFLOAT3 dir = XMFLOAT3(-0.5f, -0.7f, -0.5f);
+		XMFLOAT3 dir = XMFLOAT3(-0.3f, -0.85f, -0.3f);
 		float radius = 20;
 
 		XMFLOAT3 targetpos = m_pPlayer->GetPosition();

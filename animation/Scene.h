@@ -62,7 +62,7 @@ public:
 	void RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 
 	bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
-	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+	virtual void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) {};
 
 	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
@@ -155,9 +155,17 @@ public:
 
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
-	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+	void HandleCharacterInput(char c);
+	void HandleSpecialKeyInput(WPARAM wParam);
+	void ProcessLogin();
+	virtual void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void ReleaseUploadBuffers();
 	void ReleaseObjects();
+	bool m_isUsernameInput = true;  // 입력 모드 (true: 사용자 이름 입력, false: 비밀번호 입력)
+private:
+	std::string m_username;
+	std::string m_password;
+
 };
 
 class CLobbyScene : public CScene

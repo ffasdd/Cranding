@@ -128,7 +128,7 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 	
     float4 f4Texture : SV_TARGET1;
     float4 normal : SV_TARGET2;
-    float4 f4Position : SV_TARGET3;
+    float4 PositionW : SV_TARGET3;
     float4 posW : SV_TARGET4;
 };
 
@@ -186,9 +186,9 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     input.normalW = normalize(input.normalW);
     output.normal = float4(input.normalW, 0);
     
-    output.f4Position = float4(input.positionW, 1.0);
+    output.PositionW = float4(input.positionW, 1.0);
     
-    output.posW = float4(input.positionW, 0.0f);
+    output.posW = float4(input.positionW, 1.0f);
     //output.posW = float4(input.position.z, 0.0f, input.position.z, 1.0);
     //output.Position = float4(input.positionW, 0);
     
@@ -313,7 +313,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
     output.normal = float4(input.normalW, 0);
     input.normalW = normalize(input.normalW);
     
-    output.f4Position = float4(input.positionW, 1.0);
+    output.PositionW = float4(input.positionW, 0.0);
     //output.diffuse = float4(1.0, 1.0, 1.0, 1.0);
 	
     //output.posW = input.position.z;
@@ -324,7 +324,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
 	
     //output.f4Texture = lerp(output.f4Texture, cIllumination, 0.5f);
     //cIllumination = gMaterial.m_cDiffuse;
-    output.posW = float4(input.positionW, 1.0f);
+    output.posW = float4(input.positionW, 0.0f);
     output.scene = output.f4Texture + gMaterial.m_cEmissive;
     
     return (output);
@@ -622,21 +622,28 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     float4 diffuse = gMaterial.m_cDiffuse;  
     
     float3 pos = position.xyz;
-    
-    float4 ShadowPosH = mul(float4(gtxtInputTextures[2][int2(input.position.xy)].xyz, 1.0f), gmtxShadowTransform);
-
-    return float4(gtxtInputTextures[2][int2(input.position.xy)].xyz, 1.0f);
+    matrix shadowTransformMatrix =
+    {
+        -0.0176776703f, 0.00000000f, 0.0176776703f, 1.29549515f,
+        0.0158168618f, -0.0111648431f, 0.0158168618f, 1.36992741f,
+        -0.00789473671, -0.0223684218f, -0.00789473671, 0.0657894909,
+        0.00000000f, 0.00000000f, 0.00000000f, 1.00000000f
+    };
+    float4 ShadowPosH = mul(float4(gtxtInputTextures[2][int2(input.position.xy)].xyz, 1.0f), shadowTransformMatrix);
     float biasValue = 0.000f;
     float ShadowFactor = CalcShadowFactor(ShadowPosH, biasValue);
-	
+    
+
     if (ShadowPosH.x > 1 || ShadowPosH.y > 1 || ShadowPosH.z > 1 || ShadowPosH.x < 0 || ShadowPosH.y < 0 || ShadowPosH.z < 0)
     {
-        ShadowFactor = 1.0f;
+        ShadowFactor = 1.f;
+        //return float4(0.0f, 0.0f, 0.0f, 1.0f);
     }
     ShadowFactor += 0.5f;
 
-
     ShadowFactor = saturate(ShadowFactor);
+
+    
     float4 Illumination = DeferredLighting(pos, normal, specular, diffuse, ambient, tex);
     
    
@@ -652,9 +659,9 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
         isTexture = false;
 
     if (isTexture)
-        cColor = lerp(cColor, Illumination, 0.5f) * ShadowFactor; 
+        cColor = lerp(cColor, Illumination, 0.5f) * ShadowFactor;
     else
-        cColor = lerp(cColor, Illumination, 1.0f) * ShadowFactor; 
+        cColor = lerp(cColor, Illumination, 1.0f) * ShadowFactor;
 
     
     float4 cSobel = Sobel(gtxtInputTextures[0], input.uv, gssWrap);
@@ -702,12 +709,10 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     //float4 edgeColor = float4(0, 0, 0, 1); // Red color for the edge
     //float4 result = lerp(cColor, edgeColor, edgeMask);
     
-    //float4 debugSobelColor = float4(cSobel.r, cSobel.r, cSobel.r, 1.0f);
- 
-    
     float ShadowMap = gtxShadowMap.Sample(gssWrap, input.uv).r;
+    
     //return ShadowMap;
-    return ShadowMap;
+    return cColor;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

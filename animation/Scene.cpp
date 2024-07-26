@@ -526,30 +526,7 @@ bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam,
 	return(false);
 }
 
-bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
-{
-	// Object �Ŵ����� ���ؼ� ���⼭ �������൵ �ɰŰ��� 
-	// �װԴ� ��������? 
 
-	switch (nMessageID)
-	{
-	case WM_KEYDOWN:
-		switch(wParam)
-		{
-		//case 'W':
-		//	m_pPlayer->Move(DIR_FORWARD, 25.25f, true);
-		//	// send 
-		//	g_sendqueue.push(SENDTYPE::MOVE);
-		//	break;
-		default:
-			break;
-		}
-		break;
-	default:
-		break;
-	}
-	return(false);
-}
 
 ID3D12RootSignature* CScene::CreateRootSignature(ID3D12Device* pd3dDevice, D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags, UINT nRootParameters, D3D12_ROOT_PARAMETER* pd3dRootParameters, UINT nStaticSamplerDescs, D3D12_STATIC_SAMPLER_DESC* pd3dStaticSamplerDescs)
 {
@@ -719,7 +696,7 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 2);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
-	m_ppHierarchicalGameObjects[1]->SetPosition(30.0f, 0.0f, -65.0f);
+	m_ppHierarchicalGameObjects[1]->SetPosition(-30.0f, 0.0f, -65.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[1]->Rotate(-20.0f, 170.0f, 00.0f);
 
@@ -740,10 +717,73 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	if (pPlayerModel) delete pPlayerModel;
 
 }
-
-bool CLoginScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
+void CLoginScene::HandleCharacterInput(char c)
 {
-	return 0;
+	
+}
+
+void  CLoginScene::HandleSpecialKeyInput(WPARAM wParam)
+{
+	if (wParam == VK_TAB) // Switch input mode when Tab key is pressed
+	{
+		m_isUsernameInput = !m_isUsernameInput;
+	}
+}
+
+void CLoginScene::ProcessLogin()
+{
+	// Implement login processing logic here
+	// For example, validate credentials, communicate with a server, etc.
+	// For demonstration, we'll just output to console
+	printf("Username: %s\n", m_username.c_str());
+	printf("Password: %s\n", m_password.c_str());
+}
+
+void CLoginScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
+{
+	switch (nMessageID)
+	{
+
+	case WM_KEYDOWN:
+		if (m_isUsernameInput)
+		{
+			// Add character to username
+			if (wParam == '\r') // Enter key, switch to password input
+			{
+				m_isUsernameInput = false;
+			}
+			else if (wParam == '\b') // Backspace key
+			{
+				if (!m_username.empty())
+					m_username.pop_back();
+			}
+			else if (wParam >= ' ' && wParam <= '~') // Valid printable characters
+			{
+				m_username += wParam;
+			}
+		}
+		else
+		{
+			// Add character to password
+			if (wParam == '\r') // Enter key, process login
+			{
+				ProcessLogin();
+			}
+			else if (wParam == '\b') // Backspace key
+			{
+				if (!m_password.empty())
+					m_password.pop_back();
+			}
+			else if (wParam >= ' ' && wParam <= '~') // Valid printable characters
+			{
+				m_password += wParam;
+			}
+		}
+		HandleSpecialKeyInput(wParam);
+		break;
+	default:
+		break;
+	}
 }
 
 void CLoginScene::ReleaseUploadBuffers()
