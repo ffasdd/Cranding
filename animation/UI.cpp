@@ -266,11 +266,15 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
 
     m_pd2dDeviceContext->SetTarget(m_ppd2dRenderTargets[nFrame]);
     m_pd3d11On12Device->AcquireWrappedResources(ppResources, _countof(ppResources));
-    std::wstring wideUsername = {};
+    std::wstring wideUsername{};
     std::wstring widePassword{};
 
     float caretX = 0.f;
     float caretY = 0.f;
+
+    WCHAR username[256] = L"";
+    WCHAR password[256] = L"";
+
     switch (scenekind)
     {
     case SCENEKIND::LOGIN:
@@ -278,11 +282,6 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         m_pd2dDeviceContext->BeginDraw();
         m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[0], (UINT)wcslen(m_vecLoginSceneMenu[0]), m_textFormats[TEXT_SIZE::SIZE_60], m_Title, m_brushes[BRUSH_COLOR::BLACK]);
         m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[1], (UINT)wcslen(m_vecLoginSceneMenu[1]), m_textFormats[TEXT_SIZE::SIZE_40], m_GameStart, m_brushes[BRUSH_COLOR::BLACK]);
-
-
-        WCHAR username[256];
-        WCHAR password[256];
-
         // 변환 함수 호출
 
         wideUsername = StringToWString(gGameFramework.m_pScene->getname());

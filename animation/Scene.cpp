@@ -627,7 +627,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
 	}
 
-
+	
+	// 
 	//static float fAngle = 0.0f;
 	//fAngle += 1.50f;
 	//XMFLOAT4X4 xmf4x4Rotate = Matrix4x4::Rotate(0.0f, -fAngle, 0.0f);
@@ -1337,6 +1338,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 								
 	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[13]->SetHealth(500);
 
 	if (pIceBossModel) delete pIceBossModel;
 	
@@ -1345,12 +1347,18 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceItemModel, 0);
 								
 	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
-	m_ppHierarchicalGameObjects[14]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[14]->Rotate(45,0,0);
+	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	if (pIceItemModel) delete pIceItemModel;
 }
 
 bool CIceScene::CheckObjectByObjectCollisions()
 {
+	// 보스 아이템 디버깅용
+	if (m_ppHierarchicalGameObjects[13]->GetHealth() < 0) {
+		m_ppHierarchicalGameObjects[13]->isdraw = false;
+		m_ppHierarchicalGameObjects[14]->SetPosition(m_ppHierarchicalGameObjects[13]->GetPosition());
+	}
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// �ʰ� �浹�� ���
@@ -1573,7 +1581,8 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 								
 	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
-	
+	m_ppHierarchicalGameObjects[13]->SetHealth(500);
+
 	if (pFireBossModel) delete pFireBossModel;
 
 	CLoadedModelInfo* pFireItemModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/FuelTank.bin", NULL);
@@ -1581,13 +1590,20 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireItemModel, 0);
 								
 	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
-	m_ppHierarchicalGameObjects[14]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[14]->Rotate(90, 90, 0);
+	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	if (pFireItemModel) delete pFireItemModel;
 	
 
 }
 bool CFireScene::CheckObjectByObjectCollisions()
 {
+	// 보스 아이템 디버깅용
+	if (m_ppHierarchicalGameObjects[13]->GetHealth() < 0) {
+		m_ppHierarchicalGameObjects[13]->isdraw = false;
+		m_ppHierarchicalGameObjects[14]->SetPosition(m_ppHierarchicalGameObjects[13]->GetPosition());
+	}
+
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// �ʰ� �浹�� ���
@@ -1816,6 +1832,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 								
 	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[13]->SetHealth(500);
 
 	if (pGrassBossModel) delete pGrassBossModel;
 
@@ -1824,11 +1841,16 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pNatureItemModel, 0);
 								
 	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
-	m_ppHierarchicalGameObjects[14]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	if (pNatureItemModel) delete pNatureItemModel;
 }
 bool CGrassScene::CheckObjectByObjectCollisions()
 {
+	// 보스 아이템 디버깅용
+	if (m_ppHierarchicalGameObjects[13]->GetHealth() < 0) {
+		m_ppHierarchicalGameObjects[13]->isdraw = false;
+		m_ppHierarchicalGameObjects[14]->SetPosition(m_ppHierarchicalGameObjects[13]->GetPosition());
+	}
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// �ʰ� �浹�� ���
@@ -1931,6 +1953,104 @@ void CGrassScene::ReleaseUploadBuffers()
 }
 
 void CGrassScene::ReleaseObjects()
+{
+	CScene::ReleaseObjects();
+}
+
+void CWInScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
+
+	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+
+	m_nHierarchicalGameObjects = 4;
+	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
+
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/win.bin", NULL);
+	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
+	m_ppHierarchicalGameObjects[0]->SetPosition(200.0f, -10.0f, 400.0f);
+	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 3.0f, 5.0f);
+	if (map) delete map;
+
+	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
+	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
+	m_ppHierarchicalGameObjects[1]->SetPosition(50.0f, 0.0f, -15.0f);
+	m_ppHierarchicalGameObjects[1]->SetScale(30.0f, 30.0f, 30.0f);
+	m_ppHierarchicalGameObjects[1]->Rotate(-20.0f, 170.0f, 00.0f);
+
+	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
+	m_ppHierarchicalGameObjects[2]->SetPosition(0.0f, 0.0f, -15.0f);
+	m_ppHierarchicalGameObjects[2]->SetScale(30.0f, 30.0f, 30.0f);
+	m_ppHierarchicalGameObjects[2]->Rotate(-20.0f, 170.0f, 00.0f);
+
+	m_ppHierarchicalGameObjects[3] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
+	m_ppHierarchicalGameObjects[3]->SetPosition(-50.0f, 0.0f, -15.0f);
+	m_ppHierarchicalGameObjects[3]->SetScale(30.0f, 30.0f, 30.0f);
+	m_ppHierarchicalGameObjects[3]->Rotate(-20.0f, 170.0f, 0.0f);
+
+	if (pPlayerModel) delete pPlayerModel;
+}
+void CWInScene::ReleaseUploadBuffers()
+{
+	CScene::ReleaseUploadBuffers();
+}
+
+void CWInScene::ReleaseObjects()
+{
+	CScene::ReleaseObjects();
+}
+
+void CLoseScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
+
+	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+
+	m_nHierarchicalGameObjects = 4;
+	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
+
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/spaceshipmap.bin", NULL);
+	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
+	m_ppHierarchicalGameObjects[0]->SetPosition(100.0f, -100.0f, -100.0f);
+	m_ppHierarchicalGameObjects[0]->SetScale(10.0f, 8.0f, 10.0f);
+	if (map) delete map;
+
+	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
+	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 4);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
+	m_ppHierarchicalGameObjects[1]->SetPosition(-100.0f, 0.0f, -45.0f);
+	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[1]->Rotate(-20.0f, 170.0f, 00.0f);
+
+	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 4);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
+	m_ppHierarchicalGameObjects[2]->SetPosition(20.0f, 0.0f, -55.0f);
+	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[2]->Rotate(-20.0f, 170.0f, 00.0f);
+
+	m_ppHierarchicalGameObjects[3] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 3);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
+	m_ppHierarchicalGameObjects[3]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[3]->Rotate(0.0f, 0.0f, 0.0f);
+	m_ppHierarchicalGameObjects[3]->SetPosition(-60.0f, 0.0f, -30.0f);
+
+	if (pPlayerModel) delete pPlayerModel;
+}
+void CLoseScene::ReleaseUploadBuffers()
+{
+	CScene::ReleaseUploadBuffers();
+}
+
+void CLoseScene::ReleaseObjects()
 {
 	CScene::ReleaseObjects();
 }

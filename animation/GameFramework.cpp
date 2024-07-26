@@ -520,7 +520,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 		case 'L':
-
+			m_pScene->m_ppHierarchicalGameObjects[13]->SetHealth(-100);
 			break;
 		case 'F':
 			// 맵 이동 관련

@@ -230,3 +230,23 @@ public:
 	void ReleaseUploadBuffers();
 	void ReleaseObjects();
 };
+class CWInScene : public CScene
+{
+public:
+	CWInScene() { }
+	~CWInScene() { }
+
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void ReleaseUploadBuffers();
+	void ReleaseObjects();
+};
+class CLoseScene : public CScene
+{
+public:
+	CLoseScene() { }
+	~CLoseScene() { }
+
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void ReleaseUploadBuffers();
+	void ReleaseObjects();
+};
