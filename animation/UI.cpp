@@ -53,16 +53,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
         gGameFramework.isSceneChange = true;
         gGameFramework.isready = false;
        
-
         cout << "게임 시작" << endl;
-        return true;
-        });
-    UILayer::GetInstance()->AddUIRect(SCENEKIND::LOGIN, m_GameRule, [this]()-> bool {
-        cout << "게임 방법" << endl;
-        return true;
-        });
-    UILayer::GetInstance()->AddUIRect(SCENEKIND::LOGIN, m_GameQuit, [this]()-> bool {
-        cout << "게임 종료" << endl;
         return true;
         });
     UILayer::GetInstance()->AddUIRect(SCENEKIND::LOGIN, m_usernameRect, [this]()-> bool {
@@ -77,13 +68,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
         }
         return true;
         });
-    UILayer::GetInstance()->AddUIRect(SCENEKIND::LOGIN, m_loginButtonRect, [this]()-> bool {
-        if (gGameFramework.isLoginwindow) {
-            cout << "m_loginButtonRect" << endl;
-        }
-        return true;
-        });
-
+  
     m_fWidth = static_cast<float>(nWidth);
     m_fHeight = static_cast<float>(nHeight);
     m_nRenderTargets = nFrames;
@@ -279,8 +264,6 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         m_pd2dDeviceContext->BeginDraw();
         m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[0], (UINT)wcslen(m_vecLoginSceneMenu[0]), m_textFormats[TEXT_SIZE::SIZE_60], m_Title, m_brushes[BRUSH_COLOR::BLACK]);
         m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[1], (UINT)wcslen(m_vecLoginSceneMenu[1]), m_textFormats[TEXT_SIZE::SIZE_40], m_GameStart, m_brushes[BRUSH_COLOR::BLACK]);
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[2], (UINT)wcslen(m_vecLoginSceneMenu[2]), m_textFormats[TEXT_SIZE::SIZE_40], m_GameRule, m_brushes[BRUSH_COLOR::BLACK]);
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[3], (UINT)wcslen(m_vecLoginSceneMenu[3]), m_textFormats[TEXT_SIZE::SIZE_40], m_GameQuit, m_brushes[BRUSH_COLOR::BLACK]);
 
         if (gGameFramework.isLoginwindow) {
 

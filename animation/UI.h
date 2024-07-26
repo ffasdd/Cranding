@@ -81,12 +81,9 @@ private:
 
     // login
     D2D1_RECT_F m_Title = D2D1::RectF(100, -20.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT); 
-    D2D1_RECT_F m_GameStart = D2D1::RectF(150, 400, 750, 550);
-    D2D1_RECT_F m_GameRule = D2D1::RectF(150, 600.0f, 750, 750);
-    D2D1_RECT_F m_GameQuit = D2D1::RectF(150, 800.0f, 750, 950);
-    D2D1_RECT_F m_usernameRect = D2D1::RectF(350, 400, 950, 550);
-    D2D1_RECT_F m_passwordRect = D2D1::RectF(350, 600.0f, 950, 750);
-    D2D1_RECT_F m_loginButtonRect = D2D1::RectF(350, 800.0f, 950, 950);
+    D2D1_RECT_F m_usernameRect = D2D1::RectF(150, 400, 750, 550);
+    D2D1_RECT_F m_passwordRect = D2D1::RectF(150, 600.0f, 750, 750);
+    D2D1_RECT_F m_GameStart = D2D1::RectF(150, 800.0f, 750, 950);
 
     // lobby
     D2D1_RECT_F m_ReadyMent = D2D1::RectF(0.0f, 0.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
