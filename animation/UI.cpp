@@ -57,15 +57,15 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
         return true;
         });
     UILayer::GetInstance()->AddUIRect(SCENEKIND::LOGIN, m_usernameRect, [this]()-> bool {
-        if (gGameFramework.isLoginwindow) {
-            cout << "m_usernameRect" << endl;
-        }
+       gGameFramework.m_pScene->m_isUsernameInput = true;  // 입력 모드 (true: 사용자 이름 입력, false: 비밀번호 입력)
+       cout << "m_usernameRect" << endl;
+        
         return true;
         });
     UILayer::GetInstance()->AddUIRect(SCENEKIND::LOGIN, m_passwordRect, [this]()-> bool {
-        if (gGameFramework.isLoginwindow) {
-            cout << "m_passwordRect" << endl;
-        }
+        gGameFramework.m_pScene->m_isUsernameInput = false;  // 입력 모드 (true: 사용자 이름 입력, false: 비밀번호 입력)
+        cout << "m_usernameRect" << endl;
+
         return true;
         });
   
@@ -130,12 +130,15 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     m_brushes[BRUSH_COLOR::WHITE] = CreateBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
     m_brushes[BRUSH_COLOR::LIME_GREEN] = CreateBrush(D2D1::ColorF(1.0f, 0.8f, 0.8f, 1.0f));
     m_brushes[BRUSH_COLOR::BLACK] = CreateBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
+    m_brushes[BRUSH_COLOR::LIGHTBLACK] = CreateBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.8f));
+    m_brushes[BRUSH_COLOR::ABLACK] = CreateBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.3f));
     m_brushes[BRUSH_COLOR::RED] = CreateBrush(D2D1::ColorF(1.0f, 0.14f, 0.14f, 1.0f));
 
     // text format
     m_textFormats[TEXT_SIZE::SIZE_15] = CreateTextFormat(L"맑은 고딕", 15.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_18] = CreateTextFormat(L"맑은 고딕", 18.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_25] = CreateTextFormat(L"맑은 고딕", 25.0f * 3.35f);
+    m_textFormats[TEXT_SIZE::SIZE_35] = CreateTextFormat(L"맑은 고딕", 35.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_40] = CreateTextFormat(L"맑은 고딕", 40.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_50] = CreateTextFormat(L"맑은 고딕", 50.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_60] = CreateTextFormat(L"맑은 고딕", 80.0f * 3.35f);
@@ -249,14 +252,25 @@ void UILayer::UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2
     if (pdwFormat) m_pTextBlocks[nIndex].m_pdwFormat = pdwFormat;
     if (pd2dTextBrush) m_pTextBlocks[nIndex].m_pd2dTextBrush = pd2dTextBrush;
 }
-
+std::wstring StringToWString(const std::string& str) {
+    int len;
+    int slength = (int)str.length() + 1;
+    len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), slength, 0, 0);
+    std::wstring buf(len, 0);
+    MultiByteToWideChar(CP_ACP, 0, str.c_str(), slength, &buf[0], len);
+    return buf;
+}
 void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay, int curMinute, int curSecond)
 {
     ID3D11Resource* ppResources[] = { m_ppd3d11WrappedRenderTargets[nFrame] };
 
     m_pd2dDeviceContext->SetTarget(m_ppd2dRenderTargets[nFrame]);
     m_pd3d11On12Device->AcquireWrappedResources(ppResources, _countof(ppResources));
+    std::wstring wideUsername = {};
+    std::wstring widePassword{};
 
+    float caretX = 0.f;
+    float caretY = 0.f;
     switch (scenekind)
     {
     case SCENEKIND::LOGIN:
@@ -265,9 +279,35 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[0], (UINT)wcslen(m_vecLoginSceneMenu[0]), m_textFormats[TEXT_SIZE::SIZE_60], m_Title, m_brushes[BRUSH_COLOR::BLACK]);
         m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[1], (UINT)wcslen(m_vecLoginSceneMenu[1]), m_textFormats[TEXT_SIZE::SIZE_40], m_GameStart, m_brushes[BRUSH_COLOR::BLACK]);
 
-        if (gGameFramework.isLoginwindow) {
 
-        }
+        WCHAR username[256];
+        WCHAR password[256];
+
+        // 변환 함수 호출
+
+        wideUsername = StringToWString(gGameFramework.m_pScene->getname());
+        widePassword = StringToWString(gGameFramework.m_pScene->getpassword());
+
+        // wcsncpy_s 사용
+        wcsncpy_s(username, wideUsername.c_str(), _TRUNCATE);
+        wcsncpy_s(password, widePassword.c_str(), _TRUNCATE);
+
+        m_pd2dDeviceContext->FillRectangle(m_usernameRect, m_brushes[BRUSH_COLOR::ABLACK]);
+        m_pd2dDeviceContext->DrawText(username, (UINT)wcslen(username), m_textFormats[TEXT_SIZE::SIZE_35], m_usernameRect, m_brushes[BRUSH_COLOR::LIGHTBLACK]);
+
+        m_pd2dDeviceContext->FillRectangle(m_passwordRect, m_brushes[BRUSH_COLOR::ABLACK]);
+        m_pd2dDeviceContext->DrawText(password, (UINT)wcslen(password), m_textFormats[TEXT_SIZE::SIZE_35], m_passwordRect, m_brushes[BRUSH_COLOR::LIGHTBLACK]);
+
+        //// For example, you might want to position it at the end of the username text
+        //caretX = m_usernameRect.left + m_textFormats[TEXT_SIZE::SIZE_35]->GetFontSize() * (wcslen(username) + 1);  // Adjust position as needed
+        //caretY = m_usernameRect.top + 5;  // Adjust position as needed (vertical alignment)
+
+        //// Draw caret
+        //D2D1_RECT_F caretRect = D2D1::RectF(caretX, caretY, caretX + 2.0f, caretY + m_textFormats[TEXT_SIZE::SIZE_35]->GetFontSize() + 5.0f);
+        //m_pd2dDeviceContext->FillRectangle(caretRect, m_brushes[BRUSH_COLOR::LIGHTBLACK]);
+
+
+
 
         m_pd2dDeviceContext->EndDraw();
         break;

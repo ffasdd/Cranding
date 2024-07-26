@@ -135,7 +135,6 @@ public:
 	bool isSceneChangetoIce = false;
 	bool isSceneChangetoNature = false;
 
-	bool isLoginwindow = false;
 
 	// ½Ã°è
 	int total = 0;

@@ -717,10 +717,7 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	if (pPlayerModel) delete pPlayerModel;
 
 }
-void CLoginScene::HandleCharacterInput(char c)
-{
-	
-}
+
 
 void  CLoginScene::HandleSpecialKeyInput(WPARAM wParam)
 {

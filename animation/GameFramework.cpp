@@ -520,7 +520,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 		case 'L':
-			isLoginwindow = !isLoginwindow;
+
 			break;
 		case 'F':
 			// 맵 이동 관련
@@ -1605,27 +1605,9 @@ void CGameFramework::FrameAdvance()
 
 		WaitForGpuComplete();
 #ifdef _FULLSCREEN
-		// 명령 리스트 기록 시작
-		hResult = m_pd3dCommandAllocator->Reset();
-		hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
-
-		// 렌더 타겟으로 전환
-		SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
+		
 		if (m_pUILayer)
 			UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
-
-		// 상태를 PRESENT로 전환
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-
-		//hResult = m_pd3dCommandList->Close();
-
-		//// 명령 목록 실행
-		//ID3D12CommandList* pd3dCommandLists[] = { m_pd3dCommandList };
-		//m_pd3dCommandQueue->ExecuteCommandLists(1, pd3dCommandLists);
-
-		//// GPU가 명령을 처리할 때까지 기다림
-		//WaitForGpuComplete();
 
 #endif // _FULLSCREEN
 
