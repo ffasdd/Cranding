@@ -203,6 +203,44 @@ void Session::send_spaceship_hp(int hp)
 	do_send(&p);
 }
 
+void Session::send_iceboss_skill(bool attack)
+{
+	SC_ICEBOSS_SKILL_PACKET p;
+	p.size = sizeof(SC_ICEBOSS_SKILL_PACKET);
+	p.type = SC_ICEBOSS_SKILL;
+	p._isattacked = attack;
+	do_send(&p);
+}
+
+void Session::send_fireboss_skill(bool attack)
+{
+	SC_FIREBOSS_SKILL_PACKET p;
+	p.size = sizeof(SC_FIREBOSS_SKILL_PACKET);
+	p.type = SC_FIREBOSS_SKILL;
+	p._isattacked = attack;
+	do_send(&p);
+}
+
+void Session::send_natureboss_skill(bool attack)
+{
+	SC_NATUREBOSS_SKILL_PACKET p;
+	p.size = sizeof(SC_NATUREBOSS_SKILL_PACKET);
+	p.type = SC_NATUREBOSS_SKILL;
+	p._isattacked = attack;
+	do_send(&p);
+}
+
+void Session::send_monster_attack(int npc_id, MonsterType monstertype, bool _attack)
+{
+	SC_MONSTER_ATTACK_PACKET p;
+	p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
+	p.type = SC_MONSTER_ATTACK;
+	p.monstertype = monstertype;
+	p.id = npc_id;
+	p.is_attack = _attack;
+	do_send(&p);
+}
+
 void Session::Rotate()
 {
 	float radian = XMConvertToRadians(yaw);

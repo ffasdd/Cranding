@@ -44,7 +44,7 @@ public:
 	animateState animationstate;
 	animateState prevanimationstate;
 
-	float                           m_fBoundingSize{ 8.0f };
+	float                           m_fBoundingSize{ 15.0f };
 	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
 
 	mutex _v_lock;
@@ -252,6 +252,14 @@ public:
 	void send_player_attack_mosnter(int npc_id,bool isattack, MonsterType montype);
 
 	void send_spaceship_hp(int hp);
+
+	void send_iceboss_skill(bool attack);
+
+	void send_fireboss_skill(bool attack);
+
+	void send_natureboss_skill(bool attack);
+
+	void send_monster_attack(int npc_id,MonsterType monstertype, bool _attack);
 	
 	void Rotate();
 };

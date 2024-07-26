@@ -60,7 +60,9 @@ constexpr char SC_NATURE_BOSS_UPDATE = 33;
 constexpr char SC_MONSTER_ATTACK = 34;
 constexpr char SC_MONSTER_DIE = 35;
 constexpr char SC_SPACESHIP_UPDATE = 36;
-
+constexpr char SC_ICEBOSS_SKILL = 37;
+constexpr char SC_FIREBOSS_SKILL = 38;
+constexpr char SC_NATUREBOSS_SKILL = 39;
 
 
 
@@ -582,7 +584,24 @@ struct SC_SPACESHIP_PACKET {
 	int hp;
 
 };
+struct SC_ICEBOSS_SKILL_PACKET {
+	unsigned char size;
+	char type;
+	bool _isattacked;
 
+};
+struct SC_FIREBOSS_SKILL_PACKET {
+	unsigned char size;
+	char type;
+	bool _isattacked;
+
+};
+struct SC_NATUREBOSS_SKILL_PACKET {
+	unsigned char size;
+	char type;
+	bool _isattacked;
+
+};
 struct CS_TEST_PACKET {
 	unsigned char size;
 	char	type;

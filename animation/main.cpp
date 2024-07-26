@@ -140,7 +140,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						}
 						gGameFramework.myFunc_SetBossMonPosition(g_FireBossMonster.getPos());
 						gGameFramework.myFunc_SetBossMonLookRightUp(g_FireBossMonster.getLook(), g_FireBossMonster.getUp(), g_FireBossMonster.getRight());
-
+						gGameFramework.myFunc_SetBossMonAnimation(g_FireBossMonster.getNpcAttacked(), g_FireBossMonster.getNpcAttack(), g_FireBossMonster.getBossAttackType());
 
 						break;
 					}
@@ -156,7 +156,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						}
 						gGameFramework.myFunc_SetBossMonPosition(g_NatureBossMonster.getPos());
 						gGameFramework.myFunc_SetBossMonLookRightUp(g_NatureBossMonster.getLook(), g_NatureBossMonster.getUp(), g_NatureBossMonster.getRight());
-
+						gGameFramework.myFunc_SetBossMonAnimation(g_NatureBossMonster.getNpcAttacked(), g_NatureBossMonster.getNpcAttack(), g_NatureBossMonster.getBossAttackType());
 						break;
 					}
 

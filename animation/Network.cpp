@@ -246,7 +246,7 @@ void Network::ProcessPacket(char* buf)
 		SC_CHANGE_ANIMATION_PACKET* p = reinterpret_cast<SC_CHANGE_ANIMATION_PACKET*>(buf);
 		int ob_id = (p->id);
 		g_clients[ob_id].setAnimation(p->a_state);
-		g_clients[ob_id].setprevAnimation(p->prev_a_state);  
+		g_clients[ob_id].setprevAnimation(p->prev_a_state);
 	}
 							break;
 	case SC_START_GAME: {
@@ -558,10 +558,11 @@ void Network::ProcessPacket(char* buf)
 			if (p->is_attack)
 			{
 				g_IceBossMonster.setNpcAttack(p->is_attack);
-				g_IceBossMonster.setBossAttackType(p->attack_type);
+				g_IceBossMonster.setBossAttackType(4);
+
 				cout << " IceBoss Player Attack " << endl;
 			}
-			else 
+			else
 			{
 				g_IceBossMonster.setNpcAttack(p->is_attack);
 				cout << " IceBoss Run  " << endl;
@@ -611,6 +612,54 @@ void Network::ProcessPacket(char* buf)
 	{
 		SC_SPACESHIP_PACKET* p = reinterpret_cast<SC_SPACESHIP_PACKET*>(buf);
 		cout << " HP : " << p->hp << endl;
+		break;
+	}
+	case SC_ICEBOSS_SKILL:
+	{
+		SC_ICEBOSS_SKILL_PACKET* p = reinterpret_cast<SC_ICEBOSS_SKILL_PACKET*>(buf);
+		if (p->_isattacked) {
+			cout << " ICE BOSS SKILL " << endl;
+			g_IceBossMonster.setNpcAttack(true);
+			g_IceBossMonster.setBossAttackType(5);
+		}
+		else
+		{
+			cout << " Ice Boss SKill Cancle" << endl;
+			g_IceBossMonster.setNpcAttack(false);
+			g_IceBossMonster.setBossAttackType(3);
+		}
+		break;
+	}
+	case SC_FIREBOSS_SKILL:
+	{
+		SC_FIREBOSS_SKILL_PACKET* p = reinterpret_cast<SC_FIREBOSS_SKILL_PACKET*>(buf);
+		if (p->_isattacked) {
+			cout << " FIRE BOSS SKILL " << endl;
+			g_FireBossMonster.setNpcAttack(true);
+			g_FireBossMonster.setBossAttackType(5);
+		}
+		else
+		{
+			cout << " Fire Boss SKill Cancle" << endl;
+			g_FireBossMonster.setNpcAttack(false);
+			g_FireBossMonster.setBossAttackType(3);
+		}
+		break;
+	}
+	case SC_NATUREBOSS_SKILL:
+	{
+		SC_NATUREBOSS_SKILL_PACKET* p = reinterpret_cast<SC_NATUREBOSS_SKILL_PACKET*>(buf);
+		if (p->_isattacked) {
+			cout << " NATURE BOSS SKILL " << endl;
+			g_NatureBossMonster.setNpcAttack(true);
+			g_NatureBossMonster.setBossAttackType(5);
+		}
+		else
+		{
+			cout << " Nature Boss SKill Cancle" << endl;
+			g_NatureBossMonster.setNpcAttack(false);
+			g_NatureBossMonster.setBossAttackType(3);
+		}
 		break;
 	}
 

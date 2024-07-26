@@ -186,7 +186,7 @@ void Server::WorkerThread()
 				clients[c_id].animationstate = animateState::FREE;
 
 				clients[c_id].m_SPBB.Center = clients[c_id]._pos;
-				clients[c_id].m_SPBB.Center.y = clients[c_id]._pos.y;
+				clients[c_id].m_SPBB.Center.y = 20.0f;
 				clients[c_id].m_SPBB.Radius = 10.0f;
 
 				CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientsocket), _IocpHandle, c_id, 0);
@@ -316,6 +316,102 @@ void Server::WorkerThread()
 			delete ex_over;
 			break;
 		}
+		case COMP_TYPE::ICE_BOSS_SKILL: {
+			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].IceBoss._is_alive == false)break;
+			for (auto& pl : ingameroom[r_id].ingamePlayer)
+			{
+				if (ingameroom[r_id].IceBoss._fight == false)break;
+				if (pl->_stage != 3)continue;
+				pl->send_iceboss_skill(true);
+				// 스킬 send 
+			}
+			
+			TIMER_EVENT ev1{ std::chrono::system_clock::now() + std::chrono::milliseconds(2s), r_id , EVENT_TYPE::EV_ICE_BOSS_SKILL_CANCLE };
+			g_Timer.InitTimerQueue(ev1);
+
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(6s), r_id , EVENT_TYPE::EV_ICE_BOSS_SKILL };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+		}
+
+		case COMP_TYPE::ICE_BOSS_CANCLE_SKILL: {
+			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].IceBoss._is_alive == false)break;
+			for (auto& pl : ingameroom[r_id].ingamePlayer)
+			{
+				if (ingameroom[r_id].IceBoss._fight == false)break;
+				if (pl->_stage != 3)continue;
+				pl->send_iceboss_skill(false);
+			}
+			delete ex_over;
+			break;
+		}
+
+		case COMP_TYPE::FIRE_BOSS_SKILL: {
+			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].FireBoss._is_alive == false)break;
+			for (auto& pl : ingameroom[r_id].ingamePlayer)
+			{
+				if (ingameroom[r_id].FireBoss._fight == false)break;
+				if (pl->_stage != 4)continue;
+				pl->send_fireboss_skill(true);
+				// 스킬 send 
+			}
+
+			TIMER_EVENT ev1{ std::chrono::system_clock::now() + std::chrono::milliseconds(2s), r_id , EVENT_TYPE::EV_FIRE_BOSS_SKILL_CANCLE };
+			g_Timer.InitTimerQueue(ev1);
+
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(6s), r_id , EVENT_TYPE::EV_FIRE_BOSS_SKILL };
+			g_Timer.InitTimerQueue(ev);
+
+			delete ex_over;
+			break;
+		}
+		case COMP_TYPE::FIRE_BOSS_CANCLE_SKILL: {
+			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].FireBoss._is_alive == false)break;
+			for (auto& pl : ingameroom[r_id].ingamePlayer)
+			{
+				if (ingameroom[r_id].FireBoss._fight == false)break;
+				if (pl->_stage != 4)continue;
+				pl->send_fireboss_skill(false);
+			}
+			delete ex_over;
+			break;
+		}
+		case COMP_TYPE::NATURE_BOSS_SKILL: {
+			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].NatureBoss._is_alive == false)break;
+			for (auto& pl : ingameroom[r_id].ingamePlayer)
+			{
+				if (ingameroom[r_id].NatureBoss._fight == false)break;
+				if (pl->_stage != 5)continue;
+				pl->send_natureboss_skill(true);
+				// 스킬 send 
+			}
+
+			TIMER_EVENT ev1{ std::chrono::system_clock::now() + std::chrono::milliseconds(2s), r_id , EVENT_TYPE::EV_NATURE_BOSS_SKILL_CANCLE };
+			g_Timer.InitTimerQueue(ev1);
+
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(6s), r_id , EVENT_TYPE::EV_NATURE_BOSS_SKILL };
+			g_Timer.InitTimerQueue(ev);
+			delete ex_over;
+			break;
+		}
+		case COMP_TYPE::NATURE_BOSS_SKILL_CANCLE: {
+			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].NatureBoss._is_alive == false)break;
+			for (auto& pl : ingameroom[r_id].ingamePlayer)
+			{
+				if (ingameroom[r_id].NatureBoss._fight == false)break;
+				if (pl->_stage != 5)continue;
+				pl->send_natureboss_skill(false);
+			}
+			delete ex_over;
+			break;
+		}
 		default:
 			break;
 		}
@@ -363,8 +459,8 @@ void Server::InitialziedMonster(int room_Id)
 			ingameroom[room_Id].NightMonster[i]._is_alive = true;
 			ingameroom[room_Id].NightMonster[i]._stagenum = 2;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Center = ingameroom[room_Id].NightMonster[i]._pos;
+			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y = 20.0f;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 8.0f;
-			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y = ingameroom[room_Id].NightMonster[i].m_fBoundingSize;
 			ingameroom[room_Id].NightMonster[i]._spaceship = &ingameroom[room_Id]._spaceship;
 
 
@@ -410,7 +506,7 @@ void Server::ProcessPacket(int id, char* packet)
 		clients[id]._pos = p->pos;
 
 		clients[id].m_SPBB.Center = clients[id]._pos;
-		clients[id].m_SPBB.Center.y = clients[id]._pos.y;
+		clients[id].m_SPBB.Center.y = 20.0f;
 
 		for (auto& pl : clients)
 		{
@@ -487,6 +583,13 @@ void Server::ProcessPacket(int id, char* packet)
 			std::uniform_real_distribution<float> xpos(-500, -400);
 			std::uniform_real_distribution<float> zpos(1120, 1200);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+
+			if (icebossskill == false)
+			{
+				icebossskill = true;
+				TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(7s), r_id,EVENT_TYPE::EV_ICE_BOSS_SKILL };
+				g_Timer.InitTimerQueue(ev);
+			}
 		}
 			  break;
 		case 4: {
@@ -494,6 +597,12 @@ void Server::ProcessPacket(int id, char* packet)
 			std::uniform_real_distribution<float> xpos(-732, -570);
 			std::uniform_real_distribution<float> zpos(531, 580);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+			if (firebossskill == false)
+			{
+				firebossskill = true;
+				TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(7s), r_id,EVENT_TYPE::EV_FIRE_BOSS_SKILL };
+				g_Timer.InitTimerQueue(ev);
+			}
 		}
 			  break;
 		case 5: {
@@ -501,6 +610,12 @@ void Server::ProcessPacket(int id, char* packet)
 			std::uniform_real_distribution<float> xpos(-732, -570);
 			std::uniform_real_distribution<float> zpos(531, 580);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+			if (naturebossskill == false)
+			{
+				naturebossskill = true;
+				TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(7s), r_id,EVENT_TYPE::EV_NATURE_BOSS_SKILL };
+				g_Timer.InitTimerQueue(ev);
+			}
 		}
 			  break;
 		}
@@ -542,17 +657,15 @@ void Server::ProcessPacket(int id, char* packet)
 				pl->send_ingame_start();
 			}
 
-
-
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
 			TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
 			g_Timer.InitTimerQueue(ev1);
 
-			TIMER_EVENT ev{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NPC_UPDATE };
+			TIMER_EVENT ev{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
 
-			TIMER_EVENT ev2{ ingameroom[r_id].start_time + chrono::seconds(5s),r_id,EVENT_TYPE::EV_NIGHT };
+			TIMER_EVENT ev2{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NIGHT };
 			g_Timer.InitTimerQueue(ev2);
 
 			TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_DAYTIME };
@@ -595,7 +708,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_stage != clients[id]._stage)continue;
 			pl->send_attack_packet(id);
 
-		
+
 		}
 	}
 				  break;
@@ -640,9 +753,8 @@ void Server::ProcessPacket(int id, char* packet)
 			break;
 		}
 		}
-		break;
 	}
-
+		break;
 	case CS_MONSTER_DIE: {
 		CS_MONSTER_DIE_PACKET* p = reinterpret_cast<CS_MONSTER_DIE_PACKET*>(packet);
 		// 다른 플레이어들 한테 NPC 타격 상황을 보냄 
@@ -651,7 +763,7 @@ void Server::ProcessPacket(int id, char* packet)
 			//if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage)continue;
 			// 무슨 몬스터가 죽었는지 다른 클라이언트 들한테 정보를 보내야함 
-			pl->send_player_attack_mosnter(p->npc_id, true,p->_montype);
+			pl->send_player_attack_mosnter(p->npc_id, true, p->_montype);
 
 			std::chrono::system_clock::time_point attacktime = chrono::system_clock::now();
 			TIMER_EVENT ev{ attacktime + 1s ,p->room_id,EVENT_TYPE::EV_PLAYER_ATTACK_NPC,p->npc_id,p->_montype };
@@ -659,6 +771,7 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		break;
 	}
+
 	case CS_MONSTER_HIT_SPACESHIP: {
 		CS_MONSTER_ATTACK_SPACESHIP_PACKET* p = reinterpret_cast<CS_MONSTER_ATTACK_SPACESHIP_PACKET*>(packet);
 		int space_shiphp = ingameroom[p->room_id]._spaceship.getHp();
@@ -673,7 +786,7 @@ void Server::ProcessPacket(int id, char* packet)
 		break;
 	}
 
-	
+
 	}
 }
 
@@ -795,7 +908,7 @@ void Server::ReadyToStart()
 						NightMonsters.ingamePlayer[i] = _session;
 						break;
 					}
-					
+
 				}
 			}
 
@@ -838,7 +951,7 @@ void Server::ReadyToStart()
 			{
 				if (ingameroom[room_id].FireBoss.ingamePlayer[i] == nullptr)
 				{
-				ingameroom[room_id].FireBoss.ingamePlayer[i] = _session;
+					ingameroom[room_id].FireBoss.ingamePlayer[i] = _session;
 					break;
 				}
 			}
