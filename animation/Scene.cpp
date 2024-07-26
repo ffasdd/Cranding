@@ -1010,6 +1010,8 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	SpaceshipBS.Center = { 250.0f, 10.0f, 750.0f };
 	SpaceshipBS.Radius = 50.0f;
 
+	PlayBGM(L"Sound/Day.wav");
+
 	// 메모리 해제
 	for (int i = 0; i < FireMonsterNum; ++i) {
 		if (pFireMonModels[i]) delete pFireMonModels[i];
