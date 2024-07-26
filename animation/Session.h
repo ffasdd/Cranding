@@ -51,6 +51,7 @@ public:
 	void Rotate(float yaw);
 
 	mutex _sessionlock;
+	mutex _uilock;
 	bool m_blind = false;
 	int scene_num = -1;
 	float m_yaw = 0.0f;

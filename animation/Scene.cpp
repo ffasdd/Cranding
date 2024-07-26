@@ -1109,6 +1109,8 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				
+				g_sendqueue.push(SENDTYPE::PLAYER_HIT);
 
 				return false;
 			}
