@@ -755,6 +755,7 @@ void Network::SendMonsterDie(int npc_id, MonsterType _mtype)
 	p._montype = _mtype;
 	p.room_id = my_roomid;
 	p.npc_id = npc_id;
+	p.id = my_id;
 
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }

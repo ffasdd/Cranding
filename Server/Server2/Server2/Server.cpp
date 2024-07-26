@@ -714,6 +714,7 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_ATTACK_COLLISION:
 	{
 		CS_ATTACK_COLLISION_PACKET* p = reinterpret_cast<CS_ATTACK_COLLISION_PACKET*>(packet);
+
 		switch (p->_montype)
 		{
 		case MonsterType::Night:
@@ -721,13 +722,6 @@ void Server::ProcessPacket(int id, char* packet)
 			ingameroom[p->room_id].NightMonster[p->npc_id].MonsterLock.lock();
 			ingameroom[p->room_id].NightMonster[p->npc_id]._is_alive = false;
 			ingameroom[p->room_id].NightMonster[p->npc_id].MonsterLock.unlock();
-
-			if (p->npc_id >= 0 && p->npc_id < 10)
-				clients[id]._fireMonstercnt++;
-			else if (p->npc_id >= 10 && p->npc_id < 20)
-				clients[id]._iceMontsercnt++;
-			else
-				clients[id]._natureMonstercnt++;
 
 			break;
 		}
@@ -758,6 +752,24 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_MONSTER_DIE: {
 		CS_MONSTER_DIE_PACKET* p = reinterpret_cast<CS_MONSTER_DIE_PACKET*>(packet);
 		// 다른 플레이어들 한테 NPC 타격 상황을 보냄 
+		if (p->_montype == MonsterType::Night)
+		{
+			if (p->npc_id >= 0 && p->npc_id < 10)
+			{
+				clients[p->id]._fireMonstercnt++;
+				cout << id << " - ID kill FireMonster " << clients[id]._fireMonstercnt << endl;
+			}
+			else if (p->npc_id >= 10 && p->npc_id < 20)
+			{
+				clients[p->id]._iceMontsercnt++;
+				cout << id << " - ID kill IceMonster " << clients[id]._iceMontsercnt << endl;
+			}
+			else
+			{
+				clients[p->id]._natureMonstercnt++;
+				cout << id << " - ID kill NatureMonster " << clients[id]._natureMonstercnt << endl;
+			}
+		}
 		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
 		{
 			//if (pl->_id == id)continue;
@@ -904,16 +916,12 @@ void Server::ReadyToStart()
 				}
 			}
 
+		
 			for (auto& NightMonsters : ingameroom[room_id].NightMonster)
 			{
 				for (int i = 0; i < MAX_ROOM_USER; ++i)
 				{
-					if (NightMonsters.ingamePlayer[i] == nullptr)
-					{
-						NightMonsters.ingamePlayer[i] = _session;
-						break;
-					}
-
+					NightMonsters.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
 				}
 			}
 
@@ -921,11 +929,7 @@ void Server::ReadyToStart()
 			{
 				for (int i = 0; i < MAX_ROOM_USER; ++i)
 				{
-					if (IceMontsers.ingamePlayer[i] == nullptr)
-					{
-						IceMontsers.ingamePlayer[i] = _session;
-						break;
-					}
+					IceMontsers.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
 				}
 			}
 
@@ -933,11 +937,7 @@ void Server::ReadyToStart()
 			{
 				for (int i = 0; i < MAX_ROOM_USER; ++i)
 				{
-					if (FireMontsers.ingamePlayer[i] == nullptr)
-					{
-						FireMontsers.ingamePlayer[i] = _session;
-						break;
-					}
+					FireMontsers.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
 				}
 			}
 
@@ -945,41 +945,15 @@ void Server::ReadyToStart()
 			{
 				for (int i = 0; i < MAX_ROOM_USER; ++i)
 				{
-					if (NatureMontsers.ingamePlayer[i] == nullptr)
-					{
-						NatureMontsers.ingamePlayer[i] = _session;
-						break;
-					}
+					NatureMontsers.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
 				}
 			}
 			for (int i = 0; i < MAX_ROOM_USER; ++i)
 			{
-				if (ingameroom[room_id].FireBoss.ingamePlayer[i] == nullptr)
-				{
-					ingameroom[room_id].FireBoss.ingamePlayer[i] = _session;
-					break;
-				}
+				ingameroom[room_id].IceBoss.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
+				ingameroom[room_id].NatureBoss.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
+				ingameroom[room_id].FireBoss.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
 			}
-			for (int i = 0; i < MAX_ROOM_USER; ++i)
-			{
-				if (ingameroom[room_id].IceBoss.ingamePlayer[i] == nullptr)
-				{
-					ingameroom[room_id].IceBoss.ingamePlayer[i] = _session;
-					break;
-				}
-			}
-			for (int i = 0; i < MAX_ROOM_USER; ++i)
-			{
-				if (ingameroom[room_id].NatureBoss.ingamePlayer[i] == nullptr)
-				{
-					ingameroom[room_id].NatureBoss.ingamePlayer[i] = _session;
-					break;
-				}
-			}
-
-			//ingameroom[room_id].FireBoss.ingamePlayer[getidformonster] = _session;
-			//ingameroom[room_id].IceBoss.ingamePlayer[getidformonster] = _session;
-			//ingameroom[room_id].NatureBoss.ingamePlayer[getidformonster] = _session;
 
 		}
 		else

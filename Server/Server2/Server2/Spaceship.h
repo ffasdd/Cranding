@@ -18,7 +18,7 @@ private:
 	XMFLOAT3 _pos;
 	int _hp;
 
-	float _BoundingBoxSize = 50.0f;
+	float _BoundingBoxSize = 70.0f;
 	BoundingSphere _BoundingBox;
 
 };

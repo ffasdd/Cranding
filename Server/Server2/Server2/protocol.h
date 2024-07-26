@@ -416,6 +416,7 @@ struct CS_MONSTER_DIE_PACKET {
 	int npc_id;
 	MonsterType _montype;
 	int room_id;
+	int id;
 };
 struct CS_TIME_CHECK_PACKET {
 	unsigned char size;
