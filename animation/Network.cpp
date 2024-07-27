@@ -66,14 +66,14 @@ void Network::End()
 {
 }
 
-void Network::StartServer()
+bool Network::StartServer()
 {
 	ServerStart = true;
 
 	netThread = std::thread([this]() {NetThreadFunc(); });
-
 	sendThread = std::thread([this]() {SendThreadFunc(); });
 
+	return true;
 }
 
 void Network::NetThreadFunc()
@@ -177,9 +177,10 @@ void Network::ProcessPacket(char* buf)
 	case SC_LOGIN_INFO: {
 		// 로그인 되자마자 로그인 씬 
 		SC_LOGIN_INFO_PACKET* p = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
-		//my_id = getmyid(p->id);
+		my_id = getmyid(p->id);
 		my_id = (p->id);
 		my_roomid = p->room_id;
+		g_clients_mutex.lock();
 		g_clients[my_id].setState(STATE::Ingame);
 		g_clients[my_id].setId(my_id);
 		g_clients[my_id].setHp(p->hp);
@@ -191,12 +192,14 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setAnimation((p->a_state));
 		g_clients[my_id].setprevAnimation((p->prev_state));
 		g_clients[my_id].scene_num = p->stage_num;
-		gamestart = true;
+
 
 		gGameFramework.m_pPlayer->c_id = my_id;
 		gGameFramework.cl_id = my_id;
 
-		//SetEvent(loginevent);
+		gamestart = true;
+		g_clients_mutex.unlock();
+		SetEvent(loginevent);
 
 		break;
 	}
@@ -209,6 +212,7 @@ void Network::ProcessPacket(char* buf)
 		//int ob_id = getmyid(p->id);
 		int ob_id = (p->id);
 		std::cout << "Add Player ID - " << ob_id << std::endl;
+		g_clients_mutex.lock();
 		g_clients[ob_id].setState(STATE::Ingame);
 		g_clients[ob_id].setId(ob_id);
 		g_clients[ob_id].setHp(p->hp);
@@ -220,7 +224,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setAnimation(p->a_state);
 		g_clients[ob_id].setprevAnimation(p->prev_state);
 		g_clients[ob_id].scene_num = p->stage_num;
-
+		g_clients_mutex.unlock();
 		break;
 	}
 
@@ -631,9 +635,9 @@ void Network::ProcessPacket(char* buf)
 	case SC_PLAYER_HIT:
 	{
 		SC_PLAYER_HIT_PACKET* p = reinterpret_cast<SC_PLAYER_HIT_PACKET*>(buf);
-		cout << p->id << " < - Player Hit " << endl; 
+		cout << p->id << " < - Player Hit " << endl;
 		g_clients[p->id].is_damage = p->isdamaged;
-		
+
 		break;
 	}
 

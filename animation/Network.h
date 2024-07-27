@@ -34,7 +34,7 @@ public:
 	
 public:
 	// thread recv
-	void StartServer();
+	bool StartServer();
 	void NetThreadFunc();
 
 	void ProcessData(size_t _size);
@@ -80,6 +80,9 @@ public:
 	bool isNight = false;
 
 	int index = 0;
+public:
+	mutex g_clients_mutex;
+	
 private:
 	SOCKET clientsocket;
 	 char _buf[BUF_SIZE];

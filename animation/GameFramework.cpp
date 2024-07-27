@@ -308,8 +308,8 @@ void CGameFramework::CreateShadowMap()
 
 	/// 
 
- 	m_ShadowMap->BuildDescriptors(m_pPostProcessingShader->GetCPUSrvDescriptorNextHandle(), m_pPostProcessingShader->GetGPUSrvDescriptorNextHandle(), d3dDsvCPUDescriptorHandle);
-	
+	m_ShadowMap->BuildDescriptors(m_pPostProcessingShader->GetCPUSrvDescriptorNextHandle(), m_pPostProcessingShader->GetGPUSrvDescriptorNextHandle(), d3dDsvCPUDescriptorHandle);
+
 	m_ShadowMap->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
 
 }
@@ -365,13 +365,11 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 			UILayer::GetInstance()->ProcessMouseClick(SCENEKIND::LOGIN, m_ptOldCursorPos);
 		}
 		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
-		if (g_clients[cl_id].getCharacterType() == 0)
-		{
-			g_clients[cl_id].setAttack(true);
-			g_sendqueue.push(SENDTYPE::ATTACK);
+		if (g_clients.size() == 0)break;
+		g_clients[cl_id].setAttack(true);
+		g_sendqueue.push(SENDTYPE::ATTACK);
 
-			//gNetwork.SendAttack(g_clients[cl_id].getAttack()); 
-		}
+
 		break;
 
 
@@ -450,7 +448,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 1;
 				isSceneChange = true;
 				isready = false;
-		
+
 
 				break;
 			}
@@ -496,10 +494,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// grass map
 			SceneNum = 5;
-		/*	sceneManager.SetCurrentScene(SCENEKIND::NATURE);
-			ReleaseObjects();
-			BuildObjects(sceneManager.GetCurrentScene());*/
-			//isSceneChange = true;
+			/*	sceneManager.SetCurrentScene(SCENEKIND::NATURE);
+				ReleaseObjects();
+				BuildObjects(sceneManager.GetCurrentScene());*/
+				//isSceneChange = true;
 			isSceneChangetoNature = true;
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
@@ -533,7 +531,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 3;
 				isSceneChangetoIce = true;
 				isready = false;
-				
+
 				break;
 			}
 			else if (PlayerPosX > 0 && PlayerPosZ < 0)
@@ -613,7 +611,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 	if (nSceneKind != sceneManager.GetCurrentScene())
 	{
-		if(m_pPlayer)
+		if (m_pPlayer)
 			ChangeSceneReleaseObject();
 
 		switch (nSceneKind)
@@ -875,8 +873,8 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, animateState prevAni, an
 			break;
 		}
 
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 1.5);
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 1.5);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 1.5);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 1.5);
 
 		if (prevAni != curAni)
 		{
@@ -943,7 +941,7 @@ void CGameFramework::myFunc_SetBossMonAnimation(bool isAttacked, bool isAttack, 
 		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bIsMonsterAttack = true;
 		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bWasMonsterAttack = true;
 
-		for(int i = 0; i < m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_nAnimationTracks; i++)
+		for (int i = 0; i < m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_nAnimationTracks; i++)
 			m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(i, false);
 
 		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(attackAniNum, true);
@@ -1129,7 +1127,7 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	CreateShaderVariables();
 
 	m_pPostProcessingShader = new CTextureToFullScreenShader();
-	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(),0, NULL, DXGI_FORMAT_UNKNOWN);
+	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 0, NULL, DXGI_FORMAT_UNKNOWN);
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
@@ -1178,7 +1176,7 @@ void CGameFramework::ReleaseObjects()
 	if (m_pScene) {
 		delete m_pScene;
 		m_pScene = nullptr;
-}
+	}
 	if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pPostProcessingShader) m_pPostProcessingShader->ReleaseObjects();
@@ -1264,8 +1262,11 @@ void CGameFramework::ProcessInput()
 					if (yaw < 0.f) yaw += 360.0f;
 
 					m_pPlayer->RotateYaw(yaw);
-					g_clients[gNetwork.Getmyid()].m_yaw = yaw;
-					g_sendqueue.push(SENDTYPE::ROTATE);
+					if (g_clients.size() != 0)
+					{
+						g_clients[gNetwork.Getmyid()].m_yaw = yaw;
+						g_sendqueue.push(SENDTYPE::ROTATE);
+					}
 				}
 			}
 
@@ -1388,14 +1389,14 @@ void CGameFramework::UpdateTime()
 		if (accumulatedTime >= serverDayTime) {
 			curDay++;
 			accumulatedTime -= serverDayTime;  // 낮 시간 초기화 (밤으로 전환)
-	
+
 		}
 	}
 	else if (Night) {
 		if (accumulatedTime >= serverNightTime) {
 
 			accumulatedTime -= serverNightTime;  // 밤 시간 초기화 (낮으로 전환)
-			
+
 		}
 	}
 
@@ -1410,7 +1411,7 @@ void CGameFramework::FrameAdvance()
 {
 	// Scene Change 변경
 	try {
-		if (isSceneChange &&  SceneNum < 3 )
+		if (isSceneChange && SceneNum < 3)
 		{
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
@@ -1531,7 +1532,7 @@ void CGameFramework::FrameAdvance()
 		XMStoreFloat4x4(&m_pShadowMappedCamera->m_xmf4x4View, XMMatrixTranspose(XMLoadFloat4x4(&view)));
 		XMStoreFloat4x4(&m_pShadowMappedCamera->m_xmf4x4Projection, XMMatrixTranspose(XMLoadFloat4x4(&proj)));
 		XMStoreFloat4x4(&m_pShadowMappedCamera->m_xm4x4ShadowTransform, XMMatrixTranspose(S));
-		 XMStoreFloat4x4(&m_pCamera->GetCameraInfo()->m_xm4x4ShadowTransform, XMMatrixTranspose(S));
+		XMStoreFloat4x4(&m_pCamera->GetCameraInfo()->m_xm4x4ShadowTransform, XMMatrixTranspose(S));
 
 		::memcpy(&m_pShadowMappedCamera->m_xmf3Position, &pos, sizeof(XMFLOAT3));
 
@@ -1540,10 +1541,10 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->SetGraphicsRootConstantBufferView(0, d3dGPUVirtualAddress);
 
 
-		if (m_pScene ) {
+		if (m_pScene) {
 			m_pScene->m_ppHierarchicalGameObjects[0]->UpdateTransform(NULL);
 			m_pScene->m_ppHierarchicalGameObjects[0]->Render(m_pd3dCommandList, m_pCamera, 0, -1);
-		
+
 		}
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
 
@@ -1630,7 +1631,7 @@ void CGameFramework::FrameAdvance()
 
 		WaitForGpuComplete();
 #ifdef _FULLSCREEN
-		
+
 		if (m_pUILayer)
 			UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
 

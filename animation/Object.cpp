@@ -191,7 +191,7 @@ CMaterial::~CMaterial()
 {
 	if (m_pShader) m_pShader->Release();
 
-	if (m_nTextures > 0)
+	if (m_nTextures > 0 && m_ppTextures != nullptr )
 	{
 		for (int i = 0; i < m_nTextures; i++) if (m_ppTextures[i]) m_ppTextures[i]->Release();
 		delete[] m_ppTextures;

@@ -1734,8 +1734,6 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	if (pFireItemModel) delete pFireItemModel;
 
 	PlayBGM(L"Sound/Fire.wav");
-
-	if (pFireItemModel) delete pFireItemModel;
 }
 bool CFireScene::CheckObjectByObjectCollisions()
 {

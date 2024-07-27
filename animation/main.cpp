@@ -13,7 +13,7 @@ TCHAR							szWindowClass[MAX_LOADSTRING];
 CGameFramework					gGameFramework;
 Network							gNetwork;
 
-unordered_map<int, Session> g_clients;
+std::unordered_map<int, Session> g_clients;
 unordered_map<int, Session> g_monsters;
 unordered_map<int, Session> g_ice_monsters;
 unordered_map<int, Session> g_fire_monsters;
@@ -46,11 +46,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	MyRegisterClass(hInstance);
 
 
-	while (!gNetwork.ReadytoConnect());
-
+	while (!gNetwork.ReadytoConnect())
+	{
+		this_thread::yield();
+	}
 
 	//// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
-	gNetwork.StartServer();
+	while (!gNetwork.StartServer())
+	{
+		this_thread::yield();
+	}
 
 	// 로그인 완료 
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
@@ -70,7 +75,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				::TranslateMessage(&msg);
 				::DispatchMessage(&msg);
 			}
-
 		}
 		else
 		{
