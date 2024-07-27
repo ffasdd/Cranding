@@ -139,6 +139,10 @@ public:
 	bool isSceneChangetoIce = false;
 	bool isSceneChangetoNature = false;
 
+	bool isWin = false;
+	bool isLose = false;
+
+	int spaceshipHP = 2000;
 
 	// ½Ã°è
 	int total = 0;

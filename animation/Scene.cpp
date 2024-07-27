@@ -2145,6 +2145,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 	}
 	return(false);
 }
+
 void CGrassScene::ReleaseUploadBuffers()
 {
 	CScene::ReleaseUploadBuffers();

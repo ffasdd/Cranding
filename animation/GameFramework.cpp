@@ -520,6 +520,12 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case 'L':
 			m_pScene->m_ppHierarchicalGameObjects[13]->SetHealth(-100);
 			break;
+		case 'M':
+			isWin = true;
+			break;
+		case 'K':
+			isLose = true;
+			break;
 		case 'F':
 			// 맵 이동 관련
 			PlayerPosX = m_pPlayer->GetPosition().x;
@@ -714,6 +720,48 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 
 			CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+
+			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+			m_pCamera = m_pPlayer->GetCamera();
+
+
+			break;
+		}
+		case SCENEKIND::VICTORY:
+		{
+			if (S_OK != m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL)) {
+				cout << "CommandList Reset Fail" << endl;
+			}
+			isWin = false;
+
+			sceneManager.SetCurrentScene(nSceneKind);
+			// victory map
+			m_pScene = new CWInScene();
+			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+
+			CLoginPlayer* pPlayer = new CLoginPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+
+			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
+			m_pCamera = m_pPlayer->GetCamera();
+
+
+			break;
+		}
+		case SCENEKIND::DEFEAT:
+		{
+			if (S_OK != m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL)) {
+				cout << "CommandList Reset Fail" << endl;
+			}
+			isLose = false;
+
+			sceneManager.SetCurrentScene(nSceneKind);
+			// Lose map
+			m_pScene = new CLoseScene();
+			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+
+			CLoginPlayer* pPlayer = new CLoginPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
@@ -1458,7 +1506,12 @@ void CGameFramework::FrameAdvance()
 			//
 			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
-
+		else if (isWin) {
+			ChangeScene(SCENEKIND::VICTORY);
+		}
+		else if (isLose) {
+			ChangeScene(SCENEKIND::DEFEAT);
+		}
 
 		m_GameTimer.Tick(60.0f);
 		ProcessInput();

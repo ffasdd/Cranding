@@ -79,7 +79,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     m_pTextBlocks = new TextBlock[nTextBlocks];
 
     //  login scene
-    int loginUI_num = 4;
+    int loginUI_num = 2;
     WCHAR** pMent = new WCHAR * [loginUI_num];
     for (int i = 0; i < loginUI_num; ++i)
     {
@@ -88,8 +88,6 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
 
     wcscpy_s(pMent[0], 256, L"Cranding");
     wcscpy_s(pMent[1], 256, L"게임 시작");
-    wcscpy_s(pMent[2], 256, L"게임 방법");
-    wcscpy_s(pMent[3], 256, L"게임 종료");
     for (int i = 0; i < loginUI_num; ++i) {
         m_vecLoginSceneMenu.push_back(pMent[i]);
     }
@@ -108,8 +106,22 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
         m_vecLobbyScene.push_back(plobbytext[i]);
     }
 
+    // Result Scene
+    int Result_num = 2;
+    WCHAR** presulttext = new WCHAR * [Result_num];
+    for (int i = 0; i < Result_num; ++i)
+    {
+        presulttext[i] = new WCHAR[256];
+    }
+
+    wcscpy_s(presulttext[0], 256, L"VICTORY");
+    wcscpy_s(presulttext[1], 256, L"DEFEAT");
+    for (int i = 0; i < Result_num; ++i) {
+        m_vecResultScene.push_back(presulttext[i]);
+    }
+
     //  ingame scene
-    int ingameUI_num = 5;
+    int ingameUI_num = 4;
     WCHAR** pMap = new WCHAR * [ingameUI_num];
     for (int i = 0; i < ingameUI_num; ++i)
     {
@@ -214,11 +226,30 @@ void UILayer::InitializeDevice(ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3
         pdxgiSurface->Release();
     }
 }
+float ConvertHPToPercentage(float hp) {
+    // 원래 값의 범위
+    float min_in = 0.0f;
+    float max_in = 2000.0f;
+
+    // 변환할 범위
+    float min_out = 0.0f;
+    float max_out = 100.0f;
+
+    // 입력값 범위 체크
+    hp = max(min_in, min(hp, max_in));
+
+    // 선형 보간 공식 적용
+    float normalizedValue = ((hp - min_in) * (max_out - min_out)) / (max_in - min_in) + min_out;
+
+    return normalizedValue;
+}
 
 void UILayer::SetHP()
 {
     m_playerHP = gGameFramework.m_pPlayer->GetHealth();
-    m_spaceshipHP = gGameFramework.m_pPlayer->GetHealth();
+    float spaceshipHP = gGameFramework.spaceshipHP; // 0 ~ 2000 사이의 값
+    m_spaceshipHP = ConvertHPToPercentage(spaceshipHP); // 0 ~ 100 사이의 값
+
     UpdateHPBar();
 }
 void UILayer::UpdateHPBar()
@@ -308,6 +339,16 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
             m_pd2dDeviceContext->DrawText(m_vecLobbyScene[1], (UINT)wcslen(m_vecLobbyScene[1]), m_textFormats[TEXT_SIZE::SIZE_40], m_Ready, m_brushes[BRUSH_COLOR::WHITE]);
         m_pd2dDeviceContext->EndDraw();
         break;
+    case SCENEKIND::VICTORY:
+        m_pd2dDeviceContext->BeginDraw();
+        m_pd2dDeviceContext->DrawText(m_vecResultScene[0], (UINT)wcslen(m_vecResultScene[0]), m_textFormats[TEXT_SIZE::SIZE_60], m_Title, m_brushes[BRUSH_COLOR::WHITE]);
+        m_pd2dDeviceContext->EndDraw();
+        break;
+    case SCENEKIND::DEFEAT:
+        m_pd2dDeviceContext->BeginDraw();
+        m_pd2dDeviceContext->DrawText(m_vecResultScene[1], (UINT)wcslen(m_vecResultScene[1]), m_textFormats[TEXT_SIZE::SIZE_60], m_Title, m_brushes[BRUSH_COLOR::WHITE]);
+        m_pd2dDeviceContext->EndDraw();
+        break;
     default:
         // ingame 
 
@@ -322,6 +363,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
 
         // hp
         SetHP();
+        m_pd2dDeviceContext->FillRectangle(m_Bar, m_brushes[BRUSH_COLOR::BLACK]);
         m_pd2dDeviceContext->FillRectangle(m_HPBar, m_brushes[BRUSH_COLOR::RED]);
 
         // status

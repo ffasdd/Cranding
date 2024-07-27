@@ -598,6 +598,7 @@ void Network::ProcessPacket(char* buf)
 	{
 		SC_SPACESHIP_PACKET* p = reinterpret_cast<SC_SPACESHIP_PACKET*>(buf);
 		cout << " HP : " << p->hp << endl;
+		gGameFramework.spaceshipHP = p->hp;
 		break;
 	}
 	case SC_ICEBOSS_SKILL:
