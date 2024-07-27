@@ -40,6 +40,7 @@ bool Network::ReadytoConnect()
 	sockaddrIn.sin_port = htons(PORT_NUM);
 
 	// 사용자로부터 IP 주소 입력 받기
+	//string ipAddress = { "221.165.49.99" };
 	string ipAddress = { "127.0.0.1" };
 
 

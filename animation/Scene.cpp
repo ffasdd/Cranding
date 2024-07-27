@@ -1093,7 +1093,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		}
 	}
 
-	PlayBGM(L"Sound/Day.wav");
+	//PlayBGM(L"Sound/Day.wav");
 
 	// spaceship boundingsphere
 	SpaceshipBS.Center = { 250.0f, 10.0f, 750.0f };
@@ -1458,13 +1458,14 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceItemModel, 0);
 								
-	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
+	m_ppHierarchicalGameObjects[14]->SetPosition(-12.0f, 10.0f, -220.f);
 	m_ppHierarchicalGameObjects[14]->Rotate(45,0,0);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
-
-	PlayBGM(L"Sound/Ice.wav");
-
+	m_ppHierarchicalGameObjects[14]->isdraw = false;
 	if (pIceItemModel) delete pIceItemModel;
+
+	//PlayBGM(L"Sound/Ice.wav");
+
 }
 
 bool CIceScene::CheckObjectByObjectCollisions()
@@ -1472,7 +1473,7 @@ bool CIceScene::CheckObjectByObjectCollisions()
 	// 보스 아이템 디버깅용
 	if (m_ppHierarchicalGameObjects[13]->GetHealth() < 0) {
 		m_ppHierarchicalGameObjects[13]->isdraw = false;
-		m_ppHierarchicalGameObjects[14]->SetPosition(m_ppHierarchicalGameObjects[13]->GetPosition());
+		m_ppHierarchicalGameObjects[14]->isdraw = true;
 	}
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
@@ -1728,9 +1729,10 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireItemModel, 0);
 								
-	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
+	m_ppHierarchicalGameObjects[14]->SetPosition(-60.0, 10.0f, 1327.0f);
 	m_ppHierarchicalGameObjects[14]->Rotate(90, 90, 0);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
+	m_ppHierarchicalGameObjects[14]->isdraw = false;
 	if (pFireItemModel) delete pFireItemModel;
 
 	PlayBGM(L"Sound/Fire.wav");
@@ -1740,7 +1742,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 	// 보스 아이템 디버깅용
 	if (m_ppHierarchicalGameObjects[13]->GetHealth() < 0) {
 		m_ppHierarchicalGameObjects[13]->isdraw = false;
-		m_ppHierarchicalGameObjects[14]->SetPosition(m_ppHierarchicalGameObjects[13]->GetPosition());
+		m_ppHierarchicalGameObjects[14]->isdraw = true;
 	}
 
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
@@ -2003,17 +2005,18 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 								
 	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
-
-	PlayBGM(L"Sound/Grass.wav");
-
+	m_ppHierarchicalGameObjects[14]->isdraw = false;
 	if (pNatureItemModel) delete pNatureItemModel;
+
+	//PlayBGM(L"Sound/Grass.wav");
+
 }
 bool CGrassScene::CheckObjectByObjectCollisions()
 {
 	// 보스 아이템 디버깅용
 	if (m_ppHierarchicalGameObjects[13]->GetHealth() < 0) {
 		m_ppHierarchicalGameObjects[13]->isdraw = false;
-		m_ppHierarchicalGameObjects[14]->SetPosition(m_ppHierarchicalGameObjects[13]->GetPosition());
+		m_ppHierarchicalGameObjects[14]->isdraw = true;
 	}
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
