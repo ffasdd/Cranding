@@ -301,8 +301,8 @@ void CGameFramework::CreateDepthStencilView()
 }
 void CGameFramework::CreateShadowMap()
 {
-	m_ShadowMap = make_unique<ShadowMap>(m_pd3dDevice, 4096, 4096);
-	//m_ShadowMap = new ShadowMap(m_pd3dDevice, 4096, 4096);
+	m_ShadowMap = make_unique<ShadowMap>(m_pd3dDevice, 2048, 2048);
+	//m_ShadowMap = make_unique<ShadowMap>(m_pd3dDevice, 4096, 4096);
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	d3dDsvCPUDescriptorHandle.ptr += (::gnDsvDescriptorIncrementSize);
 
@@ -1547,7 +1547,7 @@ void CGameFramework::FrameAdvance()
 		if (m_pScene) {
 			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);			
 		}
-		m_pPlayer->Render(m_pd3dCommandList, m_pCamera, -1);
+		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 

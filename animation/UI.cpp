@@ -116,10 +116,10 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
         pMap[i] = new WCHAR[256];
     }
 
-    wcscpy_s(pMap[0], 256, L"ice map으로 이동하기 위해 F키를 눌러주세요");
-    wcscpy_s(pMap[1], 256, L"fire map으로 이동하기 위해 F키를 눌러주세요");
-    wcscpy_s(pMap[2], 256, L"grass map으로 이동하기 위해 F키를 눌러주세요");
-    wcscpy_s(pMap[3], 256, L"spaceship map으로 이동하기 위해 F키를 눌러주세요");
+    wcscpy_s(pMap[0], 256, L"F키로 ice map 이동 !");
+    wcscpy_s(pMap[1], 256, L"F키로 fire map 이동 !");
+    wcscpy_s(pMap[2], 256, L"F키로 grass map 이동 !");
+    wcscpy_s(pMap[3], 256, L"F키로 spaceship map 이동 !");
     for (int i = 0; i < ingameUI_num; ++i) {
         m_vecIngameScene.push_back(pMap[i]);
     }
@@ -215,14 +215,16 @@ void UILayer::InitializeDevice(ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3
     }
 }
 
-void UILayer::SetPlayerHP()
+void UILayer::SetHP()
 {
-    m_playerhp = gGameFramework.m_pPlayer->GetHealth();
+    m_playerHP = gGameFramework.m_pPlayer->GetHealth();
+    m_spaceshipHP = gGameFramework.m_pPlayer->GetHealth();
     UpdateHPBar();
 }
 void UILayer::UpdateHPBar()
 {
-    m_HPBar = D2D1::RectF(1300.0f, 930.0f, 1300 + m_playerhp * 6.0f, FRAME_BUFFER_HEIGHT - 50.0f);
+    m_HPBar = D2D1::RectF(1300.0f, 930.0f, 1300 + m_playerHP * 6.0f, FRAME_BUFFER_HEIGHT - 50.0f);
+    m_spaceshipHPBar = D2D1::RectF(10.0f, 0.0f, 10 + m_spaceshipHP * 6.0f, 40.0f);
 }
 ID2D1SolidColorBrush* UILayer::CreateBrush(D2D1::ColorF d2dColor)
 {
@@ -308,27 +310,28 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         break;
     default:
         // ingame 
+
         m_pd2dDeviceContext->BeginDraw();
+        
+        // time
         WCHAR pstrOutputText[256];
         std::wstring DnN[2] = { L"Day", L"Night" };
         int timenum = gGameFramework.Night;
         swprintf_s(pstrOutputText, 256, L"Day: %d  Time:%02d:%02d %s", curDay, curMinute, curSecond, DnN[timenum].c_str());
         m_pd2dDeviceContext->DrawText(pstrOutputText, (UINT)wcslen(pstrOutputText), m_textFormats[TEXT_SIZE::SIZE_18], m_Timer, m_brushes[BRUSH_COLOR::LIME_GREEN]);
-        SetPlayerHP();
+
+        // hp
+        SetHP();
         m_pd2dDeviceContext->FillRectangle(m_HPBar, m_brushes[BRUSH_COLOR::RED]);
 
         // status
         WCHAR elementText[256];
-
-        // Ice Element 개수 출력
         swprintf_s(elementText, 256, L"HP: %d", gGameFramework.m_pPlayer->GetHealth());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
-        // Fire Element 개수 출력
         swprintf_s(elementText, 256, L"Attack Power: %d", gGameFramework.m_pPlayer->GetAttackPower());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
-        // Nature Element 개수 출력
         swprintf_s(elementText, 256, L"Speed: %d", gGameFramework.m_pPlayer->GetSpeed());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
@@ -344,8 +347,13 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
             mapMessage = m_vecIngameScene[2];
         }
         if (!mapMessage.empty()) {
-            m_pd2dDeviceContext->DrawText(mapMessage.c_str(), (UINT)wcslen(mapMessage.c_str()), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+            m_pd2dDeviceContext->DrawText(mapMessage.c_str(), (UINT)wcslen(mapMessage.c_str()), m_textFormats[TEXT_SIZE::SIZE_15], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
         }
+
+        // 우주선 hp
+        m_pd2dDeviceContext->FillRectangle(m_spaceshipBar, m_brushes[BRUSH_COLOR::BLACK]);
+        m_pd2dDeviceContext->FillRectangle(m_spaceshipHPBar, m_brushes[BRUSH_COLOR::RED]);
+
 
         m_pd2dDeviceContext->EndDraw();
         break;
