@@ -353,7 +353,7 @@ bool Monster::CollideCheckToPlayer(Session* _player)
 	if (_player->_stage != _stagenum)return false;
 
 	if (m_SPBB.Intersects(_player->m_SPBB) == true)return true;
-
+	
 	return false;
 }
 

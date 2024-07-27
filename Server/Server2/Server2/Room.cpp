@@ -641,7 +641,7 @@ void Room::NightMonsterCollide(Monster& _monster)
 		{
 			if (_monster.m_SPBB.Intersects(monster.m_SPBB))
 			{
-				_monster._speed = 0.f;
+				_monster._speed = 0.1f;
 
 			}
 		}
