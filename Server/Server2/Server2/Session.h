@@ -26,6 +26,7 @@ public:
 	int _iceMontsercnt = 0;
 
 	bool _isAttack = false;
+	bool _isDamaged = false;
 	SOCKET _socket;
 	XMFLOAT3 _pos;
 	XMFLOAT3 _look;
@@ -44,7 +45,7 @@ public:
 	animateState animationstate;
 	animateState prevanimationstate;
 
-	float                           m_fBoundingSize{ 8.0f };
+	float                           m_fBoundingSize{ 15.0f };
 	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);
 
 	mutex _v_lock;
@@ -207,7 +208,7 @@ public:
 	}
 	~Session() { closesocket(_socket); }
 
-
+	void Rotate();
 
 	void do_recv()
 	{
@@ -249,8 +250,19 @@ public:
 
 	void send_add_monster(int npc_id);
 
-	void send_player_attack_mosnter(int npc_id,bool isattack);
+	void send_player_attack_mosnter(int npc_id,bool isattack, MonsterType montype);
 
-	void Rotate();
+	void send_spaceship_hp(int hp);
+
+	void send_iceboss_skill(bool attack);
+
+	void send_fireboss_skill(bool attack);
+
+	void send_natureboss_skill(bool attack);
+
+	void send_monster_attack(int npc_id,MonsterType monstertype, bool _attack);
+	
+	void send_player_hit(int client_id);
+
 };
 extern array<Session, MAX_USER> clients;

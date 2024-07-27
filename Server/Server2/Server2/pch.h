@@ -17,6 +17,7 @@
 
 using namespace std;
 
+
 enum class EVENT_TYPE : char {
 	EV_NONE,
 	EV_MOVE,
@@ -35,8 +36,16 @@ enum class EVENT_TYPE : char {
 	EV_FIRE_BOSS_MOVE,
 	EV_ICE_BOSS_MOVE,
 	EV_NATURE_BOSS_MOVE,
-	EV_PLAYER_ATTACK_NPC
+	EV_PLAYER_ATTACK_NPC,
+	EV_ICE_BOSS_SKILL,
+	EV_ICE_BOSS_SKILL_CANCLE,
+	EV_FIRE_BOSS_SKILL,
+	EV_FIRE_BOSS_SKILL_CANCLE,
+	EV_NATURE_BOSS_SKILL,
+	EV_NATURE_BOSS_SKILL_CANCLE
 };
+
+enum class MonsterType : char;
 
 struct TIMER_EVENT
 {
@@ -44,6 +53,7 @@ struct TIMER_EVENT
 	int roomId;
 	EVENT_TYPE eventId = EVENT_TYPE::EV_NONE;
 	int targetId;
+	MonsterType monsterType;
 	constexpr bool operator < (const TIMER_EVENT& L) const
 	{
 		return (wakeupTime > L.wakeupTime);
@@ -51,7 +61,7 @@ struct TIMER_EVENT
 	TIMER_EVENT() {}
 	TIMER_EVENT(std::chrono::system_clock::time_point w_t, int r_id, EVENT_TYPE e_id) : wakeupTime{ w_t }, roomId{ r_id }, eventId{ e_id }, targetId{ 0 }
 	{}
-	TIMER_EVENT(std::chrono::system_clock::time_point w_t, int r_id, EVENT_TYPE e_id,int n_id) : wakeupTime{ w_t }, roomId{ r_id }, eventId{ e_id }, targetId{ n_id }
+	TIMER_EVENT(std::chrono::system_clock::time_point w_t, int r_id, EVENT_TYPE e_id,int n_id, MonsterType _monstertype) : wakeupTime{ w_t }, roomId{ r_id }, eventId{ e_id }, targetId{ n_id }, monsterType{ _monstertype }
 	{}
 };
 

@@ -107,11 +107,58 @@ void Timer::TimerThread()
 					Over_Exp* ov = new Over_Exp;
 					ov->_comptype = COMP_TYPE::PLAYER_ATTACKED_NPC;
 					ov->_ai_target_obj = ev.targetId;
+					ov->_monstertype = ev.monsterType;
 					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
-
 				}
-
+				case EVENT_TYPE::EV_ICE_BOSS_SKILL: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::ICE_BOSS_SKILL;
+					ov->_ai_target_obj = ev.targetId;
+					ov->_monstertype = ev.monsterType;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+				}
+				case EVENT_TYPE::EV_ICE_BOSS_SKILL_CANCLE: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::ICE_BOSS_CANCLE_SKILL;
+					ov->_ai_target_obj = ev.targetId;
+					ov->_monstertype = ev.monsterType;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+				}
+				case EVENT_TYPE::EV_FIRE_BOSS_SKILL: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::FIRE_BOSS_SKILL;
+					ov->_ai_target_obj = ev.targetId;
+					ov->_monstertype = ev.monsterType;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+				}
+				case EVENT_TYPE::EV_FIRE_BOSS_SKILL_CANCLE: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::FIRE_BOSS_CANCLE_SKILL;
+					ov->_ai_target_obj = ev.targetId;
+					ov->_monstertype = ev.monsterType;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+				}
+				case EVENT_TYPE::EV_NATURE_BOSS_SKILL: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::NATURE_BOSS_SKILL;
+					ov->_ai_target_obj = ev.targetId;
+					ov->_monstertype = ev.monsterType;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+				}
+				case EVENT_TYPE::EV_NATURE_BOSS_SKILL_CANCLE: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::NATURE_BOSS_SKILL_CANCLE;
+					ov->_ai_target_obj = ev.targetId;
+					ov->_monstertype = ev.monsterType;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+				}
 
 				}
 			}

@@ -1,4 +1,5 @@
 #pragma once
+#include"../Server/Server2/Server2/protocol.h"
 // 클라이언트 들의 정보 , 여기서 dosend do recv? 필요한가? '
 enum class animateState;
 enum class STATE : unsigned int { Free, Alloc, Ingame, Start };
@@ -17,13 +18,14 @@ public:
 	XMFLOAT3 getRight();
 	XMFLOAT3 getUp();
 	XMFLOAT3 getPrevPos();
-	int getAnimation();
-	int getprevAnimation();
+	animateState getAnimation();
+	animateState getprevAnimation();
 	int getCharacterType();
 	STATE getState();
 	bool getAttack();
 	bool getNpcAttack();
 	bool getNpcAttacked();
+	int	 getBossAttackType();
 
 
 	void setCharacterType(int type);
@@ -38,19 +40,23 @@ public:
 	void setRight(float rx, float ry, float rz);
 	void setRight(XMFLOAT3 right);
 	void setUp(XMFLOAT3 up);
-	void setAnimation(int ani);
-	void setprevAnimation(int ani);
+	void setAnimation(animateState ani);
+	void setprevAnimation(animateState ani);
 	void setAttack(bool att);
 	void setState(STATE state);
 	void setPrevPos(XMFLOAT3 prevpos);
 	void setNpcAttack(bool _isattack);
 	void setNpcAttacked(bool _isattacked);
+	void setBossAttackType(int _typenum);
 	void Rotate(float yaw);
 
 	mutex _sessionlock;
+	mutex _uilock;
 	bool m_blind = false;
+	bool is_damage = false;
 	int scene_num = -1;
 	float m_yaw = 0.0f;
+
 
 	int m_firecnt = 0;
 	int m_icencnt = 0;
@@ -64,7 +70,7 @@ private:
 	int characterType = -1;
 	char m_name[20];
 	int m_hp;
-
+	int attack_type_num = -1;
 
 
 	XMFLOAT3 m_right;
@@ -78,8 +84,11 @@ private:
 	// state 
 	STATE m_state = STATE::Free;
 
-	int m_animationstate = 0;
-	int m_prevanimationstate = 0;
+	animateState m_animationstate = animateState::FREE;
+	animateState m_prevanimationstate = animateState::FREE;
+	
+	//int m_animationstate = 0;
+	//int m_prevanimationstate = 0;
 
 
 	

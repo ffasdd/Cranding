@@ -15,8 +15,8 @@ std::uniform_real_distribution<float> p_zpos(-312, 455);
 Session::Session()
 {
 	characterType = -1;
-	animationstate = animateState::FREE;
-	prevanimationstate = animateState::FREE;
+	animationstate = animateState::SWORD_IDLE;
+	prevanimationstate = animateState::SWORD_IDLE;
 	_id = -1;
 	_socket = 0;
 	_pos = { 0.0f,0.0f,0.0f };
@@ -183,13 +183,71 @@ void Session::send_add_monster(int npc_id)
 	do_send(&p);
 }
 
-void Session::send_player_attack_mosnter(int npc_id, bool isattack)
+void Session::send_player_attack_mosnter(int npc_id, bool isattack , MonsterType montype)
 {
 	SC_MONSTER_DIE_PACKET p;
 	p.size = sizeof(SC_MONSTER_DIE_PACKET);
 	p.type = SC_MONSTER_DIE;
 	p.npc_id = npc_id;
 	p._isattacked = isattack;
+	p._montype = montype;
+	do_send(&p);
+}
+
+void Session::send_spaceship_hp(int hp)
+{
+	SC_SPACESHIP_PACKET p;
+	p.size = sizeof(SC_SPACESHIP_PACKET);
+	p.type = SC_SPACESHIP_UPDATE;
+	p.hp = hp;
+	do_send(&p);
+}
+
+void Session::send_iceboss_skill(bool attack)
+{
+	SC_ICEBOSS_SKILL_PACKET p;
+	p.size = sizeof(SC_ICEBOSS_SKILL_PACKET);
+	p.type = SC_ICEBOSS_SKILL;
+	p._isattacked = attack;
+	do_send(&p);
+}
+
+void Session::send_fireboss_skill(bool attack)
+{
+	SC_FIREBOSS_SKILL_PACKET p;
+	p.size = sizeof(SC_FIREBOSS_SKILL_PACKET);
+	p.type = SC_FIREBOSS_SKILL;
+	p._isattacked = attack;
+	do_send(&p);
+}
+
+void Session::send_natureboss_skill(bool attack)
+{
+	SC_NATUREBOSS_SKILL_PACKET p;
+	p.size = sizeof(SC_NATUREBOSS_SKILL_PACKET);
+	p.type = SC_NATUREBOSS_SKILL;
+	p._isattacked = attack;
+	do_send(&p);
+}
+
+void Session::send_monster_attack(int npc_id, MonsterType monstertype, bool _attack)
+{
+	SC_MONSTER_ATTACK_PACKET p;
+	p.size = sizeof(SC_MONSTER_ATTACK_PACKET);
+	p.type = SC_MONSTER_ATTACK;
+	p.monstertype = monstertype;
+	p.id = npc_id;
+	p.is_attack = _attack;
+	do_send(&p);
+}
+
+void Session::send_player_hit(int client_id)
+{
+	SC_PLAYER_HIT_PACKET p;
+	p.size = sizeof(SC_PLAYER_HIT_PACKET);
+	p.type = SC_PLAYER_HIT;
+	p.id = client_id;
+	p.isdamaged = clients[client_id]._isDamaged;
 	do_send(&p);
 }
 

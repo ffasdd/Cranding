@@ -6,7 +6,7 @@ constexpr int CHAT_SIZE = 100;
 constexpr int MAX_USER = 15;
 constexpr int MAX_ROOM = 5;
 
-constexpr int MAX_ROOM_USER = 3;
+constexpr int MAX_ROOM_USER = 2;
 
 constexpr char CS_LOGIN = 0;
 constexpr char CS_MOVE = 1;
@@ -25,6 +25,8 @@ constexpr char CS_MOVE_MONSTER = 13;
 constexpr char CS_ATTACK_COLLISION = 14;
 constexpr char CS_ICE_MONSTER_UPDATE = 15;
 constexpr char CS_MONSTER_DIE = 16;
+constexpr char CS_MONSTER_HIT_SPACESHIP = 17;
+constexpr char CS_PLAYER_HIT = 18;
 
 
 constexpr char SC_LOGIN_INFO = 2;
@@ -58,6 +60,11 @@ constexpr char SC_FIRE_BOSS_UPDATE = 32;
 constexpr char SC_NATURE_BOSS_UPDATE = 33;
 constexpr char SC_MONSTER_ATTACK = 34;
 constexpr char SC_MONSTER_DIE = 35;
+constexpr char SC_SPACESHIP_UPDATE = 36;
+constexpr char SC_ICEBOSS_SKILL = 37;
+constexpr char SC_FIREBOSS_SKILL = 38;
+constexpr char SC_NATUREBOSS_SKILL = 39;
+constexpr char SC_PLAYER_HIT = 40;
 
 
 
@@ -349,8 +356,8 @@ struct CS_ROTATE_PACKET {
 struct CS_CHANGE_ANIMATION_PACKET {
 	unsigned char size;
 	char type;
-	int a_state;
-	int prev_a_state;
+	animateState a_state;
+	animateState prev_a_state;
 	int		roomid;
 };
 struct CS_READY_PACKET {
@@ -389,12 +396,27 @@ struct CS_ATTACK_COLLISION_PACKET {
 	int room_id;
 
 };
+struct CS_MONSTER_ATTACK_SPACESHIP_PACKET {
+	unsigned char size;
+	char type;
+	int npc_id;
+	int room_id;
+};
+struct CS_PLAYER_HIT_PACKET {
+	unsigned char size;
+	char type;
+	int id;
+	int room_id;
+	bool isdamaged;
+};
+
 struct CS_MONSTER_DIE_PACKET {
 	unsigned char size;
 	char type;
 	int npc_id;
 	MonsterType _montype;
 	int room_id;
+	int id;
 };
 struct CS_TIME_CHECK_PACKET {
 	unsigned char size;
@@ -509,7 +531,7 @@ struct SC_MONSTER_ATTACK_PACKET {
 	int id;
 	bool is_attack;
 	MonsterType monstertype;
-	animateState_NPC a_state;
+	int attack_type;
 };
 struct SC_CHANGE_ANIMATION_PACKET {
 	unsigned char size;
@@ -548,7 +570,8 @@ struct SC_TIME_CHECK_PACKET {
 };
 struct SC_DAYTIME_PACKET {
 	unsigned char size;
-	char type;; 
+	char type; 
+
 	int firecnt;
 	int icecnt;
 	int naturecnt;
@@ -558,6 +581,7 @@ struct SC_NIGHT_PACKET {
 	unsigned char size;
 	char type;
 };
+
 struct SC_MONSTER_DIE_PACKET {
 	unsigned char size;
 	char type;
@@ -565,8 +589,36 @@ struct SC_MONSTER_DIE_PACKET {
 	int npc_id;
 	bool _isattacked;
 };
+struct SC_SPACESHIP_PACKET {
+	unsigned char size;
+	char type;
+	int hp;
 
+};
+struct SC_ICEBOSS_SKILL_PACKET {
+	unsigned char size;
+	char type;
+	bool _isattacked;
 
+};
+struct SC_FIREBOSS_SKILL_PACKET {
+	unsigned char size;
+	char type;
+	bool _isattacked;
+
+};
+struct SC_NATUREBOSS_SKILL_PACKET {
+	unsigned char size;
+	char type;
+	bool _isattacked;
+
+};
+struct SC_PLAYER_HIT_PACKET {
+	unsigned char size;
+	char type;
+	int id;
+	bool isdamaged;
+};
 struct CS_TEST_PACKET {
 	unsigned char size;
 	char	type;

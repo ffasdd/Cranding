@@ -115,15 +115,19 @@ public:
 	void myFunc_SetBossMonLookRightUp( XMFLOAT3 Look, XMFLOAT3 Up, XMFLOAT3 Right);
 
 	// 다른 클라들 애니메이션 변경해주는 함수
-	void myFunc_SetAnimation(int n, int id, int prevAni, int curAni);
+	void myFunc_SetAnimation(int n, int id, animateState prevAni, animateState curAni);
 	void myFunc_SetMonAnimation(int n, bool isAttacked, bool isAttack);
+	void myFunc_SetBossMonAnimation(bool isAttacked, bool isAttack, int attackAniNum);
+
 
 	// 다른 클라들 공격 설정해주는 함수
 	void myFunc_SetAttack(int n, int id, bool isAttack);
+	void myFunc_SetAttacked(int n, int id, bool isAttacked);
+
 
 	void myFunc_SetBlind(int n, int id, bool _isblind);
 
-	void myFunc_SetStatus(int FCnt, int ICnt, int NCnt);
+	void myFunc_SetStatus(int FireCnt, int IceCnt, int NatureCnt);
 
 	CScene* m_pScene = NULL;
 
@@ -145,6 +149,7 @@ public:
 	bool isDayTimeProcessed = false;
 	bool DayTime = false;
 	bool Night = false;
+	int beforeTimeState = 1;
 
 
 	ID3D12Resource* m_pd3dcbTime = NULL;

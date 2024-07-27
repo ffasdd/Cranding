@@ -51,6 +51,9 @@ public:
     CScene();
     ~CScene();
 
+	// bgm
+	void PlayBGM(const wchar_t* soundFile) { PlaySound(soundFile, NULL, SND_FILENAME | SND_ASYNC | SND_LOOP); };
+	void StopBGM() { PlaySound(NULL, 0, 0); };
 
 	// 충돌체크 함수
 	void HandleCollisionEnd(CGameObject* pObject) {}
@@ -193,6 +196,9 @@ public:
 	bool CheckObjectByObjectCollisions();
 	void ReleaseUploadBuffers();
 	void ReleaseObjects();
+
+public:
+	BoundingSphere SpaceshipBS;
 };
 
 class CIceScene : public CScene

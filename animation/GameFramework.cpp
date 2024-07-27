@@ -857,7 +857,7 @@ void CGameFramework::myFunc_SetBossMonLookRightUp(XMFLOAT3 Look, XMFLOAT3 Up, XM
 
 }
 
-void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
+void CGameFramework::myFunc_SetAnimation(int n, int id, animateState prevAni, animateState curAni)
 {
 	if (cl_id != n)
 	{
@@ -875,33 +875,23 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, int prevAni, int curAni)
 			break;
 		}
 
-		if (id == 1 || id == 2)
-		{
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 0.5);
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(1, 0.5);
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(2, 0.5);
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(3, 0.5);
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(4, 0.5);
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(5, 0.5);
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 0.5);
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 0.5);
-		}
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 1.5);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 1.5);
 
 		if (prevAni != curAni)
 		{
-
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
 
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationBefore = prevAni;
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationAfter = curAni;
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationBefore = int(prevAni);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_nAnimationAfter = int(curAni);
 
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackEnable(prevAni, false);
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackEnable(curAni, true);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackEnable(int(prevAni), false);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackEnable(int(curAni), true);
 
-			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(prevAni, 0.0f);
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(int(prevAni), 0.0f);
 
 
-			g_clients[others_id + 1].setprevAnimation(curAni);
+			g_clients[id].setprevAnimation(curAni);
 		}
 	}
 }
@@ -937,6 +927,39 @@ void CGameFramework::myFunc_SetMonAnimation(int n, bool isAttacked, bool isAttac
 	}
 }
 
+void CGameFramework::myFunc_SetBossMonAnimation(bool isAttacked, bool isAttack, int attackAniNum)
+{
+	if (isAttacked == true)
+	{
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+
+		for (int i = 0; i < m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_nAnimationTracks; i++)
+			m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(i, false);
+
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
+	}
+	else if (isAttack == true)
+	{
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bIsMonsterAttack = true;
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bWasMonsterAttack = true;
+
+		for(int i = 0; i < m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_nAnimationTracks; i++)
+			m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(i, false);
+
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(attackAniNum, true);
+	}
+	else if (isAttack == false && m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bWasMonsterAttack)
+	{
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bIsMonsterAttack = false;
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bWasMonsterAttack = false;
+
+		for (int i = 0; i < m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_nAnimationTracks; i++)
+			m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(i, false);
+
+		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+	}
+}
+
 void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
 {
 	if (cl_id != n)
@@ -960,6 +983,32 @@ void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
 
 		if (isAttack == true)
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsAttack = true;
+	}
+}
+
+void CGameFramework::myFunc_SetAttacked(int n, int id, bool isAttacked)
+{
+	if (cl_id != n)
+	{
+		int others_id = -1;
+		switch (cl_id) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 1.0);
+		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 1.0);
+
+		if (isAttacked == true)
+			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
 	}
 }
 
@@ -989,26 +1038,15 @@ void CGameFramework::myFunc_SetBlind(int n, int id, bool _isblind)
 
 }
 
-void CGameFramework::myFunc_SetStatus(int FCnt, int ICnt, int NCnt)
+void CGameFramework::myFunc_SetStatus(int FireCnt, int IceCnt, int NatureCnt)
 {
-	cout << "myFunc_SetStatus" << endl;
-	int attack = m_pPlayer->GetAttackPower() + (FCnt * 5);
-	if (attack > 100) {
-		attack = 100;
-	}
-
+	int attack = m_pPlayer->GetAttackPower() + (FireCnt * 5);
 	m_pPlayer->SetAttackPower(attack);
 
-	int speed = m_pPlayer->GetSpeed() + (ICnt * 3);
-	if (speed > 90) {
-		speed = 90;
-	}
+	int speed = m_pPlayer->GetSpeed() + (IceCnt * 3);
 	m_pPlayer->SetSpeed(speed);
 
-	int health = m_pPlayer->GetHealth() + (NCnt * 5);
-	if (health > 100) {
-		health = 100;
-	}
+	int health = m_pPlayer->GetHealth() + (NatureCnt * 5);
 	m_pPlayer->SetHealth(health);
 }
 
@@ -1221,6 +1259,10 @@ void CGameFramework::ProcessInput()
 				if (pKeysBuffer[VK_RBUTTON] & 0xF0) {
 
 					float yaw = cxDelta;
+
+					if (yaw > 360.0f) yaw -= 360.0f;
+					if (yaw < 0.f) yaw += 360.0f;
+
 					m_pPlayer->RotateYaw(yaw);
 					g_clients[gNetwork.Getmyid()].m_yaw = yaw;
 					g_sendqueue.push(SENDTYPE::ROTATE);
@@ -1342,7 +1384,7 @@ void CGameFramework::UpdateTime()
 	float fullCycleTime = serverDayTime + serverNightTime;
 
 	// 서버에서 낮과 밤 전환 여부에 따른 시간 조정
-	if (DayTime) {
+	if (DayTime && !Night) {
 		if (accumulatedTime >= serverDayTime) {
 			curDay++;
 			accumulatedTime -= serverDayTime;  // 낮 시간 초기화 (밤으로 전환)

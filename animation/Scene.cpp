@@ -4,6 +4,8 @@
 
 #include "stdafx.h"
 #include "Scene.h"
+#pragma comment(lib, "winmm.lib")
+
 extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 extern Network							gNetwork;
 ID3D12DescriptorHeap *CScene::m_pd3dCbvSrvDescriptorHeap = NULL;
@@ -442,6 +444,28 @@ void CScene::CreateCbvSrvDescriptorHeaps(ID3D12Device *pd3dDevice, int nConstant
 	{
 		m_pd3dCbvSrvDescriptorHeap->SetName(L"CScene::CreateCbvSrvDescriptorHeaps");
 	}
+	else
+	{
+		// Print the HRESULT error code
+		std::wcout << L"Failed to create descriptor heap. HRESULT = " << hResult << std::endl;
+
+		// Check if the error is related to the device being removed
+		HRESULT deviceRemovedReason = pd3dDevice->GetDeviceRemovedReason();
+		if (deviceRemovedReason != DXGI_ERROR_DEVICE_REMOVED)
+		{
+			// Print device removed reason if available
+			std::wcout << L"Device removed reason HRESULT = " << deviceRemovedReason << std::endl;
+		}
+		else
+		{
+			// Handle the case where the device has been removed
+			std::wcout << L"Device has been removed or lost." << std::endl;
+
+			// You might also want to include additional diagnostic information
+			// depending on the specific requirements of your application.
+		}
+	}
+
 
 	m_d3dCbvCPUDescriptorNextHandle = m_d3dCbvCPUDescriptorStartHandle = m_pd3dCbvSrvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	m_d3dCbvGPUDescriptorNextHandle = m_d3dCbvGPUDescriptorStartHandle = m_pd3dCbvSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
@@ -590,7 +614,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 				case MONSTERTYPE::ICE:
 				{
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
-					gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Ice);
+					gNetwork.SendAttackCollision(g_ice_monsters[i - 3].getId(), MonsterType::Ice);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
@@ -598,7 +622,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 				case MONSTERTYPE::FIRE:
 				{
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
-					gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Fire);
+					gNetwork.SendAttackCollision(g_fire_monsters[i - 3].getId(), MonsterType::Fire);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
@@ -606,11 +630,18 @@ void CScene::AnimateObjects(float fTimeElapsed)
 				case MONSTERTYPE::NATURE:
 				{
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
-					gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Nature);
+					gNetwork.SendAttackCollision(g_nature_monsters[i - 3].getId(), MonsterType::Nature);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
 				break;
+				case MONSTERTYPE::ICEBOSS:
+				{
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+					gNetwork.SendAttackCollision(g_IceBossMonster.getId(), MonsterType::Ice_Boss);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+				}
 
 				default:
 					break;
@@ -697,7 +728,7 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 2);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
-	m_ppHierarchicalGameObjects[1]->SetPosition(-30.0f, 0.0f, -65.0f);
+	m_ppHierarchicalGameObjects[1]->SetPosition(30.0f, 0.0f, -65.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[1]->Rotate(-20.0f, 170.0f, 00.0f);
 
@@ -1062,6 +1093,12 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		}
 	}
 
+	PlayBGM(L"Sound/Day.wav");
+
+	// spaceship boundingsphere
+	SpaceshipBS.Center = { 250.0f, 10.0f, 750.0f };
+	SpaceshipBS.Radius = 50.0f;
+
 	// 메모리 해제
 	for (int i = 0; i < FireMonsterNum; ++i) {
 		if (pFireMonModels[i]) delete pFireMonModels[i];
@@ -1075,6 +1112,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		if (pGrassMonModels[i]) delete pGrassMonModels[i];
 	}
 }
+
 void CSpaceShipScene::HandleCollisionEnd(CGameObject* pObject) {
 	// 충돌 종료 시 수행할 작업 구현
 	std::cout << "Collision ended with object: " << pObject->m_pstrFrameName << std::endl;
@@ -1147,22 +1185,39 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				//// send  
 				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Night);
 
-				return true;
+				return false;
 			}
 			// fire monster's hand with player (when firemonster attack)
 			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
-				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_xmBoundingBox))
+				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_xmBoundingBox)
+				||
+				 m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
 			{
 				m_pPlayer->SetHealth(m_pPlayer->GetHealth() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(2, true);
-				m_pPlayer->m_pSkinnedAnimationController->SetTrackEnable(m_pPlayer->m_pSkinnedAnimationController->m_nAnimationBefore, false);
+				g_clients[gNetwork.my_id].is_damage = true;
+				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				//g_sendqueue.push(SENDTYPE::PLAYER_HIT);
+
+				return false;
+			}
+			// fire monster's hand with spaceship
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& (this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_xmBoundingBox)
+					||
+					this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				gNetwork.SendMonsterHitSpaceship(g_monsters[i - 3].getId());
+
 				return false;
 			}
 		}
-		// grass monster와의 충돌 체크
+		// ice monster와의 충돌 체크
 		else if (i >= 13 && i < 23)
 		{
 			// monster with player's sword(attack mode)
@@ -1175,10 +1230,37 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				m_ppHierarchicalGameObjects[i]->SetHealth(m_ppHierarchicalGameObjects[i]->GetHealth() - m_pPlayer->GetAttackPower());
 				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Night);
 
-				return true;
+				return false;
+			}
+			// ice monster's hand with player (when ice monster attack)
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)
+				||
+				m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				g_clients[gNetwork.my_id].is_damage = true;
+				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+
+				return false;
+			}
+			// ice monster's hand with spaceship
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& (this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)
+					||
+					this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+
+				return false;
 			}
 		}
-		// ice monster와의 충돌 체크
+		// grass monster와의 충돌 체크
 		else if (i >= 23 && i < 33)
 		{
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
@@ -1190,7 +1272,30 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				m_ppHierarchicalGameObjects[i]->SetHealth(m_ppHierarchicalGameObjects[i]->GetHealth() - m_pPlayer->GetAttackPower());
 				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Night);
 
-				return true;
+				return false;
+			}
+			// grass monster's head with player (when grass monster attack)
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				g_clients[gNetwork.my_id].is_damage = true;
+				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+
+				return false;
+			}
+			// grass monster's head with spaceship
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+
+				return false;
 			}
 		}
 	}
@@ -1257,6 +1362,9 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackEnable(7, false);
 
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 1.5);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 1.5);
+
 	m_ppHierarchicalGameObjects[1]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
 
@@ -1278,6 +1386,9 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackEnable(7, false);
+
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(6, 1.5);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(7, 1.5);
 
 	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
@@ -1312,6 +1423,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
+		m_ppHierarchicalGameObjects[3 + i]->SetMonsType(MONSTERTYPE::ICE);
 	}
 
 	// 로드된 모든 모델 해제
@@ -1349,6 +1461,9 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[14]->Rotate(45,0,0);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
+
+	PlayBGM(L"Sound/Ice.wav");
+
 	if (pIceItemModel) delete pIceItemModel;
 }
 
@@ -1408,39 +1523,62 @@ bool CIceScene::CheckObjectByObjectCollisions()
 		// collision check with ice monster
 		else if (i > 2 && i < 13)
 		{
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			// monster with player's sword(attack mode)
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
+				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
-				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(2, true);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 				m_ppHierarchicalGameObjects[i]->SetHealth(m_ppHierarchicalGameObjects[i]->GetHealth() - m_pPlayer->GetAttackPower());
+				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Ice);
 
-				return(true);
+				return true;
+			}
+			// ice monster's hand with player (when ice monster attack)
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)
+					||
+					m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				g_clients[gNetwork.my_id].is_damage = true;
+				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+
+				return false;
 			}
 		}
 		// collision check with ice boss monster
 		else if (i == 13)
 		{
-			// monster with player(attack mode)
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
+			// monster with player's sword
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
+				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-				//send attacked monster num
-				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
-				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 				m_ppHierarchicalGameObjects[i]->SetHealth(m_ppHierarchicalGameObjects[i]->GetHealth() - m_pPlayer->GetAttackPower());
-
-
-				return(true);
+				//gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Ice);
+	
+				return true;
 			}
+			//// ice boss hand with player
+			//else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+			//	&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+			//	&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)
+			//		||
+			//		m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
+			//{
+			//	// 여기에 hp 닳는 코드 넣어주랑
+			//	m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+			//	m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+
+			//	return false;
+			//}
 		}
 	}
 
@@ -1553,6 +1691,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
+		m_ppHierarchicalGameObjects[3 + i]->SetMonsType(MONSTERTYPE::FIRE);
 	}
 
 	// 로드된 모든 모델 해제
@@ -1593,8 +1732,10 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[14]->Rotate(90, 90, 0);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	if (pFireItemModel) delete pFireItemModel;
-	
 
+	PlayBGM(L"Sound/Fire.wav");
+
+	if (pFireItemModel) delete pFireItemModel;
 }
 bool CFireScene::CheckObjectByObjectCollisions()
 {
@@ -1653,44 +1794,65 @@ bool CFireScene::CheckObjectByObjectCollisions()
 		// collision check with fire monster
 		else if (i > 2 && i < 13)
 		{
-			// monster with player(attack mode)
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			// monster with player's sword(attack mode)
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
+				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild
+					->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-				//send attacked monster num
-				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
-				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
-
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 				m_ppHierarchicalGameObjects[i]->SetHealth(m_ppHierarchicalGameObjects[i]->GetHealth() - m_pPlayer->GetAttackPower());
+				//// send  
+				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Fire);
 
-
-				return(true);
+				return true;
+			}
+			// fire monster's hand with player (when firemonster attack)
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				// 왼손
+				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_xmBoundingBox)
+					||
+					m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				g_clients[gNetwork.my_id].is_damage = true;
+				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				return false;
 			}
 		}
 		// collision check with fire boss monster
 		else if (i == 13)
 		{
-			// monster with player(attack mode)
+			// fire boss with player(attack mode)
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-				//send attacked monster num
-				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
-				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 				m_ppHierarchicalGameObjects[i]->SetHealth(m_ppHierarchicalGameObjects[i]->GetHealth() - m_pPlayer->GetAttackPower());
+				
 
+				return true;
+			}
+			// fire boss hand with player
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)
+					||
+					m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
 
-				return(true);
+				g_clients[gNetwork.my_id].is_damage = true;
+				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				return false;
 			}
 		}
-		
 	}
 
 
@@ -1806,6 +1968,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
+		m_ppHierarchicalGameObjects[3 + i]->SetMonsType(MONSTERTYPE::NATURE);
 	}
 
 	// 로드된 모든 모델 해제
@@ -1842,6 +2005,9 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 								
 	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
+
+	PlayBGM(L"Sound/Grass.wav");
+
 	if (pNatureItemModel) delete pNatureItemModel;
 }
 bool CGrassScene::CheckObjectByObjectCollisions()
@@ -1900,21 +2066,28 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 		// collision check with nature monster
 		else if (i > 2 && i < 13)
 		{
-			// monster with player(attack mode)
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
+				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
-				//send attacked monster num
-				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
-				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 				m_ppHierarchicalGameObjects[i]->SetHealth(m_ppHierarchicalGameObjects[i]->GetHealth() - m_pPlayer->GetAttackPower());
+				gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Nature);
 
-
-				return(true);
+				return true;
+			}
+			// grass monster's head with player (when grass monster attack)
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				g_clients[gNetwork.my_id].is_damage = true;
+				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				return false;
 			}
 		}
 		// collision check with grass boss monster
@@ -1932,7 +2105,6 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 				m_ppHierarchicalGameObjects[i]->SetHealth(m_ppHierarchicalGameObjects[i]->GetHealth() - m_pPlayer->GetAttackPower());
-
 
 				return(true);
 			}

@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "Scene.h"
 #include "Scenemanager.h"
+#pragma comment(lib, "winmm.lib")
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CPlayer
@@ -87,7 +88,7 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 		//if (dwDirection & DIR_UP) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, fDistance);
 		//if (dwDirection & DIR_DOWN) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, -fDistance);
 
-		Move(c_id,xmf3Shift, bUpdateVelocity);
+		Move(c_id, xmf3Shift, bUpdateVelocity);
 	}
 }
 
@@ -144,7 +145,7 @@ void CPlayer::RotateYaw(float yaw) {
 	}
 }
 
-void CPlayer::Move(int c_id,const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
+void CPlayer::Move(int c_id, const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 {
 	if (bUpdateVelocity)
 	{
@@ -232,7 +233,7 @@ void CPlayer::Update(float fTimeElapsed)
 	if (fLength > m_fMaxVelocityY) m_xmf3Velocity.y *= (fMaxVelocityY / fLength);
 
 	XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(m_xmf3Velocity, fTimeElapsed, false);
-	Move(c_id,xmf3Velocity, false);
+	Move(c_id, xmf3Velocity, false);
 
 	if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
 
@@ -331,7 +332,7 @@ void CSoundCallbackHandler::HandleCallback(void* pCallbackData, float fTrackPosi
 #ifdef _WITH_SOUND_RESOURCE
 	PlaySound(pWavName, ::ghAppInstance, SND_RESOURCE | SND_ASYNC);
 #else
-	//PlaySound(pWavName, NULL, SND_FILENAME | SND_ASYNC);
+	PlaySound(pWavName, NULL, SND_FILENAME | SND_ASYNC);
 #endif
 }
 
@@ -368,15 +369,15 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkinnedAnimationController->SetTrackEnable(6, false);
 	m_pSkinnedAnimationController->SetTrackEnable(7, false);
 
-	//m_pSkinnedAnimationController->SetCallbackKeys(1, 2);
+	m_pSkinnedAnimationController->SetCallbackKeys(1, 1);
 #ifdef _WITH_SOUND_RESOURCE
 	m_pSkinnedAnimationController->SetCallbackKey(0, 0.1f, _T("Footstep01"));
 	m_pSkinnedAnimationController->SetCallbackKey(1, 0.5f, _T("Footstep02"));
 	m_pSkinnedAnimationController->SetCallbackKey(2, 0.9f, _T("Footstep03"));
 #else
-	//m_pSkinnedAnimationController->SetCallbackKey(1, 0, 0.2f, _T("Sound/Footstep01.wav"));
-	//m_pSkinnedAnimationController->SetCallbackKey(1, 1, 0.5f, _T("Sound/Footstep02.wav"));
-	//	m_pSkinnedAnimationController->SetCallbackKey(1, 2, 0.39f, _T("Sound/Footstep03.wav"));
+	m_pSkinnedAnimationController->SetCallbackKey(1, 0, 0.0f, _T("Sound/Walk_out.wav"));
+	//m_pSkinnedAnimationController->SetCallbackKey(1, 1, 0.5f, _T("Sound/Walk.wav"));
+	//m_pSkinnedAnimationController->SetCallbackKey(1, 2, 0.39f, _T("Sound/Footstep03.wav"));
 #endif
 	CAnimationCallbackHandler* pAnimationCallbackHandler = new CSoundCallbackHandler();
 	m_pSkinnedAnimationController->SetAnimationCallbackHandler(1, pAnimationCallbackHandler);
@@ -516,22 +517,15 @@ void CTerrainPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 	}
 }
 
-// �÷��̾ �����̸� �ִϸ��̼� �ٲ��ִ� �κ�
+
 void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 {
-	// ����Ű ���� ���
 	if (dwDirection)
 	{
-		// �� ����ϴ� �÷��̾��� ��� idle, run
-		// m_nAnimationBefore = 0, m_nAnimationAfter = 2
-		// �� ����ϴ� �÷��̾��� ��� idle, run
-		// m_nAnimationBefore = 1, m_nAnimationAfter = 3
 
-		// ��ȣ�ۿ� ���� �ƴ� ��
 		if (m_pSkinnedAnimationController->m_bIsMove == true
-			&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false)
-		{                                                                    
-			// run���� ��ȭ
+			/*&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false*/)
+		{
 			if (m_pSkinnedAnimationController->m_nAnimationBefore != 1
 				&& m_pSkinnedAnimationController->m_bIsDead == false)
 			{
@@ -541,17 +535,14 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
-				if (g_clients[c_id].getCharacterType() == 0)
+				if (g_clients[c_id].getAnimation() != animateState::SWORD_MOVE)
 				{
-					if (g_clients[c_id].getAnimation() != (int)animateState::SWORD_MOVE)
-					{
-						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation()); // ���� �ִϸ��̼��� ��� 
-						g_clients[c_id].setAnimation((int)animateState::SWORD_MOVE);
-					}
+					g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
+					g_clients[c_id].setAnimation(animateState::SWORD_MOVE);
 				}
-
+				g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
 			}
-			gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
+			//gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 		}
 	}
 	CPlayer::Move(dwDirection, fDistance, bUpdateVelocity);
@@ -571,20 +562,9 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 		{
 			m_pSkinnedAnimationController->m_bIsMove = false;
 
-			//if (m_pSkinnedAnimationController->m_bIsPlayerAttacked
-			//	&& m_pSkinnedAnimationController->m_bIsDead == false
-			//	&& m_pSkinnedAnimationController->m_nAnimationBefore != 2)
-			//{
-			//	m_pSkinnedAnimationController->m_nAnimationAfter = 2;
-			//	m_pSkinnedAnimationController->m_bIsBlending = true;
-			//	m_pSkinnedAnimationController->SetTrackEnable(2, true);
-			//	m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
-			//}
-			// �� �ϴٰ� idle �� ��� -> ������ �ؾ��ϴ� ���
-/*			else */if (m_pSkinnedAnimationController->m_nAnimationBefore != 0
+			if (m_pSkinnedAnimationController->m_nAnimationBefore != 0
 				&& m_pSkinnedAnimationController->m_bIsHeal == false
-				&& m_pSkinnedAnimationController->m_bIsDead == false
-				&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false)
+				&& m_pSkinnedAnimationController->m_bIsDead == false)
 			{
 				m_pSkinnedAnimationController->m_nAnimationAfter = 0;
 				m_pSkinnedAnimationController->m_bIsBlending = true;
@@ -595,10 +575,10 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				// �÷��̾� ���Ⱑ Į�̶�� Į idle
 				if (g_clients[c_id].getCharacterType() == 0)
 				{
-					if (g_clients[c_id].getAnimation() != (int)animateState::SWORD_IDLE)
+					if (g_clients[c_id].getAnimation() != animateState::SWORD_IDLE)
 					{
 						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
-						g_clients[c_id].setAnimation((int)animateState::SWORD_IDLE);
+						g_clients[c_id].setAnimation(animateState::SWORD_IDLE);
 					}
 				}
 
@@ -635,10 +615,9 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 
 		// ��ȣ�ۿ� ����
 		else if (m_pSkinnedAnimationController->m_bIsHeal == true
-			&& m_pSkinnedAnimationController->m_nAnimationAfter != 5
-			&& m_pSkinnedAnimationController->m_bIsPlayerAttacked == false)
+			&& m_pSkinnedAnimationController->m_nAnimationAfter != 5)
 		{
-     			m_pSkinnedAnimationController->m_nAnimationAfter = 5;
+			m_pSkinnedAnimationController->m_nAnimationAfter = 5;
 			m_pSkinnedAnimationController->m_bIsBlending = true;
 
 			m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
@@ -675,8 +654,8 @@ CLoginPlayer::CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 	m_pSkinnedAnimationController->SetTrackEnable(1, false);
 	m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
-	CAnimationCallbackHandler* pAnimationCallbackHandler = new CSoundCallbackHandler();
-	m_pSkinnedAnimationController->SetAnimationCallbackHandler(0, pAnimationCallbackHandler);
+	//CAnimationCallbackHandler* pAnimationCallbackHandler = new CSoundCallbackHandler();
+	//m_pSkinnedAnimationController->SetAnimationCallbackHandler(0, pAnimationCallbackHandler);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 

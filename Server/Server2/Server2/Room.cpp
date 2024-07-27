@@ -171,7 +171,7 @@ void Room::FireUpdateNpc()
 		sendFireMonsterUpdatePacket[idx]._monster._lx = npc._look.x;
 		sendFireMonsterUpdatePacket[idx]._monster._ly = npc._look.y;
 		sendFireMonsterUpdatePacket[idx]._monster._lz = npc._look.z;
-	
+
 		sendFireMonsterUpdatePacket[idx]._monster._rx = npc._right.x;
 		sendFireMonsterUpdatePacket[idx]._monster._ry = npc._right.y;
 		sendFireMonsterUpdatePacket[idx]._monster._rz = npc._right.z;
@@ -207,15 +207,15 @@ void Room::NatureUpdateNpc()
 		sendNatureMontserUpdatePacket[idx].size = sizeof(NatureMonsterUpdate);
 		sendNatureMontserUpdatePacket[idx].type = SC_NATURE_MONSTER_UPDATE;
 		sendNatureMontserUpdatePacket[idx]._monster._id = idx;
-		
+
 		sendNatureMontserUpdatePacket[idx]._monster._x = npc._pos.x;
 		sendNatureMontserUpdatePacket[idx]._monster._y = npc._pos.y;
 		sendNatureMontserUpdatePacket[idx]._monster._z = npc._pos.z;
-		
+
 		sendNatureMontserUpdatePacket[idx]._monster._lx = npc._look.x;
 		sendNatureMontserUpdatePacket[idx]._monster._ly = npc._look.y;
 		sendNatureMontserUpdatePacket[idx]._monster._lz = npc._look.z;
-		
+
 		sendNatureMontserUpdatePacket[idx]._monster._rx = npc._right.x;
 		sendNatureMontserUpdatePacket[idx]._monster._ry = npc._right.y;
 		sendNatureMontserUpdatePacket[idx]._monster._rz = npc._right.z;
@@ -239,6 +239,7 @@ void Room::IceBossUpdate()
 	BossUpdate_Ice sendIceBossUpdatePacket;
 	if (IceBoss._is_alive == true)
 	{
+
 		IceBoss.Move();
 	}
 	else
@@ -248,7 +249,7 @@ void Room::IceBossUpdate()
 
 	sendIceBossUpdatePacket.size = sizeof(BossUpdate_Ice);
 	sendIceBossUpdatePacket.type = SC_ICE_BOSS_UPDATE;
-	
+
 	sendIceBossUpdatePacket._boss._x = IceBoss._pos.x;
 	sendIceBossUpdatePacket._boss._y = IceBoss._pos.y;
 	sendIceBossUpdatePacket._boss._z = IceBoss._pos.z;
@@ -283,15 +284,15 @@ void Room::FireBossUpdate()
 
 	sendFireBossUpdatePacket.size = sizeof(BossUpdate_Fire);
 	sendFireBossUpdatePacket.type = SC_FIRE_BOSS_UPDATE;
-	
+
 	sendFireBossUpdatePacket._boss._x = FireBoss._pos.x;
 	sendFireBossUpdatePacket._boss._y = FireBoss._pos.y;
 	sendFireBossUpdatePacket._boss._z = FireBoss._pos.z;
-	
+
 	sendFireBossUpdatePacket._boss._lx = FireBoss._look.x;
 	sendFireBossUpdatePacket._boss._ly = FireBoss._look.y;
 	sendFireBossUpdatePacket._boss._lz = FireBoss._look.z;
-	
+
 	sendFireBossUpdatePacket._boss._rx = FireBoss._right.x;
 	sendFireBossUpdatePacket._boss._ry = FireBoss._right.y;
 	sendFireBossUpdatePacket._boss._rz = FireBoss._right.z;
@@ -379,6 +380,7 @@ void Room::BossMonsterInitialziedMonster()
 	IceBoss._stagenum = 3;
 	IceBoss._m_type = MonsterType::Ice_Boss;
 	IceBoss._initPos = IceBoss._pos;
+	IceBoss.m_fBoundingSize = 15.0f;
 
 	NatureBoss._pos = XMFLOAT3(77.0f, 10.0f, -408.0f);
 	NatureBoss._is_alive = true;
@@ -399,7 +401,7 @@ void Room::BossMonsterInitialziedMonster()
 	sendFireBossMonsterInitialziedpacket._boss._lx = FireBoss._look.x;
 	sendFireBossMonsterInitialziedpacket._boss._ly = FireBoss._look.y;
 	sendFireBossMonsterInitialziedpacket._boss._lz = FireBoss._look.z;
-															  
+
 	sendFireBossMonsterInitialziedpacket._boss._rx = FireBoss._right.x;
 	sendFireBossMonsterInitialziedpacket._boss._ry = FireBoss._right.y;
 	sendFireBossMonsterInitialziedpacket._boss._rz = FireBoss._right.z;
@@ -533,11 +535,11 @@ void Room::FireNpcInitialized()
 		sendFireMonsterUpdatePacket[idx]._monster._x = npc._pos.x;
 		sendFireMonsterUpdatePacket[idx]._monster._y = npc._pos.y;
 		sendFireMonsterUpdatePacket[idx]._monster._z = npc._pos.z;
-	
+
 		sendFireMonsterUpdatePacket[idx]._monster._lx = npc._look.x;
 		sendFireMonsterUpdatePacket[idx]._monster._ly = npc._look.y;
 		sendFireMonsterUpdatePacket[idx]._monster._lz = npc._look.z;
-	
+
 		sendFireMonsterUpdatePacket[idx]._monster._rx = npc._right.x;
 		sendFireMonsterUpdatePacket[idx]._monster._ry = npc._right.y;
 		sendFireMonsterUpdatePacket[idx]._monster._rz = npc._right.z;
@@ -588,15 +590,15 @@ void Room::NatureNpcInitialized()
 		sendNatureMonsterUpdatePacket[idx].size = sizeof(NatureMonsterUpdate);
 		sendNatureMonsterUpdatePacket[idx].type = SC_NATURE_MONSTER_UPDATE;
 		sendNatureMonsterUpdatePacket[idx]._monster._id = idx;
-		
+
 		sendNatureMonsterUpdatePacket[idx]._monster._x = npc._pos.x;
 		sendNatureMonsterUpdatePacket[idx]._monster._y = npc._pos.y;
 		sendNatureMonsterUpdatePacket[idx]._monster._z = npc._pos.z;
-		
+
 		sendNatureMonsterUpdatePacket[idx]._monster._lx = npc._look.x;
 		sendNatureMonsterUpdatePacket[idx]._monster._ly = npc._look.y;
 		sendNatureMonsterUpdatePacket[idx]._monster._lz = npc._look.z;
-		
+
 		sendNatureMonsterUpdatePacket[idx]._monster._rx = npc._right.x;
 		sendNatureMonsterUpdatePacket[idx]._monster._ry = npc._right.y;
 		sendNatureMonsterUpdatePacket[idx]._monster._rz = npc._right.z;

@@ -329,15 +329,15 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         WCHAR elementText[256];
 
         // Ice Element 개수 출력
-        swprintf_s(elementText, 256, L"HP: %d", gGameFramework.m_pPlayer->GetHealth());
+        swprintf_s(elementText, 256, L"HP: %f", gGameFramework.m_pPlayer->GetHealth());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         // Fire Element 개수 출력
-        swprintf_s(elementText, 256, L"Attack Power: %d", gGameFramework.m_pPlayer->GetAttackPower());
+        swprintf_s(elementText, 256, L"Attack Power: %f", gGameFramework.m_pPlayer->GetAttackPower());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         // Nature Element 개수 출력
-        swprintf_s(elementText, 256, L"Speed: %d", gGameFramework.m_pPlayer->GetSpeed());
+        swprintf_s(elementText, 256, L"Speed: %f", gGameFramework.m_pPlayer->GetSpeed());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         //// Map 이동 메시지
