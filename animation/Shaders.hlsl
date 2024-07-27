@@ -36,11 +36,11 @@ cbuffer cbGameObjectInfo : register(b2)
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
 
 ////_FULLSCREEN
-//#define FRAME_BUFFER_WIDTH				1920
-//#define FRAME_BUFFER_HEIGHT				1080
+#define FRAME_BUFFER_WIDTH				1920
+#define FRAME_BUFFER_HEIGHT				1080
 
-#define FRAME_BUFFER_WIDTH				640
-#define FRAME_BUFFER_HEIGHT				480
+//#define FRAME_BUFFER_WIDTH				640
+//#define FRAME_BUFFER_HEIGHT				480
 
 Texture2D gtxtAlbedoTexture : register(t6);
 Texture2D gtxtSpecularTexture : register(t7);
@@ -155,27 +155,27 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
     
 	// 객체 렌더링
-    //float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    //if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
-    //    cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
+    float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
+        cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
 	
-    //float4 cSpecularColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    //if (gnTexturesMask & MATERIAL_SPECULAR_MAP)
-    //    cSpecularColor = gtxtSpecularTexture.Sample(gssWrap, input.uv);
+    float4 cSpecularColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_SPECULAR_MAP)
+        cSpecularColor = gtxtSpecularTexture.Sample(gssWrap, input.uv);
 	
-    //float4 cNormalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    //if (gnTexturesMask & MATERIAL_NORMAL_MAP)
-    //    cNormalColor = gtxtNormalTexture.Sample(gssWrap, input.uv);
+    float4 cNormalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_NORMAL_MAP)
+        cNormalColor = gtxtNormalTexture.Sample(gssWrap, input.uv);
 	
-    //float4 cMetallicColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    //if (gnTexturesMask & MATERIAL_METALLIC_MAP)
-    //    cMetallicColor = gtxtMetallicTexture.Sample(gssWrap, input.uv);
+    float4 cMetallicColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_METALLIC_MAP)
+        cMetallicColor = gtxtMetallicTexture.Sample(gssWrap, input.uv);
 	
-    //float4 cEmissionColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    //if (gnTexturesMask & MATERIAL_EMISSION_MAP)
-    //    cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
+    float4 cEmissionColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    if (gnTexturesMask & MATERIAL_EMISSION_MAP)
+        cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
 	
-    //output.f4Texture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
+    output.f4Texture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
 	
     output.f4Texture = float4(0.0f, 0.0f, 0.0f, 1.0f);
     if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
@@ -636,8 +636,8 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
 
     if (ShadowPosH.x > 1 || ShadowPosH.y > 1 || ShadowPosH.z > 1 || ShadowPosH.x < 0 || ShadowPosH.y < 0 || ShadowPosH.z < 0)
     {
-        //ShadowFactor = 1.f;
-        return float4(1.0f, 0.0f, 0.0f, 1.0f);
+        ShadowFactor = 1.f;
+        //return float4(1.0f, 0.0f, 0.0f, 1.0f);
     }
     ShadowFactor += 0.5f;
 
@@ -808,6 +808,8 @@ float4 PSBlur(float4 position : SV_POSITION) : SV_Target
     //    blurStrength = 0.5f;
     //    cColor = GaussianBlur(texCoord, blurStrength);
     //}
+    
+    
     float brightness = dot(cColor.rgb, float3(0.299, 0.587, 0.114));
     float blurStrength = 0.5;
     if (brightness > 0.7f)
@@ -820,7 +822,7 @@ float4 PSBlur(float4 position : SV_POSITION) : SV_Target
         cColor = GaussianBlur(texCoord, blurStrength);
     }
 
-    return (cColor);
+    return cColor;
 }
 
 struct VS_ShadowMap_In

@@ -303,8 +303,8 @@ void CGameFramework::CreateDepthStencilView()
 }
 void CGameFramework::CreateShadowMap()
 {
-	m_ShadowMap = make_unique<ShadowMap>(m_pd3dDevice, 4096, 4096);
-	//m_ShadowMap = new ShadowMap(m_pd3dDevice, 4096, 4096);
+	m_ShadowMap = make_unique<ShadowMap>(m_pd3dDevice, 2048, 2048);
+	//m_ShadowMap = make_unique<ShadowMap>(m_pd3dDevice, 4096, 4096);
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dDsvCPUDescriptorHandle = m_pd3dDsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	d3dDsvCPUDescriptorHandle.ptr += (::gnDsvDescriptorIncrementSize);
 
@@ -1276,7 +1276,7 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
 
-	DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+	DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R32G32B32A32_FLOAT, DXGI_FORMAT_R32G32B32A32_FLOAT, DXGI_FORMAT_R32G32B32A32_FLOAT };
 	m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle, 8); //SRV to (Render Targets) + (Depth Buffer)
 
 	// ���� SRV ��¼��..
@@ -1685,10 +1685,9 @@ void CGameFramework::FrameAdvance()
 
 
 		if (m_pScene) {
-			m_pScene->m_ppHierarchicalGameObjects[0]->UpdateTransform(NULL);
-			m_pScene->m_ppHierarchicalGameObjects[0]->Render(m_pd3dCommandList, m_pCamera, 0, -1);
-
+			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);			
 		}
+		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 

@@ -54,8 +54,6 @@ public:
 	array<Session*, 2> ingamePlayer;
 	vector<pair<float, XMFLOAT3>> playerdisPos;
 public:
-
-
 	virtual void Move();
 	void Remove();
 
@@ -67,11 +65,9 @@ public:
 
 	bool CollideCheckToPlayer(Session* _player);
 	bool CollideCheckToSpaceship();
+
 	// trace
 	int FindClosePlayer();
-
-	
-
 
 };
 

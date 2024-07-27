@@ -93,7 +93,7 @@ public:
     void AnimateObjects(float fTimeElapsed);
 
 	void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, bool bIsAnimate = true);
-    void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL, bool bIsAnimate = true);
+    void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL, bool bIsAnimate = true, int pipelinestate=0);
 
 	ID3D12RootSignature* GetRootSignature() { return m_pd3dGraphicsRootSignature; }
 

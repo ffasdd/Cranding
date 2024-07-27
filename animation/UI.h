@@ -67,7 +67,7 @@ public:
     UINT                            m_nTextBlocks = 0;
     TextBlock* m_pTextBlocks = NULL;
     // 플레이어의 체력 설정 메서드
-    void SetPlayerHP();
+    void SetHP();
     void UpdateHPBar();
 
     // 로그인 관련
@@ -90,7 +90,8 @@ private:
     D2D1_RECT_F m_Ready = D2D1::RectF(FRAME_BUFFER_WIDTH - 300, FRAME_BUFFER_HEIGHT -200, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 
     // ingame
-    int m_playerhp = 100;
+    int m_playerHP = 100;
+    int m_spaceshipHP = 100;
     D2D1_RECT_F m_HPBar = D2D1::RectF(0.0f, 0.0f, 0.0f, 0.0f);
     D2D1_RECT_F m_Timer = D2D1::RectF(1300.0f, 0.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 
@@ -98,7 +99,9 @@ private:
     D2D1_RECT_F fireRect = D2D1::RectF(10, 840, 500, 870);
     D2D1_RECT_F natureRect = D2D1::RectF(10, 880, 500, 910);
 
-    D2D1_RECT_F m_Map = D2D1::RectF(-FRAME_BUFFER_WIDTH / 2.0f + 500, -20.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+    D2D1_RECT_F m_Map = D2D1::RectF(660, 0.0f, 1260, FRAME_BUFFER_HEIGHT);
+    D2D1_RECT_F m_spaceshipHPBar = D2D1::RectF(10.0f, 0.0f, 610.0f, 40.0f);
+    D2D1_RECT_F m_spaceshipBar = D2D1::RectF(10.0f, 0.0f, 610.0f, 40.0f);
 
 private:
     static UILayer* s_instance;
