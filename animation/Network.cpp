@@ -383,7 +383,6 @@ void Network::ProcessPacket(char* buf)
 		SC_DAYTIME_PACKET* p = reinterpret_cast<SC_DAYTIME_PACKET*>(buf);
 		gGameFramework.DayTime = true;
 		gGameFramework.Night = false;
-
 		g_clients[my_id].m_firecnt = p->firecnt;
 		g_clients[my_id].m_icencnt = p->icecnt;
 		g_clients[my_id].m_naturecnt = p->naturecnt;

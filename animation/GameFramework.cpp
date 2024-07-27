@@ -1320,29 +1320,9 @@ void CGameFramework::UpdateShaderVariables()
 
 void CGameFramework::UpdateTime()
 {
-	//static float accumulatedTime = 0.0f;  // 누적된 시간
-	//float fTimeElapsed = m_GameTimer.GetTimeElapsed();  // 경과 시간 가져오기
-	//accumulatedTime += fTimeElapsed;  // 누적 시간 업데이트
-
-	//// 누적 시간이 초 단위 이상인 경우
-	//int totalSeconds = static_cast<int>(accumulatedTime);  // 누적 시간을 초 단위로 변환
-
-	//// 분과 초 계산
-	//curMinute = totalSeconds / 60;
-	//curSecond = totalSeconds % 60;
-
-	//// 5분이 지나면 curDay를 증가시키고, 시간 초기화
-	//if (curMinute >= 5) {
-	//	curDay++;
-	//	accumulatedTime -= (5 * 60);  // 5분(300초)을 뺌으로써 초기화
-	//	totalSeconds = static_cast<int>(accumulatedTime);  // 갱신된 누적 시간을 초 단위로 변환
-	//	curMinute = totalSeconds / 60;
-	//	curSecond = totalSeconds % 60;
-	//}
-
 	// 서버에서 제공하는 낮과 밤의 시간 (초 단위)
-	float serverDayTime = 60.0f;  // 예: 낮 시간 300초 (5분)
-	float serverNightTime = 30.0f;  // 예: 밤 시간 300초 (5분)
+	float serverDayTime = 60.0f;  // 낮 시간 (예: 60초)
+	float serverNightTime = 30.0f;  // 밤 시간 (예: 30초)
 
 	// 클라이언트에서 관리하는 누적 시간 변수 초기화
 	static float accumulatedTime = 0.0f;  // 현재 누적 시간
@@ -1352,31 +1332,34 @@ void CGameFramework::UpdateTime()
 	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 	accumulatedTime += fTimeElapsed;  // 누적 시간 업데이트
 
-	// 서버에서 낮과 밤 전환 여부에 따른 시간 조정
-	if (DayTime && !Night) {
-		if (accumulatedTime >= serverDayTime) {
-			accumulatedTime = 0.0f;  // 밤 시간 초기화
-		}
-	}
-	else if (!DayTime && Night) {
-		if (accumulatedTime >= serverNightTime) {
-			accumulatedTime = 0.0f;  // 낮 시간 초기화
-		}
-	}
-
 	// 누적 시간이 초 단위 이상인 경우 분과 초 계산
 	int totalSeconds = static_cast<int>(accumulatedTime);  // 누적 시간을 초 단위로 변환
 	curMinute = totalSeconds / 60;
 	curSecond = totalSeconds % 60;
 
-	// 5분이 지나면 curDay를 증가시키고, 시간 초기화
-	int day = (totalSeconds % int(serverDayTime + serverNightTime));
-	if (day == 0) {
-		curDay++;
-		//totalSeconds = static_cast<int>(accumulatedTime);  // 갱신된 누적 시간을 초 단위로 변환
-		curMinute = totalSeconds / 60;
-		curSecond = totalSeconds % 60;
+
+	// 전체 시간 (낮 + 밤)을 기준으로 하루 계산
+	float fullCycleTime = serverDayTime + serverNightTime;
+
+	// 서버에서 낮과 밤 전환 여부에 따른 시간 조정
+	if (DayTime) {
+		if (accumulatedTime >= serverDayTime) {
+			curDay++;
+			accumulatedTime -= serverDayTime;  // 낮 시간 초기화 (밤으로 전환)
+	
+		}
 	}
+	else if (Night) {
+		if (accumulatedTime >= serverNightTime) {
+
+			accumulatedTime -= serverNightTime;  // 밤 시간 초기화 (낮으로 전환)
+			
+		}
+	}
+
+	// 업데이트된 시간 계산
+	curMinute = static_cast<int>(accumulatedTime) / 60;
+	curSecond = static_cast<int>(accumulatedTime) % 60;
 
 }
 

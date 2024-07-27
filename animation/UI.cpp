@@ -119,8 +119,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     wcscpy_s(pMap[0], 256, L"ice map으로 이동하기 위해 F키를 눌러주세요");
     wcscpy_s(pMap[1], 256, L"fire map으로 이동하기 위해 F키를 눌러주세요");
     wcscpy_s(pMap[2], 256, L"grass map으로 이동하기 위해 F키를 눌러주세요");
-    wcscpy_s(pMap[3], 256, L"이동을 위한 원소가 부족합니다");
-    wcscpy_s(pMap[4], 256, L"spaceship map으로 이동하기 위해 F키를 눌러주세요");
+    wcscpy_s(pMap[3], 256, L"spaceship map으로 이동하기 위해 F키를 눌러주세요");
     for (int i = 0; i < ingameUI_num; ++i) {
         m_vecIngameScene.push_back(pMap[i]);
     }
@@ -304,9 +303,6 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         //// Draw caret
         //D2D1_RECT_F caretRect = D2D1::RectF(caretX, caretY, caretX + 2.0f, caretY + m_textFormats[TEXT_SIZE::SIZE_35]->GetFontSize() + 5.0f);
         //m_pd2dDeviceContext->FillRectangle(caretRect, m_brushes[BRUSH_COLOR::LIGHTBLACK]);
-
-
-
 
         m_pd2dDeviceContext->EndDraw();
         break;

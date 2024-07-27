@@ -141,7 +141,7 @@ public:
 	int curDay = 0;
 	int curMinute = 0;
 	int curSecond = 0;
-	
+
 	bool isDayTimeProcessed = false;
 	bool DayTime = false;
 	bool Night = false;
