@@ -485,6 +485,8 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Ingame;
 			clients[id]._stage = 1;
+			clients[id]._attpow = 20;
+			clients[id]._hp = 100;
 		}
 
 		matchingqueue.push(&clients[id]);
@@ -746,13 +748,30 @@ void Server::ProcessPacket(int id, char* packet)
 			ingameroom[p->room_id].NatureMonster[p->npc_id].MonsterLock.unlock();
 			break;
 		}
+		case MonsterType::Fire_Boss:
+		{
+			ingameroom[p->room_id].FireBoss._is_alive = false;
+			break;
+		}
+		case MonsterType::Ice_Boss:
+		{
+			ingameroom[p->room_id].IceBoss._is_alive = false;
+			break;
+		}
+		case MonsterType::Nature_Boss:
+		{
+			ingameroom[p->room_id].NatureBoss._is_alive = false;
+			break;
+		}
 		}
 	}
 	break;
 	case CS_MONSTER_DIE: {
 		CS_MONSTER_DIE_PACKET* p = reinterpret_cast<CS_MONSTER_DIE_PACKET*>(packet);
 		// 다른 플레이어들 한테 NPC 타격 상황을 보냄 
-		if (p->_montype == MonsterType::Night)
+		switch (p->_montype)
+		{
+		case MonsterType::Night:
 		{
 			if (p->npc_id >= 0 && p->npc_id < 10)
 			{
@@ -770,6 +789,25 @@ void Server::ProcessPacket(int id, char* packet)
 				cout << id << " - ID kill NatureMonster " << clients[id]._natureMonstercnt << endl;
 			}
 		}
+		break;
+		case MonsterType::Fire:
+		{
+
+		}
+		break;
+		case MonsterType::Ice:
+		{
+
+		}
+		break;
+		case MonsterType::Nature:
+		{
+
+		}
+		break;
+
+		}
+
 		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
 		{
 			//if (pl->_id == id)continue;
@@ -809,6 +847,46 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 	}
 
+	case CS_BOSSMONSTER_DAMGED: {
+
+		CS_BOSSMONSTER_DAMAGED_PACKET* p = reinterpret_cast<CS_BOSSMONSTER_DAMAGED_PACKET*>(packet);
+		switch (p->_montype)
+		{
+		case MonsterType::Fire_Boss: {
+
+			ingameroom[p->room_id].FireBoss._hp = p->bosshp;
+			cout << " Fire Boss _HP" << p->bosshp << endl;
+			// 보스 죽는 애니메이션을 모두에게 보내야한다. 
+			// 아이템 을 뛰우라는 정보 
+			// 
+			if (ingameroom[p->room_id].FireBoss._hp <= 0)
+			{
+
+				for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+				{
+					if (pl->_stage != clients[id]._stage)continue;
+					// 무슨 몬스터가 죽었는지 다른 클라이언트 들한테 정보를 보내야함 
+					pl->send_player_attack_mosnter(0, true, MonsterType::Fire_Boss);
+
+					std::chrono::system_clock::time_point attacktime = chrono::system_clock::now();
+					TIMER_EVENT ev{ attacktime + 1s ,p->room_id,EVENT_TYPE::EV_PLAYER_ATTACK_NPC, 0, MonsterType::Fire_Boss };
+					g_Timer.InitTimerQueue(ev);
+				}
+			}
+		}
+								   break;
+		case MonsterType::Ice_Boss: {
+			ingameroom[p->room_id].IceBoss._hp = p->bosshp;
+			if (ingameroom[p->room_id].IceBoss._hp <= 0)ingameroom[p->room_id].FireBoss._is_alive = false;
+		}
+								  break;
+		case MonsterType::Nature_Boss: {
+			ingameroom[p->room_id].NatureBoss._hp = p->bosshp;
+			if (ingameroom[p->room_id].NatureBoss._hp <= 0)ingameroom[p->room_id].FireBoss._is_alive = false;
+		}
+									 break;
+		}
+	}
 	}
 }
 
@@ -916,7 +994,7 @@ void Server::ReadyToStart()
 				}
 			}
 
-		
+
 			for (auto& NightMonsters : ingameroom[room_id].NightMonster)
 			{
 				for (int i = 0; i < MAX_ROOM_USER; ++i)

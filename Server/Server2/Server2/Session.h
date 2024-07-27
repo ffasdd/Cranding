@@ -20,6 +20,7 @@ public:
 	int _id;
 	int _hp;
 	int _maxhp;
+	int _attpow;
 
 	int _fireMonstercnt = 0;
 	int _natureMonstercnt= 0;

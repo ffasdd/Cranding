@@ -100,6 +100,11 @@ int Session::getBossAttackType()
 	return attack_type_num;
 }
 
+int Session::getAttackPower()
+{
+	return m_attpower;
+}
+
 void Session::setCharacterType(int type)
 {
 	characterType = type;
@@ -205,6 +210,11 @@ void Session::setNpcAttacked(bool _isattacked)
 void Session::setBossAttackType(int _typenum)
 {
 	attack_type_num = _typenum;
+}
+
+void Session::setAttackPower(int _att)
+{
+	m_attpower = _att;
 }
 
 void Session::Rotate(float yaw)

@@ -192,15 +192,14 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setCharacterType(p->charactertype);
 		g_clients[my_id].setAnimation((p->a_state));
 		g_clients[my_id].setprevAnimation((p->prev_state));
+		g_clients[my_id].setAttackPower(p->att);
 		g_clients[my_id].scene_num = p->stage_num;
-
 
 		gGameFramework.m_pPlayer->c_id = my_id;
 		gGameFramework.cl_id = my_id;
-
-		gamestart = true;
 		g_clients_mutex.unlock();
-		SetEvent(loginevent);
+		gamestart = true;
+
 
 		break;
 	}
@@ -224,6 +223,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setCharacterType(p->charactertype);
 		g_clients[ob_id].setAnimation(p->a_state);
 		g_clients[ob_id].setprevAnimation(p->prev_state);
+		g_clients[ob_id].setAttackPower(p->att);
 		g_clients[ob_id].scene_num = p->stage_num;
 		g_clients_mutex.unlock();
 		break;
@@ -440,7 +440,7 @@ void Network::ProcessPacket(char* buf)
 		g_IceBossMonster.setPos(p->_boss._x, p->_boss._y, p->_boss._z);
 		g_IceBossMonster.setLook(p->_boss._lx, p->_boss._ly, p->_boss._lz);
 		g_IceBossMonster.setRight(p->_boss._rx, p->_boss._ry, p->_boss._rz);
-
+		g_IceBossMonster.setHp(p->_boss._hp);
 		g_IceBossMonster.setUp({ 0.f,1.f,0.f });
 	}
 	break;
@@ -452,7 +452,7 @@ void Network::ProcessPacket(char* buf)
 		g_FireBossMonster.setPos(p->_boss._x, p->_boss._y, p->_boss._z);
 		g_FireBossMonster.setLook(p->_boss._lx, p->_boss._ly, p->_boss._lz);
 		g_FireBossMonster.setRight(p->_boss._rx, p->_boss._ry, p->_boss._rz);
-
+		g_FireBossMonster.setHp(p->_boss._hp);
 		g_FireBossMonster.setUp({ 0.f,1.f,0.f });
 	}
 	break;
@@ -464,7 +464,7 @@ void Network::ProcessPacket(char* buf)
 		g_NatureBossMonster.setPos(p->_boss._x, p->_boss._y, p->_boss._z);
 		g_NatureBossMonster.setLook(p->_boss._lx, p->_boss._ly, p->_boss._lz);
 		g_NatureBossMonster.setRight(p->_boss._rx, p->_boss._ry, p->_boss._rz);
-
+		g_NatureBossMonster.setHp(p->_boss._hp);
 		g_NatureBossMonster.setUp({ 0.f,1.f,0.f });
 	}
 	break;
@@ -573,6 +573,21 @@ void Network::ProcessPacket(char* buf)
 		{
 			int npc_id = p->npc_id;
 			g_monsters[npc_id].setNpcAttacked(p->_isattacked);
+			break;
+		}
+		case MonsterType::Fire_Boss:
+		{
+			g_FireBossMonster.setNpcAttacked(p->_isattacked);
+			break;
+		}
+		case MonsterType::Ice_Boss:
+		{
+			g_IceBossMonster.setNpcAttacked(p->_isattacked);
+			break;
+		}
+		case MonsterType::Nature_Boss:
+		{
+			g_NatureBossMonster.setNpcAttacked(p->_isattacked);
 			break;
 		}
 		}
@@ -787,6 +802,17 @@ void Network::SendPlayerHIt(bool is_damaged)
 	p.room_id = my_roomid;
 	p.isdamaged = is_damaged;
 
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendBossDamage(int _hp , MonsterType _type)
+{
+	CS_BOSSMONSTER_DAMAGED_PACKET p;
+	p.size = sizeof(CS_BOSSMONSTER_DAMAGED_PACKET);
+	p.type = CS_BOSSMONSTER_DAMGED;
+	p.bosshp = _hp;
+	p._montype = _type;
+	p.room_id = my_roomid;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 

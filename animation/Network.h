@@ -62,6 +62,7 @@ public: // thread send
 	void SendMonsterHitSpaceship(int npc_id);
 
 	void SendPlayerHIt(bool is_damaged);
+	void SendBossDamage(int _hp,MonsterType _type);
 
 	bool MonsterCollide(Session& _monster);
 	

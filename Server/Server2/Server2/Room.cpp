@@ -262,6 +262,7 @@ void Room::IceBossUpdate()
 	sendIceBossUpdatePacket._boss._ry = IceBoss._right.y;
 	sendIceBossUpdatePacket._boss._rz = IceBoss._right.z;
 
+	sendIceBossUpdatePacket._boss._id = IceBoss._hp;
 
 	for (auto& cl : ingamePlayer)
 	{
@@ -296,7 +297,8 @@ void Room::FireBossUpdate()
 	sendFireBossUpdatePacket._boss._rx = FireBoss._right.x;
 	sendFireBossUpdatePacket._boss._ry = FireBoss._right.y;
 	sendFireBossUpdatePacket._boss._rz = FireBoss._right.z;
-
+	
+	sendFireBossUpdatePacket._boss._hp = FireBoss._hp;
 
 	for (auto& cl : ingamePlayer)
 	{
@@ -332,6 +334,7 @@ void Room::NatureBossUpdate()
 	sendNatureBossUpdatePacket._boss._ry = NatureBoss._right.y;
 	sendNatureBossUpdatePacket._boss._rz = NatureBoss._right.z;
 
+	sendNatureBossUpdatePacket._boss._hp = NatureBoss._hp;
 
 	for (auto& cl : ingamePlayer)
 	{
@@ -374,6 +377,7 @@ void Room::BossMonsterInitialziedMonster()
 	FireBoss._stagenum = 4;
 	FireBoss._m_type = MonsterType::Fire_Boss;
 	FireBoss._initPos = FireBoss._pos;
+	FireBoss._hp = 40;
 
 	IceBoss._pos = XMFLOAT3(-12.0f, 10.0f, -220.f);
 	IceBoss._is_alive = true;
@@ -381,12 +385,14 @@ void Room::BossMonsterInitialziedMonster()
 	IceBoss._m_type = MonsterType::Ice_Boss;
 	IceBoss._initPos = IceBoss._pos;
 	IceBoss.m_fBoundingSize = 15.0f;
+	IceBoss._hp = 500;
 
 	NatureBoss._pos = XMFLOAT3(77.0f, 10.0f, -408.0f);
 	NatureBoss._is_alive = true;
 	NatureBoss._stagenum = 5;
 	NatureBoss._m_type = MonsterType::Nature_Boss;
 	NatureBoss._initPos = NatureBoss._pos;
+	NatureBoss._hp = 500;
 
 	BossUpdate_Fire sendFireBossMonsterInitialziedpacket;
 	BossUpdate_Ice sendIceBossMonsterInitialziedpacket;
@@ -405,6 +411,7 @@ void Room::BossMonsterInitialziedMonster()
 	sendFireBossMonsterInitialziedpacket._boss._rx = FireBoss._right.x;
 	sendFireBossMonsterInitialziedpacket._boss._ry = FireBoss._right.y;
 	sendFireBossMonsterInitialziedpacket._boss._rz = FireBoss._right.z;
+	sendFireBossMonsterInitialziedpacket._boss._hp = FireBoss._hp;
 
 	sendIceBossMonsterInitialziedpacket.size = sizeof(BossUpdate_Ice);
 	sendIceBossMonsterInitialziedpacket.type = SC_ICE_BOSS_UPDATE;
@@ -419,6 +426,8 @@ void Room::BossMonsterInitialziedMonster()
 	sendIceBossMonsterInitialziedpacket._boss._rx = IceBoss._right.x;
 	sendIceBossMonsterInitialziedpacket._boss._ry = IceBoss._right.y;
 	sendIceBossMonsterInitialziedpacket._boss._rz = IceBoss._right.z;
+	
+	sendIceBossMonsterInitialziedpacket._boss._hp = IceBoss._hp;
 
 	sendNatureBossMonsterInitialziedpacket.size = sizeof(BossUpdate_Nature);
 	sendNatureBossMonsterInitialziedpacket.type = SC_NATURE_BOSS_UPDATE;
@@ -433,6 +442,8 @@ void Room::BossMonsterInitialziedMonster()
 	sendNatureBossMonsterInitialziedpacket._boss._rx = NatureBoss._right.x;
 	sendNatureBossMonsterInitialziedpacket._boss._ry = NatureBoss._right.y;
 	sendNatureBossMonsterInitialziedpacket._boss._rz = NatureBoss._right.z;
+
+	sendNatureBossMonsterInitialziedpacket._boss._hp = NatureBoss._hp;
 
 	for (auto& pl : ingamePlayer)
 	{
