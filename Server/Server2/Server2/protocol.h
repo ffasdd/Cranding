@@ -27,7 +27,7 @@ constexpr char CS_ICE_MONSTER_UPDATE = 15;
 constexpr char CS_MONSTER_DIE = 16;
 constexpr char CS_MONSTER_HIT_SPACESHIP = 17;
 constexpr char CS_PLAYER_HIT = 18;
-
+constexpr char CS_BOSSMONSTER_DAMGED = 19;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -129,9 +129,6 @@ struct NightMonster
 	float _ry;
 	float _rz;
 
-	//XMFLOAT3 _pos; // 12 
-	//XMFLOAT3 _look; // 12 
-	//XMFLOAT3 _right; // 12 
 	int _id; // 4
 	// 40 
 };
@@ -141,10 +138,7 @@ struct NightMonstersUpdate
 	unsigned char size; // 1
 	char type; // 1 
 	NightMonster _monster; //  400 
-	// float 
-	// 메모리잡는방식. 
-	// 
-	// 402  보내는건 142  
+
 };
 struct IceMonster
 {
@@ -185,6 +179,7 @@ struct IceBossMonsterStruct
 	float _rz;
 
 	int  _id;
+	int _hp;
 };
 struct BossUpdate_Ice
 {
@@ -224,7 +219,6 @@ struct FireBossMonsterStruct
 	float _y;
 	float _z;
 
-
 	float _lx;
 	float _ly;
 	float _lz;
@@ -234,6 +228,7 @@ struct FireBossMonsterStruct
 	float _rz;
 
 	int  _id;
+	int  _hp;
 };
 struct BossUpdate_Fire
 {
@@ -282,6 +277,7 @@ struct NatureBossMonsterStruct
 	float _rz;
 
 	int  _id;
+	int  _hp;
 };
 struct BossUpdate_Nature
 {
@@ -326,6 +322,7 @@ struct CS_LOGIN_PACKET {
 	char	name[NAME_SIZE];
 	int		id;
 	int		charactertype;
+
 };
 struct CS_MOVE_PACKET {
 	unsigned char size;
@@ -345,8 +342,6 @@ struct CS_LOGOUT_PACKET {
 	unsigned char size;
 	char	type;
 };
-
-
 struct CS_ROTATE_PACKET {
 	unsigned char size;
 	char type;
@@ -409,7 +404,6 @@ struct CS_PLAYER_HIT_PACKET {
 	int room_id;
 	bool isdamaged;
 };
-
 struct CS_MONSTER_DIE_PACKET {
 	unsigned char size;
 	char type;
@@ -424,6 +418,13 @@ struct CS_TIME_CHECK_PACKET {
 	int roomid;
 	int time;
 
+};
+struct CS_BOSSMONSTER_DAMAGED_PACKET {
+	unsigned char size;
+	char type;
+	int bosshp;
+	int room_id;
+	MonsterType _montype;
 };
 
 struct SC_GAMESTART_PACKET {
@@ -445,6 +446,7 @@ struct SC_LOGIN_INFO_PACKET {
 	int		charactertype;
 	int		room_id;
 	int		stage_num;
+	int		att;
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 right;
@@ -461,6 +463,7 @@ struct SC_ADD_OBJECT_PACKET {
 	int		Max_hp;
 	int		charactertype;
 	int		stage_num;
+	int		att;
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 right;

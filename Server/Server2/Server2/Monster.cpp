@@ -26,7 +26,6 @@ Monster::Monster() : ingamePlayer{ nullptr,nullptr }
 
 void Monster::Move()
 {
-
 	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
 	_prevpos = _pos;
 	int id = FindClosePlayer();
@@ -111,7 +110,7 @@ void Monster::Move()
 
 void Monster::Remove()
 {
-	_pos = { 0.f,-100.f,0.f };
+	_pos = { 0.f,-200.f,0.f };
 }
 
 void Monster::IceMove()
@@ -353,7 +352,7 @@ bool Monster::CollideCheckToPlayer(Session* _player)
 	if (_player->_stage != _stagenum)return false;
 
 	if (m_SPBB.Intersects(_player->m_SPBB) == true)return true;
-
+	
 	return false;
 }
 
@@ -429,7 +428,6 @@ bool Monster::CollideCheckToSpaceship()
 		}
 	}
 	return false;
-
 }
 
 IceBossMonster::IceBossMonster()
@@ -437,6 +435,7 @@ IceBossMonster::IceBossMonster()
 	_look = { 0.f,0.f,1.f };
 	_right = { 1.f,0.f,0.f };
 	_up = { 0.f,1.f,0.f };
+	_hp = 200;
 }
 
 void IceBossMonster::Move()
@@ -474,18 +473,15 @@ void IceBossMonster::Move()
 			_speed = 0;	
 		}
 
-
 		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 		_speed = 1.0f;
 		m_SPBB.Center = _pos;
 		m_SPBB.Center.y = _pos.y;
 
-
 	}
 	else
 	{
 		_fight = false;
-	
 	}
 }
 
@@ -494,6 +490,7 @@ FireBossMonster::FireBossMonster()
 	_look = { 0.f,0.f,1.f };
 	_right = { 1.f,0.f,0.f };
 	_up = { 0.f,1.f,0.f };
+	_hp = 200;
 }
 
 void FireBossMonster::Move()
@@ -531,14 +528,10 @@ void FireBossMonster::Move()
 			_speed = 0;
 
 		}
-
-
 		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 		_speed = 1.0f;
 		m_SPBB.Center = _pos;
 		m_SPBB.Center.y = _pos.y;
-
-
 	}
 	else
 	{
@@ -552,6 +545,7 @@ NatureBossMonster::NatureBossMonster()
 	_look = { 0.f,0.f,1.f };
 	_right = { 1.f,0.f,0.f };
 	_up = { 0.f,1.f,0.f };
+	_hp = 200;
 }
 
 void NatureBossMonster::Move()
