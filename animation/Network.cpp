@@ -200,7 +200,6 @@ void Network::ProcessPacket(char* buf)
 
 		gamestart = true;
 		g_clients_mutex.unlock();
-		SetEvent(loginevent);
 
 		break;
 	}

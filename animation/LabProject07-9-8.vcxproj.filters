@@ -118,6 +118,9 @@
     <ClCompile Include="Scenemanager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="shadowMap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DDSTextureLoader12.h">
@@ -199,6 +202,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Scenemanager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="shadowMap.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

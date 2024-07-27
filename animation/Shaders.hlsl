@@ -636,8 +636,8 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
 
     if (ShadowPosH.x > 1 || ShadowPosH.y > 1 || ShadowPosH.z > 1 || ShadowPosH.x < 0 || ShadowPosH.y < 0 || ShadowPosH.z < 0)
     {
-        //ShadowFactor = 1.f;
-        return float4(1.0f, 0.0f, 0.0f, 1.0f);
+        ShadowFactor = 1.f;
+        //return float4(1.0f, 0.0f, 0.0f, 1.0f);
     }
     ShadowFactor += 0.5f;
 

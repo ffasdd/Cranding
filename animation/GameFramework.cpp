@@ -1118,7 +1118,7 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
 	cout << "CLoginScene BuildObjects" << endl;
-	m_pScene = new CLoginScene();
+	m_pScene = new CLoseScene();
 	m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 	CLoginPlayer* pPlayer = new CLoginPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
@@ -1136,7 +1136,7 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
 
-	DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
+	DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R32G32B32A32_FLOAT, DXGI_FORMAT_R32G32B32A32_FLOAT, DXGI_FORMAT_R32G32B32A32_FLOAT };
 	m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle, 8); //SRV to (Render Targets) + (Depth Buffer)
 
 	// ���� SRV ��¼��..
@@ -1146,7 +1146,7 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	m_pPostProcessingShader->CreateShaderResourceViews(m_pd3dDevice, 1, &m_pd3dDepthStencilBuffer, pdxgiDepthSrvFormats);
 
 	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0, 1);
-	m_pBlurBuffer = pTexture->CreateTexture(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_COMMON, NULL, RESOURCE_TEXTURE2D, 0, 1);
+	m_pBlurBuffer = pTexture->CreateTexture(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_COMMON, NULL, RESOURCE_TEXTURE2D, 0, 1);
 	m_pBlurBuffer->AddRef();
 
 	m_BlurShader = make_unique<CBlurShader>();
@@ -1545,10 +1545,10 @@ void CGameFramework::FrameAdvance()
 
 
 		if (m_pScene) {
-			m_pScene->m_ppHierarchicalGameObjects[0]->UpdateTransform(NULL);
-			m_pScene->m_ppHierarchicalGameObjects[0]->Render(m_pd3dCommandList, m_pCamera, 0, -1);
-
+			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
+			
 		}
+		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 
