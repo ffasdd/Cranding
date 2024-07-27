@@ -98,7 +98,7 @@ private:
     D2D1_RECT_F fireRect = D2D1::RectF(10, 840, 500, 870);
     D2D1_RECT_F natureRect = D2D1::RectF(10, 880, 500, 910);
 
-    D2D1_RECT_F m_Map = D2D1::RectF(-FRAME_BUFFER_WIDTH / 2.0f + 500, -20.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+    D2D1_RECT_F m_Map = D2D1::RectF(300, -20.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 
 private:
     static UILayer* s_instance;

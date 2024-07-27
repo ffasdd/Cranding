@@ -296,14 +296,6 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         m_pd2dDeviceContext->FillRectangle(m_passwordRect, m_brushes[BRUSH_COLOR::ABLACK]);
         m_pd2dDeviceContext->DrawText(password, (UINT)wcslen(password), m_textFormats[TEXT_SIZE::SIZE_35], m_passwordRect, m_brushes[BRUSH_COLOR::LIGHTBLACK]);
 
-        //// For example, you might want to position it at the end of the username text
-        //caretX = m_usernameRect.left + m_textFormats[TEXT_SIZE::SIZE_35]->GetFontSize() * (wcslen(username) + 1);  // Adjust position as needed
-        //caretY = m_usernameRect.top + 5;  // Adjust position as needed (vertical alignment)
-
-        //// Draw caret
-        //D2D1_RECT_F caretRect = D2D1::RectF(caretX, caretY, caretX + 2.0f, caretY + m_textFormats[TEXT_SIZE::SIZE_35]->GetFontSize() + 5.0f);
-        //m_pd2dDeviceContext->FillRectangle(caretRect, m_brushes[BRUSH_COLOR::LIGHTBLACK]);
-
         m_pd2dDeviceContext->EndDraw();
         break;
     case SCENEKIND::LOBBY:
@@ -325,36 +317,35 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         SetPlayerHP();
         m_pd2dDeviceContext->FillRectangle(m_HPBar, m_brushes[BRUSH_COLOR::RED]);
 
-        // 원소 개수
+        // status
         WCHAR elementText[256];
 
         // Ice Element 개수 출력
-        swprintf_s(elementText, 256, L"HP: %f", gGameFramework.m_pPlayer->GetHealth());
+        swprintf_s(elementText, 256, L"HP: %d", gGameFramework.m_pPlayer->GetHealth());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         // Fire Element 개수 출력
-        swprintf_s(elementText, 256, L"Attack Power: %f", gGameFramework.m_pPlayer->GetAttackPower());
+        swprintf_s(elementText, 256, L"Attack Power: %d", gGameFramework.m_pPlayer->GetAttackPower());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
         // Nature Element 개수 출력
-        swprintf_s(elementText, 256, L"Speed: %f", gGameFramework.m_pPlayer->GetSpeed());
+        swprintf_s(elementText, 256, L"Speed: %d", gGameFramework.m_pPlayer->GetSpeed());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
 
-        //// Map 이동 메시지
-        //std::wstring mapMessage;
-        //if (gGameFramework.m_pPlayer->isIceMap) {
-        //    mapMessage = (IceElement > 15) ? m_vecIngameScene[0] : m_vecIngameScene[3];
-        //}
-        //else if (gGameFramework.m_pPlayer->isFireMap) {
-        //    mapMessage = (FireElement > 15) ? m_vecIngameScene[1] : m_vecIngameScene[3];
-        //}
-        //else if (gGameFramework.m_pPlayer->isNatureMap) {
-        //    mapMessage = (NatureElement > 15) ? m_vecIngameScene[2] : m_vecIngameScene[3];
-        //}
-
-        //if (!mapMessage.empty()) {
-        //    m_pd2dDeviceContext->DrawText(mapMessage.c_str(), (UINT)wcslen(mapMessage.c_str()), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
-        //}
+        // Map 이동 메시지
+        std::wstring mapMessage;
+        if (gGameFramework.m_pPlayer->isIceMap) {
+            mapMessage = m_vecIngameScene[0];
+        }
+        else if (gGameFramework.m_pPlayer->isFireMap) {
+            mapMessage = m_vecIngameScene[1];
+        }
+        else if (gGameFramework.m_pPlayer->isNatureMap) {
+            mapMessage = m_vecIngameScene[2];
+        }
+        if (!mapMessage.empty()) {
+            m_pd2dDeviceContext->DrawText(mapMessage.c_str(), (UINT)wcslen(mapMessage.c_str()), m_textFormats[TEXT_SIZE::SIZE_18], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        }
 
         m_pd2dDeviceContext->EndDraw();
         break;

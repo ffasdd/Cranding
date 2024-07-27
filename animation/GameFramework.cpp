@@ -1118,7 +1118,7 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
 	cout << "CLoginScene BuildObjects" << endl;
-	m_pScene = new CLoseScene();
+	m_pScene = new CLoginScene();
 	m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 	CLoginPlayer* pPlayer = new CLoginPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
@@ -1545,8 +1545,7 @@ void CGameFramework::FrameAdvance()
 
 
 		if (m_pScene) {
-			m_pScene->Render(m_pd3dCommandList, m_pCamera, false, -1);
-			
+			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);			
 		}
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera, -1);
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
