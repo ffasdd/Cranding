@@ -45,21 +45,28 @@ struct PS_CB_Blend_Factor
 	XMINT4							m_xmn4BlendFactor;
 };
 
+struct SoundData {
+	WAVEFORMATEX wfx;
+	XAUDIO2_BUFFER buffer;
+	BYTE* pData;
+};
+
 class CScene
 {
 public:
     CScene();
     ~CScene();
 
-	// bgm
-	void PlayBGM(const wchar_t* soundFile) { PlaySound(soundFile, NULL, SND_FILENAME | SND_ASYNC | SND_LOOP); };
-	void StopBGM() { PlaySound(NULL, 0, 0); };
+
+	//// bgm
+	//void PlayBGM(const wchar_t* soundFile) { PlaySound(soundFile, NULL, SND_FILENAME | SND_ASYNC | SND_LOOP); };
+	//void StopBGM() { PlaySound(NULL, 0, 0); };
 
 	// 충돌체크 함수
 	void HandleCollisionEnd(CGameObject* pObject) {}
 	virtual bool CheckObjectByObjectCollisions() { return true; }
 
-
+	//void SendDeadToServer();
 
 	// 바운딩박스
 	void RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);

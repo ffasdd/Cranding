@@ -56,14 +56,16 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	CreateDirect3DDevice();
 	CreateCommandQueueAndList();
 	CreateRtvAndDsvAndImGuiDescriptorHeaps();
-
+	
 	CreateSwapChain();
 
 	CreateSwapChainRenderTargetViews();
 
 	CreateDepthStencilView();
 
-	HRESULT res = CoInitialize(NULL);
+	//HRESULT res = CoInitialize(NULL);
+
+	InitXAudio2();
 
 	CreateShadowMapCamera();
 	BuildObjects(sceneManager.GetCurrentScene());
@@ -605,6 +607,130 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 	return(0);
 }
 
+void CGameFramework::InitXAudio2()
+{
+	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+	if (FAILED(hr) && hr != RPC_E_CHANGED_MODE) {
+		std::cerr << "CoInitializeEx 실패: " << std::hex << hr << std::endl;
+		exit(1);
+	}
+
+	HRESULT hResult = XAudio2Create(&m_pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
+	if (FAILED(hResult)) {
+		std::cerr << "XAudio2 초기화 실패: " << std::hex << hResult << std::endl;
+		exit(1);
+	}
+	hResult = m_pXAudio2->CreateMasteringVoice(&m_pMasterVoice);
+	if (FAILED(hResult)) {
+		std::cerr << "Failed to create mastering voice" << std::endl;
+	}
+}
+
+void CGameFramework::CleanupXAudio2() {
+	if (m_pMasterVoice) m_pMasterVoice->DestroyVoice();
+	if (m_pXAudio2) m_pXAudio2->Release();
+	CoUninitialize();
+}
+
+SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
+	SoundData soundData = {};
+	std::ifstream file(filename, std::ios::binary);
+
+	if (!file) {
+		std::cerr << "Failed to open sound file" << std::endl;
+		exit(1);
+	}
+
+	// RIFF 헤더를 읽습니다.
+	char riffHeader[4];
+	file.read(riffHeader, 4);
+	if (strncmp(riffHeader, "RIFF", 4) != 0) {
+		std::cerr << "Invalid WAV file: RIFF header not found" << std::endl;
+		exit(1);
+	}
+
+	// 파일 크기를 건너뜁니다.
+	file.seekg(4, std::ios::cur);
+
+	// WAVE 헤더를 읽습니다.
+	char waveHeader[4];
+	file.read(waveHeader, 4);
+	if (strncmp(waveHeader, "WAVE", 4) != 0) {
+		std::cerr << "Invalid WAV file: WAVE header not found" << std::endl;
+		exit(1);
+	}
+
+	// 서브 청크들을 순회하면서 fmt 청크와 data 청크를 찾습니다.
+	while (file.good()) {
+		char chunkHeader[4];
+		DWORD chunkSize;
+		file.read(chunkHeader, 4);
+		file.read(reinterpret_cast<char*>(&chunkSize), sizeof(DWORD));
+
+		if (strncmp(chunkHeader, "fmt ", 4) == 0) {
+			if (chunkSize == 16 || chunkSize == 18) {
+				file.read(reinterpret_cast<char*>(&soundData.wfx), 16); // WAVEFORMAT 구조체 크기
+				if (chunkSize > 16) {
+					file.read(reinterpret_cast<char*>(&soundData.wfx.cbSize), 2); // 추가 크기 읽기
+				}
+				if (chunkSize > 18) {
+					file.seekg(chunkSize - 18, std::ios::cur); // 나머지 건너뛰기
+				}
+			}
+			else {
+				std::cerr << "Unexpected fmt chunk size" << std::endl;
+				exit(1);
+			}
+		}
+		else if (strncmp(chunkHeader, "data", 4) == 0) {
+			soundData.pData = new BYTE[chunkSize];
+			file.read(reinterpret_cast<char*>(soundData.pData), chunkSize);
+			soundData.buffer.AudioBytes = chunkSize;
+			soundData.buffer.pAudioData = soundData.pData;
+			soundData.buffer.Flags = XAUDIO2_END_OF_STREAM;
+			break;
+		}
+		else {
+			// 다른 서브 청크를 건너뜁니다.
+			file.seekg(chunkSize, std::ios::cur);
+		}
+	}
+
+	if (soundData.buffer.AudioBytes == 0) {
+		std::cerr << "Failed to find data chunk" << std::endl;
+		exit(1);
+	}
+
+	return soundData;
+}
+
+void CGameFramework::PlaySounds(IXAudio2* pXAudio2, const SoundData& soundData) {
+	if (pXAudio2) {
+		HRESULT hr = pXAudio2->CreateSourceVoice(&m_pSourceVoice, &soundData.wfx);
+		if (SUCCEEDED(hr)) {
+			m_pSourceVoice->SubmitSourceBuffer(&soundData.buffer);
+			m_pSourceVoice->Start(0);
+		}
+		else {
+			std::cerr << "Failed to create source voice: " << std::hex << hr << std::endl;
+		}
+	}
+	else {
+		std::cerr << "pXAudio2 is null" << std::endl;
+	}
+}
+
+void CGameFramework::ChangeBGM(int nSceneKind)
+{
+	if (m_pSourceVoice) {
+		m_pSourceVoice->Stop(0);
+		m_pSourceVoice->DestroyVoice();
+	}
+
+	m_pXAudio2->CreateSourceVoice(&m_pSourceVoice, &m_SceneSounds[nSceneKind].wfx);
+	m_pSourceVoice->SubmitSourceBuffer(&m_SceneSounds[nSceneKind].buffer);
+	m_pSourceVoice->Start(0);
+}
 
 void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 {
@@ -654,7 +780,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-
+			//SoundData SpaceshipBgm = LoadWaveFile(L"Sound/Day.wav");
+			ChangeBGM(0);
 
 			break;
 		}
@@ -677,6 +804,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
+			ChangeBGM(1);
+
 			break;
 
 		}
@@ -696,6 +825,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
+
+			ChangeBGM(2);
 
 			break;
 		}
@@ -718,6 +849,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
+			ChangeBGM(3);
 
 			break;
 		}
@@ -749,7 +881,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 		//m_BlurShader = make_unique<CBlurShader>();
 		//m_BlurShader->CreateShader(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
 		//m_BlurShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), NULL, pTexture);
-
 
 		m_pd3dCommandList->Close();
 		ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
@@ -1126,6 +1257,15 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
+	m_SceneSounds[0] = LoadWaveFile(L"Sound/Day.wav");
+	m_SceneSounds[1] = LoadWaveFile(L"Sound/Ice.wav");
+	m_SceneSounds[2] = LoadWaveFile(L"Sound/Fire.wav");
+	m_SceneSounds[3] = LoadWaveFile(L"Sound/Grass.wav");
+
+		// bgm
+	//SoundData IceBgm = m_pScene->LoadWaveFile(L"Scene2BGM.wav");
+	//SoundData FireBgm = m_pScene->LoadWaveFile(L"Scene3BGM.wav");
+	//SoundData GrassBgm = m_pScene->LoadWaveFile(L"Scene4BGM.wav");
 
 	CreateShaderVariables();
 

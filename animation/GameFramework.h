@@ -93,8 +93,18 @@ public:
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
+	void InitXAudio2();
+	void CleanupXAudio2();
+	void PlaySounds(IXAudio2* pXAudio2, const SoundData& soundData);
+	SoundData LoadWaveFile(const wchar_t* filename);
 
 public:
+	// sound
+	SoundData m_SceneSounds[4];
+	IXAudio2SourceVoice* m_pSourceVoice;
+	IXAudio2* m_pXAudio2 = nullptr;
+	IXAudio2MasteringVoice* m_pMasterVoice = nullptr;
+
 	unique_ptr<CBlurShader> m_BlurShader = NULL;
 	ID3D12Resource* m_pBlurBuffer = NULL;
 	bool isBlurRender = false;
@@ -105,6 +115,7 @@ public:
 
 	int cl_id = -1;
 	void ChangeScene(SCENEKIND nSceneKind);
+	void ChangeBGM(int nSceneKind);
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
 	void myFunc_SetMonPosition(int n, XMFLOAT3 position);

@@ -57,6 +57,8 @@ using namespace std;
 
 #include <Mmsystem.h>
 
+#include <xaudio2.h>
+
 #ifdef _DEBUG
 #include <dxgidebug.h>
 #endif
@@ -90,6 +92,7 @@ constexpr int DEFERREDNUM = 5;
 #pragma comment(lib, "dwrite.lib")
 
 #pragma comment(lib, "dxguid.lib")
+//#pragma comment(lib, "xaudio2.lib")
 
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 
