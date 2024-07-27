@@ -36,11 +36,11 @@ cbuffer cbGameObjectInfo : register(b2)
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
 
 ////_FULLSCREEN
-#define FRAME_BUFFER_WIDTH				1920
-#define FRAME_BUFFER_HEIGHT				1080
+//#define FRAME_BUFFER_WIDTH				1920
+//#define FRAME_BUFFER_HEIGHT				1080
 
-//#define FRAME_BUFFER_WIDTH				640
-//#define FRAME_BUFFER_HEIGHT				480
+#define FRAME_BUFFER_WIDTH				640
+#define FRAME_BUFFER_HEIGHT				480
 
 Texture2D gtxtAlbedoTexture : register(t6);
 Texture2D gtxtSpecularTexture : register(t7);
@@ -629,15 +629,15 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
         -0.00789473671, -0.0223684218f, -0.00789473671, 0.0657894909,
         0.00000000f, 0.00000000f, 0.00000000f, 1.00000000f
     };
-    float4 ShadowPosH = mul(float4(gtxtInputTextures[2][int2(input.position.xy)].xyz, 1.0f), shadowTransformMatrix);
+    float4 ShadowPosH = mul(float4(gtxtInputTextures[2][int2(input.position.xy)].xyz, 1.0f), gmtxShadowTransform);
     float biasValue = 0.000f;
     float ShadowFactor = CalcShadowFactor(ShadowPosH, biasValue);
     
 
     if (ShadowPosH.x > 1 || ShadowPosH.y > 1 || ShadowPosH.z > 1 || ShadowPosH.x < 0 || ShadowPosH.y < 0 || ShadowPosH.z < 0)
     {
-        ShadowFactor = 1.f;
-        //return float4(0.0f, 0.0f, 0.0f, 1.0f);
+        //ShadowFactor = 1.f;
+        return float4(1.0f, 0.0f, 0.0f, 1.0f);
     }
     ShadowFactor += 0.5f;
 
