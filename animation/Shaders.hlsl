@@ -10,7 +10,8 @@ cbuffer cbCameraInfo : register(b1)
 {
     matrix gmtxView : packoffset(c0);
     matrix gmtxProjection : packoffset(c4);
-    float3 gvCameraPosition : packoffset(c8);
+    matrix gmtxShadowTransform : packoffset(c8); // 그림자 변환 행렬
+    float3 gvCameraPosition : packoffset(c12);    
 };
 
 cbuffer cbGameObjectInfo : register(b2)
@@ -34,7 +35,7 @@ cbuffer cbGameObjectInfo : register(b2)
 #define MATERIAL_DETAIL_ALBEDO_MAP	0x20
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
 
-//_FULLSCREEN
+////_FULLSCREEN
 #define FRAME_BUFFER_WIDTH				1920
 #define FRAME_BUFFER_HEIGHT				1080
 
@@ -125,10 +126,10 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
     float4 scene : SV_TARGET0;
 	
-    float4 cTexture : SV_TARGET1;
-    float4 diffuse : SV_TARGET2;
-    float4 normal : SV_TARGET3;
-    float4 zDepth : SV_TARGET4;
+    float4 f4Texture : SV_TARGET1;
+    float4 normal : SV_TARGET2;
+    float4 PositionW : SV_TARGET3;
+    float4 posW : SV_TARGET4;
 };
 
 Texture2DArray gtxtTextureArray : register(t19);
@@ -154,42 +155,47 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
     
 	// 객체 렌더링
-    float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
+    //    cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
+	
+    //float4 cSpecularColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //if (gnTexturesMask & MATERIAL_SPECULAR_MAP)
+    //    cSpecularColor = gtxtSpecularTexture.Sample(gssWrap, input.uv);
+	
+    //float4 cNormalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //if (gnTexturesMask & MATERIAL_NORMAL_MAP)
+    //    cNormalColor = gtxtNormalTexture.Sample(gssWrap, input.uv);
+	
+    //float4 cMetallicColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //if (gnTexturesMask & MATERIAL_METALLIC_MAP)
+    //    cMetallicColor = gtxtMetallicTexture.Sample(gssWrap, input.uv);
+	
+    //float4 cEmissionColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //if (gnTexturesMask & MATERIAL_EMISSION_MAP)
+    //    cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
+	
+    //output.f4Texture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
+	
+    output.f4Texture = float4(0.0f, 0.0f, 0.0f, 1.0f);
     if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
-        cAlbedoColor = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
-	
-    float4 cSpecularColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    if (gnTexturesMask & MATERIAL_SPECULAR_MAP)
-        cSpecularColor = gtxtSpecularTexture.Sample(gssWrap, input.uv);
-	
-    float4 cNormalColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    if (gnTexturesMask & MATERIAL_NORMAL_MAP)
-        cNormalColor = gtxtNormalTexture.Sample(gssWrap, input.uv);
-	
-    float4 cMetallicColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    if (gnTexturesMask & MATERIAL_METALLIC_MAP)
-        cMetallicColor = gtxtMetallicTexture.Sample(gssWrap, input.uv);
-	
-    float4 cEmissionColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    if (gnTexturesMask & MATERIAL_EMISSION_MAP)
-        cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
-	
-    output.cTexture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
-	
-    output.cTexture = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
-        output.cTexture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
-    
-    output.diffuse = gMaterial.m_cDiffuse;
+        output.f4Texture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
+    output.f4Texture.a = 1;
+
     
     input.normalW = normalize(input.normalW);
     output.normal = float4(input.normalW, 0);
     
-    output.zDepth = input.position.z;
-    //output.zDepth = float4(input.position.z, 0.0f, input.position.z, 1.0);
+    output.PositionW = float4(input.positionW, 1.0);
+    
+    output.posW = float4(input.positionW, 1.0f);
+    //output.posW = float4(input.position.z, 0.0f, input.position.z, 1.0);
     //output.Position = float4(input.positionW, 0);
     
-    output.scene = output.cTexture + gMaterial.m_cEmissive;
+    output.scene = output.f4Texture + gMaterial.m_cEmissive;
+    
+    
+    
     return (output);
 }
 
@@ -267,7 +273,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
     // 이건 움직이는 애들
     PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 	
-    //output.cTexture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
+    //output.f4Texture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
     
     
     //float4 cAlbedoColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -290,40 +296,42 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
     //if (gnTexturesMask & MATERIAL_EMISSION_MAP)
     //    cEmissionColor = gtxtEmissionTexture.Sample(gssWrap, input.uv);
         
-    //output.cTexture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
-    output.cTexture = float4(0.0f, 0.0f, 0.0f, 1.0f);
+    //output.f4Texture = cAlbedoColor + cSpecularColor + cMetallicColor + cEmissionColor;
+    output.f4Texture = float4(0.0f, 0.0f, 0.0f, 1.0f);
     if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
-        output.cTexture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
+        output.f4Texture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
+    
+    output.f4Texture.a = 1;
+    
     //output.normal = float4(0.0,0.0,0.0, 1.0f);
 
 	//output.normal = float4(input.normalW.xyz * 0.5f + 0.5f, 1.0f);
     //output.normal = float4(input.normalW, 0);
-    //output.zDepth = input.position.z;
-    //output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
+    //output.posW = input.position.z;
+    //output.posW = float4(input.position.z, 0.0f,input.position.z, 1.0);
     
     output.normal = float4(input.normalW, 0);
     input.normalW = normalize(input.normalW);
     
-    output.diffuse = gMaterial.m_cDiffuse;
+    output.PositionW = float4(input.positionW, 0.0);
     //output.diffuse = float4(1.0, 1.0, 1.0, 1.0);
 	
-    //output.zDepth = input.position.z;
-    //output.zDepth = float4(input.position.z, 0.0f,input.position.z, 1.0);
+    //output.posW = input.position.z;
+    //output.posW = float4(input.position.z, 0.0f,input.position.z, 1.0);
     // output.Position = float4(input.positionW, 0);
     
-    float4 cIllumination = Lighting(input.positionW, input.normalW);
+    //float4 cIllumination = Lighting(input.positionW, input.normalW);
 	
-    output.cTexture = lerp(output.cTexture, cIllumination, 0.5f);
-    cIllumination = gMaterial.m_cDiffuse;
-   
-    output.scene = output.cTexture + gMaterial.m_cEmissive;
+    //output.f4Texture = lerp(output.f4Texture, cIllumination, 0.5f);
+    //cIllumination = gMaterial.m_cDiffuse;
+    output.posW = float4(input.positionW, 0.0f);
+    output.scene = output.f4Texture + gMaterial.m_cEmissive;
     
     return (output);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-Texture2D gtxtTerrainDetailTexture : register(t2);
 
 
 
@@ -345,13 +353,11 @@ TextureCube gtxtSkyBoxTextureNight : register(t1);
 
 SamplerState gssClamp : register(s1);
 
-Texture2D<float4> gtxtTextureTexture : register(t14);
-Texture2D<float4> gtxtIlluminationTexture : register(t15);
-Texture2D<float4> gtxtdrNormalTexture : register(t16);
+Texture2D gtxtInputTextures[5] : register(t14); //To Defferd Rendering
 
-Texture2D<float> gtxtzDepthTexture : register(t17);
-Texture2D<float> gtxtDepthTexture : register(t18);
+Texture2D gtxShadowMap : register(t2);
 
+SamplerComparisonState gssComparisonPCFShadow : register(s2);
 cbuffer cbBlendFactor : register(b10)
 {
     float g_fMin;
@@ -566,60 +572,127 @@ float4 DeferredLighting(float3 vPosition, float3 vNormal, float4 vSpecular, floa
     return (cColor);
 }
 
+float2 GenerateOffset(int index, int kernelSize, float texelSize)
+{
+    int halfSize = kernelSize / 2;
+    int x = index % kernelSize;
+    int y = index / kernelSize;
+    return float2((x - halfSize) * texelSize, (y - halfSize) * texelSize);
+}
+
+float CalcShadowFactor(float4 shadowPosH, float bias)
+{
+
+    shadowPosH.xyz /= shadowPosH.w;
+
+    float depth = shadowPosH.z - 0.001;
+
+    uint width, height, numMips;
+    gtxShadowMap.GetDimensions(0, width, height, numMips);
+
+    // Texel size.
+    float dx = 1.0f / (float) width;
+    int kernelSize = 3;
+    
+    float percentLit = 0.0f;
+    
+    [unroll]
+    for (int i = 0; i < kernelSize * kernelSize; ++i)
+    {
+        float2 offset = GenerateOffset(i, kernelSize, dx);
+        percentLit += gtxShadowMap.SampleCmpLevelZero(gssComparisonPCFShadow, shadowPosH.xy + offset, depth + bias).r;
+    }
+
+    return percentLit / (float) (kernelSize * kernelSize);
+
+}
+
 float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_Target
 {
     float2 textureSize = float2(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
     float2 texelCoord = input.uv * textureSize;
     uint3 texCoord = uint3(texelCoord, 0);
     
-    float3 pos = input.position;
-    //float4 position = gtxtzDepthTexture.Load(texCoord);
-    //float3 pos = position.xyz;
-    //float3 normal = gtxtdrNormalTexture.Sample(gssWrap, input.uv); // good
-    float3 normal = gtxtdrNormalTexture.Load(texCoord).rgb; // good
+    float4 tex = gtxtInputTextures[0].Load(texCoord);
+    float3 normal = gtxtInputTextures[1].Load(texCoord).rgb; 
+    float4 position = gtxtInputTextures[2].Load(texCoord);
+    //return position;
     float4 specular = float4(0.0f, 0.0f, 0.0f, 1.0f);
     float4 ambient = float4(0.0f, 0.0f, 0.0f, 1.0f);
-    float4 diffuse = gMaterial.m_cDiffuse;
-    //float4 diffuse = gtxtDepthTexture.Load(texCoord);
-    //float4 tex = gtxtTextureTexture.Sample(gssWrap, input.uv);
-    float4 tex = gtxtTextureTexture.Load(texCoord);
+    float4 diffuse = gMaterial.m_cDiffuse;  
+    
+    float3 pos = position.xyz;
+    matrix shadowTransformMatrix =
+    {
+        -0.0176776703f, 0.00000000f, 0.0176776703f, 1.29549515f,
+        0.0158168618f, -0.0111648431f, 0.0158168618f, 1.36992741f,
+        -0.00789473671, -0.0223684218f, -0.00789473671, 0.0657894909,
+        0.00000000f, 0.00000000f, 0.00000000f, 1.00000000f
+    };
+    float4 ShadowPosH = mul(float4(gtxtInputTextures[2][int2(input.position.xy)].xyz, 1.0f), shadowTransformMatrix);
+    float biasValue = 0.000f;
+    float ShadowFactor = CalcShadowFactor(ShadowPosH, biasValue);
+    
 
-    float4 cColor = DeferredLighting(pos, normal, specular, diffuse, ambient, tex);
+    if (ShadowPosH.x > 1 || ShadowPosH.y > 1 || ShadowPosH.z > 1 || ShadowPosH.x < 0 || ShadowPosH.y < 0 || ShadowPosH.z < 0)
+    {
+        ShadowFactor = 1.f;
+        //return float4(0.0f, 0.0f, 0.0f, 1.0f);
+    }
+    ShadowFactor += 0.5f;
+
+    ShadowFactor = saturate(ShadowFactor);
+
     
+    float4 Illumination = DeferredLighting(pos, normal, specular, diffuse, ambient, tex);
     
-    float4 cc = tex;
-    if (cc.b >= 0.3f && cc.r <= 0.1f && cc.g <= 0.1f)
+   
+    float4 cColor = tex;
+    if (cColor.b >= 0.3f && cColor.r <= 0.1f && cColor.g <= 0.1f)
         discard;
-    cc.a = 1.0;
+    cColor.a = 1.0;
     
+    bool isTexture;
+    if (max(cColor.r, max(cColor.g, cColor.b)) != 0.f)
+        isTexture = true;
+    else
+        isTexture = false;
+
+    if (isTexture)
+        cColor = lerp(cColor, Illumination, 0.5f) * ShadowFactor;
+    else
+        cColor = lerp(cColor, Illumination, 1.0f) * ShadowFactor;
+
+    
+    float4 cSobel = Sobel(gtxtInputTextures[0], input.uv, gssWrap);
+	
+    cColor.rgb *= (1.0f - cSobel.r + 0.3);
 
     switch (gvDrawOptions.x)
     {
         case 79: //'O'
 		{
 			// 끝
-                cColor = gtxtTextureTexture.Sample(gssWrap, input.uv);
+                //cColor = gtxtTextureTexture.Sample(gssWrap, input.uv);
                 //cColor = (1.0f, 0.0f, 0.0f, 1.0f);
                 break;
             }
         case 78: //'N'
 		{
 			// 끝
-                cColor = gtxtdrNormalTexture.Sample(gssWrap, input.uv);
+                //cColor = gtxtdrNormalTexture.Sample(gssWrap, input.uv);
                 //cColor = gtxtIlluminationTexture.Sample(gssWrap, input.uv);
                 break;
             }
         case 90: //'Z'
 		{
-                float fzDepth = gtxtzDepthTexture.Load(uint3((uint) input.position.x, (uint) input.position.y, 0));
-                cColor = fzDepth;
+                // fzDepth = gtxtzDepthTexture.Load(uint3((uint) input.position.x, (uint) input.position.y, 0));
+                //cColor = fzDepth;
                 break;
             }
     }
     
-    float4 cSobel = Sobel(gtxtTextureTexture, input.uv, gssWrap);
-	
-    cColor.rgb *= (1.0f - cSobel.r + 0.3);
+
     
     //float4 la = Laplacian(gtxtdrNormalTexture, input.uv, gssWrap);
     //cColor.rgb *= (1.0f - la.r*4.0f + 0.3);
@@ -636,7 +709,9 @@ float4 PSScreenRectSamplingTextured(VS_SCREEN_RECT_TEXTURED_OUTPUT input) : SV_T
     //float4 edgeColor = float4(0, 0, 0, 1); // Red color for the edge
     //float4 result = lerp(cColor, edgeColor, edgeMask);
     
+    float ShadowMap = gtxShadowMap.Sample(gssWrap, input.uv).r;
     
+    //return ShadowMap;
     return cColor;
 }
 
@@ -746,4 +821,55 @@ float4 PSBlur(float4 position : SV_POSITION) : SV_Target
     }
 
     return (cColor);
+}
+
+struct VS_ShadowMap_In
+{
+    float3 PosL : POSITION;
+	//float2 TexC    : TEXCOORD;
+};
+
+struct VS_ShadowMap_Out
+{
+    float4 PosH : SV_POSITION;
+    float2 TexC : TEXCOORD;
+};
+
+VS_ShadowMap_Out VSShadowMap(VS_ShadowMap_In vin)
+{
+    VS_ShadowMap_Out vout = (VS_ShadowMap_Out) 0.0f;
+
+	//MaterialData matData = gMaterialData[gMaterialIndex];
+
+	// Transform to world space.
+    float4 posW = mul(float4(vin.PosL, 1.0f), gmtxGameObject);
+
+	// Transform to homogeneous clip space.
+    vout.PosH = mul(mul(posW, gmtxView), gmtxProjection);
+	// Output vertex attributes for interpolation across triangle.
+	/*float4 texC = mul(float4(vin.TexC, 0.0f, 1.0f), gTexTransform);
+	vout.TexC = mul(texC, matData.MatTransform).xy;*/
+	
+    return vout;
+}
+
+// This is only used for alpha cut out geometry, so that shadows 
+// show up correctly.  Geometry that does not need to sample a
+// texture can use a NULL pixel shader for depth pass.
+void PSShadowMap(VS_ShadowMap_Out pin)
+{
+	//	// Fetch the material data.
+	//	MaterialData matData = gMaterialData[gMaterialIndex];
+	//	float4 diffuseAlbedo = matData.DiffuseAlbedo;
+	//	uint diffuseMapIndex = matData.DiffuseMapIndex;
+	//
+	//	// Dynamically look up the texture in the array.
+	//	diffuseAlbedo *= gTextureMaps[diffuseMapIndex].Sample(gsamAnisotropicWrap, pin.TexC);
+	//
+	//#ifdef ALPHA_TEST
+	//	// Discard pixel if texture alpha < 0.1.  We do this test as soon 
+	//	// as possible in the shader so that we can potentially exit the
+	//	// shader early, thereby skipping the rest of the shader code.
+	//	clip(diffuseAlbedo.a - 0.1f);
+	//#endif
 }

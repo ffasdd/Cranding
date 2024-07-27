@@ -28,13 +28,15 @@
 #include "Scene.h"
 #include "Network.h"
 #include "Scenemanager.h"
+#include "shadowMap.h"
+
 
 extern Network							gNetwork;
 
 struct TIME
 {
-	float fCurrentMin;
-	float fCurrentSec;
+	int fCurrentMin;
+	int fCurrentSec;
 };
 
 class UILayer;
@@ -56,6 +58,10 @@ public:
 
 	void CreateSwapChainRenderTargetViews();
 	void CreateDepthStencilView();
+
+	void CreateShadowMap();
+
+	void CreateShadowMapCamera();
 
 	void ChangeSwapChainState();
 
@@ -94,8 +100,8 @@ public:
 	bool isBlurRender = false;
 
 	CPlayer* m_pPlayer = NULL;
-	float PlayerPosX;
-	float PlayerPosZ;
+	float PlayerPosX = 0.0f;
+	float PlayerPosZ = 0.0f;
 
 	int cl_id = -1;
 	void ChangeScene(SCENEKIND nSceneKind);
@@ -133,12 +139,14 @@ public:
 	bool isSceneChangetoIce = false;
 	bool isSceneChangetoNature = false;
 
+
 	// ½Ã°è
 	int total = 0;
 	int curDay = 0;
 	int curMinute = 0;
 	int curSecond = 0;
-	
+
+	bool isDayTimeProcessed = false;
 	bool DayTime = false;
 	bool Night = false;
 	int beforeTimeState = 1;
@@ -197,8 +205,6 @@ private:
 
 	CCamera						*m_pCamera = NULL;
 
-	UILayer* m_pUILayer1 = NULL;
-	UILayer* m_pUILayer2 = NULL;
 	UILayer* m_pUILayer = NULL;
 
 
@@ -209,5 +215,11 @@ private:
 	POINT						m_ptOldCursorPos;
 
 	_TCHAR						m_pszFrameRate[70];
+
+	//Shadow
+	unique_ptr<ShadowMap> m_ShadowMap = NULL;
+	ID3D12PipelineState* m_pPipelineState;
+	ID3D12Resource* m_pShadowCamera = NULL;
+	VS_CB_CAMERA_INFO* m_pShadowMappedCamera = NULL;
 };
 

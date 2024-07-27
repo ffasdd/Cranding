@@ -21,7 +21,7 @@ public:
     bool ClickCollide(POINT clickPos) const;
 
 private:
-    D2D1_RECT_F m_rect;
+    D2D1_RECT_F m_rect = D2D1::RectF(0.0f, 0.0f, 0.0f, 0.0f);
     function<bool()> m_function;
     std::function<bool()> m_UIfunc;
 };
@@ -68,25 +68,30 @@ public:
     TextBlock* m_pTextBlocks = NULL;
     // 플레이어의 체력 설정 메서드
     void SetPlayerHP();
-
     void UpdateHPBar();
 
+    // 로그인 관련
+    WCHAR username[256] = { '\0' };
+    WCHAR password[256] = { '\0' };
+    bool bOnUsername =false;
+    bool bOnPassword = false;
+    bool bPasswordVisible = false;
 private:
     array<vector<UIRect>, 3> m_uiRects;
 
     // login
     D2D1_RECT_F m_Title = D2D1::RectF(100, -20.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT); 
-    D2D1_RECT_F m_GameStart = D2D1::RectF(150, 400, 750, 550);
-    D2D1_RECT_F m_GameRule = D2D1::RectF(150, 600.0f, 750, 750);
-    D2D1_RECT_F m_GameQuit = D2D1::RectF(150, 800.0f, 750, 950);
+    D2D1_RECT_F m_usernameRect = D2D1::RectF(150, 400, 750, 550);
+    D2D1_RECT_F m_passwordRect = D2D1::RectF(150, 600.0f, 750, 750);
+    D2D1_RECT_F m_GameStart = D2D1::RectF(150, 800.0f, 750, 950);
 
     // lobby
     D2D1_RECT_F m_ReadyMent = D2D1::RectF(0.0f, 0.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
     D2D1_RECT_F m_Ready = D2D1::RectF(FRAME_BUFFER_WIDTH - 300, FRAME_BUFFER_HEIGHT -200, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 
     // ingame
-    float m_playerhp = 100.0;
-    D2D1_RECT_F m_HPBar;
+    int m_playerhp = 100;
+    D2D1_RECT_F m_HPBar = D2D1::RectF(0.0f, 0.0f, 0.0f, 0.0f);
     D2D1_RECT_F m_Timer = D2D1::RectF(1300.0f, 0.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 
     D2D1_RECT_F iceRect = D2D1::RectF(10, 800, 500, 830);
@@ -98,7 +103,7 @@ private:
 private:
     static UILayer* s_instance;
 
-    array<ID2D1SolidColorBrush*, BRUSH_COLOR::BRUSH_COUNT> m_brushes;
+    array<ID2D1SolidColorBrush*, BRUSH_COLOR::BRUSH_COUNT> m_brushes ;
     array<IDWriteTextFormat*, TEXT_SIZE::TEXT_COUNT> m_textFormats;
 
     // login scene ui

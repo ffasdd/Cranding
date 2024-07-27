@@ -136,6 +136,8 @@ extern BYTE ReadStringFromFile(FILE *pInFile, char *pstrToken);
 extern int ReadIntegerFromFile(FILE *pInFile);
 extern float ReadFloatFromFile(FILE *pInFile);
 
+D3D12_SHADER_BYTECODE CompileShaderFromFile(const WCHAR* pszFileName, LPCSTR pszShaderName, LPCSTR pszShaderProfile, ID3DBlob** ppd3dShaderBlob);
+
 #define RANDOM_COLOR			XMFLOAT4(rand() / float(RAND_MAX), rand() / float(RAND_MAX), rand() / float(RAND_MAX), rand() / float(RAND_MAX))
 
 #define EPSILON					1.0e-10f
@@ -452,9 +454,9 @@ void SafeDelete(T& ptr)
 	}
 }
 
-enum BRUSH_COLOR { WHITE, LIME_GREEN, BLACK, RED, BRUSH_COUNT };
+enum BRUSH_COLOR { WHITE, LIME_GREEN, BLACK, LIGHTBLACK, ABLACK, RED, BRUSH_COUNT };
 
-enum TEXT_SIZE { SIZE_15, SIZE_18, SIZE_25, SIZE_40, SIZE_50, SIZE_60, TEXT_COUNT };
+enum TEXT_SIZE { SIZE_15, SIZE_18, SIZE_25, SIZE_35, SIZE_40, SIZE_50, SIZE_60, TEXT_COUNT };
 
 // imGUI
 

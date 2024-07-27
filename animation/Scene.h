@@ -65,7 +65,7 @@ public:
 	void RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 
 	bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
-	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+	virtual void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) {};
 
 	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
@@ -85,8 +85,10 @@ public:
 	bool ProcessInput(UCHAR *pKeysBuffer);
     void AnimateObjects(float fTimeElapsed);
 
-	void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
-    void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
+	void OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, bool bIsAnimate = true);
+    void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL, bool bIsAnimate = true);
+
+	ID3D12RootSignature* GetRootSignature() { return m_pd3dGraphicsRootSignature; }
 
 	void ReleaseUploadBuffers();
 
@@ -146,6 +148,13 @@ public:
 
 	ID3D12Resource						*m_pd3dcbLights = NULL;
 	LIGHTS								*m_pcbMappedLights = NULL;
+
+	virtual string getname() { return m_username; }
+	virtual string getpassword() { return m_password; }
+	bool m_isUsernameInput = true;  // 입력 모드 (true: 사용자 이름 입력, false: 비밀번호 입력)
+
+	 std::string m_username = "";
+	 std::string m_password="";
 };
 
 class CLoginScene : public CScene
@@ -156,8 +165,12 @@ public:
 
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void HandleSpecialKeyInput(WPARAM wParam);
+	void ProcessLogin();
+	virtual void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void ReleaseUploadBuffers();
 	void ReleaseObjects();
+	
 };
 
 class CLobbyScene : public CScene
@@ -220,6 +233,26 @@ public:
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	bool CheckObjectByObjectCollisions();
+	void ReleaseUploadBuffers();
+	void ReleaseObjects();
+};
+class CWInScene : public CScene
+{
+public:
+	CWInScene() { }
+	~CWInScene() { }
+
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void ReleaseUploadBuffers();
+	void ReleaseObjects();
+};
+class CLoseScene : public CScene
+{
+public:
+	CLoseScene() { }
+	~CLoseScene() { }
+
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	void ReleaseUploadBuffers();
 	void ReleaseObjects();
 };

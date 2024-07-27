@@ -13,7 +13,7 @@ TCHAR							szWindowClass[MAX_LOADSTRING];
 CGameFramework					gGameFramework;
 Network							gNetwork;
 
-unordered_map<int, Session> g_clients;
+std::unordered_map<int, Session> g_clients;
 unordered_map<int, Session> g_monsters;
 unordered_map<int, Session> g_ice_monsters;
 unordered_map<int, Session> g_fire_monsters;
@@ -46,11 +46,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	MyRegisterClass(hInstance);
 
 
-	while (!gNetwork.ReadytoConnect());
-
+	while (!gNetwork.ReadytoConnect())
+	{
+		this_thread::yield();
+	}
 
 	//// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
-	gNetwork.StartServer();
+	while (!gNetwork.StartServer())
+	{
+		this_thread::yield();
+	}
 
 	// 로그인 완료 
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
@@ -70,7 +75,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				::TranslateMessage(&msg);
 				::DispatchMessage(&msg);
 			}
-
 		}
 		else
 		{
@@ -91,6 +95,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						if (gGameFramework.DayTime && gGameFramework.beforeTimeState == 0)
 						{
 							gGameFramework.myFunc_SetStatus(g_clients[i].m_firecnt, g_clients[i].m_icencnt, g_clients[i].m_naturecnt);
+							gGameFramework.isDayTimeProcessed = true;
 						}
 						if (gGameFramework.DayTime) gGameFramework.beforeTimeState = 1;
 						else if(gGameFramework.Night) gGameFramework.beforeTimeState = 0;
@@ -221,20 +226,20 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	::UpdateWindow(hMainWnd);
 
 	//imgui
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	//IMGUI_CHECKVERSION();
+	//ImGui::CreateContext();
+	//ImGuiIO& io = ImGui::GetIO();
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsDark();
 
-	// 플랫폼/렌더러 바인딩 설정
-	ImGui_ImplWin32_Init(hMainWnd);
-	ImGui_ImplDX12_Init(gGameFramework.GetDevice(), 3,
-		DXGI_FORMAT_R8G8B8A8_UNORM, gGameFramework.m_pd3dImGuiDescriptorHeap,
-		gGameFramework.m_pd3dImGuiDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-		gGameFramework.m_pd3dImGuiDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+	//// 플랫폼/렌더러 바인딩 설정
+	//ImGui_ImplWin32_Init(hMainWnd);
+	//ImGui_ImplDX12_Init(gGameFramework.GetDevice(), 3,
+	//	DXGI_FORMAT_R8G8B8A8_UNORM, gGameFramework.m_pd3dImGuiDescriptorHeap,
+	//	gGameFramework.m_pd3dImGuiDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+	//	gGameFramework.m_pd3dImGuiDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 
 
 	return(TRUE);

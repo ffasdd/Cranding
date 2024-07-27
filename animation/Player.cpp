@@ -154,7 +154,8 @@ void CPlayer::Move(int c_id, const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 	else
 	{
 		m_xmf3Position = Vector3::Add(m_xmf3Position, xmf3Shift);
-		g_clients[c_id].setPos(m_xmf3Position);
+		if(g_clients.size() != 0)
+			g_clients[c_id].setPos(m_xmf3Position);
 		m_pCamera->Move(xmf3Shift);
 	}
 }
@@ -439,7 +440,7 @@ CCamera* CTerrainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 	case THIRD_PERSON_CAMERA:
 		SetFriction(250.0f);
 		SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
-		SetMaxVelocityXZ(GetSpeed());
+		SetMaxVelocityXZ(float(GetSpeed()));
 		SetMaxVelocityY(40.0f);
 		m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(0.5f);
@@ -451,7 +452,7 @@ CCamera* CTerrainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 	case INGAME_SCENE_CAMERA:
 		SetFriction(250.0f);
 		SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
-		SetMaxVelocityXZ(GetSpeed());
+		SetMaxVelocityXZ(float(GetSpeed()));
 		SetMaxVelocityY(40.0f);
 		m_pCamera = OnChangeCamera(INGAME_SCENE_CAMERA, nCurrentCameraMode);
 		m_pCamera->SetTimeLag(1.0f);

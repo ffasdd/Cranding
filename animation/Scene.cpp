@@ -134,7 +134,11 @@ void CScene::ReleaseObjects()
 
 	if (m_ppHierarchicalGameObjects)
 	{
-		for (int i = 0; i < m_nHierarchicalGameObjects; i++) if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->Release();
+		for (int i = 0; i < m_nHierarchicalGameObjects; i++)
+			if (m_ppHierarchicalGameObjects[i]) {
+				m_ppHierarchicalGameObjects[i]->Release();
+				cout << "=========================================" << endl;
+			}
 		delete[] m_ppHierarchicalGameObjects;
 	}
 
@@ -196,7 +200,7 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 
 	pd3dDescriptorRanges[7].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dDescriptorRanges[7].NumDescriptors = 1;
-	pd3dDescriptorRanges[7].BaseShaderRegister = 2; //t2: gtxtTerrainDetailTexture
+	pd3dDescriptorRanges[7].BaseShaderRegister = 2; //t2: shadow
 	pd3dDescriptorRanges[7].RegisterSpace = 0;
 	pd3dDescriptorRanges[7].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
@@ -300,7 +304,7 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	pd3dRootParameters[16].Descriptor.RegisterSpace = 0;
 	pd3dRootParameters[16].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
-	D3D12_STATIC_SAMPLER_DESC pd3dSamplerDescs[2];
+	D3D12_STATIC_SAMPLER_DESC pd3dSamplerDescs[3];
 
 	pd3dSamplerDescs[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
 	pd3dSamplerDescs[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -327,6 +331,20 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	pd3dSamplerDescs[1].ShaderRegister = 1;
 	pd3dSamplerDescs[1].RegisterSpace = 0;
 	pd3dSamplerDescs[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	pd3dSamplerDescs[2].Filter = D3D12_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+	pd3dSamplerDescs[2].AddressU = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+	pd3dSamplerDescs[2].AddressV = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+	pd3dSamplerDescs[2].AddressW = D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+	pd3dSamplerDescs[2].MipLODBias = 0;
+	pd3dSamplerDescs[2].MaxAnisotropy = 16;
+	pd3dSamplerDescs[2].BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_BLACK;
+	pd3dSamplerDescs[2].ComparisonFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	pd3dSamplerDescs[2].MinLOD = 0;
+	pd3dSamplerDescs[2].MaxLOD = 0;
+	pd3dSamplerDescs[2].ShaderRegister = 2;
+	pd3dSamplerDescs[2].RegisterSpace = 0;
+	pd3dSamplerDescs[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
 	D3D12_ROOT_SIGNATURE_DESC d3dRootSignatureDesc;
@@ -532,28 +550,7 @@ bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam,
 	return(false);
 }
 
-bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
-{
-	// Object �Ŵ����� ���ؼ� ���⼭ �������൵ �ɰŰ��� 
-	// �װԴ� ��������? 
 
-	switch (nMessageID)
-	{
-	case WM_KEYDOWN:
-		switch(wParam)
-		{
-		//case 'W':
-		//	m_pPlayer->Move(DIR_FORWARD, 25.25f, true);
-		//	// send 
-		//	g_sendqueue.push(SENDTYPE::MOVE);
-		//	break;
-		}
-		break;
-	default:
-		break;
-	}
-	return(false);
-}
 
 ID3D12RootSignature* CScene::CreateRootSignature(ID3D12Device* pd3dDevice, D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags, UINT nRootParameters, D3D12_ROOT_PARAMETER* pd3dRootParameters, UINT nStaticSamplerDescs, D3D12_STATIC_SAMPLER_DESC* pd3dStaticSamplerDescs)
 {
@@ -661,7 +658,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
 	}
 
-
+	
+	// 
 	//static float fAngle = 0.0f;
 	//fAngle += 1.50f;
 	//XMFLOAT4X4 xmf4x4Rotate = Matrix4x4::Rotate(0.0f, -fAngle, 0.0f);
@@ -669,19 +667,19 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 }
 
-void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera,bool bIsAnimate )
 {
 	if (m_pd3dGraphicsRootSignature) pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 	if (m_pd3dCbvSrvDescriptorHeap) pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
 
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
-	pCamera->UpdateShaderVariables(pd3dCommandList);
+	if(bIsAnimate) pCamera->UpdateShaderVariables(pd3dCommandList);
 
 	UpdateShaderVariables(pd3dCommandList);
 
 }
 
-void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
+void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, bool bIsAnimate)
 {
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Light
@@ -690,14 +688,14 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	//if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
 
 	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Render(pd3dCommandList, pCamera);
-	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera);
+	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera, 0);
 
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		if (m_ppHierarchicalGameObjects[i] && m_ppHierarchicalGameObjects[i]->isdraw == true)
 		{
 			//cout << i << endl;
-			m_ppHierarchicalGameObjects[i]->Animate(m_fElapsedTime);
+			if(bIsAnimate) m_ppHierarchicalGameObjects[i]->Animate(m_fElapsedTime);
 			if (!m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController) m_ppHierarchicalGameObjects[i]->UpdateTransform(NULL);
 			m_ppHierarchicalGameObjects[i]->Render(pd3dCommandList, pCamera);
 		}
@@ -722,8 +720,8 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/plane.bin", NULL);
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
-	m_ppHierarchicalGameObjects[0]->SetPosition(400.0f, -20.0f, 400.0f);
-	m_ppHierarchicalGameObjects[0]->SetScale(8.0f, 8.0f, 8.0f);
+	m_ppHierarchicalGameObjects[0]->SetPosition(400.0f, -30.0f, 400.0f);
+	m_ppHierarchicalGameObjects[0]->SetScale(15.0f, 8.0f, 15.0f);
 	if (map) delete map;
 
 	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
@@ -752,6 +750,71 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 }
 
+
+void  CLoginScene::HandleSpecialKeyInput(WPARAM wParam)
+{
+	if (wParam == VK_TAB) // Switch input mode when Tab key is pressed
+	{
+		m_isUsernameInput = !m_isUsernameInput;
+	}
+}
+
+void CLoginScene::ProcessLogin()
+{
+	// Implement login processing logic here
+	// For example, validate credentials, communicate with a server, etc.
+	// For demonstration, we'll just output to console
+	printf("Username: %s\n", m_username.c_str());
+	printf("Password: %s\n", m_password.c_str());
+}
+
+void CLoginScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
+{
+	switch (nMessageID)
+	{
+
+	case WM_KEYDOWN:
+		if (m_isUsernameInput)
+		{
+			// Add character to username
+			if (wParam == '\r') // Enter key, switch to password input
+			{
+				m_isUsernameInput = false;
+			}
+			else if (wParam == '\b') // Backspace key
+			{
+				if (!m_username.empty())
+					m_username.pop_back();
+			}
+			else if (wParam >= ' ' && wParam <= '~') // Valid printable characters
+			{
+				m_username += wParam;
+			}
+		}
+		else
+		{
+			// Add character to password
+			if (wParam == '\r') // Enter key, process login
+			{
+				ProcessLogin();
+			}
+			else if (wParam == '\b') // Backspace key
+			{
+				if (!m_password.empty())
+					m_password.pop_back();
+			}
+			else if (wParam >= ' ' && wParam <= '~') // Valid printable characters
+			{
+				m_password += wParam;
+			}
+		}
+		HandleSpecialKeyInput(wParam);
+		break;
+	default:
+		break;
+	}
+}
+
 void CLoginScene::ReleaseUploadBuffers()
 {
 	CScene::ReleaseUploadBuffers();
@@ -773,7 +836,7 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_nHierarchicalGameObjects = 3;
 	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
 
-	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/robbymap.bin", NULL);
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/lobbymap.bin", NULL);
 	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
 	m_ppHierarchicalGameObjects[0]->SetPosition(280.0f, 0.0f, 620.0f);
 	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 5.0f, 5.0f);
@@ -1030,7 +1093,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		}
 	}
 
-	PlayBGM(L"Sound/Day.wav");
+	//PlayBGM(L"Sound/Day.wav");
 
 	// spaceship boundingsphere
 	SpaceshipBS.Center = { 250.0f, 10.0f, 750.0f };
@@ -1131,7 +1194,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				||
 				 m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
 			{
-				// 여기에 hp 닳는 코드 넣어주랑
+				m_pPlayer->SetHealth(m_pPlayer->GetHealth() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
 				g_clients[gNetwork.my_id].is_damage = true;
@@ -1355,8 +1418,8 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 		// 초기 속성 설정
 		m_ppHierarchicalGameObjects[3 + i]->isdraw = false;
 
-		float posX = (rand() % 2000) / 10.0;
-		float posY = (rand() % 2000) / 10.0;
+		float posX = float((rand() % 2000) / 10.0);
+		float posY = float((rand() % 2000) / 10.0);
 
 		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
@@ -1387,6 +1450,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 								
 	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[13]->SetHealth(500);
 
 	if (pIceBossModel) delete pIceBossModel;
 	
@@ -1394,16 +1458,23 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceItemModel, 0);
 								
-	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
-	m_ppHierarchicalGameObjects[14]->SetScale(20.0f, 20.0f, 20.0f);
-
-	PlayBGM(L"Sound/Ice.wav");
-
+	m_ppHierarchicalGameObjects[14]->SetPosition(-12.0f, 10.0f, -220.f);
+	m_ppHierarchicalGameObjects[14]->Rotate(45,0,0);
+	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
+	m_ppHierarchicalGameObjects[14]->isdraw = false;
 	if (pIceItemModel) delete pIceItemModel;
+
+	//PlayBGM(L"Sound/Ice.wav");
+
 }
 
 bool CIceScene::CheckObjectByObjectCollisions()
 {
+	// 보스 아이템 디버깅용
+	if (m_ppHierarchicalGameObjects[13]->GetHealth() < 0) {
+		m_ppHierarchicalGameObjects[13]->isdraw = false;
+		m_ppHierarchicalGameObjects[14]->isdraw = true;
+	}
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// �ʰ� �浹�� ���
@@ -1650,22 +1721,30 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 								
 	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
-	
+	m_ppHierarchicalGameObjects[13]->SetHealth(500);
+
 	if (pFireBossModel) delete pFireBossModel;
 
 	CLoadedModelInfo* pFireItemModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/FuelTank.bin", NULL);
 
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireItemModel, 0);
 								
-	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
-	m_ppHierarchicalGameObjects[14]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[14]->SetPosition(-60.0, 10.0f, 1327.0f);
+	m_ppHierarchicalGameObjects[14]->Rotate(90, 90, 0);
+	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
+	m_ppHierarchicalGameObjects[14]->isdraw = false;
+	if (pFireItemModel) delete pFireItemModel;
 
 	PlayBGM(L"Sound/Fire.wav");
-
-	if (pFireItemModel) delete pFireItemModel;
 }
 bool CFireScene::CheckObjectByObjectCollisions()
 {
+	// 보스 아이템 디버깅용
+	if (m_ppHierarchicalGameObjects[13]->GetHealth() < 0) {
+		m_ppHierarchicalGameObjects[13]->isdraw = false;
+		m_ppHierarchicalGameObjects[14]->isdraw = true;
+	}
+
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// �ʰ� �浹�� ���
@@ -1916,6 +1995,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 								
 	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[13]->SetHealth(500);
 
 	if (pGrassBossModel) delete pGrassBossModel;
 
@@ -1924,14 +2004,20 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pNatureItemModel, 0);
 								
 	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
-	m_ppHierarchicalGameObjects[14]->SetScale(20.0f, 20.0f, 20.0f);
-
-	PlayBGM(L"Sound/Grass.wav");
-
+	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
+	m_ppHierarchicalGameObjects[14]->isdraw = false;
 	if (pNatureItemModel) delete pNatureItemModel;
+
+	//PlayBGM(L"Sound/Grass.wav");
+
 }
 bool CGrassScene::CheckObjectByObjectCollisions()
 {
+	// 보스 아이템 디버깅용
+	if (m_ppHierarchicalGameObjects[13]->GetHealth() < 0) {
+		m_ppHierarchicalGameObjects[13]->isdraw = false;
+		m_ppHierarchicalGameObjects[14]->isdraw = true;
+	}
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// �ʰ� �浹�� ���
@@ -2040,6 +2126,104 @@ void CGrassScene::ReleaseUploadBuffers()
 }
 
 void CGrassScene::ReleaseObjects()
+{
+	CScene::ReleaseObjects();
+}
+
+void CWInScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
+
+	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+
+	m_nHierarchicalGameObjects = 4;
+	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
+
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/win.bin", NULL);
+	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
+	m_ppHierarchicalGameObjects[0]->SetPosition(200.0f, -10.0f, 400.0f);
+	m_ppHierarchicalGameObjects[0]->SetScale(5.0f, 3.0f, 5.0f);
+	if (map) delete map;
+
+	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
+	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
+	m_ppHierarchicalGameObjects[1]->SetPosition(50.0f, 0.0f, -15.0f);
+	m_ppHierarchicalGameObjects[1]->SetScale(30.0f, 30.0f, 30.0f);
+	m_ppHierarchicalGameObjects[1]->Rotate(-20.0f, 170.0f, 00.0f);
+
+	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
+	m_ppHierarchicalGameObjects[2]->SetPosition(0.0f, 0.0f, -15.0f);
+	m_ppHierarchicalGameObjects[2]->SetScale(30.0f, 30.0f, 30.0f);
+	m_ppHierarchicalGameObjects[2]->Rotate(-20.0f, 170.0f, 00.0f);
+
+	m_ppHierarchicalGameObjects[3] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 1);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
+	m_ppHierarchicalGameObjects[3]->SetPosition(-50.0f, 0.0f, -15.0f);
+	m_ppHierarchicalGameObjects[3]->SetScale(30.0f, 30.0f, 30.0f);
+	m_ppHierarchicalGameObjects[3]->Rotate(-20.0f, 170.0f, 0.0f);
+
+	if (pPlayerModel) delete pPlayerModel;
+}
+void CWInScene::ReleaseUploadBuffers()
+{
+	CScene::ReleaseUploadBuffers();
+}
+
+void CWInScene::ReleaseObjects()
+{
+	CScene::ReleaseObjects();
+}
+
+void CLoseScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
+
+	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+
+	m_nHierarchicalGameObjects = 4;
+	m_ppHierarchicalGameObjects = new CGameObject * [m_nHierarchicalGameObjects];
+
+	CLoadedModelInfo* map = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Map/spaceshipmap.bin", NULL);
+	m_ppHierarchicalGameObjects[0] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, map, 0);
+	m_ppHierarchicalGameObjects[0]->SetPosition(100.0f, -100.0f, -100.0f);
+	m_ppHierarchicalGameObjects[0]->SetScale(10.0f, 8.0f, 10.0f);
+	if (map) delete map;
+
+	CLoadedModelInfo* pPlayerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
+	m_ppHierarchicalGameObjects[1] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 4);
+	m_ppHierarchicalGameObjects[1]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
+	m_ppHierarchicalGameObjects[1]->SetPosition(-100.0f, 0.0f, -45.0f);
+	m_ppHierarchicalGameObjects[1]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[1]->Rotate(-20.0f, 170.0f, 00.0f);
+
+	m_ppHierarchicalGameObjects[2] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 4);
+	m_ppHierarchicalGameObjects[2]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
+	m_ppHierarchicalGameObjects[2]->SetPosition(20.0f, 0.0f, -55.0f);
+	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[2]->Rotate(-20.0f, 170.0f, 00.0f);
+
+	m_ppHierarchicalGameObjects[3] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pPlayerModel, 1);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackAnimationSet(0, 3);
+	m_ppHierarchicalGameObjects[3]->m_pSkinnedAnimationController->SetTrackSpeed(0, 1.3);
+	m_ppHierarchicalGameObjects[3]->SetScale(20.0f, 20.0f, 20.0f);
+	m_ppHierarchicalGameObjects[3]->Rotate(0.0f, 0.0f, 0.0f);
+	m_ppHierarchicalGameObjects[3]->SetPosition(-60.0f, 0.0f, -30.0f);
+
+	if (pPlayerModel) delete pPlayerModel;
+}
+void CLoseScene::ReleaseUploadBuffers()
+{
+	CScene::ReleaseUploadBuffers();
+}
+
+void CLoseScene::ReleaseObjects()
 {
 	CScene::ReleaseObjects();
 }
