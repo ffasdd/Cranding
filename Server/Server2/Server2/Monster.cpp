@@ -46,16 +46,40 @@ void Monster::Move()
 		XMVECTOR rightVec = XMVector3Cross(upVec, directionToPlayer);
 		XMFLOAT3 rightFloat3;
 		XMStoreFloat3(&rightFloat3, rightVec);
-
 		// right 벡터를 업데이트
 		_right = rightFloat3;
+	
+		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
+		{
+			_speed = 0;
 
-		//else 
-		if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
+			if (_attackState != true)
+			{
+				_attackState = true;
+				for (auto& pl : ingamePlayer)
+				{
+					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					pl->send_monster_attack(_id, _m_type, true);
+				}
+			}
+		}
+		else
+		{
+			if (_attackState != false)
+			{
+				_attackState = false;
+				for (auto& pl : ingamePlayer)
+				{
+					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					pl->send_monster_attack(_id, _m_type, false);
+				}
+			}
+		}
 
 		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
 		_speed = 0.5f;
+
 		m_SPBB.Center = _pos;
 		m_SPBB.Center.y = _pos.y;
 	}
@@ -85,12 +109,10 @@ void Monster::Move()
 	}
 }
 
-
 void Monster::Remove()
 {
 	_pos = { 0.f,-100.f,0.f };
 }
-
 
 void Monster::IceMove()
 {

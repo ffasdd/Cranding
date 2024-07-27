@@ -133,7 +133,7 @@ void Network::SendProcess(SENDTYPE sendtype)
 	}
 	case SENDTYPE::PLAYER_HIT:
 	{
-		SendPlayerHIt();
+		SendPlayerHIt(g_clients[my_id].is_damage);
 		break;
 	}
 
@@ -631,6 +631,8 @@ void Network::ProcessPacket(char* buf)
 	{
 		SC_PLAYER_HIT_PACKET* p = reinterpret_cast<SC_PLAYER_HIT_PACKET*>(buf);
 		cout << p->id << " < - Player Hit " << endl; 
+		g_clients[p->id].is_damage = p->isdamaged;
+		
 		break;
 	}
 
@@ -753,6 +755,7 @@ void Network::SendMonsterDie(int npc_id, MonsterType _mtype)
 	p._montype = _mtype;
 	p.room_id = my_roomid;
 	p.npc_id = npc_id;
+	p.id = my_id;
 
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
@@ -769,13 +772,14 @@ void Network::SendMonsterHitSpaceship(int npc_id)
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
-void Network::SendPlayerHIt()
+void Network::SendPlayerHIt(bool is_damaged)
 {
 	CS_PLAYER_HIT_PACKET p;
 	p.size = sizeof(CS_PLAYER_HIT_PACKET);
 	p.type = CS_PLAYER_HIT;
 	p.id = my_id;
 	p.room_id = my_roomid;
+	p.isdamaged = is_damaged;
 
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }

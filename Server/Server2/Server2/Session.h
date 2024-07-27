@@ -26,6 +26,7 @@ public:
 	int _iceMontsercnt = 0;
 
 	bool _isAttack = false;
+	bool _isDamaged = false;
 	SOCKET _socket;
 	XMFLOAT3 _pos;
 	XMFLOAT3 _look;

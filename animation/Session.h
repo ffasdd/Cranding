@@ -53,8 +53,10 @@ public:
 	mutex _sessionlock;
 	mutex _uilock;
 	bool m_blind = false;
+	bool is_damage = false;
 	int scene_num = -1;
 	float m_yaw = 0.0f;
+
 
 	int m_firecnt = 0;
 	int m_icencnt = 0;

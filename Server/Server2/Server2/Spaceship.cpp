@@ -3,7 +3,7 @@
 
 Spaceship::Spaceship()
 {
-    _pos = { 250.0f, 10.0f, 750.0f };
+    _pos = { 253.0f, 10.0f, 752.0f };
     _hp = 2000;
     _BoundingBox = BoundingSphere(_pos, _BoundingBoxSize);
 }
