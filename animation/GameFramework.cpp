@@ -1146,7 +1146,7 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	m_pPostProcessingShader->CreateShaderResourceViews(m_pd3dDevice, 1, &m_pd3dDepthStencilBuffer, pdxgiDepthSrvFormats);
 
 	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0, 1);
-	m_pBlurBuffer = pTexture->CreateTexture(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_COMMON, NULL, RESOURCE_TEXTURE2D, 0, 1);
+	m_pBlurBuffer = pTexture->CreateTexture(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_COMMON, NULL, RESOURCE_TEXTURE2D, 0, 1);
 	m_pBlurBuffer->AddRef();
 
 	m_BlurShader = make_unique<CBlurShader>();
