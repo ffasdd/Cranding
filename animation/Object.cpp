@@ -809,7 +809,6 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						// monster dead animation
 						if (m_bIsAttacked == true && fPosition > 1.0f)
 						{
-							//cout << "m_d" << endl;
 							m_bIsAttacked = false;
 							m_bIsDead = true;
 						}

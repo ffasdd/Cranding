@@ -641,11 +641,14 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					gNetwork.SendAttackCollision(0, MonsterType::Ice_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+					m_ppHierarchicalGameObjects[14]->isdraw = true;
 				}
 				break;
 				case MONSTERTYPE::FIREBOSS:
 				{
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+					m_ppHierarchicalGameObjects[i]->isdraw = false;
+					m_ppHierarchicalGameObjects[14]->isdraw = true;
 					gNetwork.SendAttackCollision(0, MonsterType::Fire_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
@@ -657,6 +660,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					gNetwork.SendAttackCollision(0, MonsterType::Nature_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+					m_ppHierarchicalGameObjects[14]->isdraw = true;
 				}
 				break;
 
@@ -1760,6 +1764,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 	// 보스 아이템 디버깅용
 	//if (m_ppHierarchicalGameObjects[13]->GetHealth() < 0) {
 	//	m_ppHierarchicalGameObjects[13]->isdraw = false;
+	//	m_ppHierarchicalGameObjects[14]->SetPosition(-60.0, 10.0f, 1327.0f);
 	//	m_ppHierarchicalGameObjects[14]->isdraw = true;
 	//}
 
