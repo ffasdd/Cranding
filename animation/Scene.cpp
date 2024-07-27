@@ -426,6 +426,28 @@ void CScene::CreateCbvSrvDescriptorHeaps(ID3D12Device *pd3dDevice, int nConstant
 	{
 		m_pd3dCbvSrvDescriptorHeap->SetName(L"CScene::CreateCbvSrvDescriptorHeaps");
 	}
+	else
+	{
+		// Print the HRESULT error code
+		std::wcout << L"Failed to create descriptor heap. HRESULT = " << hResult << std::endl;
+
+		// Check if the error is related to the device being removed
+		HRESULT deviceRemovedReason = pd3dDevice->GetDeviceRemovedReason();
+		if (deviceRemovedReason != DXGI_ERROR_DEVICE_REMOVED)
+		{
+			// Print device removed reason if available
+			std::wcout << L"Device removed reason HRESULT = " << deviceRemovedReason << std::endl;
+		}
+		else
+		{
+			// Handle the case where the device has been removed
+			std::wcout << L"Device has been removed or lost." << std::endl;
+
+			// You might also want to include additional diagnostic information
+			// depending on the specific requirements of your application.
+		}
+	}
+
 
 	m_d3dCbvCPUDescriptorNextHandle = m_d3dCbvCPUDescriptorStartHandle = m_pd3dCbvSrvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	m_d3dCbvGPUDescriptorNextHandle = m_d3dCbvGPUDescriptorStartHandle = m_pd3dCbvSrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
@@ -1008,6 +1030,8 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 		}
 	}
 
+	PlayBGM(L"Sound/Day.wav");
+
 	// spaceship boundingsphere
 	SpaceshipBS.Center = { 250.0f, 10.0f, 750.0f };
 	SpaceshipBS.Radius = 50.0f;
@@ -1367,6 +1391,9 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 								
 	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[14]->SetScale(20.0f, 20.0f, 20.0f);
+
+	PlayBGM(L"Sound/Ice.wav");
+
 	if (pIceItemModel) delete pIceItemModel;
 }
 
@@ -1625,9 +1652,10 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 								
 	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[14]->SetScale(20.0f, 20.0f, 20.0f);
-	if (pFireItemModel) delete pFireItemModel;
-	
 
+	PlayBGM(L"Sound/Fire.wav");
+
+	if (pFireItemModel) delete pFireItemModel;
 }
 bool CFireScene::CheckObjectByObjectCollisions()
 {
@@ -1887,6 +1915,9 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 								
 	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[14]->SetScale(20.0f, 20.0f, 20.0f);
+
+	PlayBGM(L"Sound/Grass.wav");
+
 	if (pNatureItemModel) delete pNatureItemModel;
 }
 bool CGrassScene::CheckObjectByObjectCollisions()
