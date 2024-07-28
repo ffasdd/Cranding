@@ -710,6 +710,18 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 	return soundData;
 }
 
+void CGameFramework::PlayAttackSound(IXAudio2* pXAudio2, const SoundData& soundData) {
+	IXAudio2SourceVoice* pSourceVoice;
+	HRESULT hr = pXAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfx);
+	if (SUCCEEDED(hr)) {
+		pSourceVoice->SubmitSourceBuffer(&soundData.buffer);
+		pSourceVoice->Start(0);
+	}
+	else {
+		std::cerr << "Failed to create source voice: " << std::hex << hr << std::endl;
+	}
+}
+
 void CGameFramework::PlaySounds(IXAudio2* pXAudio2, const SoundData& soundData) {
 	if (pXAudio2) {
 		HRESULT hr = pXAudio2->CreateSourceVoice(&m_pSourceVoice, &soundData.wfx);
@@ -1445,6 +1457,7 @@ void CGameFramework::ProcessInput()
 			&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false)
 		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
+			PlaySound(L"Sound/Attack.wav", NULL, SND_FILENAME);
 		}
 
 		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
