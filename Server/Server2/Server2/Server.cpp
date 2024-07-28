@@ -626,7 +626,7 @@ void Server::ProcessPacket(int id, char* packet)
 		case 2: {
 			clients[id]._stage = scenenum;
 			std::uniform_real_distribution<float> xpos(210, 240);
-			std::uniform_real_distribution<float> zpos(710, 760);
+			std::uniform_real_distribution<float> zpos(710, 730);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		}
 			  break;
@@ -893,7 +893,11 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_PLAYER_HIT: {
 		CS_PLAYER_HIT_PACKET* p = reinterpret_cast<CS_PLAYER_HIT_PACKET*>(packet);
 		clients[p->id]._isDamaged = p->isdamaged;
-		clients[p->id]._hp = p->hp;
+		if (p->hp <= 0)
+		{
+			clients[p->id]._hp = 0;
+
+		}else clients[p->id]._hp = p->hp;
 		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
 		{
 			if (pl->_stage != clients[p->id]._stage)continue;
