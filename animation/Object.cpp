@@ -37,11 +37,11 @@ CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers, int nRootPar
 
 CTexture::~CTexture()
 {
-	if (m_ppd3dTextures)
-	{
-		for (int i = 0; i < m_nTextures; i++) if (m_ppd3dTextures[i]) m_ppd3dTextures[i]->Release();
-		delete[] m_ppd3dTextures;
-	}
+	//if (m_ppd3dTextures)
+	//{
+	//	for (int i = 0; i < m_nTextures; i++) if (m_ppd3dTextures[i]) m_ppd3dTextures[i]->Release();
+	//	delete[] m_ppd3dTextures;
+	//}
 	if (m_pnResourceTypes) delete[] m_pnResourceTypes;
 	if (m_pdxgiBufferFormats) delete[] m_pdxgiBufferFormats;
 	if (m_pnBufferElements) delete[] m_pnBufferElements;
@@ -464,7 +464,7 @@ CAnimationSets::~CAnimationSets()
 //
 CAnimationTrack::~CAnimationTrack()
 { 
-	if (m_pCallbackKeys) delete[] m_pCallbackKeys;
+	//if (m_pCallbackKeys) delete[] m_pCallbackKeys;
 	if (m_pAnimationCallbackHandler) delete m_pAnimationCallbackHandler;
 }
 
@@ -575,9 +575,9 @@ CAnimationController::~CAnimationController()
 		{
 			if (m_ppd3dcbSkinningBoneTransforms[i]) {
 				std::cout << "Unmapping and releasing skinning bone transform " << i << std::endl;
-				m_ppd3dcbSkinningBoneTransforms[i]->Unmap(0, NULL);
-				m_ppd3dcbSkinningBoneTransforms[i]->Release();
-				m_ppd3dcbSkinningBoneTransforms[i] = nullptr;
+				//m_ppd3dcbSkinningBoneTransforms[i]->Unmap(0, NULL);
+				//m_ppd3dcbSkinningBoneTransforms[i]->Release();
+				//m_ppd3dcbSkinningBoneTransforms[i] = nullptr;
 			}
 		}
 	}

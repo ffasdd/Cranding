@@ -17,11 +17,11 @@ CMesh::~CMesh()
 
 	if (m_nSubMeshes > 0)
 	{
-		for (int i = 0; i < m_nSubMeshes; i++)
-		{
-			if (m_ppd3dSubSetIndexBuffers[i] != nullptr) m_ppd3dSubSetIndexBuffers[i]->Release();
-			if (m_ppnSubSetIndices[i] != nullptr) delete[] m_ppnSubSetIndices[i];
-		}
+		//for (int i = 0; i < m_nSubMeshes; i++)
+		//{
+		//	if (m_ppd3dSubSetIndexBuffers[i] != nullptr) m_ppd3dSubSetIndexBuffers[i]->Release();
+		//	//if (m_ppnSubSetIndices[i] != nullptr) delete[] m_ppnSubSetIndices[i];
+		//}
 		if (m_ppd3dSubSetIndexBuffers != nullptr) delete[] m_ppd3dSubSetIndexBuffers;
 		if (m_pd3dSubSetIndexBufferViews != nullptr) delete[] m_pd3dSubSetIndexBufferViews;
 
@@ -41,10 +41,10 @@ void CMesh::ReleaseUploadBuffers()
 	}
 	if ((m_nSubMeshes > 0) && m_ppd3dSubSetIndexUploadBuffers != nullptr)
 	{
-		for (int i = 0; i < m_nSubMeshes; i++)
-		{
-			if (m_ppd3dSubSetIndexUploadBuffers[i] != nullptr) m_ppd3dSubSetIndexUploadBuffers[i]->Release();
-		}
+		//for (int i = 0; i < m_nSubMeshes; i++)
+		//{
+		//	if (m_ppd3dSubSetIndexUploadBuffers[i] != nullptr) m_ppd3dSubSetIndexUploadBuffers[i]->Release();
+		//}
 		if (m_ppd3dSubSetIndexUploadBuffers != nullptr)
 		{
 			delete[] m_ppd3dSubSetIndexUploadBuffers;
@@ -407,7 +407,7 @@ CStandardMesh::~CStandardMesh()
 	if (m_pd3dTangentBuffer != nullptr) m_pd3dTangentBuffer->Release();
 	if (m_pd3dBiTangentBuffer != nullptr) m_pd3dBiTangentBuffer->Release();
 
-	if (m_pxmf4Colors != nullptr) delete[] m_pxmf4Colors;
+	//if (m_pxmf4Colors != nullptr) delete[] m_pxmf4Colors;
 	if (m_pxmf3Normals != nullptr) delete[] m_pxmf3Normals;
 	if (m_pxmf3Tangents != nullptr) delete[] m_pxmf3Tangents;
 	if (m_pxmf3BiTangents != nullptr) delete[] m_pxmf3BiTangents;

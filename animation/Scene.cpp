@@ -2164,26 +2164,13 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 
 				return true;
 			}
-			// grass monster's head with player (when grass monster attack)
-			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
-				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
-			{
-				// 여기에 hp 닳는 코드 넣어주랑
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
-				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				g_clients[gNetwork.my_id].is_damage = true;
-				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
-				return false;
-			}
 		}
 		// collision check with nature boss monster
 		else if (i == 13)
 		{
-			// monster with player(attack mode)
+			// monster with player(player attack)
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				//send attacked monster num
 				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
@@ -2194,6 +2181,19 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 
 				return(true);
+			}
+			// grass monster's head with player (when grass monster attack)
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				g_clients[gNetwork.my_id].is_damage = true;
+				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				return false;
 			}
 		}
 
