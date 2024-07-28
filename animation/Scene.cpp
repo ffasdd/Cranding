@@ -100,51 +100,30 @@ void CScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* p
 
 void CScene::ReleaseObjects()
 {
-	//if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
-	if (m_pd3dCbvSrvDescriptorHeap != nullptr) m_pd3dCbvSrvDescriptorHeap->Release();
-	//if (m_pDescriptorHeap) delete m_pDescriptorHeap;
+	if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
+	if (m_pd3dCbvSrvDescriptorHeap) m_pd3dCbvSrvDescriptorHeap->Release();
 
-	if (m_ppGameObjects != nullptr)
+	/*if (m_ppGameObjects != nullptr)
 	{
 		for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Release();
 		delete[] m_ppGameObjects;
-	}
+	}*/
 
-	if (m_ppShaders != nullptr)
+	if (m_pSkyBox) delete m_pSkyBox;
+
+	if (m_ppHierarchicalGameObjects)
 	{
-		for (int i = 0; i < m_nShaders; i++)
+		for (int i = 0; i < m_nHierarchicalGameObjects; i++) if (m_ppHierarchicalGameObjects[i])
 		{
-			m_ppShaders[i]->ReleaseShaderVariables();
-			m_ppShaders[i]->ReleaseObjects();
-			m_ppShaders[i]->Release();
-			m_ppShaders[i] = nullptr;
+			m_ppHierarchicalGameObjects[i]->ReleaseUploadBuffers();
+			m_ppHierarchicalGameObjects[i]->Release();
 		}
-		delete[] m_ppShaders;
-		m_ppShaders = nullptr;
-	}
-
-	if (m_pSkyBox != nullptr)
-	{
-		delete m_pSkyBox;
-		m_pSkyBox = nullptr;
-	}
-
-	if (m_ppHierarchicalGameObjects != nullptr)
-	{
-		for (int i = 0; i < m_nHierarchicalGameObjects; i++)
-			if (m_ppHierarchicalGameObjects[i] != nullptr) {
-				m_ppHierarchicalGameObjects[i]->Release();
-				cout << "=========================================" << endl;
-			}
 		delete[] m_ppHierarchicalGameObjects;
 	}
 
 	ReleaseShaderVariables();
 
-	if (m_pLights != nullptr) {
-		delete[] m_pLights;
-		m_pLights = nullptr;
-	}
+	if (m_pLights) delete[] m_pLights;
 }
 
 ID3D12RootSignature* CScene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
@@ -423,7 +402,7 @@ void CScene::ReleaseUploadBuffers()
 {
 	if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
 
-	for (int i = 0; i < m_nShaders; i++) m_ppShaders[i]->ReleaseUploadBuffers();
+	//for (int i = 0; i < m_nShaders; i++) m_ppShaders[i]->ReleaseUploadBuffers();
 	//for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->ReleaseUploadBuffers();
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++) m_ppHierarchicalGameObjects[i]->ReleaseUploadBuffers();
 }
@@ -542,11 +521,6 @@ void CScene::RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCame
 	m_pPlayer->RenderBoundingBox(pd3dCommandList, pCamera);
 }
 
-bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
-{
-	return(false);
-}
-
 
 
 ID3D12RootSignature* CScene::CreateRootSignature(ID3D12Device* pd3dDevice, D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags, UINT nRootParameters, D3D12_ROOT_PARAMETER* pd3dRootParameters, UINT nStaticSamplerDescs, D3D12_STATIC_SAMPLER_DESC* pd3dStaticSamplerDescs)
@@ -653,6 +627,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 				case MONSTERTYPE::ICEBOSS:
 				{
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+					m_ppHierarchicalGameObjects[i]->isdraw = false;
 					gNetwork.SendAttackCollision(0, MonsterType::Ice_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
@@ -676,6 +651,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 				case MONSTERTYPE::NATUREBOSS:
 				{
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+					m_ppHierarchicalGameObjects[i]->isdraw = false;
 					gNetwork.SendAttackCollision(0, MonsterType::Nature_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
@@ -692,7 +668,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		}
 	}
 
-	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->AnimateObjects(fTimeElapsed);
+	//for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->AnimateObjects(fTimeElapsed);
 
 	if (m_pLights)
 	{
@@ -730,7 +706,7 @@ void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera
 	//if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
 
 	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Render(pd3dCommandList, pCamera);
-	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera);
+	//for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera);
 
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
@@ -1617,15 +1593,17 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
-				//gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Ice);
+
+				// 보스 체력 서버로 전송 
+				gNetwork.SendBossDamage(g_IceBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Ice_Boss);
 
 				return true;
 			}
 			// ice boss hand with player
 			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
-				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox))
+				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox)
+				&& gNetwork.IcebossSkill == true)
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
@@ -1648,6 +1626,10 @@ bool CIceScene::CheckObjectByObjectCollisions()
 			{
 				isIceitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
+				gNetwork.SendGetItem(3);
+				// 아이템을 먹었다 send 
+
+
 			}
 		}
 	}
@@ -1936,6 +1918,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 			{
 				isFireitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
+				gNetwork.SendGetItem(4);
 			}
 		}
 	}
@@ -2173,12 +2156,10 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				//send attacked monster num
-				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
-				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+				// 보스 체력 서버로 전송 
+				gNetwork.SendBossDamage(g_NatureBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Nature_Boss);
 
 				return(true);
 			}
@@ -2197,6 +2178,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 			}
 		}
 
+		}
 		// collision check with nature item
 		else if (i == 14 ) {
 			XMFLOAT3 e_pos = m_ppHierarchicalGameObjects[i]->GetPosition();
@@ -2206,6 +2188,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 			{
 				isNatureitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
+				gNetwork.SendGetItem(5);
 			}
 		}
 	}

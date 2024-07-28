@@ -385,14 +385,14 @@ void Room::BossMonsterInitialziedMonster()
 	IceBoss._m_type = MonsterType::Ice_Boss;
 	IceBoss._initPos = IceBoss._pos;
 	IceBoss.m_fBoundingSize = 15.0f;
-	IceBoss._hp = 500;
+	IceBoss._hp = 40;
 
 	NatureBoss._pos = XMFLOAT3(77.0f, 10.0f, -408.0f);
 	NatureBoss._is_alive = true;
 	NatureBoss._stagenum = 5;
 	NatureBoss._m_type = MonsterType::Nature_Boss;
 	NatureBoss._initPos = NatureBoss._pos;
-	NatureBoss._hp = 500;
+	NatureBoss._hp = 40;
 
 	BossUpdate_Fire sendFireBossMonsterInitialziedpacket;
 	BossUpdate_Ice sendIceBossMonsterInitialziedpacket;

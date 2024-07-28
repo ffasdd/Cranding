@@ -18,7 +18,6 @@ public:
     UIRect(D2D1_RECT_F r, std::function<bool()> f) : m_rect(r), m_UIfunc(f) {}
     ~UIRect() {}
 
-    bool ClickCollide(POINT clickPos) const;
 
 private:
     D2D1_RECT_F m_rect = D2D1::RectF(0.0f, 0.0f, 0.0f, 0.0f);
@@ -35,12 +34,9 @@ public:
 
     static UILayer* Create(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets, UINT nWidth, UINT nHeight);
     HRESULT Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets, UINT nWidth, UINT nHeight);
-    void ProcessMouseClick(SCENEKIND scenekind, POINT clickPos);
     void UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2dLayoutRect, IDWriteTextFormat* pdwFormat, ID2D1SolidColorBrush* pd2dTextBrush);
     void Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay, int curMinute, int curSecond);
     void ReleaseResources();
-    void AddUIRect(SCENEKIND scenekind, D2D1_RECT_F rect, std::function<bool()> func);
-    //void AddUIRect(int sceneNum, D2D1_RECT_F rect, std::function<bool()> func);
 
     static UILayer* GetInstance() { return s_instance; }
 

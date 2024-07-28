@@ -19,12 +19,15 @@ public:
 	roomState _state = roomState::Free;
 	mutex r_l;
 	bool fullcheck = false;
-
+	int daycnt = 0;
 	int _id = -1;
 	int readycnt = 0;
 	int deadplayercnt = 0;
 	std::chrono::system_clock::time_point start_time;
 
+	bool IceItem = false;
+	bool FireItem = false;
+	bool NatureItem = false;
 
 
 	//array < Monster*, 10 >_NightMonsters; // 이렇게 바꿔야하나? 
@@ -79,9 +82,6 @@ public:
 
 	void NightMonsterCollide(Monster& _monster);
 
-	void IceMonsterCollide(Monster& _monster);
-	void FireMonsterCollide(Monster& _monster);
-	void NatureMontserCollide(Monster& _monster);
 
 };
 

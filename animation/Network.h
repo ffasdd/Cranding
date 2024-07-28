@@ -65,6 +65,7 @@ public: // thread send
 	void SendBossDamage(int _hp,MonsterType _type);
 
 	void SendPlayerDead();
+	void SendGetItem(int _type);
 
 	bool MonsterCollide(Session& _monster);
 	
@@ -75,6 +76,12 @@ public: // utils
 	bool gamestart = false;
 	bool SpaceshipScene = false;
 	bool ClientState = false;
+	bool IcebossSkill = false;
+
+	bool IceItem = false;
+	bool FireItem = false;
+	bool NatureItem = false;
+
 public:
 	int prev_remain = 0;
 	int my_id = 0;

@@ -13,20 +13,22 @@ CMesh::CMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandLis
 
 CMesh::~CMesh()
 {
-	if (m_pd3dPositionBuffer != nullptr) m_pd3dPositionBuffer->Release();
+	if (m_pd3dPositionBuffer) {
+		m_pd3dPositionBuffer->Release();
+	}
 
 	if (m_nSubMeshes > 0)
 	{
-		//for (int i = 0; i < m_nSubMeshes; i++)
-		//{
-		//	if (m_ppd3dSubSetIndexBuffers[i] != nullptr) m_ppd3dSubSetIndexBuffers[i]->Release();
-		//	//if (m_ppnSubSetIndices[i] != nullptr) delete[] m_ppnSubSetIndices[i];
-		//}
-		if (m_ppd3dSubSetIndexBuffers != nullptr) delete[] m_ppd3dSubSetIndexBuffers;
-		if (m_pd3dSubSetIndexBufferViews != nullptr) delete[] m_pd3dSubSetIndexBufferViews;
+		for (int i = 0; i < m_nSubMeshes; i++)
+		{
+			if (m_ppd3dSubSetIndexBuffers[i]) m_ppd3dSubSetIndexBuffers[i]->Release();
+			if (m_ppnSubSetIndices[i]) delete[] m_ppnSubSetIndices[i];
+		}
+		if (m_ppd3dSubSetIndexBuffers) delete[] m_ppd3dSubSetIndexBuffers;
+		if (m_pd3dSubSetIndexBufferViews) delete[] m_pd3dSubSetIndexBufferViews;
 
-		if (m_pnSubSetIndices != nullptr) delete[] m_pnSubSetIndices;
-		if (m_ppnSubSetIndices != nullptr) delete[] m_ppnSubSetIndices;
+		if (m_pnSubSetIndices) delete[] m_pnSubSetIndices;
+		if (m_ppnSubSetIndices) delete[] m_ppnSubSetIndices;
 	}
 
 	if (m_pxmf3Positions) delete[] m_pxmf3Positions;
@@ -34,22 +36,18 @@ CMesh::~CMesh()
 
 void CMesh::ReleaseUploadBuffers()
 {
-	if (m_pd3dPositionUploadBuffer != nullptr)
+	if (m_pd3dPositionUploadBuffer) m_pd3dPositionUploadBuffer->Release();
+	m_pd3dPositionUploadBuffer = NULL;
+
+	if ((m_nSubMeshes > 0) && m_ppd3dSubSetIndexUploadBuffers)
 	{
-		m_pd3dPositionUploadBuffer->Release();
-		m_pd3dPositionUploadBuffer = NULL;
-	}
-	if ((m_nSubMeshes > 0) && m_ppd3dSubSetIndexUploadBuffers != nullptr)
-	{
-		//for (int i = 0; i < m_nSubMeshes; i++)
-		//{
-		//	if (m_ppd3dSubSetIndexUploadBuffers[i] != nullptr) m_ppd3dSubSetIndexUploadBuffers[i]->Release();
-		//}
-		if (m_ppd3dSubSetIndexUploadBuffers != nullptr)
+
+		for (int i = 0; i < m_nSubMeshes; i++)
 		{
-			delete[] m_ppd3dSubSetIndexUploadBuffers;
-			m_ppd3dSubSetIndexUploadBuffers = NULL;
+			if (m_ppd3dSubSetIndexUploadBuffers[i]) m_ppd3dSubSetIndexUploadBuffers[i]->Release();
 		}
+		if (m_ppd3dSubSetIndexUploadBuffers) delete[] m_ppd3dSubSetIndexUploadBuffers;
+		m_ppd3dSubSetIndexUploadBuffers = NULL;
 	}
 }
 

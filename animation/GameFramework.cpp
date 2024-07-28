@@ -56,7 +56,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	CreateDirect3DDevice();
 	CreateCommandQueueAndList();
 	CreateRtvAndDsvAndImGuiDescriptorHeaps();
-	
+
 	CreateSwapChain();
 
 	CreateSwapChainRenderTargetViews();
@@ -356,16 +356,12 @@ void CGameFramework::ChangeSwapChainState()
 
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	if (m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+
 	switch (nMessageID)
 	{
 	case WM_LBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
-		if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN && FRAME_BUFFER_HEIGHT > 1000)
-		{
-			UILayer::GetInstance()->ProcessMouseClick(SCENEKIND::LOGIN, m_ptOldCursorPos);
-		}
 		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
 		if (g_clients.size() == 0)break;
 		g_clients[cl_id].setAttack(true);
@@ -770,9 +766,9 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			sceneManager.SetCurrentScene(nSceneKind);
 			isSceneChange = false;
-			cout << "CLobbyScene BuildObjects" << endl;
 			m_pScene = new CLobbyScene();
 			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+			cout << "CLobbyScene BuildObjects" << endl;
 
 			CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 2);
 
@@ -789,10 +785,10 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			}
 			isSceneChange = false;
 			sceneManager.SetCurrentScene(nSceneKind);
-			cout << "CSpaceShipScene BuildObjects" << endl;
 			//this_thread::sleep_for(10ms);
 			m_pScene = new CSpaceShipScene();
 			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+			cout << "CSpaceShipScene BuildObjects" << endl;
 
 			CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 1);
 
@@ -812,10 +808,10 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			isSceneChangetoIce = false;
 			sceneManager.SetCurrentScene(nSceneKind);
-			cout << "CIceScene BuildObjects" << endl;
 			// ice map
 			m_pScene = new CIceScene();
 			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+			cout << "CIceScene BuildObjects" << endl;
 
 
 			CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
@@ -839,6 +835,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene = new CFireScene();
 			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
+			cout << "CFireScene BuildObjects" << endl;
 
 			CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
@@ -862,6 +859,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene = new CGrassScene();
 			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
+			cout << "CNatureScene BuildObjects" << endl;
 
 			CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 
@@ -918,38 +916,13 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			break;
 		}
 
-
-		//m_pPostProcessingShader = new CTextureToFullScreenShader();
-		//m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
-		//m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
-
-		//D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-		//d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
-
-		//DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
-		//m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle, 6); //SRV to (Render Targets) + (Depth Buffer)
-
-		//// ���� SRV ��¼��..
-		////D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
-
-		//DXGI_FORMAT pdxgiDepthSrvFormats[1] = { DXGI_FORMAT_R32_FLOAT };
-		//m_pPostProcessingShader->CreateShaderResourceViews(m_pd3dDevice, 1, &m_pd3dDepthStencilBuffer, pdxgiDepthSrvFormats);
-
-		//CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0, 1);
-		//m_pBlurBuffer = pTexture->CreateTexture(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_COMMON, NULL, RESOURCE_TEXTURE2D, 0, 1);
-		//m_pBlurBuffer->AddRef();
-
-		//m_BlurShader = make_unique<CBlurShader>();
-		//m_BlurShader->CreateShader(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
-		//m_BlurShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), NULL, pTexture);
-
 		m_pd3dCommandList->Close();
 		ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 		m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 
 		WaitForGpuComplete();
 
-		if (m_pScene) m_pScene->ReleaseUploadBuffers();
+		//if (m_pScene) m_pScene->ReleaseUploadBuffers();
 		if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
 
 		m_GameTimer.Reset();
@@ -1250,7 +1223,7 @@ void CGameFramework::myFunc_SetStatus(int FireCnt, int IceCnt, int NatureCnt)
 	curDay++;
 
 	int attack = g_clients[cl_id].getAttackPower() + (FireCnt * 5);
-	
+
 	if (attack > 100) {
 		attack = 100;
 	}
@@ -1344,10 +1317,10 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	m_SceneSounds[2] = LoadWaveFile(L"Sound/Fire.wav");
 	m_SceneSounds[3] = LoadWaveFile(L"Sound/Grass.wav");
 
-		// bgm
-	//SoundData IceBgm = m_pScene->LoadWaveFile(L"Scene2BGM.wav");
-	//SoundData FireBgm = m_pScene->LoadWaveFile(L"Scene3BGM.wav");
-	//SoundData GrassBgm = m_pScene->LoadWaveFile(L"Scene4BGM.wav");
+	// bgm
+//SoundData IceBgm = m_pScene->LoadWaveFile(L"Scene2BGM.wav");
+//SoundData FireBgm = m_pScene->LoadWaveFile(L"Scene3BGM.wav");
+//SoundData GrassBgm = m_pScene->LoadWaveFile(L"Scene4BGM.wav");
 
 	CreateShaderVariables();
 
@@ -1416,7 +1389,7 @@ void CGameFramework::ChangeSceneReleaseObject()
 		m_pPlayer->Release();
 	}
 
-	if (m_pScene) m_pScene->ReleaseObjects();
+	//if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) {
 		delete m_pScene;
 		m_pScene = nullptr;
@@ -1776,10 +1749,10 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->SetGraphicsRootConstantBufferView(0, d3dGPUVirtualAddress);
 
 
-		if (m_pScene) {
-			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);			
+		if (m_pScene && m_pPlayer) {
+			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
+			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		}
-		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
 
