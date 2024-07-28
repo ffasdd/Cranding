@@ -45,30 +45,7 @@ UILayer* UILayer::Create(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevic
 }
 
 HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets, UINT nWidth, UINT nHeight)
-{
-    // 클릭 처리 필요한 ui
-    // game start
-    UILayer::GetInstance()->AddUIRect(SCENEKIND::LOGIN, m_GameStart, [this]()-> bool {
-        gGameFramework.SceneNum = 1;
-        gGameFramework.isSceneChange = true;
-        gGameFramework.isready = false;
-       
-        cout << "게임 시작" << endl;
-        return true;
-        });
-    UILayer::GetInstance()->AddUIRect(SCENEKIND::LOGIN, m_usernameRect, [this]()-> bool {
-       gGameFramework.m_pScene->m_isUsernameInput = true;  // 입력 모드 (true: 사용자 이름 입력, false: 비밀번호 입력)
-       cout << "m_usernameRect" << endl;
-        
-        return true;
-        });
-    UILayer::GetInstance()->AddUIRect(SCENEKIND::LOGIN, m_passwordRect, [this]()-> bool {
-        gGameFramework.m_pScene->m_isUsernameInput = false;  // 입력 모드 (true: 사용자 이름 입력, false: 비밀번호 입력)
-        cout << "m_usernameRect" << endl;
-
-        return true;
-        });
-  
+{  
     m_fWidth = static_cast<float>(nWidth);
     m_fHeight = static_cast<float>(nHeight);
     m_nRenderTargets = nFrames;
@@ -175,15 +152,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     return NOERROR;
 }
 
-void UILayer::ProcessMouseClick(SCENEKIND scenekind, POINT clickPos)
-{
-    int index = static_cast<int>(scenekind);
 
-    for (UIRect& rect : m_uiRects[index]) {
-        if (rect.ClickCollide(clickPos))
-            break;
-    }
-}
 
 void UILayer::InitializeDevice(ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets)
 {
@@ -429,9 +398,6 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         if (gNetwork.NatureItem)
             m_pd2dDeviceContext->DrawText(m_vecItem[2], (UINT)wcslen(m_vecItem[2]), m_textFormats[TEXT_SIZE::SIZE_15], m_NatureItemBar, m_brushes[BRUSH_COLOR::BLACK]);
 
-
-
-
         m_pd2dDeviceContext->EndDraw();
         break;
     }
@@ -484,28 +450,4 @@ void UILayer::ReleaseResources()
     if(m_pd2dFactory)m_pd2dFactory->Release();
     if(m_pd3d11DeviceContext)m_pd3d11DeviceContext->Release();
     if(m_pd3d11On12Device)m_pd3d11On12Device->Release();
-}
-
-void UILayer::AddUIRect(SCENEKIND scenekind, D2D1_RECT_F rect, std::function<bool()> func)
-{
-    int sceneNum = static_cast<int>(scenekind);
-
-    if (sceneNum <= m_uiRects.size()) {
-        m_uiRects[sceneNum].emplace_back(rect, func);
-    }
-    else {
-        std::cerr << "Invalid sceneNum: " << sceneNum << std::endl;
-    }
-}
-
-bool UIRect::ClickCollide(POINT clickPos) const
-{
-    std::cout << "Click position: " << clickPos.x << ", " << clickPos.y << std::endl;
-
-    if (m_rect.left <= clickPos.x && m_rect.right >= clickPos.x &&
-        m_rect.top <= clickPos.y && m_rect.bottom >= clickPos.y) {
-        return m_UIfunc();
-    }
-
-    return false;
 }
