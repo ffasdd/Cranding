@@ -29,6 +29,7 @@ constexpr char CS_MONSTER_HIT_SPACESHIP = 17;
 constexpr char CS_PLAYER_HIT = 18;
 constexpr char CS_BOSSMONSTER_DAMGED = 19;
 constexpr char CS_DEAD_PLAYER = 20;
+constexpr char CS_GET_ITEM = 21;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -67,6 +68,7 @@ constexpr char SC_FIREBOSS_SKILL = 38;
 constexpr char SC_NATUREBOSS_SKILL = 39;
 constexpr char SC_PLAYER_HIT = 40;
 constexpr char SC_PLAYER_DEAD = 41;
+constexpr char SC_GET_ITEM = 42;
 
 
 
@@ -434,6 +436,13 @@ struct CS_PLAYER_DEAD_PACKET {
 	int id;
 	int room_id;
 };
+struct CS_GET_ITEM_PACKET {
+	unsigned char size;
+	char type;
+
+	int room_id;
+	char itemtype;
+};
 
 
 struct SC_GAMESTART_PACKET {
@@ -648,5 +657,10 @@ struct SC_PLAYER_DEAD_PACKET {
 	char type;
 	int id;
 	// ANimate? 
+};
+struct SC_GET_ITEM_PACKET {
+	unsigned char size;
+	char type;
+	char itemtype;
 };
 #pragma pack (pop)

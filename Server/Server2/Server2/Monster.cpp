@@ -90,6 +90,7 @@ void Monster::Move()
 			_attackState = false;
 			for (auto& pl : ingamePlayer)
 			{
+				if (id == -1)break;
 				if (pl->_stage != ingamePlayer[id]->_stage)continue;
 				pl->send_monster_attack(_id, _m_type, false);
 			}
@@ -190,6 +191,7 @@ void Monster::IceMove()
 			_attackState = false;
 			for (auto& pl : ingamePlayer)
 			{
+				if (id == -1)break;
 				if (pl->_stage != ingamePlayer[id]->_stage)continue;
 				pl->send_monster_attack(_id, _m_type, false);
 			}
@@ -291,6 +293,7 @@ void Monster::FireMove()
 			_attackState = false;
 			for (auto& pl : ingamePlayer)
 			{
+				if (id == -1)break;
 				if (pl->_stage != ingamePlayer[id]->_stage)continue;
 				pl->send_monster_attack(_id, _m_type, false);
 			}
@@ -394,6 +397,7 @@ void Monster::NatureMove()
 			_attackState = false;
 			for (auto& pl : ingamePlayer)
 			{
+				if (id == -1)break;
 				if (pl->_stage != ingamePlayer[id]->_stage)continue;
 				pl->send_monster_attack(_id, _m_type, false);
 			}
@@ -670,13 +674,10 @@ void NatureBossMonster::Move()
 			_speed = 0;
 
 		}
-
-
 		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ¿Ãµø , 
 		_speed = 1.0f;
 		m_SPBB.Center = _pos;
 		m_SPBB.Center.y = _pos.y;
-
 
 	}
 	else

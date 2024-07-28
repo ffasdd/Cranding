@@ -257,9 +257,17 @@ void Server::WorkerThread()
 			int r_id = static_cast<int>(key);
 			cout << " Day " << endl;
 			ingameroom[r_id].DayTimeSend();
-	
+			ingameroom[r_id].daycnt++;
+			if (ingameroom[r_id].daycnt == 6)
+			{
+				TIMER_EVENT ev1{ chrono::system_clock::now() + std::chrono::seconds(5s),r_id,EVENT_TYPE::EV_GAME_LOSE_ENDING };
+				g_Timer.InitTimerQueue(ev1);
+			}
+			else
+			{
 			TIMER_EVENT ev{ chrono::system_clock::now() + std::chrono::seconds(20s),r_id,EVENT_TYPE::EV_NIGHT };
 			g_Timer.InitTimerQueue(ev);
+			}
 			delete ex_over;
 			break;
 		}
@@ -414,6 +422,24 @@ void Server::WorkerThread()
 			delete ex_over;
 			break;
 		}
+		case COMP_TYPE::GAME_ENDING: {
+			int r_id = static_cast<int>(key);
+			for (auto& pl : ingameroom[r_id].ingamePlayer)
+			{
+				pl->send_change_scene(pl->_id, 7);
+			}
+			break; 
+		}
+
+		case COMP_TYPE::GAME_WIN: {
+			int r_id = static_cast<int>(key);
+			for (auto& pl : ingameroom[r_id].ingamePlayer)
+			{
+				pl->send_change_scene(pl->_id, 6);
+			}
+			break;
+		}
+
 		default:
 			break;
 		}
@@ -860,7 +886,6 @@ void Server::ProcessPacket(int id, char* packet)
 			cout << " Fire Boss _HP" << p->bosshp << endl;
 			// 보스 죽는 애니메이션을 모두에게 보내야한다. 
 			// 아이템 을 뛰우라는 정보 
-			// 
 			if (ingameroom[p->room_id].FireBoss._hp <= 0)
 			{
 
@@ -879,12 +904,42 @@ void Server::ProcessPacket(int id, char* packet)
 								   break;
 		case MonsterType::Ice_Boss: {
 			ingameroom[p->room_id].IceBoss._hp = p->bosshp;
+			cout << " ICE BOSS HP " << p->bosshp << endl;
 			if (ingameroom[p->room_id].IceBoss._hp <= 0)ingameroom[p->room_id].FireBoss._is_alive = false;
+
+			if (ingameroom[p->room_id].IceBoss._hp <= 0)
+			{
+
+				for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+				{
+					if (pl->_stage != clients[id]._stage)continue;
+					// 무슨 몬스터가 죽었는지 다른 클라이언트 들한테 정보를 보내야함 
+					pl->send_player_attack_mosnter(0, true, MonsterType::Ice_Boss);
+
+					std::chrono::system_clock::time_point attacktime = chrono::system_clock::now();
+					TIMER_EVENT ev{ attacktime + 1s ,p->room_id,EVENT_TYPE::EV_PLAYER_ATTACK_NPC, 0, MonsterType::Ice_Boss };
+					g_Timer.InitTimerQueue(ev);
+				}
+			}
 		}
 								  break;
 		case MonsterType::Nature_Boss: {
 			ingameroom[p->room_id].NatureBoss._hp = p->bosshp;
 			if (ingameroom[p->room_id].NatureBoss._hp <= 0)ingameroom[p->room_id].FireBoss._is_alive = false;
+			if (ingameroom[p->room_id].FireBoss._hp <= 0)
+			{
+
+				for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+				{
+					if (pl->_stage != clients[id]._stage)continue;
+					// 무슨 몬스터가 죽었는지 다른 클라이언트 들한테 정보를 보내야함 
+					pl->send_player_attack_mosnter(0, true, MonsterType::Nature_Boss);
+
+					std::chrono::system_clock::time_point attacktime = chrono::system_clock::now();
+					TIMER_EVENT ev{ attacktime + 1s ,p->room_id,EVENT_TYPE::EV_PLAYER_ATTACK_NPC, 0, MonsterType::Nature_Boss };
+					g_Timer.InitTimerQueue(ev);
+				}
+			}
 		}
 									 break;
 		}
@@ -895,8 +950,8 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_PLAYER_DEAD_PACKET* p = reinterpret_cast<CS_PLAYER_DEAD_PACKET*>(packet);
 		clients[p->id]._hp = 0;
 		clients[p->id].isDead = true;
-		clients[p->id].animationstate = animateState::BLACKOUT;
 		clients[p->id].prevanimationstate= clients[p->id].animationstate;
+		clients[p->id].animationstate = animateState::BLACKOUT;
 
 		ingameroom[p->room_id].deadplayercnt++;
 		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
@@ -904,6 +959,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == p->id)continue;
 			pl->send_change_animate_packet(p->id);
 		}
+
 		if (ingameroom[p->room_id].deadplayercnt == 2)
 		{
 			for (auto& pl : ingameroom[p->room_id].ingamePlayer)
@@ -912,8 +968,40 @@ void Server::ProcessPacket(int id, char* packet)
 			}
 		}
 		break;
-
-
+	}
+	case CS_GET_ITEM: {
+		CS_GET_ITEM_PACKET* p = reinterpret_cast<CS_GET_ITEM_PACKET*>(packet);
+		switch (p->itemtype)
+		{
+		case '3':
+			ingameroom[p->room_id].IceItem = true;
+			for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+			{
+				pl->send_get_item('3');
+			}
+			break;
+		case '4':
+			ingameroom[p->room_id].FireItem = true;
+			for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+			{
+				pl->send_get_item('4');
+			}
+			break;
+		case '5':
+			ingameroom[p->room_id].NatureItem = true;
+			for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+			{
+				pl->send_get_item('5');
+			}
+			break;
+		}
+		if (ingameroom[p->room_id].IceItem == true
+			&& ingameroom[p->room_id].FireItem == true
+			&& ingameroom[p->room_id].NatureItem == true)
+		{
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(3s), p->room_id,EVENT_TYPE::EV_GAME_WIN_ENDING };
+			g_Timer.InitTimerQueue(ev);
+		}
 	}
 	}
 }
@@ -931,15 +1019,6 @@ void Server::disconnect(int id)
 	ingameroom[clients[id].room_id].ingamePlayer.erase(std::remove_if(ingameroom[clients[id].room_id].ingamePlayer.begin(),
 		ingameroom[clients[id].room_id].ingamePlayer.end(), [id](Session* _session) {
 			return _session->_id == clients[id]._id; }), ingameroom[clients[id].room_id].ingamePlayer.end());
-
-	//auto it = std::find_if(ingameroom[clients[id].room_id].NightMonster)
-
-	//for (auto& npc : ingameroom[clients[id].room_id].NightMonster)
-	//{
-	//	auto it = find_if(npc.ingamePlayer.begin(),npc.ingamePlayer.end(), [id](Session* _session) {
-	//		return _session->_id == id; });
-	//	if(it != npc.ingamePlayer.end())
-	//}
 
 	ingameroom[clients[id].room_id]._state = roomState::Free;
 

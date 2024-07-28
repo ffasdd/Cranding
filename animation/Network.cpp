@@ -626,12 +626,14 @@ void Network::ProcessPacket(char* buf)
 		if (p->_isattacked) {
 			cout << " ICE BOSS SKILL " << endl;
 			g_IceBossMonster.setNpcAttack(true);
+			IcebossSkill = true;
 			g_IceBossMonster.setBossAttackType(5);
 		}
 		else
 		{
 			cout << " Ice Boss SKill Cancle" << endl;
 			g_IceBossMonster.setNpcAttack(false);
+			IcebossSkill = false;
 			g_IceBossMonster.setBossAttackType(3);
 		}
 		break;
@@ -674,6 +676,23 @@ void Network::ProcessPacket(char* buf)
 		cout << p->id << " < - Player Hit " << endl;
 		g_clients[p->id].is_damage = p->isdamaged;
 
+		break;
+	}
+	case SC_GET_ITEM:
+	{
+		SC_GET_ITEM_PACKET* p = reinterpret_cast<SC_GET_ITEM_PACKET*>(buf);
+		switch (p->itemtype)
+		{
+		case '3':
+			IceItem = true;
+			break;
+		case '4':
+			FireItem = true;
+			break;
+		case '5':
+			NatureItem = true; 
+			break;
+		}
 		break;
 	}
 
@@ -844,6 +863,17 @@ void Network::SendPlayerDead()
 	p.type = CS_DEAD_PLAYER;
 	p.room_id = my_roomid;
 	p.id = my_id;
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendGetItem(char _type)
+{
+	CS_GET_ITEM_PACKET p;
+	p.size = sizeof(CS_GET_ITEM_PACKET);
+	p.type = CS_GET_ITEM;
+	p.room_id = my_roomid;
+	p.itemtype = _type;
 
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }

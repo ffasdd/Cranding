@@ -1597,15 +1597,17 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
-				//gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Ice);
+
+				// 보스 체력 서버로 전송 
+				gNetwork.SendBossDamage(g_IceBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Ice_Boss);
 
 				return true;
 			}
 			// ice boss hand with player
 			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
-				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox))
+				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox)
+				&& gNetwork.IcebossSkill == true)
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
@@ -1628,6 +1630,10 @@ bool CIceScene::CheckObjectByObjectCollisions()
 			{
 				isIceitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
+				gNetwork.SendGetItem('3');
+				// 아이템을 먹었다 send 
+
+
 			}
 		}
 	}
@@ -1906,6 +1912,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 			{
 				isFireitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
+				gNetwork.SendGetItem('4');
 			}
 		}
 	}
@@ -2143,20 +2150,19 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 		{
 			// monster with player(attack mode)
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox)
+				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0)
 			{
 				//send attacked monster num
-				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
-				float fPosition2 = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].UpdatePosition(m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_fPosition, m_fElapsedTime, pAnimationSet->m_fLength);
+				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
-				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+				// 보스 체력 서버로 전송 
+				gNetwork.SendBossDamage(g_NatureBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Nature_Boss);
 
 				return(true);
 			}
-		}
 
+		}
 		// collision check with nature item
 		else if (i == 14 ) {
 			XMFLOAT3 e_pos = m_ppHierarchicalGameObjects[i]->GetPosition();
@@ -2166,6 +2172,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 			{
 				isNatureitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
+				gNetwork.SendGetItem('5');
 			}
 		}
 	}

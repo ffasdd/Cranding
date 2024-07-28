@@ -159,6 +159,20 @@ void Timer::TimerThread()
 					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
 				}
+				case EVENT_TYPE::EV_GAME_LOSE_ENDING: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::GAME_ENDING;
+					ov->_ai_target_obj = ev.targetId;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+				}
+				case EVENT_TYPE::EV_GAME_WIN_ENDING: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::GAME_WIN;
+					ov->_ai_target_obj = ev.targetId;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+				}
 
 				}
 			}

@@ -418,15 +418,15 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
 
         // item UI        
         m_pd2dDeviceContext->DrawText(m_vecItem[0], (UINT)wcslen(m_vecItem[0]), m_textFormats[TEXT_SIZE::SIZE_15], m_IceItemBar, m_brushes[BRUSH_COLOR::ABLACK]);
-        if(gGameFramework.m_pScene->isIceitem)
+        if(gNetwork.IceItem) // 여기서 아이템 UI 
             m_pd2dDeviceContext->DrawText(m_vecItem[0], (UINT)wcslen(m_vecItem[0]), m_textFormats[TEXT_SIZE::SIZE_15], m_IceItemBar, m_brushes[BRUSH_COLOR::BLACK]);
 
         m_pd2dDeviceContext->DrawText(m_vecItem[1], (UINT)wcslen(m_vecItem[1]), m_textFormats[TEXT_SIZE::SIZE_15], m_FireItemBar, m_brushes[BRUSH_COLOR::ABLACK]);
-        if (gGameFramework.m_pScene->isFireitem)
+        if (gNetwork.FireItem)
             m_pd2dDeviceContext->DrawText(m_vecItem[1], (UINT)wcslen(m_vecItem[1]), m_textFormats[TEXT_SIZE::SIZE_15], m_FireItemBar, m_brushes[BRUSH_COLOR::BLACK]);
 
         m_pd2dDeviceContext->DrawText(m_vecItem[2], (UINT)wcslen(m_vecItem[2]), m_textFormats[TEXT_SIZE::SIZE_15], m_NatureItemBar, m_brushes[BRUSH_COLOR::ABLACK]);
-        if (gGameFramework.m_pScene->isNatureitem)
+        if (gNetwork.NatureItem)
             m_pd2dDeviceContext->DrawText(m_vecItem[2], (UINT)wcslen(m_vecItem[2]), m_textFormats[TEXT_SIZE::SIZE_15], m_NatureItemBar, m_brushes[BRUSH_COLOR::BLACK]);
 
 
