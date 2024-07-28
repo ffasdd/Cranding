@@ -846,7 +846,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == p->id)continue;
 			pl->send_player_hit(p->id);
 		}
-
+		break;
 	}
 
 	case CS_BOSSMONSTER_DAMGED: {
@@ -888,6 +888,17 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 									 break;
 		}
+		break;
+	}
+
+	case CS_DEAD_PLAYER: {
+		CS_PLAYER_DEAD_PACKET* p = reinterpret_cast<CS_PLAYER_DEAD_PACKET*>(packet);
+		clients[p->id]._hp = 0;
+		clients[p->id].isDead = true;
+
+		break;
+
+
 	}
 	}
 }

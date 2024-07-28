@@ -64,6 +64,8 @@ public: // thread send
 	void SendPlayerHIt( bool is_damaged);
 	void SendBossDamage(int _hp,MonsterType _type);
 
+	void SendPlayerDead();
+
 	bool MonsterCollide(Session& _monster);
 	
 public: // utils
