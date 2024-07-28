@@ -114,6 +114,8 @@ public:
 	float PlayerPosX = 0.0f;
 	float PlayerPosZ = 0.0f;
 
+	bool isBiludobj = false;
+
 	int cl_id = -1;
 	void ChangeScene(SCENEKIND nSceneKind);
 	void ChangeBGM(int nSceneKind);

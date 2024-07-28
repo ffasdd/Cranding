@@ -749,9 +749,9 @@ void CGameFramework::ChangeBGM(int nSceneKind)
 
 void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 {
-
 	if (nSceneKind != sceneManager.GetCurrentScene())
 	{
+		isBiludobj = false;
 		if (m_pPlayer)
 			ChangeSceneReleaseObject();
 
@@ -776,6 +776,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
+			isBiludobj = true;
+
 			break;
 		}
 		case SCENEKIND::SPACESHIP:
@@ -797,7 +799,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			//SoundData SpaceshipBgm = LoadWaveFile(L"Sound/Day.wav");
 			//ChangeBGM(0);
-
+			isBiludobj = true;
 			break;
 		}
 		case SCENEKIND::ICE:
@@ -820,7 +822,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 
 			//ChangeBGM(1);
-
+			isBiludobj = true;
 			break;
 
 		}
@@ -843,7 +845,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 
 			//ChangeBGM(2);
-
+			isBiludobj = true;
 			break;
 		}
 
@@ -867,7 +869,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 
 			//ChangeBGM(3);
-
+			isBiludobj = true;
 			break;
 		}
 		case SCENEKIND::VICTORY:
@@ -887,7 +889,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
+			isBiludobj = true;
 
 			break;
 		}
@@ -908,7 +910,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
+			isBiludobj = true;
 
 			break;
 		}
@@ -1356,6 +1358,8 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 
 	if (m_pScene) m_pScene->ReleaseUploadBuffers();
 	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
+
+	isBiludobj = true;
 
 	m_GameTimer.Reset();
 }
@@ -1840,7 +1844,7 @@ void CGameFramework::FrameAdvance()
 		WaitForGpuComplete();
 #ifdef _FULLSCREEN
 
-		if (m_pUILayer)
+		if (m_pUILayer && isBiludobj)
 			UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
 
 #endif // _FULLSCREEN
