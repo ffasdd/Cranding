@@ -767,6 +767,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
+			ChangeBGM(0);
 
 			break;
 		}
@@ -787,8 +788,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			//SoundData SpaceshipBgm = LoadWaveFile(L"Sound/Day.wav");
-			//ChangeBGM(0);
+
+			ChangeBGM(1);
 			break;
 		}
 		case SCENEKIND::ICE:
@@ -810,7 +811,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			//ChangeBGM(1);
+			ChangeBGM(2);
+
 			break;
 
 		}
@@ -832,7 +834,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			//ChangeBGM(2);
+			ChangeBGM(3);
+
 			break;
 		}
 
@@ -855,7 +858,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			//ChangeBGM(3);
+			ChangeBGM(4);
+
 
 			break;
 		}
@@ -877,7 +881,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			
+			ChangeBGM(5);
+
 
 			break;
 		}
@@ -898,6 +903,9 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
+
+			ChangeBGM(6);
+
 
 	
 			break;
@@ -1304,10 +1312,14 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
-	m_SceneSounds[0] = LoadWaveFile(L"Sound/Day.wav");
-	m_SceneSounds[1] = LoadWaveFile(L"Sound/Ice.wav");
-	m_SceneSounds[2] = LoadWaveFile(L"Sound/Fire.wav");
-	m_SceneSounds[3] = LoadWaveFile(L"Sound/Grass.wav");
+	m_SceneSounds[0] = LoadWaveFile(L"Sound/Lobby.wav");
+	m_SceneSounds[1] = LoadWaveFile(L"Sound/Day.wav");
+	m_SceneSounds[2] = LoadWaveFile(L"Sound/Ice.wav");
+	m_SceneSounds[3] = LoadWaveFile(L"Sound/Fire.wav");
+	m_SceneSounds[4] = LoadWaveFile(L"Sound/Grass.wav");
+	m_SceneSounds[5] = LoadWaveFile(L"Sound/Win.wav");
+	m_SceneSounds[6] = LoadWaveFile(L"Sound/Lose.wav");
+
 
 	// bgm
 //SoundData IceBgm = m_pScene->LoadWaveFile(L"Scene2BGM.wav");
@@ -1612,6 +1624,7 @@ void CGameFramework::FrameAdvance()
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
 				gNetwork.SendLoginfo();
+
 				while (cl_id != -1);
 
 				ChangeScene(SCENEKIND::LOBBY);

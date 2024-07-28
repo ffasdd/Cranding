@@ -98,7 +98,7 @@ public:
 	void PlayAttackSound(IXAudio2* pXAudio2, const SoundData& soundData);
 public:
 	// sound
-	SoundData m_SceneSounds[4];
+	SoundData m_SceneSounds[7];
 	IXAudio2SourceVoice* m_pSourceVoice;
 	IXAudio2* m_pXAudio2 = nullptr;
 	IXAudio2MasteringVoice* m_pMasterVoice = nullptr;
