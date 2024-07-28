@@ -240,7 +240,7 @@ void Server::WorkerThread()
 			int r_id = static_cast<int>(key);
 			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			InitialziedMonster(r_id);
-			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(60s),r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(40s),r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
 			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
