@@ -1602,19 +1602,21 @@ bool CIceScene::CheckObjectByObjectCollisions()
 
 				return true;
 			}
-			//// ice boss hand with player
-			//else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
-			//	&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
-			//	&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)
-			//		||
-			//		m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
-			//{
-			//	// 여기에 hp 닳는 코드 넣어주랑
-			//	m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
-			//	m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+			// ice boss hand with player
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
 
-			//	return false;
-			//}
+				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
+				g_clients[gNetwork.my_id].is_damage = true;
+				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+
+				return false;
+			}
 		}
 
 		// collision check with ice item
