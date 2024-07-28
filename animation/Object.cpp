@@ -92,12 +92,12 @@ void CTexture::ReleaseShaderVariables()
 
 void CTexture::ReleaseUploadBuffers()
 {
-	//if (m_ppd3dTextureUploadBuffers)
-	//{
-	//	for (int i = 0; i < m_nTextures; i++) if (m_ppd3dTextureUploadBuffers[i]) m_ppd3dTextureUploadBuffers[i]->Release();
-	//	delete[] m_ppd3dTextureUploadBuffers;
-	//	m_ppd3dTextureUploadBuffers = NULL;
-	//}
+	if (m_ppd3dTextureUploadBuffers)
+	{
+		for (int i = 0; i < m_nTextures; i++) if (m_ppd3dTextureUploadBuffers[i]) m_ppd3dTextureUploadBuffers[i]->Release();
+		delete[] m_ppd3dTextureUploadBuffers;
+		m_ppd3dTextureUploadBuffers = NULL;
+	}
 }
 
 //void CTexture::LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nIndex)
@@ -562,25 +562,14 @@ CAnimationController::CAnimationController(ID3D12Device *pd3dDevice, ID3D12Graph
 
 CAnimationController::~CAnimationController()
 {
-	if (m_pAnimationTracks)
+	if (m_pAnimationTracks) delete[] m_pAnimationTracks;
+
+	for (int i = 0; i < m_nSkinnedMeshes; i++)
 	{
-		delete[] m_pAnimationTracks;
-		m_pAnimationTracks = nullptr;
+		m_ppd3dcbSkinningBoneTransforms[i]->Unmap(0, NULL);
+		m_ppd3dcbSkinningBoneTransforms[i]->Release();
 	}
 
-	// Code for releasing
-	if (m_nSkinnedMeshes > 0)
-	{
-		for (int i = 0; i < m_nSkinnedMeshes; i++)
-		{
-			if (m_ppd3dcbSkinningBoneTransforms[i]) {
-				std::cout << "Unmapping and releasing skinning bone transform " << i << std::endl;
-				m_ppd3dcbSkinningBoneTransforms[i]->Unmap(0, NULL);
-				m_ppd3dcbSkinningBoneTransforms[i]->Release();
-				m_ppd3dcbSkinningBoneTransforms[i] = nullptr;
-			}
-		}
-	}
 	if (m_ppd3dcbSkinningBoneTransforms) delete[] m_ppd3dcbSkinningBoneTransforms;
 	if (m_ppcbxmf4x4MappedSkinningBoneTransforms) delete[] m_ppcbxmf4x4MappedSkinningBoneTransforms;
 
@@ -878,23 +867,16 @@ CGameObject::~CGameObject()
 {
 	if (m_pMesh) m_pMesh->Release();
 
-
-	if (m_nMaterials > 0)
+	if (m_nMaterials > 0 && m_ppMaterials)
 	{
 		for (int i = 0; i < m_nMaterials; i++)
 		{
-			if (m_ppMaterials[i] != nullptr) {
-				std::cout << "Releasing material " << i << std::endl;
-				m_ppMaterials[i]->Release();
-				m_ppMaterials[i] = nullptr;
-			}
+			if (m_ppMaterials[i]) m_ppMaterials[i]->Release();
 		}
 	}
 	if (m_ppMaterials) delete[] m_ppMaterials;
 
 	if (m_pSkinnedAnimationController) delete m_pSkinnedAnimationController;
-
-	ReleaseShaderVariables();
 }
 
 void CGameObject::UpdateBoundingBox()
@@ -1157,15 +1139,17 @@ void CGameObject::ReleaseShaderVariables()
 
 void CGameObject::ReleaseUploadBuffers()
 {
-	if (m_pMesh != nullptr) m_pMesh->ReleaseUploadBuffers();
+	if (m_pMesh) {
+		m_pMesh->ReleaseUploadBuffers();
+	}
 
 	for (int i = 0; i < m_nMaterials; i++)
 	{
-		if (m_ppMaterials[i] != nullptr) m_ppMaterials[i]->ReleaseUploadBuffers();
+		if (m_ppMaterials[i]) m_ppMaterials[i]->ReleaseUploadBuffers();
 	}
 
-	if (m_pSibling != nullptr) m_pSibling->ReleaseUploadBuffers();
-	if (m_pChild != nullptr) m_pChild->ReleaseUploadBuffers();
+	if (m_pSibling) m_pSibling->ReleaseUploadBuffers();
+	if (m_pChild) m_pChild->ReleaseUploadBuffers();
 }
 
 void CGameObject::SetPosition(float x, float y, float z)
