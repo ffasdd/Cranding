@@ -36,11 +36,11 @@ cbuffer cbGameObjectInfo : register(b2)
 #define MATERIAL_DETAIL_NORMAL_MAP	0x40
 
 ////_FULLSCREEN
-#define FRAME_BUFFER_WIDTH				1920
-#define FRAME_BUFFER_HEIGHT				1080
+//#define FRAME_BUFFER_WIDTH				1920
+//#define FRAME_BUFFER_HEIGHT				1080
 
-//#define FRAME_BUFFER_WIDTH				640
-//#define FRAME_BUFFER_HEIGHT				480
+#define FRAME_BUFFER_WIDTH				640
+#define FRAME_BUFFER_HEIGHT				480
 
 Texture2D gtxtAlbedoTexture : register(t6);
 Texture2D gtxtSpecularTexture : register(t7);

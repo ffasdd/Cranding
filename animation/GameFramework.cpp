@@ -948,7 +948,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 		WaitForGpuComplete();
 
-		if (m_pScene) m_pScene->ReleaseUploadBuffers();
+		//if (m_pScene) m_pScene->ReleaseUploadBuffers();
 		if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
 
 		m_GameTimer.Reset();
@@ -1782,7 +1782,7 @@ void CGameFramework::FrameAdvance()
 		if (m_pScene) {
 			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);			
 		}
-		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+		if(m_pPlayer) m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 
