@@ -513,9 +513,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isready = true;
 			break;
 
-		case 'B':
+		case 'R':
 			//m_bRenderBoundingBox = !m_bRenderBoundingBox;
 			//isSceneChange = true;
+			isready = true;
 			g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
@@ -1762,6 +1763,7 @@ void CGameFramework::FrameAdvance()
 			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);			
 		}
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 
