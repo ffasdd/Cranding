@@ -394,7 +394,7 @@ void Monster::NatureMove()
 	{
 		if (_attackState != false)
 		{
-			_attackState = false;
+			_attackState = false; 
 			for (auto& pl : ingamePlayer)
 			{
 				if (id == -1)break;

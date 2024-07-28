@@ -1143,10 +1143,10 @@ void CGameObject::ReleaseUploadBuffers()
 		m_pMesh->ReleaseUploadBuffers();
 	}
 
-	for (int i = 0; i < m_nMaterials; i++)
-	{
-		if (m_ppMaterials[i]) m_ppMaterials[i]->ReleaseUploadBuffers();
-	}
+	//for (int i = 0; i < m_nMaterials; i++)
+	//{
+	//	if (m_ppMaterials[i]) m_ppMaterials[i]->ReleaseUploadBuffers();
+	//}
 
 	if (m_pSibling) m_pSibling->ReleaseUploadBuffers();
 	if (m_pChild) m_pChild->ReleaseUploadBuffers();
