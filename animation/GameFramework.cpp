@@ -1693,6 +1693,12 @@ void CGameFramework::FrameAdvance()
 		ProcessInput();
 
 		AnimateObjects();
+
+		if (m_pPlayer->m_pSkinnedAnimationController->m_bIsDead)
+			isBlurRender = true;
+		else
+			isBlurRender = false;
+
 		HRESULT hResult = m_pd3dCommandAllocator->Reset();
 		hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 

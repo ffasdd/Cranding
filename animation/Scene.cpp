@@ -595,7 +595,6 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		gNetwork.SendPlayerDead();
 		//m_pPlayer->SetHealth(0);
 		m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
-		
 
 	}
 	// monster dead
