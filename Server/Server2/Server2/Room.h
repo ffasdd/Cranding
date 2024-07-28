@@ -22,6 +22,7 @@ public:
 
 	int _id = -1;
 	int readycnt = 0;
+	int deadplayercnt = 0;
 	std::chrono::system_clock::time_point start_time;
 
 

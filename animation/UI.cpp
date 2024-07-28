@@ -137,7 +137,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     }
 
     //  ingame item
-    int Item_num = 3;
+    int Item_num = 4;
     WCHAR** pItem = new WCHAR * [Item_num];
     for (int i = 0; i < Item_num; ++i)
     {
@@ -147,6 +147,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     wcscpy_s(pItem[0], 256, L"Ice");
     wcscpy_s(pItem[1], 256, L"Fire");
     wcscpy_s(pItem[2], 256, L"Nature");
+    wcscpy_s(pItem[3], 256, L"SpaceShip HP");
     for (int i = 0; i < Item_num; ++i) {
         m_vecItem.push_back(pItem[i]);
     }
@@ -288,7 +289,7 @@ IDWriteTextFormat* UILayer::CreateTextFormat(WCHAR* pszFontName, float fFontSize
     IDWriteTextFormat* pdwDefaultTextFormat = NULL;
     m_pd2dWriteFactory->CreateTextFormat(L"¸¼Àº °íµñ", nullptr, DWRITE_FONT_WEIGHT_BOLD, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_EXPANDED, fFontSize, L"en-us", &pdwDefaultTextFormat);
 
-    pdwDefaultTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    pdwDefaultTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); // ¿ÞÂÊ Á¤·Ä
     pdwDefaultTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
     //m_pd2dWriteFactory->CreateTextFormat(L"Arial", nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fSmallFontSize, L"en-us", &m_pdwDefaultTextFormat);
 
@@ -387,13 +388,13 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         // status
         WCHAR elementText[256];
         swprintf_s(elementText, 256, L"HP: %d", g_clients[gNetwork.my_id].getHp());
-        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::PINK]);
+        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::BLACK]);
 
         swprintf_s(elementText, 256, L"Attack Power: %d", g_clients[gNetwork.my_id].getAttackPower());
-        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::PINK]);
+        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::BLACK]);
 
         swprintf_s(elementText, 256, L"Speed: %d", g_clients[gNetwork.my_id].getSpeed());
-        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::PINK]);
+        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::BLACK]);
 
         // Map ÀÌµ¿ ¸Þ½ÃÁö
         std::wstring mapMessage;
@@ -413,6 +414,8 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         // ¿ìÁÖ¼± hp
         m_pd2dDeviceContext->FillRectangle(m_spaceshipBar, m_brushes[BRUSH_COLOR::BLACK]);
         m_pd2dDeviceContext->FillRectangle(m_spaceshipHPBar, m_brushes[BRUSH_COLOR::RED]);
+        m_pd2dDeviceContext->DrawText(m_vecItem[3], (UINT)wcslen(m_vecItem[3]), m_textFormats[TEXT_SIZE::SIZE_15], m_spaceshipBar, m_brushes[BRUSH_COLOR::BLACK]);
+
 
         // item UI        
         m_pd2dDeviceContext->DrawText(m_vecItem[0], (UINT)wcslen(m_vecItem[0]), m_textFormats[TEXT_SIZE::SIZE_15], m_IceItemBar, m_brushes[BRUSH_COLOR::ABLACK]);

@@ -246,15 +246,16 @@ void Server::WorkerThread()
 		case COMP_TYPE::NIGHT_TIMER: {
 			int r_id = static_cast<int>(key);
 			ingameroom[r_id].NightSend();
-			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(60s),r_id,EVENT_TYPE::EV_NIGHT };
-			g_Timer.InitTimerQueue(ev);
+			TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(30s),r_id,EVENT_TYPE::EV_DAYTIME };
+			g_Timer.InitTimerQueue(ev3);
+
 			delete ex_over;
 			break;
 		}
 		case COMP_TYPE::DAYTIME_TIMER: {
 			int r_id = static_cast<int>(key);
 			ingameroom[r_id].DayTimeSend();
-			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(30s),r_id,EVENT_TYPE::EV_DAYTIME };
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(30s),r_id,EVENT_TYPE::EV_NIGHT };
 			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
@@ -670,8 +671,7 @@ void Server::ProcessPacket(int id, char* packet)
 			TIMER_EVENT ev2{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NIGHT };
 			g_Timer.InitTimerQueue(ev2);
 
-			TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_DAYTIME };
-			g_Timer.InitTimerQueue(ev3);
+
 
 			TIMER_EVENT ev4{ ingameroom[r_id].start_time ,r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev4);
@@ -895,7 +895,14 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_PLAYER_DEAD_PACKET* p = reinterpret_cast<CS_PLAYER_DEAD_PACKET*>(packet);
 		clients[p->id]._hp = 0;
 		clients[p->id].isDead = true;
-
+		ingameroom[p->room_id].deadplayercnt++;
+		if (ingameroom[p->room_id].deadplayercnt == 2)
+		{
+			for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+			{
+				pl->send_change_scene(pl->_id, 7);
+			}
+		}
 		break;
 
 
