@@ -72,13 +72,15 @@ public: // thread send
 
 	void StopSendRecv()
 	{
+
 		if (netThread.joinable()) {
 			netThread.join();
 		}
-		if (sendThread.joinable())
-		{
-			sendThread.join();
-		}
+
+		//if (sendThread.joinable())
+		//{
+		//	sendThread.join();
+		//}
 	}
 	
 public: // utils
