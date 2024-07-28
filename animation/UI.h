@@ -92,6 +92,7 @@ private:
     // ingame
     int m_playerHP = 100;
     int m_spaceshipHP = 100;
+    D2D1_RECT_F m_Bar = D2D1::RectF(1300.0f, 930.0f, 1900.0f, FRAME_BUFFER_HEIGHT - 50.0f);
     D2D1_RECT_F m_HPBar = D2D1::RectF(0.0f, 0.0f, 0.0f, 0.0f);
     D2D1_RECT_F m_Timer = D2D1::RectF(1300.0f, 0.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 
@@ -114,6 +115,9 @@ private:
 
     // lobby scene ui
     vector<WCHAR*> m_vecLobbyScene;
+
+    // result scene ui
+    vector<WCHAR*> m_vecResultScene;
 
     // ingame scene ui
     vector<WCHAR*> m_vecIngameScene;

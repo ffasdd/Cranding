@@ -36,7 +36,7 @@ CPlayer::CPlayer()
 
 	SetHealth(100);
 	SetSpeed(70);
-	SetAttackPower(5);
+	SetAttackPower(20);
 }
 
 CPlayer::~CPlayer()

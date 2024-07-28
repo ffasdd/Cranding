@@ -590,6 +590,10 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = true;
 	}*/
 
+	if (m_pPlayer->GetHealth() < 0) {
+		m_pPlayer->SetHealth(0);
+		m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
+	}
 	// monster dead
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
@@ -1234,7 +1238,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 					||
 					this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
 			{
-				// 여기에 hp 닳는 코드 넣어주랑
+				
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				gNetwork.SendMonsterHitSpaceship(g_monsters[i - 3].getId());
 
@@ -1279,7 +1283,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 					||
 					this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
 			{
-				// 여기에 hp 닳는 코드 넣어주랑
+				
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 
 				return false;
@@ -1318,7 +1322,6 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
 			{
-				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 
 				return false;
@@ -1875,7 +1878,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 					||
 					m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)))
 			{
-				// 여기에 hp 닳는 코드 넣어주랑
+				m_pPlayer->SetHealth(m_pPlayer->GetHealth() - 20);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
 				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
@@ -2151,6 +2154,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 	}
 	return(false);
 }
+
 void CGrassScene::ReleaseUploadBuffers()
 {
 	CScene::ReleaseUploadBuffers();
