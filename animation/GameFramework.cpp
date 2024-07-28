@@ -787,7 +787,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 
 			//SoundData SpaceshipBgm = LoadWaveFile(L"Sound/Day.wav");
-			ChangeBGM(0);
+			//ChangeBGM(0);
 
 			break;
 		}
@@ -810,7 +810,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			ChangeBGM(1);
+			//ChangeBGM(1);
 
 			break;
 
@@ -832,7 +832,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			ChangeBGM(2);
+			//ChangeBGM(2);
 
 			break;
 		}
@@ -855,7 +855,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			ChangeBGM(3);
+			//ChangeBGM(3);
 
 			break;
 		}

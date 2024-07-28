@@ -757,7 +757,7 @@ void Server::ProcessPacket(int id, char* packet)
 		case MonsterType::Ice_Boss:
 		{
 			ingameroom[p->room_id].IceBoss._is_alive = false;
-			break;
+			break; 
 		}
 		case MonsterType::Nature_Boss:
 		{
