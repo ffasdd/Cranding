@@ -33,11 +33,6 @@
 #include <concurrent_queue.h>
 
 
-
-#include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx12.h"
-
 using namespace std;
 
 #include<unordered_map>

@@ -752,8 +752,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 	if (nSceneKind != sceneManager.GetCurrentScene())
 	{
 		isBiludobj = false;
-		if (m_pPlayer)
-			ChangeSceneReleaseObject();
+		ChangeSceneReleaseObject();
 
 		switch (nSceneKind)
 		{
@@ -918,13 +917,15 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			break;
 		}
 
-		m_pd3dCommandList->Close();
+		if (S_OK != m_pd3dCommandList->Close()) {
+			cout << "CommandList Close Fail" << endl;
+		}
 		ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 		m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 
 		WaitForGpuComplete();
 
-		//if (m_pScene) m_pScene->ReleaseUploadBuffers();
+		if (m_pScene) m_pScene->ReleaseUploadBuffers();
 		if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
 
 		m_GameTimer.Reset();

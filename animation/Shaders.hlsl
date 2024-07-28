@@ -181,7 +181,6 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     if (gnTexturesMask & MATERIAL_ALBEDO_MAP)
         output.f4Texture = gtxtAlbedoTexture.Sample(gssWrap, input.uv);
     output.f4Texture.a = 1;
-
     
     input.normalW = normalize(input.normalW);
     output.normal = float4(input.normalW, 0);
@@ -193,8 +192,6 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     //output.Position = float4(input.positionW, 0);
     
     output.scene = output.f4Texture + gMaterial.m_cEmissive;
-    
-    
     
     return (output);
 }
