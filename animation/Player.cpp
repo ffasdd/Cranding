@@ -109,7 +109,7 @@ void CPlayer::UpdateRotation()
 void CPlayer::RotateYaw(float yaw) {
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
 
-	if ((nCurrentCameraMode == FIRST_PERSON_CAMERA) || (nCurrentCameraMode == THIRD_PERSON_CAMERA) || (nCurrentCameraMode == INGAME_SCENE_CAMERA)) {
+	if ((nCurrentCameraMode == FIRST_PERSON_CAMERA) || (nCurrentCameraMode == THIRD_PERSON_CAMERA) || (nCurrentCameraMode == INGAME_SCENE_CAMERA || m_pCamera->GetMode() == LOGIN_SCENE_CAMERA)) {
 		if (yaw != 0.0f) {
 			m_fYaw += yaw;
 			if (m_fYaw > 360.0f) m_fYaw -= 360.0f;
@@ -163,7 +163,7 @@ void CPlayer::Move(int c_id, const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 void CPlayer::Rotate(float x, float y, float z)
 {
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
-	if ((nCurrentCameraMode == FIRST_PERSON_CAMERA) || (nCurrentCameraMode == THIRD_PERSON_CAMERA) || (nCurrentCameraMode == INGAME_SCENE_CAMERA))
+	if ((nCurrentCameraMode == FIRST_PERSON_CAMERA) || (nCurrentCameraMode == THIRD_PERSON_CAMERA) || (nCurrentCameraMode == INGAME_SCENE_CAMERA || m_pCamera->GetMode() == LOGIN_SCENE_CAMERA))
 	{
 		if (x != 0.0f)
 		{
@@ -243,9 +243,9 @@ void CPlayer::Update(float fTimeElapsed)
 	XMFLOAT3 b = GetLookVector();
 	b = Vector3::ScalarProduct(b, 100, false);
 
-	if (nCurrentCameraMode == THIRD_PERSON_CAMERA || nCurrentCameraMode == INGAME_SCENE_CAMERA) m_pCamera->Update(Vector3::Add(m_xmf3Position, b), fTimeElapsed);
+	if (nCurrentCameraMode == THIRD_PERSON_CAMERA || nCurrentCameraMode == INGAME_SCENE_CAMERA || m_pCamera->GetMode() == LOGIN_SCENE_CAMERA) m_pCamera->Update(Vector3::Add(m_xmf3Position, b), fTimeElapsed);
 	if (m_pCameraUpdatedContext) OnCameraUpdateCallback(fTimeElapsed);
-	if (nCurrentCameraMode == THIRD_PERSON_CAMERA || nCurrentCameraMode == INGAME_SCENE_CAMERA) m_pCamera->SetLookAt(Vector3::Add(m_xmf3Position, b));
+	if (nCurrentCameraMode == THIRD_PERSON_CAMERA || nCurrentCameraMode == INGAME_SCENE_CAMERA || m_pCamera->GetMode() == LOGIN_SCENE_CAMERA) m_pCamera->SetLookAt(Vector3::Add(m_xmf3Position, b));
 	m_pCamera->RegenerateViewMatrix();
 
 	fLength = Vector3::Length(m_xmf3Velocity);
@@ -271,6 +271,11 @@ CCamera* CPlayer::OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode)
 		break;
 	case INGAME_SCENE_CAMERA:
 		pNewCamera = new CLoginSceneCamera(m_pCamera);
+		break;
+	case LOGIN_SCENE_CAMERA:
+		pNewCamera = new CLoginSceneCamera(m_pCamera);
+		break;
+	default:
 		break;
 	}
 	if (nCurrentCameraMode == SPACESHIP_CAMERA)
@@ -315,7 +320,7 @@ void CPlayer::OnPrepareRender()
 void CPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int pipelinestate)
 {
 	DWORD nCameraMode = (pCamera) ? pCamera->GetMode() : 0x00;
-	if (nCameraMode == THIRD_PERSON_CAMERA || nCameraMode == INGAME_SCENE_CAMERA) CGameObject::Render(pd3dCommandList, pCamera, 0, pipelinestate);
+	if (nCameraMode == THIRD_PERSON_CAMERA || nCameraMode == INGAME_SCENE_CAMERA || nCameraMode == LOGIN_SCENE_CAMERA) CGameObject::Render(pd3dCommandList, pCamera, 0, pipelinestate);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -473,6 +478,18 @@ CCamera* CTerrainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 		break;
+	case LOGIN_SCENE_CAMERA:
+		SetFriction(250.0f);
+		SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
+		SetMaxVelocityXZ(float(GetSpeed()));
+		SetMaxVelocityY(40.0f);
+		m_pCamera = OnChangeCamera(LOGIN_SCENE_CAMERA, nCurrentCameraMode);
+		m_pCamera->SetTimeLag(1.0f);
+		m_pCamera->SetOffset(XMFLOAT3(0.0f, 40.0f, -30.0f));
+		m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 75.0f);
+		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
+		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+		break;
 	default:
 		break;
 	}
@@ -520,7 +537,7 @@ void CTerrainPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 	{
 		xmf3CameraPosition.y = fHeight;
 		m_pCamera->SetPosition(xmf3CameraPosition);
-		if (m_pCamera->GetMode() == THIRD_PERSON_CAMERA || m_pCamera->GetMode() == INGAME_SCENE_CAMERA)
+		if (m_pCamera->GetMode() == THIRD_PERSON_CAMERA || m_pCamera->GetMode() == INGAME_SCENE_CAMERA || m_pCamera->GetMode() == LOGIN_SCENE_CAMERA)
 		{
 
 			CLoginSceneCamera* p3rdPersonCamera = (CLoginSceneCamera*)m_pCamera;
@@ -797,7 +814,7 @@ void CLoginPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 	{
 		xmf3CameraPosition.y = fHeight;
 		m_pCamera->SetPosition(xmf3CameraPosition);
-		if (m_pCamera->GetMode() == THIRD_PERSON_CAMERA || m_pCamera->GetMode() == LOGIN_SCENE_CAMERA)
+		if (m_pCamera->GetMode() == THIRD_PERSON_CAMERA || m_pCamera->GetMode() == LOGIN_SCENE_CAMERA || m_pCamera->GetMode() == INGAME_SCENE_CAMERA)
 		{
 			CLoginSceneCamera* p3rdPersonCamera = (CLoginSceneCamera*)m_pCamera;
 			p3rdPersonCamera->SetLookAt(GetPosition());
