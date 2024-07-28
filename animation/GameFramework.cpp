@@ -743,7 +743,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 	if (nSceneKind != sceneManager.GetCurrentScene())
 	{
 		//if (m_pPlayer)
-			ChangeSceneReleaseObject();
+		ChangeSceneReleaseObject();
 
 
 		switch (nSceneKind)
@@ -766,7 +766,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
 			ChangeBGM(0);
 
 			break;
@@ -787,7 +786,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
 
 			ChangeBGM(1);
 			break;
@@ -810,7 +808,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
 			ChangeBGM(2);
 
 			break;
@@ -833,7 +830,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
 			ChangeBGM(3);
 
 			break;
@@ -857,7 +853,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
 			ChangeBGM(4);
 
 
@@ -880,7 +875,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
 			ChangeBGM(5);
 
 
@@ -903,7 +897,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
+	
 			ChangeBGM(6);
 
 
@@ -1390,6 +1384,7 @@ void CGameFramework::ReleaseObjects()
 
 void CGameFramework::ChangeSceneReleaseObject()
 {
+	m_pPlayer->isplayermake = false;
 	if (m_pPlayer) {
 		m_pPlayer->Release();
 		m_pPlayer = nullptr;
@@ -1625,7 +1620,9 @@ void CGameFramework::FrameAdvance()
 			{
 				gNetwork.SendLoginfo();
 
-				while (cl_id != -1);
+				while (cl_id != -1) {
+					cout << "==" << endl;
+				}
 
 				ChangeScene(SCENEKIND::LOBBY);
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
@@ -1756,7 +1753,7 @@ void CGameFramework::FrameAdvance()
 		if (m_pScene && m_pScene->isBiludobj) {
 			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
 		}
-		if(m_pPlayer && m_pScene->isBiludobj)
+		if(m_pPlayer && m_pPlayer->isplayermake ==true)
 			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);

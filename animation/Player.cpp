@@ -418,6 +418,7 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	SetAttackPower(5);
 
 	if (pAngrybotModel) delete pAngrybotModel;
+	isplayermake = true;
 }
 
 CTerrainPlayer::~CTerrainPlayer()
@@ -701,6 +702,7 @@ CLoginPlayer::CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 	SetScale(XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 	if (pAngrybotModel) delete pAngrybotModel;
+	isplayermake = true;
 }
 
 CLoginPlayer::~CLoginPlayer()

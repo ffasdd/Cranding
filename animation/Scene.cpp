@@ -1498,7 +1498,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	if (pIceItemModel) delete pIceItemModel;
 
 	//PlayBGM(L"Sound/Ice.wav");
-	isBiludobj = false;
+	isBiludobj = true;
 }
 
 bool CIceScene::CheckObjectByObjectCollisions()

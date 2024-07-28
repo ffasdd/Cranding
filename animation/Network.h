@@ -75,10 +75,7 @@ public: // thread send
 		if (netThread.joinable()) {
 			netThread.join();
 		}
-		if (sendThread.joinable())
-		{
-			sendThread.join();
-		}
+		
 	}
 	
 public: // utils

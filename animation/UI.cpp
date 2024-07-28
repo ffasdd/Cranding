@@ -339,7 +339,6 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         break;
     default:
         // ingame 
-
         m_pd2dDeviceContext->BeginDraw();
         
         // time
