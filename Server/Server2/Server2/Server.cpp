@@ -811,9 +811,7 @@ void Server::ProcessPacket(int id, char* packet)
 
 		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
 		{
-			//if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage)continue;
-			// 무슨 몬스터가 죽었는지 다른 클라이언트 들한테 정보를 보내야함 
 			pl->send_player_attack_mosnter(p->npc_id, true, p->_montype);
 
 			std::chrono::system_clock::time_point attacktime = chrono::system_clock::now();
