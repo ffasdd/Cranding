@@ -93,11 +93,12 @@ public:
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
+	// sound
 	void InitXAudio2();
 	void CleanupXAudio2();
 	void PlaySounds(IXAudio2* pXAudio2, const SoundData& soundData);
 	SoundData LoadWaveFile(const wchar_t* filename);
-
+	void PlayAttackSound(IXAudio2* pXAudio2, const SoundData& soundData);
 public:
 	// sound
 	SoundData m_SceneSounds[4];
