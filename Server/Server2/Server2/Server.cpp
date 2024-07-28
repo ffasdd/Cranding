@@ -229,6 +229,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::NPC_UPDATE: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			ingameroom[r_id].UpdateNpc();
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
@@ -237,6 +238,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::NPC_INITIALIZE: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			InitialziedMonster(r_id);
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(60s),r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
 			g_Timer.InitTimerQueue(ev);
@@ -245,9 +247,10 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::NIGHT_TIMER: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			cout << " Night " << endl;
 			ingameroom[r_id].NightSend();
-			TIMER_EVENT ev3{chrono::system_clock::now() + chrono::seconds(20s), r_id,EVENT_TYPE::EV_DAYTIME};
+			TIMER_EVENT ev3{ chrono::system_clock::now() + chrono::seconds(20s), r_id,EVENT_TYPE::EV_DAYTIME };
 			g_Timer.InitTimerQueue(ev3);
 
 			delete ex_over;
@@ -255,24 +258,27 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::DAYTIME_TIMER: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			cout << " Day " << endl;
 			ingameroom[r_id].DayTimeSend();
 			ingameroom[r_id].daycnt++;
 			if (ingameroom[r_id].daycnt == 6)
 			{
+				ingameroom[r_id].isLose = true;
 				TIMER_EVENT ev1{ chrono::system_clock::now() + std::chrono::seconds(5s),r_id,EVENT_TYPE::EV_GAME_LOSE_ENDING };
 				g_Timer.InitTimerQueue(ev1);
 			}
 			else
 			{
-			TIMER_EVENT ev{ chrono::system_clock::now() + std::chrono::seconds(20s),r_id,EVENT_TYPE::EV_NIGHT };
-			g_Timer.InitTimerQueue(ev);
+				TIMER_EVENT ev{ chrono::system_clock::now() + std::chrono::seconds(20s),r_id,EVENT_TYPE::EV_NIGHT };
+				g_Timer.InitTimerQueue(ev);
 			}
 			delete ex_over;
 			break;
 		}
 		case COMP_TYPE::ICE_NPC_UPDATE: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			ingameroom[r_id].IceUpdateNpc();
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms), r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
@@ -281,6 +287,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::FIRE_NPC_UPDATE: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			ingameroom[r_id].FireUpdateNpc();
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms), r_id,EVENT_TYPE::EV_FIRE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
@@ -289,6 +296,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::NATURE_NPC_UPDATE: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			ingameroom[r_id].NatureUpdateNpc();
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms), r_id,EVENT_TYPE::EV_NATURE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
@@ -297,6 +305,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::ICE_BOSS_MOVE: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			ingameroom[r_id].IceBossUpdate();
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_ICE_BOSS_MOVE };
 			g_Timer.InitTimerQueue(ev);
@@ -305,6 +314,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::FIRE_BOSS_MOVE: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			ingameroom[r_id].FireBossUpdate();
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_FIRE_BOSS_MOVE };
 			g_Timer.InitTimerQueue(ev);
@@ -313,6 +323,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::NATURE_BOSS_MOVE: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			ingameroom[r_id].NatureBossUpdate();
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NATURE_BOSS_MOVE };
 			g_Timer.InitTimerQueue(ev);
@@ -321,6 +332,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::PLAYER_ATTACKED_NPC: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
 				pl->send_player_attack_mosnter(ex_over->_ai_target_obj, false, ex_over->_monstertype);
@@ -330,6 +342,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::ICE_BOSS_SKILL: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			if (ingameroom[r_id].IceBoss._is_alive == false)break;
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
@@ -349,6 +362,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::ICE_BOSS_CANCLE_SKILL: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			if (ingameroom[r_id].IceBoss._is_alive == false)break;
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
@@ -361,6 +375,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::FIRE_BOSS_SKILL: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			if (ingameroom[r_id].FireBoss._is_alive == false)break;
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
@@ -381,6 +396,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::FIRE_BOSS_CANCLE_SKILL: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			if (ingameroom[r_id].FireBoss._is_alive == false)break;
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
@@ -393,6 +409,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::NATURE_BOSS_SKILL: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			if (ingameroom[r_id].NatureBoss._is_alive == false)break;
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
@@ -412,6 +429,7 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::NATURE_BOSS_SKILL_CANCLE: {
 			int r_id = static_cast<int>(key);
+			if (ingameroom[r_id].isLose == true || ingameroom[r_id].isWin == true)break;
 			if (ingameroom[r_id].NatureBoss._is_alive == false)break;
 			for (auto& pl : ingameroom[r_id].ingamePlayer)
 			{
@@ -429,7 +447,7 @@ void Server::WorkerThread()
 				pl->send_change_scene(pl->_id, 7);
 			}
 			delete ex_over;
-			break; 
+			break;
 		}
 
 		case COMP_TYPE::GAME_WIN: {
@@ -722,7 +740,7 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		else
 			break;
-						break;
+		break;
 	}
 	case CS_ATTACK: {
 		CS_ATTACK_PACKET* p = reinterpret_cast<CS_ATTACK_PACKET*>(packet);
@@ -786,7 +804,7 @@ void Server::ProcessPacket(int id, char* packet)
 		case MonsterType::Ice_Boss:
 		{
 			ingameroom[p->room_id].IceBoss._is_alive = false;
-			break; 
+			break;
 		}
 		case MonsterType::Nature_Boss:
 		{
@@ -855,11 +873,19 @@ void Server::ProcessPacket(int id, char* packet)
 		int space_shiphp = ingameroom[p->room_id]._spaceship.getHp();
 		space_shiphp -= 1;
 		ingameroom[p->room_id]._spaceship.setHp(space_shiphp);
-
-		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+		if (space_shiphp <= 0)
 		{
-			// 우주선 체력
-			pl->send_spaceship_hp(space_shiphp);
+			ingameroom[p->room_id].isLose = true;
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(1s), p->room_id,EVENT_TYPE::EV_GAME_LOSE_ENDING };
+			g_Timer.InitTimerQueue(ev);
+		}
+		else
+		{
+			for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+			{
+				// 우주선 체력
+				pl->send_spaceship_hp(space_shiphp);
+			}
 		}
 		break;
 	}
@@ -951,7 +977,7 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_PLAYER_DEAD_PACKET* p = reinterpret_cast<CS_PLAYER_DEAD_PACKET*>(packet);
 		clients[p->id]._hp = 0;
 		clients[p->id].isDead = true;
-		clients[p->id].prevanimationstate= clients[p->id].animationstate;
+		clients[p->id].prevanimationstate = clients[p->id].animationstate;
 		clients[p->id].animationstate = animateState::BLACKOUT;
 
 		ingameroom[p->room_id].deadplayercnt++;
@@ -967,6 +993,7 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				pl->send_change_scene(pl->_id, 7);
 			}
+			ingameroom[p->room_id].isLose = true;
 		}
 		break;
 	}
@@ -1002,6 +1029,7 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(3s), p->room_id,EVENT_TYPE::EV_GAME_WIN_ENDING };
 			g_Timer.InitTimerQueue(ev);
+			ingameroom[p->room_id].isWin = true;
 		}
 		break;
 	}

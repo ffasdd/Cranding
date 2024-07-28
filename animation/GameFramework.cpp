@@ -446,8 +446,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 1;
 				isSceneChange = true;
 				isready = false;
-
-
 				break;
 			}
 			break;
@@ -893,6 +891,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 			isBiludobj = true;
 
+			
+
 			break;
 		}
 		case SCENEKIND::DEFEAT:
@@ -914,6 +914,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 			isBiludobj = true;
 
+	
 			break;
 		}
 		default:
@@ -1625,11 +1626,8 @@ void CGameFramework::FrameAdvance()
 		{
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
-
 				gNetwork.SendLoginfo();
-
-				while (cl_id == -1)
-					this_thread::yield();
+				while (cl_id != -1);
 
 				ChangeScene(SCENEKIND::LOBBY);
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
