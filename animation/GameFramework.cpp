@@ -1394,7 +1394,7 @@ void CGameFramework::ChangeSceneReleaseObject()
 		m_pPlayer->Release();
 	}
 
-	//if (m_pScene) m_pScene->ReleaseObjects();
+	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) {
 		delete m_pScene;
 		m_pScene = nullptr;
@@ -1754,7 +1754,7 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->SetGraphicsRootConstantBufferView(0, d3dGPUVirtualAddress);
 
 
-		if (m_pScene && m_pPlayer) {
+		if (m_pScene && m_pPlayer && isBiludobj) {
 			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
 			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		}
@@ -1837,8 +1837,9 @@ void CGameFramework::FrameAdvance()
 		}
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
-		hResult = m_pd3dCommandList->Close();
-
+		if (S_OK != m_pd3dCommandList->Close()) {
+			cout << "CommandList Close Fail" << endl;
+		}
 		ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 		m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 
