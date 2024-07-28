@@ -51,7 +51,9 @@ protected:
 	XMVECTOR m_look;
 	XMVECTOR m_right;
 	XMVECTOR m_up;
+
 public:
+	bool isplayermake = false;
 	int c_id = 0;
 public:
 	CPlayer();
