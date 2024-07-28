@@ -263,7 +263,6 @@ float ConvertHPToPercentage(float hp) {
 
 void UILayer::SetHP()
 {
-
     m_playerHP = g_clients[gNetwork.my_id].getHp();
 
     float spaceshipHP = gGameFramework.spaceshipHP; // 0 ~ 2000 사이의 값
