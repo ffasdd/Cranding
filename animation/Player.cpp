@@ -653,7 +653,7 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 
 CLoginPlayer::CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext)
 {
-	m_pCamera = ChangeCamera(INGAME_SCENE_CAMERA, 0.0f);
+	m_pCamera = ChangeCamera(LOGIN_SCENE_CAMERA, 0.0f);
 
 	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
@@ -743,6 +743,18 @@ CCamera* CLoginPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 		break;
+	case LOGIN_SCENE_CAMERA:
+		SetFriction(250.0f);
+		SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
+		SetMaxVelocityXZ(90.0f);
+		SetMaxVelocityY(40.0f);
+		m_pCamera = OnChangeCamera(LOGIN_SCENE_CAMERA, nCurrentCameraMode);
+		m_pCamera->SetTimeLag(0.25f);
+		m_pCamera->SetOffset(XMFLOAT3(0.0f, 75.0f, -80.0f));
+		m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 75.0f);
+		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
+		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+		break;
 	default:
 		break;
 	}
@@ -785,7 +797,7 @@ void CLoginPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 	{
 		xmf3CameraPosition.y = fHeight;
 		m_pCamera->SetPosition(xmf3CameraPosition);
-		if (m_pCamera->GetMode() == THIRD_PERSON_CAMERA || m_pCamera->GetMode() == INGAME_SCENE_CAMERA)
+		if (m_pCamera->GetMode() == THIRD_PERSON_CAMERA || m_pCamera->GetMode() == LOGIN_SCENE_CAMERA)
 		{
 			CLoginSceneCamera* p3rdPersonCamera = (CLoginSceneCamera*)m_pCamera;
 			p3rdPersonCamera->SetLookAt(GetPosition());

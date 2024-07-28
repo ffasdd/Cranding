@@ -28,7 +28,6 @@
 #include "Scene.h"
 #include "Network.h"
 #include "Scenemanager.h"
-#include "shadowMap.h"
 
 
 extern Network							gNetwork;
