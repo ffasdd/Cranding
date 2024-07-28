@@ -27,6 +27,7 @@ public:
 	bool getNpcAttacked();
 	int	 getBossAttackType();
 	int  getAttackPower();
+	int  getSpeed();
 
 
 	void setCharacterType(int type);
@@ -50,10 +51,13 @@ public:
 	void setNpcAttacked(bool _isattacked);
 	void setBossAttackType(int _typenum);
 	void setAttackPower(int _att);
+	void setSpeed(int _speed);
+
 	void Rotate(float yaw);
 
 	mutex _sessionlock;
 	mutex _uilock;
+
 	bool m_blind = false;
 	bool is_damage = false;
 	int scene_num = -1;
@@ -73,6 +77,7 @@ private:
 	char m_name[20];
 	int m_hp;
 	int m_attpower;
+	int m_speed;
 	int attack_type_num = -1;
 
 

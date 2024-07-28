@@ -51,6 +51,7 @@ void Session::send_login_info_packet()
 	p.room_id = clients[_id].room_id;
 	p.stage_num = clients[_id]._stage;
 	p.att = clients[_id]._attpow;
+	p.speed = clients[_id]._speed;
 
 	if (clients[_id].characterType == 0)
 	{
@@ -76,6 +77,7 @@ void Session::send_add_info_packet(int client_id)
 	p.charactertype = clients[client_id].characterType;
 	p.stage_num = clients[client_id]._stage;
 	p.att = clients[client_id]._attpow;
+	p.speed = clients[client_id]._speed;
 
 	if (clients[_id].characterType == 0)
 	{

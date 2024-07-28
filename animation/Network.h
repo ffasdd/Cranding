@@ -61,7 +61,7 @@ public: // thread send
 	void SendMonsterDie(int npc_id, MonsterType _mtype);
 	void SendMonsterHitSpaceship(int npc_id);
 
-	void SendPlayerHIt(bool is_damaged);
+	void SendPlayerHIt( bool is_damaged);
 	void SendBossDamage(int _hp,MonsterType _type);
 
 	bool MonsterCollide(Session& _monster);
@@ -80,6 +80,7 @@ public:
 	int stage_num = -1;
 	bool isNight = false;
 
+	int Day = 0;
 	int index = 0;
 public:
 	mutex g_clients_mutex;

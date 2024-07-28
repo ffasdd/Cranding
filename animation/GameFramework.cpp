@@ -1038,11 +1038,15 @@ void CGameFramework::myFunc_SetBlind(int n, int id, bool _isblind)
 
 void CGameFramework::myFunc_SetStatus(int FireCnt, int IceCnt, int NatureCnt)
 {
-	int attack = m_pPlayer->GetAttackPower() + (FireCnt * 5);
-	if (attack > 100) {
+	curDay++;
+
+	int attack = g_clients[cl_id].getAttackPower() + (FireCnt * 5);
 	
+	if (attack > 100) {
+		attack = 100;
 	}
-	m_pPlayer->SetAttackPower(attack);
+	//m_pPlayer->SetAttackPower(attack);
+	g_clients[cl_id].setAttackPower(attack);
 
 	int speed = m_pPlayer->GetSpeed() + (IceCnt * 3);
 	m_pPlayer->SetSpeed(speed);

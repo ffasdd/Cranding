@@ -19,14 +19,14 @@ CMesh::~CMesh()
 	{
 		for (int i = 0; i < m_nSubMeshes; i++)
 		{
-			if (m_ppd3dSubSetIndexBuffers[i]) m_ppd3dSubSetIndexBuffers[i]->Release();
-			if (m_ppnSubSetIndices[i]) delete[] m_ppnSubSetIndices[i];
+			if (m_ppd3dSubSetIndexBuffers[i] != nullptr) m_ppd3dSubSetIndexBuffers[i]->Release();
+			if (m_ppnSubSetIndices[i] != nullptr) delete[] m_ppnSubSetIndices[i];
 		}
-		if (m_ppd3dSubSetIndexBuffers) delete[] m_ppd3dSubSetIndexBuffers;
-		if (m_pd3dSubSetIndexBufferViews) delete[] m_pd3dSubSetIndexBufferViews;
+		if (m_ppd3dSubSetIndexBuffers != nullptr) delete[] m_ppd3dSubSetIndexBuffers;
+		if (m_pd3dSubSetIndexBufferViews != nullptr) delete[] m_pd3dSubSetIndexBufferViews;
 
-		if (m_pnSubSetIndices) delete[] m_pnSubSetIndices;
-		if (m_ppnSubSetIndices) delete[] m_ppnSubSetIndices;
+		if (m_pnSubSetIndices != nullptr) delete[] m_pnSubSetIndices;
+		if (m_ppnSubSetIndices != nullptr) delete[] m_ppnSubSetIndices;
 	}
 
 	if (m_pxmf3Positions) delete[] m_pxmf3Positions;

@@ -402,6 +402,7 @@ struct CS_PLAYER_HIT_PACKET {
 	char type;
 	int id;
 	int room_id;
+	int hp;
 	bool isdamaged;
 };
 struct CS_MONSTER_DIE_PACKET {
@@ -447,6 +448,7 @@ struct SC_LOGIN_INFO_PACKET {
 	int		room_id;
 	int		stage_num;
 	int		att;
+	int		speed;
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 right;
@@ -464,6 +466,7 @@ struct SC_ADD_OBJECT_PACKET {
 	int		charactertype;
 	int		stage_num;
 	int		att;
+	int		speed;
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 right;

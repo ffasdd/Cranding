@@ -105,6 +105,11 @@ int Session::getAttackPower()
 	return m_attpower;
 }
 
+int Session::getSpeed()
+{
+	return m_speed;
+}
+
 void Session::setCharacterType(int type)
 {
 	characterType = type;
@@ -215,6 +220,11 @@ void Session::setBossAttackType(int _typenum)
 void Session::setAttackPower(int _att)
 {
 	m_attpower = _att;
+}
+
+void Session::setSpeed(int _speed)
+{
+	m_speed = _speed;
 }
 
 void Session::Rotate(float yaw)
