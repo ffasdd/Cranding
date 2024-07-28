@@ -100,7 +100,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
         plobbytext[i] = new WCHAR[256];
     }
 
-    wcscpy_s(plobbytext[0], 256, L"게임 시작을 위해 '2'를 눌러주세요");
+    wcscpy_s(plobbytext[0], 256, L"게임 시작을 위해 'R'을 눌러주세요");
     wcscpy_s(plobbytext[1], 256, L"ready");
     for (int i = 0; i < lobbyUI_num; ++i) {
         m_vecLobbyScene.push_back(plobbytext[i]);
@@ -163,6 +163,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     m_brushes[BRUSH_COLOR::RED] = CreateBrush(D2D1::ColorF(1.0f, 0.14f, 0.14f, 1.0f));
 
     // text format
+    m_textFormats[TEXT_SIZE::SIZE_8] = CreateTextFormat(L"맑은 고딕", 8.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_15] = CreateTextFormat(L"맑은 고딕", 15.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_18] = CreateTextFormat(L"맑은 고딕", 18.0f * 3.35f);
     m_textFormats[TEXT_SIZE::SIZE_25] = CreateTextFormat(L"맑은 고딕", 25.0f * 3.35f);
@@ -413,8 +414,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         // 우주선 hp
         m_pd2dDeviceContext->FillRectangle(m_spaceshipBar, m_brushes[BRUSH_COLOR::BLACK]);
         m_pd2dDeviceContext->FillRectangle(m_spaceshipHPBar, m_brushes[BRUSH_COLOR::RED]);
-        m_pd2dDeviceContext->DrawText(m_vecItem[3], (UINT)wcslen(m_vecItem[3]), m_textFormats[TEXT_SIZE::SIZE_15], m_spaceshipBar, m_brushes[BRUSH_COLOR::BLACK]);
-
+        m_pd2dDeviceContext->DrawText(m_vecItem[3], (UINT)wcslen(m_vecItem[3]), m_textFormats[TEXT_SIZE::SIZE_8], m_spaceshipBar, m_brushes[BRUSH_COLOR::BLACK]);
 
         // item UI        
         m_pd2dDeviceContext->DrawText(m_vecItem[0], (UINT)wcslen(m_vecItem[0]), m_textFormats[TEXT_SIZE::SIZE_15], m_IceItemBar, m_brushes[BRUSH_COLOR::ABLACK]);

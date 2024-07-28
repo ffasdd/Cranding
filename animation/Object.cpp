@@ -723,7 +723,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							}
 							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
 						}
-						if (fPosition2 > 1.0f)
+						if (fPosition2 > 0.5f)
 							this->m_bIsValidAttack = true;
 
 						if (fPosition2 == 0)
@@ -1067,7 +1067,7 @@ void CGameObject::SetRootParameter(ID3D12GraphicsCommandList* pd3dCommandList)
 }
 
 void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, int SharedNum, int nPipelineState)
-{
+{	
 	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->UpdateShaderVariables(pd3dCommandList);
 
 	if (m_pMesh)
@@ -1157,15 +1157,15 @@ void CGameObject::ReleaseShaderVariables()
 
 void CGameObject::ReleaseUploadBuffers()
 {
-	if (m_pMesh) m_pMesh->ReleaseUploadBuffers();
+	if (m_pMesh != nullptr) m_pMesh->ReleaseUploadBuffers();
 
 	for (int i = 0; i < m_nMaterials; i++)
 	{
-		if (m_ppMaterials[i]) m_ppMaterials[i]->ReleaseUploadBuffers();
+		if (m_ppMaterials[i] != nullptr) m_ppMaterials[i]->ReleaseUploadBuffers();
 	}
 
-	if (m_pSibling) m_pSibling->ReleaseUploadBuffers();
-	if (m_pChild) m_pChild->ReleaseUploadBuffers();
+	if (m_pSibling != nullptr) m_pSibling->ReleaseUploadBuffers();
+	if (m_pChild != nullptr) m_pChild->ReleaseUploadBuffers();
 }
 
 void CGameObject::SetPosition(float x, float y, float z)

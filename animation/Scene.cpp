@@ -101,16 +101,16 @@ void CScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* p
 void CScene::ReleaseObjects()
 {
 	//if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
-	if (m_pd3dCbvSrvDescriptorHeap) m_pd3dCbvSrvDescriptorHeap->Release();
+	if (m_pd3dCbvSrvDescriptorHeap != nullptr) m_pd3dCbvSrvDescriptorHeap->Release();
 	//if (m_pDescriptorHeap) delete m_pDescriptorHeap;
 
-	if (m_ppGameObjects)
+	if (m_ppGameObjects != nullptr)
 	{
 		for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Release();
 		delete[] m_ppGameObjects;
 	}
 
-	if (m_ppShaders)
+	if (m_ppShaders != nullptr)
 	{
 		for (int i = 0; i < m_nShaders; i++)
 		{
@@ -123,16 +123,16 @@ void CScene::ReleaseObjects()
 		m_ppShaders = nullptr;
 	}
 
-	if (m_pSkyBox)
+	if (m_pSkyBox != nullptr)
 	{
 		delete m_pSkyBox;
 		m_pSkyBox = nullptr;
 	}
 
-	if (m_ppHierarchicalGameObjects)
+	if (m_ppHierarchicalGameObjects != nullptr)
 	{
 		for (int i = 0; i < m_nHierarchicalGameObjects; i++)
-			if (m_ppHierarchicalGameObjects[i]) {
+			if (m_ppHierarchicalGameObjects[i] != nullptr) {
 				m_ppHierarchicalGameObjects[i]->Release();
 				cout << "=========================================" << endl;
 			}
@@ -141,7 +141,7 @@ void CScene::ReleaseObjects()
 
 	ReleaseShaderVariables();
 
-	if (m_pLights) {
+	if (m_pLights != nullptr) {
 		delete[] m_pLights;
 		m_pLights = nullptr;
 	}
@@ -595,7 +595,6 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		gNetwork.SendPlayerDead();
 		//m_pPlayer->SetHealth(0);
 		m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
-		
 
 	}
 	// monster dead
@@ -617,6 +616,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 					gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Night);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
 				break;
@@ -625,6 +625,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 					gNetwork.SendAttackCollision(g_ice_monsters[i - 3].getId(), MonsterType::Ice);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
 				break;
@@ -633,6 +635,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 					gNetwork.SendAttackCollision(g_fire_monsters[i - 3].getId(), MonsterType::Fire);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
 				break;
@@ -641,6 +645,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 					gNetwork.SendAttackCollision(g_nature_monsters[i - 3].getId(), MonsterType::Nature);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
 				break;
@@ -649,6 +655,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 					gNetwork.SendAttackCollision(0, MonsterType::Ice_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 					m_ppHierarchicalGameObjects[14]->isdraw = true;
 				}
@@ -660,6 +668,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[14]->isdraw = true;
 					gNetwork.SendAttackCollision(0, MonsterType::Fire_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
 				break;
@@ -668,6 +678,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 					gNetwork.SendAttackCollision(0, MonsterType::Nature_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 					m_ppHierarchicalGameObjects[14]->isdraw = true;
 				}
@@ -709,7 +721,7 @@ void CScene::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 
 }
 
-void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, bool bIsAnimate, int pipelinestate)
+void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, bool bIsAnimate)
 {
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Light
@@ -717,8 +729,8 @@ void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera
 	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
 	//if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
 
-	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Render(pd3dCommandList, pCamera, pipelinestate);
-	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera, pipelinestate);
+	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Render(pd3dCommandList, pCamera);
+	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera);
 
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
@@ -727,7 +739,7 @@ void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera
 			//cout << i << endl;
 			if (bIsAnimate) m_ppHierarchicalGameObjects[i]->Animate(m_fElapsedTime);
 			if (!m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController) m_ppHierarchicalGameObjects[i]->UpdateTransform(NULL);
-			m_ppHierarchicalGameObjects[i]->Render(pd3dCommandList, pCamera, 0, pipelinestate);
+			m_ppHierarchicalGameObjects[i]->Render(pd3dCommandList, pCamera);
 		}
 	}
 

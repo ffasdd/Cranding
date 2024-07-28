@@ -315,7 +315,7 @@ void CPlayer::OnPrepareRender()
 void CPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int pipelinestate)
 {
 	DWORD nCameraMode = (pCamera) ? pCamera->GetMode() : 0x00;
-	if (nCameraMode == THIRD_PERSON_CAMERA || nCameraMode == INGAME_SCENE_CAMERA) CGameObject::Render(pd3dCommandList, pCamera,0, pipelinestate);
+	if (nCameraMode == THIRD_PERSON_CAMERA || nCameraMode == INGAME_SCENE_CAMERA) CGameObject::Render(pd3dCommandList, pCamera, 0, pipelinestate);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
