@@ -670,7 +670,7 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 
 CLoginPlayer::CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext)
 {
-	m_pCamera = ChangeCamera(LOGIN_SCENE_CAMERA, 0.0f);
+	m_pCamera = ChangeCamera(INGAME_SCENE_CAMERA, 0.0f);
 
 	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
 	SetChild(pAngrybotModel->m_pModelRootObject, true);

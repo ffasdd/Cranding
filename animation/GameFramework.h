@@ -86,8 +86,6 @@ public:
 
 	void UpdateTime();
 
-	void readyUI();
-
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
@@ -113,7 +111,7 @@ public:
 	float PlayerPosX = 0.0f;
 	float PlayerPosZ = 0.0f;
 
-	bool isBiludobj = false;
+
 
 	int cl_id = -1;
 	void ChangeScene(SCENEKIND nSceneKind);

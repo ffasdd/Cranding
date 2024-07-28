@@ -29,6 +29,9 @@ public:
 	bool FireItem = false;
 	bool NatureItem = false;
 
+	bool isWin = false;
+	bool isLose = false;
+
 
 	//array < Monster*, 10 >_NightMonsters; // 이렇게 바꿔야하나? 
 

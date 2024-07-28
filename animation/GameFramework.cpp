@@ -410,14 +410,15 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 
 		case VK_RETURN:
-			break;
+			// �κ�ȭ��
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) {
+				SceneNum = 1;
+				isSceneChange = true;
+				isready = false;
 
-			//case VK_F1:
-			//case VK_F2:
-			//case VK_F3:
-			//case VK_F4:
-			//	m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
-				//break;
+				break;
+			}
+			break;
 
 		case VK_F9:
 			ChangeSwapChainState();
@@ -440,17 +441,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			BuildObjects(sceneManager.GetCurrentScene());
 			break;
 
-		case '1':
-			// �κ�ȭ��
-			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) {
-				SceneNum = 1;
-				isSceneChange = true;
-				isready = false;
-
-
-				break;
-			}
-			break;
+			
 
 		case '2': {
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
@@ -751,8 +742,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 {
 	if (nSceneKind != sceneManager.GetCurrentScene())
 	{
-		isBiludobj = false;
-
 		//if (m_pPlayer)
 			ChangeSceneReleaseObject();
 
@@ -780,8 +769,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			ChangeBGM(0);
 
-			isBiludobj = true;
-
 			break;
 		}
 		case SCENEKIND::SPACESHIP:
@@ -801,9 +788,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			ChangeBGM(1);
 
-			isBiludobj = true;
+			ChangeBGM(1);
 			break;
 		}
 		case SCENEKIND::ICE:
@@ -826,7 +812,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 
 			ChangeBGM(2);
-			isBiludobj = true;
+
 			break;
 
 		}
@@ -849,7 +835,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 
 			ChangeBGM(3);
-			isBiludobj = true;
+
 			break;
 		}
 
@@ -874,7 +860,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			ChangeBGM(4);
 
-			isBiludobj = true;
 
 			break;
 		}
@@ -898,7 +883,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			ChangeBGM(5);
 
-			isBiludobj = true;
 
 			break;
 		}
@@ -922,8 +906,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			ChangeBGM(6);
 
-			isBiludobj = true;
 
+	
 			break;
 		}
 		default:
@@ -1377,7 +1361,6 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	if (m_pScene) m_pScene->ReleaseUploadBuffers();
 	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
 
-	isBiludobj = true;
 
 	m_GameTimer.Reset();
 }
@@ -1640,7 +1623,6 @@ void CGameFramework::FrameAdvance()
 		{
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
-
 				gNetwork.SendLoginfo();
 
 				while (cl_id != -1);
@@ -1771,10 +1753,11 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->SetGraphicsRootConstantBufferView(0, d3dGPUVirtualAddress);
 
 
-		if (m_pScene && m_pPlayer && isBiludobj) {
+		if (m_pScene && m_pScene->isBiludobj) {
 			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
-			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		}
+		if(m_pPlayer && m_pScene->isBiludobj)
+			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
 
@@ -1863,7 +1846,7 @@ void CGameFramework::FrameAdvance()
 		WaitForGpuComplete();
 #ifdef _FULLSCREEN
 
-		if (m_pUILayer && isBiludobj)
+		if (m_pUILayer && m_pScene->isBiludobj)
 			UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
 
 #endif // _FULLSCREEN
