@@ -752,7 +752,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 	if (nSceneKind != sceneManager.GetCurrentScene())
 	{
 		isBiludobj = false;
-		if (m_pPlayer)
+		//if (m_pPlayer)
 			ChangeSceneReleaseObject();
 
 		switch (nSceneKind)
@@ -926,7 +926,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 		WaitForGpuComplete();
 
-		if (m_pScene) m_pScene->ReleaseUploadBuffers();
+		//if (m_pScene) m_pScene->ReleaseUploadBuffers();
 		if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
 
 		m_GameTimer.Reset();
@@ -1395,7 +1395,7 @@ void CGameFramework::ChangeSceneReleaseObject()
 		m_pPlayer->Release();
 	}
 
-	if (m_pScene) m_pScene->ReleaseObjects();
+	//if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) {
 		delete m_pScene;
 		m_pScene = nullptr;

@@ -399,37 +399,34 @@ CStandardMesh::CStandardMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList
 
 CStandardMesh::~CStandardMesh()
 {
-	if (m_pd3dTextureCoord0Buffer != nullptr) m_pd3dTextureCoord0Buffer->Release();
-	if (m_pd3dTextureCoord1Buffer != nullptr) m_pd3dTextureCoord1Buffer->Release();
-	if (m_pd3dNormalBuffer != nullptr) m_pd3dNormalBuffer->Release();
-	if (m_pd3dTangentBuffer != nullptr) m_pd3dTangentBuffer->Release();
-	if (m_pd3dBiTangentBuffer != nullptr) m_pd3dBiTangentBuffer->Release();
+	if (m_pd3dTextureCoord0Buffer) m_pd3dTextureCoord0Buffer->Release();
+	if (m_pd3dTextureCoord1Buffer) m_pd3dTextureCoord1Buffer->Release();
+	if (m_pd3dNormalBuffer) m_pd3dNormalBuffer->Release();
+	if (m_pd3dTangentBuffer) m_pd3dTangentBuffer->Release();
+	if (m_pd3dBiTangentBuffer) m_pd3dBiTangentBuffer->Release();
 
 	//if (m_pxmf4Colors != nullptr) delete[] m_pxmf4Colors;
-	if (m_pxmf3Normals != nullptr) delete[] m_pxmf3Normals;
-	if (m_pxmf3Tangents != nullptr) delete[] m_pxmf3Tangents;
-	if (m_pxmf3BiTangents != nullptr) delete[] m_pxmf3BiTangents;
-	if (m_pxmf2TextureCoords0 != nullptr) delete[] m_pxmf2TextureCoords0;
-	if (m_pxmf2TextureCoords1 != nullptr) delete[] m_pxmf2TextureCoords1;
+	if (m_pxmf3Normals) delete[] m_pxmf3Normals;
+	if (m_pxmf3Tangents) delete[] m_pxmf3Tangents;
+	if (m_pxmf3BiTangents) delete[] m_pxmf3BiTangents;
+	if (m_pxmf2TextureCoords0) delete[] m_pxmf2TextureCoords0;
+	if (m_pxmf2TextureCoords1) delete[] m_pxmf2TextureCoords1;
 }
 
 void CStandardMesh::ReleaseUploadBuffers()
 {
 	CMesh::ReleaseUploadBuffers();
 
-	if (m_pd3dTextureCoord0UploadBuffer != nullptr) m_pd3dTextureCoord0UploadBuffer->Release();
+	if (m_pd3dTextureCoord0UploadBuffer) m_pd3dTextureCoord0UploadBuffer->Release();
 	m_pd3dTextureCoord0UploadBuffer = NULL;
 
-	if (m_pd3dTextureCoord1UploadBuffer != nullptr) m_pd3dTextureCoord1UploadBuffer->Release();
-	m_pd3dTextureCoord1UploadBuffer = NULL;
-
-	if (m_pd3dNormalUploadBuffer != nullptr) m_pd3dNormalUploadBuffer->Release();
+	if (m_pd3dNormalUploadBuffer) m_pd3dNormalUploadBuffer->Release();
 	m_pd3dNormalUploadBuffer = NULL;
 
-	if (m_pd3dTangentUploadBuffer != nullptr) m_pd3dTangentUploadBuffer->Release();
+	if (m_pd3dTangentUploadBuffer) m_pd3dTangentUploadBuffer->Release();
 	m_pd3dTangentUploadBuffer = NULL;
 
-	if (m_pd3dBiTangentUploadBuffer != nullptr) m_pd3dBiTangentUploadBuffer->Release();
+	if (m_pd3dBiTangentUploadBuffer) m_pd3dBiTangentUploadBuffer->Release();
 	m_pd3dBiTangentUploadBuffer = NULL;
 }
 
