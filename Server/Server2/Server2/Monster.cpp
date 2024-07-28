@@ -85,6 +85,15 @@ void Monster::Move()
 	else
 	{
 		// 플레이어와의 최대거리가 가시거리 밖이라면 우주선을 향해 간다. 
+		if (_attackState != false)
+		{
+			_attackState = false;
+			for (auto& pl : ingamePlayer)
+			{
+				if (pl->_stage != ingamePlayer[id]->_stage)continue;
+				pl->send_monster_attack(_id, _m_type, false);
+			}
+		}
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
 		XMVECTOR spaceshipVec = XMLoadFloat3(&_spaceship->getPos());
 		XMVECTOR dirToSpaceship = XMVector3Normalize(spaceshipVec - posVec);
@@ -399,7 +408,7 @@ void Monster::NightAttack(int cl_id)
 bool Monster::CollideCheckToPlayer(Session* _player)
 {
 	if (_player->_stage != _stagenum)return false;
-	//if (_player->isDead == true)return false;
+	if (_player->isDead == true)return false;
 	if (m_SPBB.Intersects(_player->m_SPBB) == true)return true;
 
 	return false;

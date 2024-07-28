@@ -324,6 +324,16 @@ void Network::ProcessPacket(char* buf)
 				}
 			}
 			break;
+			case 6:
+			{
+				gGameFramework.isWin = true;
+				break;
+			}
+			case 7:
+			{
+				gGameFramework.isLose = true;
+				break;
+			}
 			}
 		}
 		else
