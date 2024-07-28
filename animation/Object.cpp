@@ -703,7 +703,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						for (int j = 0; j < m_pAnimationSets->m_nBoneFrames; j++)
 						{
 							XMFLOAT4X4 xmf4x4Transform = m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent;
-
+						
 							if (m_pAnimationSets->m_ppBoneFrameCaches[j]->m_bUpperBody == true)
 							{
 								// 현재 플레이어의 뼈 변환 정보들
@@ -811,6 +811,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						{
 							m_bIsAttacked = false;
 							m_bIsDead = true;
+							
 						}
 						if (m_bWasMonsterAttack == true && fPosition > 0.3f)
 						{
@@ -1050,7 +1051,15 @@ void CGameObject::Animate(float fTimeElapsed)
 
 	UpdateBoundingBox();
 
-	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->AdvanceTime(fTimeElapsed, this);
+	if (m_pSkinnedAnimationController)
+	{
+		m_pSkinnedAnimationController->AdvanceTime(fTimeElapsed, this);
+		if (this->m_pSkinnedAnimationController->m_bIsDead)
+		{
+			XMFLOAT3 pos = this->GetPosition();
+			this->SetPosition(pos.x, -200.0f, pos.z);
+		}
+	}
 
 	if (m_pSibling) m_pSibling->Animate(fTimeElapsed);
 	if (m_pChild) m_pChild->Animate(fTimeElapsed);

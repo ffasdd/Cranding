@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "Scene.h"
 #pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "xaudio2.lib")
 
 extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 extern Network							gNetwork;
@@ -20,8 +21,6 @@ D3D12_GPU_DESCRIPTOR_HANDLE	CScene::m_d3dCbvGPUDescriptorNextHandle;
 D3D12_CPU_DESCRIPTOR_HANDLE	CScene::m_d3dSrvCPUDescriptorNextHandle;
 D3D12_GPU_DESCRIPTOR_HANDLE	CScene::m_d3dSrvGPUDescriptorNextHandle;
 
-
-
 CScene::CScene()
 {
 }
@@ -29,8 +28,6 @@ CScene::~CScene()
 {
 
 }
-
-
 
 void CScene::BuildDefaultLightsAndMaterials()
 {
@@ -578,6 +575,10 @@ bool CScene::ProcessInput(UCHAR* pKeysBuffer)
 {
 	return(false);
 }
+
+//void CScene::SendDeadToServer()
+//{
+//}
 
 void CScene::AnimateObjects(float fTimeElapsed)
 {
@@ -1488,6 +1489,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[14]->Rotate(45, 0, 0);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
+
 	if (pIceItemModel) delete pIceItemModel;
 
 	//PlayBGM(L"Sound/Ice.wav");
@@ -1760,9 +1762,8 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[14]->Rotate(90, 90, 0);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
-	if (pFireItemModel) delete pFireItemModel;
 
-	PlayBGM(L"Sound/Fire.wav");
+	if (pFireItemModel) delete pFireItemModel;
 }
 bool CFireScene::CheckObjectByObjectCollisions()
 {
@@ -2037,10 +2038,8 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[14]->SetPosition(410.0f, -50.0f, 735.0f);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
+
 	if (pNatureItemModel) delete pNatureItemModel;
-
-	//PlayBGM(L"Sound/Grass.wav");
-
 }
 bool CGrassScene::CheckObjectByObjectCollisions()
 {
