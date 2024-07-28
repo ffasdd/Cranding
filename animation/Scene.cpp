@@ -2147,10 +2147,26 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 
 				return true;
 			}
+		}
+		// collision check with nature boss monster
+		else if (i == 13)
+		{
+			// monster with player(player attack)
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			{
+				//send attacked monster num
+				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
+
+				// 보스 체력 서버로 전송 
+				gNetwork.SendBossDamage(g_NatureBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Nature_Boss);
+
+				return(true);
+			}
 			// grass monster's head with player (when grass monster attack)
 			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
-				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
+				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
 				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
@@ -2161,22 +2177,6 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				return false;
 			}
 		}
-		// collision check with nature boss monster
-		else if (i == 13)
-		{
-			// monster with player(attack mode)
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox)
-				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0)
-			{
-				//send attacked monster num
-				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
-
-				// 보스 체력 서버로 전송 
-				gNetwork.SendBossDamage(g_NatureBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Nature_Boss);
-
-				return(true);
-			}
 
 		}
 		// collision check with nature item
