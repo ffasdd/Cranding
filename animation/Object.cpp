@@ -723,7 +723,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							}
 							m_pAnimationSets->m_ppBoneFrameCaches[j]->m_xmf4x4ToParent = xmf4x4Transform;
 						}
-						if (fPosition2 > 1.0f)
+						if (fPosition2 > 0.5f)
 							this->m_bIsValidAttack = true;
 
 						if (fPosition2 == 0)
