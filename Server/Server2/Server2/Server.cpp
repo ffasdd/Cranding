@@ -905,7 +905,6 @@ void Server::ProcessPacket(int id, char* packet)
 		case MonsterType::Ice_Boss: {
 			ingameroom[p->room_id].IceBoss._hp = p->bosshp;
 			cout << " ICE BOSS HP " << p->bosshp << endl;
-			if (ingameroom[p->room_id].IceBoss._hp <= 0)ingameroom[p->room_id].FireBoss._is_alive = false;
 
 			if (ingameroom[p->room_id].IceBoss._hp <= 0)
 			{
@@ -925,7 +924,7 @@ void Server::ProcessPacket(int id, char* packet)
 								  break;
 		case MonsterType::Nature_Boss: {
 			ingameroom[p->room_id].NatureBoss._hp = p->bosshp;
-			if (ingameroom[p->room_id].NatureBoss._hp <= 0)ingameroom[p->room_id].FireBoss._is_alive = false;
+
 			if (ingameroom[p->room_id].FireBoss._hp <= 0)
 			{
 
@@ -973,25 +972,25 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_GET_ITEM_PACKET* p = reinterpret_cast<CS_GET_ITEM_PACKET*>(packet);
 		switch (p->itemtype)
 		{
-		case '3':
+		case 3:
 			ingameroom[p->room_id].IceItem = true;
 			for (auto& pl : ingameroom[p->room_id].ingamePlayer)
 			{
-				pl->send_get_item('3');
+				pl->send_get_item(3);
 			}
 			break;
-		case '4':
+		case 4:
 			ingameroom[p->room_id].FireItem = true;
 			for (auto& pl : ingameroom[p->room_id].ingamePlayer)
 			{
-				pl->send_get_item('4');
+				pl->send_get_item(4);
 			}
 			break;
-		case '5':
+		case 5:
 			ingameroom[p->room_id].NatureItem = true;
 			for (auto& pl : ingameroom[p->room_id].ingamePlayer)
 			{
-				pl->send_get_item('5');
+				pl->send_get_item(5);
 			}
 			break;
 		}

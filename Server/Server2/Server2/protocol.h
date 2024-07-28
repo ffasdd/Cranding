@@ -441,7 +441,7 @@ struct CS_GET_ITEM_PACKET {
 	char type;
 
 	int room_id;
-	char itemtype;
+	int itemtype;
 };
 
 
@@ -661,6 +661,6 @@ struct SC_PLAYER_DEAD_PACKET {
 struct SC_GET_ITEM_PACKET {
 	unsigned char size;
 	char type;
-	char itemtype;
+	int itemtype;
 };
 #pragma pack (pop)

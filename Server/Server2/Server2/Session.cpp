@@ -256,10 +256,11 @@ void Session::send_player_hit(int client_id)
 	do_send(&p);
 }
 
-void Session::send_get_item(char itemtype)
+void Session::send_get_item(int itemtype)
 {
 	SC_GET_ITEM_PACKET p;
-	p.size = sizeof(SC_GET_ITEM);
+	p.size = sizeof(SC_GET_ITEM_PACKET);
+	p.type = SC_GET_ITEM;
 	p.itemtype = itemtype;
 	do_send(&p);
 }

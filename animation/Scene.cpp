@@ -648,6 +648,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 				case MONSTERTYPE::ICEBOSS:
 				{
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+					m_ppHierarchicalGameObjects[i]->isdraw = false;
 					gNetwork.SendAttackCollision(0, MonsterType::Ice_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
@@ -671,6 +672,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 				case MONSTERTYPE::NATUREBOSS:
 				{
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+					m_ppHierarchicalGameObjects[i]->isdraw = false;
 					gNetwork.SendAttackCollision(0, MonsterType::Nature_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
@@ -1645,7 +1647,7 @@ bool CIceScene::CheckObjectByObjectCollisions()
 			{
 				isIceitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
-				gNetwork.SendGetItem('3');
+				gNetwork.SendGetItem(3);
 				// 아이템을 먹었다 send 
 
 
@@ -1937,7 +1939,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 			{
 				isFireitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
-				gNetwork.SendGetItem('4');
+				gNetwork.SendGetItem(4);
 			}
 		}
 	}
@@ -2207,7 +2209,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 			{
 				isNatureitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
-				gNetwork.SendGetItem('5');
+				gNetwork.SendGetItem(5);
 			}
 		}
 	}
