@@ -296,7 +296,16 @@ void Network::ProcessPacket(char* buf)
 					gGameFramework.isSceneChange = true;
 				}
 				break;
-
+			case 6:
+			{
+				gGameFramework.isWin = true;
+				break;
+			}
+			case 7:
+			{
+				gGameFramework.isLose = true;
+				break;
+			}
 			}
 			// Id가 하나만 ㅁ거음 
 		}

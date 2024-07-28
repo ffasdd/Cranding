@@ -428,6 +428,7 @@ void Server::WorkerThread()
 			{
 				pl->send_change_scene(pl->_id, 7);
 			}
+			delete ex_over;
 			break; 
 		}
 
@@ -437,6 +438,7 @@ void Server::WorkerThread()
 			{
 				pl->send_change_scene(pl->_id, 6);
 			}
+			delete ex_over;
 			break;
 		}
 
@@ -925,7 +927,7 @@ void Server::ProcessPacket(int id, char* packet)
 		case MonsterType::Nature_Boss: {
 			ingameroom[p->room_id].NatureBoss._hp = p->bosshp;
 
-			if (ingameroom[p->room_id].FireBoss._hp <= 0)
+			if (ingameroom[p->room_id].NatureBoss._hp <= 0)
 			{
 
 				for (auto& pl : ingameroom[p->room_id].ingamePlayer)
@@ -1001,7 +1003,10 @@ void Server::ProcessPacket(int id, char* packet)
 			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(3s), p->room_id,EVENT_TYPE::EV_GAME_WIN_ENDING };
 			g_Timer.InitTimerQueue(ev);
 		}
+		break;
 	}
+	default:
+		break;
 	}
 }
 
