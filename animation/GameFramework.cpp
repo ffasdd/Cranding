@@ -1567,8 +1567,8 @@ void CGameFramework::UpdateShaderVariables()
 void CGameFramework::UpdateTime()
 {
 	// 서버에서 제공하는 낮과 밤의 시간 (초 단위)
-	float serverDayTime = 60.0f;  // 낮 시간 (예: 60초)
-	float serverNightTime = 30.0f;  // 밤 시간 (예: 30초)
+	float serverDayTime = 20.0f;  // 낮 시간 (예: 20초)
+	float serverNightTime = 20.0f;  // 밤 시간 (예: 20초)
 
 	// 클라이언트에서 관리하는 누적 시간 변수 초기화
 	static float accumulatedTime = 0.0f;  // 현재 누적 시간

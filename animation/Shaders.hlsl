@@ -371,13 +371,13 @@ float4 BlendSkyTextures(float3 direction)
 
     // Calculate the blend factor based on the total time
     float blendFactor = 0.0f;
-    if (totalSeconds <= 30.0) // First 30 sec
+    if (totalSeconds <= 20.0) // First 30 sec
     {
-        blendFactor = totalSeconds / 30.0; // Blend from 0 to 1
+        blendFactor = totalSeconds / 20.0; // Blend from 0 to 1
     }
     else // Last 1 minutes
     {
-        blendFactor = (90.0 - totalSeconds) / 60.0; // Blend from 1 to 0
+        blendFactor = (40.0 - totalSeconds) / 60.0; // Blend from 1 to 0
     }
 
     return lerp(nightColor, dayColor, blendFactor);
