@@ -269,7 +269,6 @@ void Network::ProcessPacket(char* buf)
 
 		break;
 	}
-
 	case SC_CHANGE_SCENE: {
 		SC_CHANGE_SCENE_PACKET* p = reinterpret_cast<SC_CHANGE_SCENE_PACKET*>(buf);
 		int ob_id = p->id;
@@ -350,7 +349,6 @@ void Network::ProcessPacket(char* buf)
 	}
 	case SC_INGAME_STRAT: {
 		gGameFramework.isSceneChange = true;
-
 		break;
 	}
 	case SC_REMOVE_OBJECT: {

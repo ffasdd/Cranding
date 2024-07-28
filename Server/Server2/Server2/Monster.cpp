@@ -128,7 +128,7 @@ void Monster::IceMove()
 
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange && ingamePlayer[id]->isDead == false)
 	{
 
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
@@ -162,6 +162,7 @@ void Monster::IceMove()
 		}
 		else
 		{
+
 			if (_attackState != false)
 			{
 				_attackState = false;
@@ -184,6 +185,15 @@ void Monster::IceMove()
 	}
 	else
 	{
+		if (_attackState != false)
+		{
+			_attackState = false;
+			for (auto& pl : ingamePlayer)
+			{
+				if (pl->_stage != ingamePlayer[id]->_stage)continue;
+				pl->send_monster_attack(_id, _m_type, false);
+			}
+		}
 		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
 		{
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
@@ -276,6 +286,15 @@ void Monster::FireMove()
 	}
 	else
 	{
+		if (_attackState != false)
+		{
+			_attackState = false;
+			for (auto& pl : ingamePlayer)
+			{
+				if (pl->_stage != ingamePlayer[id]->_stage)continue;
+				pl->send_monster_attack(_id, _m_type, false);
+			}
+		}
 		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
 		{
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
@@ -311,7 +330,7 @@ void Monster::NatureMove()
 	_prevpos = _pos;
 	int id = FindClosePlayer();
 
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange && ingamePlayer[id]->isDead == false)
 	{
 
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
@@ -370,6 +389,15 @@ void Monster::NatureMove()
 	}
 	else
 	{
+		if (_attackState != false)
+		{
+			_attackState = false;
+			for (auto& pl : ingamePlayer)
+			{
+				if (pl->_stage != ingamePlayer[id]->_stage)continue;
+				pl->send_monster_attack(_id, _m_type, false);
+			}
+		}
 		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
 		{
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
@@ -505,7 +533,7 @@ void IceBossMonster::Move()
 
 	int id = FindClosePlayer();
 
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange && ingamePlayer[id]->isDead == false)
 	{
 		_fight = true;
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
@@ -560,7 +588,7 @@ void FireBossMonster::Move()
 
 	int id = FindClosePlayer();
 
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange && ingamePlayer[id]->isDead == false)
 	{
 		_fight = true;
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
@@ -615,7 +643,7 @@ void NatureBossMonster::Move()
 
 	int id = FindClosePlayer();
 
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange && ingamePlayer[id]->isDead == false)
 	{
 		_fight = true;
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
