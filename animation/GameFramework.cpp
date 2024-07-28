@@ -1080,6 +1080,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, animateState prevAni, an
 
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(int(prevAni), 0.0f);
 
+			if (curAni == animateState::BLACKOUT) m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsDead = true;
 
 			g_clients[id].setprevAnimation(curAni);
 		}

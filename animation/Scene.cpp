@@ -1212,7 +1212,17 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				if (pMapObject == NULL) break;
 			}
 		}
+		// player with player
+		else if (i > 0 && i < 3)
+		{
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead == true
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
+			{
 
+				return false;
+			}
+		}
 		// fire monster와의 충돌 체크
 		else if (i > 2 && i < 13)
 		{
@@ -1556,7 +1566,17 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				if (pMapObject == NULL)break;
 			}
 		}
+		// player with player
+		else if (i > 0 && i < 3)
+		{
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead == true
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
+			{
 
+				return false;
+			}
+		}
 		// collision check with ice monster
 		else if (i > 2 && i < 13)
 		{
@@ -1831,7 +1851,17 @@ bool CFireScene::CheckObjectByObjectCollisions()
 				if (pMapObject == NULL)break;
 			}
 		}
+		// player with player
+		else if (i > 0 && i < 3)
+		{
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead == true
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
+			{
 
+				return false;
+			}
+		}
 		// collision check with fire monster
 		else if (i > 2 && i < 13)
 		{
@@ -2110,7 +2140,17 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				if (pMapObject == NULL)break;
 			}
 		}
+		// player with player
+		else if (i > 0 && i < 3)
+		{
+			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead == true
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox))
+			{
 
+				return false;
+			}
+		}
 		// collision check with nature monster
 		else if (i > 2 && i < 13)
 		{
