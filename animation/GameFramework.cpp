@@ -1372,18 +1372,19 @@ void CGameFramework::ProcessInput()
 		if (pKeysBuffer[KEY_D] & 0xF0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
 			dwDirection |= DIR_RIGHT;
 
-		if (pKeysBuffer[VK_F1] & 0xF0)
-		{
-			m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
-			m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
-		}
-		if (pKeysBuffer[VK_F2] & 0xF0)
-		{
-			m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = false;
-			m_pPlayer->m_pSkinnedAnimationController->m_bIsLastBlending = true;
-		}
+		//if (pKeysBuffer[VK_F1] & 0xF0)
+		//{
+		//	m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
+		//	m_pPlayer->m_pSkinnedAnimationController->m_bIsBlending = true;
+		//}
+		//if (pKeysBuffer[VK_F2] & 0xF0)
+		//{
+		//	m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = false;
+		//	m_pPlayer->m_pSkinnedAnimationController->m_bIsLastBlending = true;
+		//}
 
-		if (pKeysBuffer[VK_SPACE] & 0xF0)
+		if (pKeysBuffer[VK_SPACE] & 0xF0
+			&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false)
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal = true;
 
 		// 공격키
@@ -1397,7 +1398,8 @@ void CGameFramework::ProcessInput()
 		{
 			if (cxDelta || cyDelta)
 			{
-				if (pKeysBuffer[VK_RBUTTON] & 0xF0) {
+				if (pKeysBuffer[VK_RBUTTON] & 0xF0
+					&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
 
 					float yaw = cxDelta;
 
@@ -1413,7 +1415,8 @@ void CGameFramework::ProcessInput()
 				}
 			}
 
-			if (dwDirection && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false)
+			if (dwDirection && m_pPlayer->m_pSkinnedAnimationController->m_bIsHeal == false
+				&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false)
 			{
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsMove = true;
 				m_pPlayer->Move(dwDirection, 12.25f, true);
