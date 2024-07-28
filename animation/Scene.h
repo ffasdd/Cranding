@@ -162,6 +162,12 @@ public:
 
 	 std::string m_username = "";
 	 std::string m_password="";
+
+
+	 // item
+	 bool isIceitem = false;
+	 bool isFireitem = false;
+	 bool isNatureitem = false;
 };
 
 class CLoginScene : public CScene

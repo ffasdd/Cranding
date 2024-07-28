@@ -104,6 +104,10 @@ private:
     D2D1_RECT_F m_spaceshipHPBar = D2D1::RectF(10.0f, 0.0f, 610.0f, 40.0f);
     D2D1_RECT_F m_spaceshipBar = D2D1::RectF(10.0f, 0.0f, 610.0f, 40.0f);
 
+    D2D1_RECT_F m_IceItemBar = D2D1::RectF(10.0f, 40.0f, 210.0f, 60.0f);
+    D2D1_RECT_F m_FireItemBar = D2D1::RectF(210.0f, 40.0f, 410.0f, 60.0f);
+    D2D1_RECT_F m_NatureItemBar = D2D1::RectF(410.0f, 40.0f, 610.0f, 60.0f);
+
 private:
     static UILayer* s_instance;
 
@@ -122,4 +126,6 @@ private:
     // ingame scene ui
     vector<WCHAR*> m_vecIngameScene;
 
+    // ingame item ui
+    vector<WCHAR*> m_vecItem;
 };

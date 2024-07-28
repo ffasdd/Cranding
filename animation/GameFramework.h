@@ -164,7 +164,7 @@ public:
 
 	bool isDayTimeProcessed = false;
 	bool DayTime = false;
-	bool Night = false;
+	bool Night = true;
 	int beforeTimeState = 1;
 
 
