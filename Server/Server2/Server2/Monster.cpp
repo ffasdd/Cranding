@@ -29,7 +29,7 @@ void Monster::Move()
 	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
 	_prevpos = _pos;
 	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
+	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange && ingamePlayer[id]->isDead == false)
 	{
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
 		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
@@ -399,7 +399,7 @@ void Monster::NightAttack(int cl_id)
 bool Monster::CollideCheckToPlayer(Session* _player)
 {
 	if (_player->_stage != _stagenum)return false;
-
+	//if (_player->isDead == true)return false;
 	if (m_SPBB.Intersects(_player->m_SPBB) == true)return true;
 
 	return false;
@@ -415,7 +415,8 @@ int Monster::FindClosePlayer()
 	int  idx = 0;
 	for (auto& pl : ingamePlayer)
 	{
-		if (_stagenum != pl->_stage) { idx++; continue; }
+		if (_stagenum != pl->_stage ) { idx++; continue; }
+
 		pl->distance = Vector3::Distance(pl->_pos, _pos);
 
 		if (pl->distance < minDistance)

@@ -590,9 +590,13 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = true;
 	}*/
 
-	if (g_clients[gNetwork.my_id].getHp()< 0) {
-		m_pPlayer->SetHealth(0);
+	if (g_clients[gNetwork.my_id].getHp() < 0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
+		g_clients[gNetwork.my_id].setHp(0);
+		gNetwork.SendPlayerDead();
+		//m_pPlayer->SetHealth(0);
 		m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
+		
+
 	}
 	// monster dead
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)

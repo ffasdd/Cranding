@@ -829,6 +829,17 @@ void Network::SendBossDamage(int _hp , MonsterType _type)
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
+void Network::SendPlayerDead()
+{
+	CS_PLAYER_DEAD_PACKET p;
+	p.size = sizeof(CS_PLAYER_DEAD_PACKET);
+	p.type = CS_DEAD_PLAYER;
+	p.room_id = my_roomid;
+	p.id = my_id;
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
 bool Network::MonsterCollide(Session& _monster)
 {
 	return 0;

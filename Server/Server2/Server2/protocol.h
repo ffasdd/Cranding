@@ -28,6 +28,7 @@ constexpr char CS_MONSTER_DIE = 16;
 constexpr char CS_MONSTER_HIT_SPACESHIP = 17;
 constexpr char CS_PLAYER_HIT = 18;
 constexpr char CS_BOSSMONSTER_DAMGED = 19;
+constexpr char CS_DEAD_PLAYER = 20;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -65,7 +66,7 @@ constexpr char SC_ICEBOSS_SKILL = 37;
 constexpr char SC_FIREBOSS_SKILL = 38;
 constexpr char SC_NATUREBOSS_SKILL = 39;
 constexpr char SC_PLAYER_HIT = 40;
-
+constexpr char SC_PLAYER_DEAD = 41;
 
 
 
@@ -427,6 +428,13 @@ struct CS_BOSSMONSTER_DAMAGED_PACKET {
 	int room_id;
 	MonsterType _montype;
 };
+struct CS_PLAYER_DEAD_PACKET {
+	unsigned char size;
+	char type;
+	int id;
+	int room_id;
+};
+
 
 struct SC_GAMESTART_PACKET {
 	unsigned char size;
@@ -634,5 +642,11 @@ struct SC_TEST_PACKET {
 	unsigned char size;
 	char	type;
 
-};	
+};
+struct SC_PLAYER_DEAD_PACKET {
+	unsigned char size;
+	char type;
+	int id;
+	// ANimate? 
+};
 #pragma pack (pop)

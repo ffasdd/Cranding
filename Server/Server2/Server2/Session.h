@@ -13,6 +13,7 @@ class Session
 public:
 	int characterType; // 0. sword , 1. gun
 	bool isReady = false;
+	bool isDead = false;
 	mutex _s_lock;
 	STATE _state;
 	INGAMESTATE _i_state;
