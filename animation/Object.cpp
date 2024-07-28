@@ -37,11 +37,11 @@ CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers, int nRootPar
 
 CTexture::~CTexture()
 {
-	//if (m_ppd3dTextures)
-	//{
-	//	for (int i = 0; i < m_nTextures; i++) if (m_ppd3dTextures[i]) m_ppd3dTextures[i]->Release();
-	//	delete[] m_ppd3dTextures;
-	//}
+	if (m_ppd3dTextures)
+	{
+		for (int i = 0; i < m_nTextures; i++) if (m_ppd3dTextures[i]) m_ppd3dTextures[i]->Release();
+		delete[] m_ppd3dTextures;
+	}
 	if (m_pnResourceTypes) delete[] m_pnResourceTypes;
 	if (m_pdxgiBufferFormats) delete[] m_pdxgiBufferFormats;
 	if (m_pnBufferElements) delete[] m_pnBufferElements;
@@ -191,7 +191,7 @@ CMaterial::~CMaterial()
 {
 	if (m_pShader) m_pShader->Release();
 
-	if (m_nTextures > 0 && m_ppTextures != nullptr )
+	if (m_nTextures > 0)
 	{
 		for (int i = 0; i < m_nTextures; i++) if (m_ppTextures[i]) m_ppTextures[i]->Release();
 		delete[] m_ppTextures;
