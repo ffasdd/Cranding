@@ -90,6 +90,7 @@ void Monster::Move()
 			_attackState = false;
 			for (auto& pl : ingamePlayer)
 			{
+				if (id == -1)break;
 				if (pl->_stage != ingamePlayer[id]->_stage)continue;
 				pl->send_monster_attack(_id, _m_type, false);
 			}
@@ -184,6 +185,7 @@ void Monster::IceMove()
 	}
 	else
 	{
+
 		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
 		{
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
@@ -243,7 +245,6 @@ void Monster::FireMove()
 		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
 		{
 			_speed = 0;
-
 			if (_attackState != true)
 			{
 				_attackState = true;
@@ -267,12 +268,9 @@ void Monster::FireMove()
 			}
 		}
 		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // ¿Ãµø , 
-
 		_speed = 0.6f;
 		m_SPBB.Center = _pos;
 		m_SPBB.Center.y = _pos.y;
-
-
 	}
 	else
 	{
