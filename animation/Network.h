@@ -69,13 +69,6 @@ public: // thread send
 
 	bool MonsterCollide(Session& _monster);
 
-
-	void StopSendRecv()
-	{
-		if (netThread.joinable()) {
-			netThread.join();
-		}
-	}
 	
 public: // utils
 	int getmyid(int _id);

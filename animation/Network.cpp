@@ -298,13 +298,11 @@ void Network::ProcessPacket(char* buf)
 			case 6:
 			{
 				gGameFramework.isWin = true;
-				StopSendRecv();
 				break;
 			}
 			case 7:
 			{
 				gGameFramework.isLose = true;
-				StopSendRecv();
 				break;
 			}
 			}

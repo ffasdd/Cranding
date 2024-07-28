@@ -1458,10 +1458,9 @@ void CGameFramework::ProcessInput()
 				if (pKeysBuffer[VK_RBUTTON] & 0xF0
 					&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
 
-					float yaw = cxDelta;
+					double yaw = cxDelta;
 
-					if (yaw > 360.0f) yaw -= 360.0f;
-					if (yaw < 0.f) yaw += 360.0f;
+					yaw = clamp(yaw, 0.0, 360.0);
 
 					m_pPlayer->RotateYaw(yaw);
 					if (g_clients.size() != 0)
@@ -1772,31 +1771,12 @@ void CGameFramework::FrameAdvance()
 
 		m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], d3dDsvCPUDescriptorHandle);
 
-		// imgui
-		bool isActive = false;
+		
 
-		//if (ImGui::Begin("chat", &isActive))
-		//{
-		//	static char serverAddress[256] = "";
-
-		//	
-		//	ImGui::InputText("Server Address", serverAddress, sizeof(serverAddress));
-
-		//	if (ImGui::Button("Connect"))
-		//	{
-		//		// Connect to server logic can be added here
-		//		std::cout << "Connecting to server at: " << serverAddress << std::endl;
-		//		// Example: gNetwork.Connect(serverAddress);
-		//	}
-
-		//	ImGui::End();
-		//}
-		//ImGui::Render();
-		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_pd3dCommandList);
-
-
-		m_pScene->Render(m_pd3dCommandList, m_pCamera);
-		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+		if (m_pScene->isBiludobj)
+			m_pScene->Render(m_pd3dCommandList, m_pCamera);
+		if ( m_pPlayer->isplayermake == true)
+			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
 		//if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 
