@@ -1091,29 +1091,44 @@ void CGameFramework::myFunc_SetMonAnimation(int n, bool isAttacked, bool isAttac
 	if (isAttacked == true)
 	{
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
+
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackPosition(2, 0.0f);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackPosition(4, 0.0f);
+
 	}
 	else if (isAttack == true)
 	{
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bIsMonsterAttack = true;
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bWasMonsterAttack = true;
+
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(4, true);
+
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackPosition(1, 0.0f);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackPosition(2, 0.0f);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
 	}
 	else if (isAttack == false && m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bWasMonsterAttack)
 	{
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bIsMonsterAttack = false;
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->m_bWasMonsterAttack = false;
+
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(2, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
+
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackPosition(2, 0.0f);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+		m_pScene->m_ppHierarchicalGameObjects[n + 3]->m_pSkinnedAnimationController->SetTrackPosition(4, 0.0f);
 	}
 }
 
@@ -1458,7 +1473,7 @@ void CGameFramework::ProcessInput()
 			&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false)
 		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
-			PlaySound(L"Sound/Attack.wav", NULL, SND_FILENAME);
+			//PlaySound(L"Sound/Attack.wav", NULL, SND_FILENAME);
 		}
 
 		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
@@ -1679,6 +1694,12 @@ void CGameFramework::FrameAdvance()
 		ProcessInput();
 
 		AnimateObjects();
+
+		if (m_pPlayer->m_pSkinnedAnimationController->m_bIsDead)
+			isBlurRender = true;
+		else
+			isBlurRender = false;
+
 		HRESULT hResult = m_pd3dCommandAllocator->Reset();
 		hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 

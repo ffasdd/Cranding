@@ -595,7 +595,6 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		gNetwork.SendPlayerDead();
 		//m_pPlayer->SetHealth(0);
 		m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
-		
 
 	}
 	// monster dead
@@ -617,6 +616,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 					gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Night);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
 				break;
@@ -625,6 +625,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 					gNetwork.SendAttackCollision(g_ice_monsters[i - 3].getId(), MonsterType::Ice);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
 				break;
@@ -633,6 +635,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 					gNetwork.SendAttackCollision(g_fire_monsters[i - 3].getId(), MonsterType::Fire);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
 				break;
@@ -641,6 +645,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 					gNetwork.SendAttackCollision(g_nature_monsters[i - 3].getId(), MonsterType::Nature);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
 				break;
@@ -649,6 +655,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 					gNetwork.SendAttackCollision(0, MonsterType::Ice_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 					m_ppHierarchicalGameObjects[14]->isdraw = true;
 				}
@@ -660,6 +668,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[14]->isdraw = true;
 					gNetwork.SendAttackCollision(0, MonsterType::Fire_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				}
 				break;
@@ -668,6 +678,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
 					gNetwork.SendAttackCollision(0, MonsterType::Nature_Boss);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
+					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackPosition(3, 0.0f);
+
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
 					m_ppHierarchicalGameObjects[14]->isdraw = true;
 				}
