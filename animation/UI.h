@@ -96,9 +96,9 @@ private:
     D2D1_RECT_F m_HPBar = D2D1::RectF(0.0f, 0.0f, 0.0f, 0.0f);
     D2D1_RECT_F m_Timer = D2D1::RectF(1300.0f, 0.0f, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 
-    D2D1_RECT_F iceRect = D2D1::RectF(10, 800, 500, 830);
-    D2D1_RECT_F fireRect = D2D1::RectF(10, 840, 500, 870);
-    D2D1_RECT_F natureRect = D2D1::RectF(10, 880, 500, 910);
+    D2D1_RECT_F iceRect = D2D1::RectF(10, 900, 500, 930);
+    D2D1_RECT_F fireRect = D2D1::RectF(10, 940, 500, 970);
+    D2D1_RECT_F natureRect = D2D1::RectF(10, 980, 500, 1010);
 
     D2D1_RECT_F m_Map = D2D1::RectF(660, 0.0f, 1260, FRAME_BUFFER_HEIGHT);
     D2D1_RECT_F m_spaceshipHPBar = D2D1::RectF(10.0f, 0.0f, 610.0f, 40.0f);
