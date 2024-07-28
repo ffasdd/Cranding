@@ -729,6 +729,7 @@ void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera
 // �α��ξ�
 void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	isBiludobj = false;
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
@@ -765,7 +766,7 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[3]->Rotate(-20.0f, 170.0f, 0.0f);
 
 	if (pPlayerModel) delete pPlayerModel;
-
+	isBiludobj = true;
 }
 
 
@@ -847,6 +848,7 @@ void CLoginScene::ReleaseObjects()
 //
 void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	isBiludobj = false;
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
@@ -910,6 +912,7 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	if (pPlayerModel1) delete pPlayerModel1;
 	if (pPlayerModel2) delete pPlayerModel2;
+	isBiludobj = true;
 }
 
 bool CLobbyScene::CheckObjectByObjectCollisions()
@@ -983,6 +986,7 @@ void CLobbyScene::ReleaseObjects()
 //
 void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	isBiludobj = false;
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
@@ -1129,6 +1133,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	for (int i = 0; i < GrassMonsterNum; ++i) {
 		if (pGrassMonModels[i]) delete pGrassMonModels[i];
 	}
+	isBiludobj = true;
 }
 
 void CSpaceShipScene::HandleCollisionEnd(CGameObject* pObject) {
@@ -1352,6 +1357,7 @@ void CSpaceShipScene::ReleaseObjects()
 
 void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	isBiludobj = false;
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
@@ -1492,7 +1498,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	if (pIceItemModel) delete pIceItemModel;
 
 	//PlayBGM(L"Sound/Ice.wav");
-
+	isBiludobj = false;
 }
 
 bool CIceScene::CheckObjectByObjectCollisions()
@@ -1654,6 +1660,7 @@ void CIceScene::ReleaseObjects()
 
 void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	isBiludobj = false;
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
@@ -1785,6 +1792,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
 
 	if (pFireItemModel) delete pFireItemModel;
+	isBiludobj = true;
 }
 bool CFireScene::CheckObjectByObjectCollisions()
 {
@@ -1947,6 +1955,7 @@ void CFireScene::ReleaseObjects()
 
 void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	isBiludobj = false;
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
@@ -2075,6 +2084,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
 
 	if (pNatureItemModel) delete pNatureItemModel;
+	isBiludobj = true;
 }
 bool CGrassScene::CheckObjectByObjectCollisions()
 {
@@ -2213,6 +2223,7 @@ void CGrassScene::ReleaseObjects()
 
 void CWInScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	isBiludobj = false;
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
@@ -2249,6 +2260,7 @@ void CWInScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[3]->Rotate(-20.0f, 170.0f, 0.0f);
 
 	if (pPlayerModel) delete pPlayerModel;
+	isBiludobj = true;
 }
 
 void CWInScene::ReleaseUploadBuffers()
@@ -2263,6 +2275,8 @@ void CWInScene::ReleaseObjects()
 
 void CLoseScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	isBiludobj = false;
+
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
@@ -2299,6 +2313,8 @@ void CLoseScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[3]->SetPosition(-60.0f, 0.0f, -30.0f);
 
 	if (pPlayerModel) delete pPlayerModel;
+
+	isBiludobj = true;
 }
 void CLoseScene::ReleaseUploadBuffers()
 {
