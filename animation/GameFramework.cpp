@@ -1392,6 +1392,7 @@ void CGameFramework::ChangeSceneReleaseObject()
 {
 	if (m_pPlayer) {
 		m_pPlayer->Release();
+		m_pPlayer = nullptr;
 	}
 
 	if (m_pScene) m_pScene->ReleaseObjects();
