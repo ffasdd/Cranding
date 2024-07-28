@@ -135,11 +135,27 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
     for (int i = 0; i < ingameUI_num; ++i) {
         m_vecIngameScene.push_back(pMap[i]);
     }
+
+    //  ingame item
+    int Item_num = 3;
+    WCHAR** pItem = new WCHAR * [Item_num];
+    for (int i = 0; i < Item_num; ++i)
+    {
+        pItem[i] = new WCHAR[256];
+    }
+
+    wcscpy_s(pItem[0], 256, L"Ice");
+    wcscpy_s(pItem[1], 256, L"Fire");
+    wcscpy_s(pItem[2], 256, L"Nature");
+    for (int i = 0; i < Item_num; ++i) {
+        m_vecItem.push_back(pItem[i]);
+    }
+
     InitializeDevice(pd3dDevice, pd3dCommandQueue, ppd3dRenderTargets);
 
     // brush
     m_brushes[BRUSH_COLOR::WHITE] = CreateBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
-    m_brushes[BRUSH_COLOR::LIME_GREEN] = CreateBrush(D2D1::ColorF(1.0f, 0.8f, 0.8f, 1.0f));
+    m_brushes[BRUSH_COLOR::PINK] = CreateBrush(D2D1::ColorF(1.0f, 0.8f, 0.8f, 1.0f));
     m_brushes[BRUSH_COLOR::BLACK] = CreateBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.0f));
     m_brushes[BRUSH_COLOR::LIGHTBLACK] = CreateBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.8f));
     m_brushes[BRUSH_COLOR::ABLACK] = CreateBrush(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.3f));
@@ -361,7 +377,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         std::wstring DnN[2] = { L"Day", L"Night" };
         int timenum = gGameFramework.Night;
         swprintf_s(pstrOutputText, 256, L"Day: %d  Time:%02d:%02d %s", gNetwork.Day, curMinute, curSecond, DnN[timenum].c_str());
-        m_pd2dDeviceContext->DrawText(pstrOutputText, (UINT)wcslen(pstrOutputText), m_textFormats[TEXT_SIZE::SIZE_18], m_Timer, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        m_pd2dDeviceContext->DrawText(pstrOutputText, (UINT)wcslen(pstrOutputText), m_textFormats[TEXT_SIZE::SIZE_18], m_Timer, m_brushes[BRUSH_COLOR::PINK]);
 
         // hp
         SetHP();
@@ -371,13 +387,13 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         // status
         WCHAR elementText[256];
         swprintf_s(elementText, 256, L"HP: %d", g_clients[gNetwork.my_id].getHp());
-        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::PINK]);
 
         swprintf_s(elementText, 256, L"Attack Power: %d", g_clients[gNetwork.my_id].getAttackPower());
-        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::PINK]);
 
         swprintf_s(elementText, 256, L"Speed: %d", g_clients[gNetwork.my_id].getSpeed());
-        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+        m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::PINK]);
 
         // Map 이동 메시지
         std::wstring mapMessage;
@@ -391,12 +407,27 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
             mapMessage = m_vecIngameScene[2];
         }
         if (!mapMessage.empty()) {
-            m_pd2dDeviceContext->DrawText(mapMessage.c_str(), (UINT)wcslen(mapMessage.c_str()), m_textFormats[TEXT_SIZE::SIZE_15], m_Map, m_brushes[BRUSH_COLOR::LIME_GREEN]);
+            m_pd2dDeviceContext->DrawText(mapMessage.c_str(), (UINT)wcslen(mapMessage.c_str()), m_textFormats[TEXT_SIZE::SIZE_15], m_Map, m_brushes[BRUSH_COLOR::PINK]);
         }
 
         // 우주선 hp
         m_pd2dDeviceContext->FillRectangle(m_spaceshipBar, m_brushes[BRUSH_COLOR::BLACK]);
         m_pd2dDeviceContext->FillRectangle(m_spaceshipHPBar, m_brushes[BRUSH_COLOR::RED]);
+
+        // item UI        
+        m_pd2dDeviceContext->DrawText(m_vecItem[0], (UINT)wcslen(m_vecItem[0]), m_textFormats[TEXT_SIZE::SIZE_15], m_IceItemBar, m_brushes[BRUSH_COLOR::ABLACK]);
+        if(gGameFramework.m_pScene->isIceitem)
+            m_pd2dDeviceContext->DrawText(m_vecItem[0], (UINT)wcslen(m_vecItem[0]), m_textFormats[TEXT_SIZE::SIZE_15], m_IceItemBar, m_brushes[BRUSH_COLOR::BLACK]);
+
+        m_pd2dDeviceContext->DrawText(m_vecItem[1], (UINT)wcslen(m_vecItem[1]), m_textFormats[TEXT_SIZE::SIZE_15], m_FireItemBar, m_brushes[BRUSH_COLOR::ABLACK]);
+        if (gGameFramework.m_pScene->isFireitem)
+            m_pd2dDeviceContext->DrawText(m_vecItem[1], (UINT)wcslen(m_vecItem[1]), m_textFormats[TEXT_SIZE::SIZE_15], m_FireItemBar, m_brushes[BRUSH_COLOR::BLACK]);
+
+        m_pd2dDeviceContext->DrawText(m_vecItem[2], (UINT)wcslen(m_vecItem[2]), m_textFormats[TEXT_SIZE::SIZE_15], m_NatureItemBar, m_brushes[BRUSH_COLOR::ABLACK]);
+        if (gGameFramework.m_pScene->isNatureitem)
+            m_pd2dDeviceContext->DrawText(m_vecItem[2], (UINT)wcslen(m_vecItem[2]), m_textFormats[TEXT_SIZE::SIZE_15], m_NatureItemBar, m_brushes[BRUSH_COLOR::BLACK]);
+
+
 
 
         m_pd2dDeviceContext->EndDraw();

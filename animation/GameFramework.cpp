@@ -1108,6 +1108,7 @@ void CGameFramework::myFunc_SetBossMonAnimation(bool isAttacked, bool isAttack, 
 {
 	if (isAttacked == true)
 	{
+		// 죽ㄴㄴ고
 		m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 
 		for (int i = 0; i < m_pScene->m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->m_nAnimationTracks; i++)

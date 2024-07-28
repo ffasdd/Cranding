@@ -1054,11 +1054,6 @@ void CGameObject::Animate(float fTimeElapsed)
 	if (m_pSkinnedAnimationController)
 	{
 		m_pSkinnedAnimationController->AdvanceTime(fTimeElapsed, this);
-		if (this->m_pSkinnedAnimationController->m_bIsDead)
-		{
-			XMFLOAT3 pos = this->GetPosition();
-			this->SetPosition(pos.x, -200.0f, pos.z);
-		}
 	}
 
 	if (m_pSibling) m_pSibling->Animate(fTimeElapsed);
