@@ -2178,7 +2178,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 			}
 		}
 
-		}
+
 		// collision check with nature item
 		else if (i == 14 ) {
 			XMFLOAT3 e_pos = m_ppHierarchicalGameObjects[i]->GetPosition();
@@ -2250,6 +2250,7 @@ void CWInScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	if (pPlayerModel) delete pPlayerModel;
 }
+
 void CWInScene::ReleaseUploadBuffers()
 {
 	CScene::ReleaseUploadBuffers();
