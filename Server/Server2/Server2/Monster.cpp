@@ -387,8 +387,6 @@ void Monster::NatureMove()
 		_speed = 1.0f;
 		m_SPBB.Center = _pos;
 		m_SPBB.Center.y = _pos.y;
-
-
 	}
 	else
 	{
