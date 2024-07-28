@@ -245,8 +245,9 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::NIGHT_TIMER: {
 			int r_id = static_cast<int>(key);
+			cout << " Night " << endl;
 			ingameroom[r_id].NightSend();
-			TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(30s),r_id,EVENT_TYPE::EV_DAYTIME };
+			TIMER_EVENT ev3{chrono::system_clock::now() + chrono::seconds(20s), r_id,EVENT_TYPE::EV_DAYTIME};
 			g_Timer.InitTimerQueue(ev3);
 
 			delete ex_over;
@@ -254,8 +255,10 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::DAYTIME_TIMER: {
 			int r_id = static_cast<int>(key);
+			cout << " Day " << endl;
 			ingameroom[r_id].DayTimeSend();
-			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(30s),r_id,EVENT_TYPE::EV_NIGHT };
+	
+			TIMER_EVENT ev{ chrono::system_clock::now() + std::chrono::seconds(20s),r_id,EVENT_TYPE::EV_NIGHT };
 			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
@@ -671,8 +674,6 @@ void Server::ProcessPacket(int id, char* packet)
 			TIMER_EVENT ev2{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NIGHT };
 			g_Timer.InitTimerQueue(ev2);
 
-
-
 			TIMER_EVENT ev4{ ingameroom[r_id].start_time ,r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev4);
 
@@ -693,8 +694,8 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		else
 			break;
-	}
 						break;
+	}
 	case CS_ATTACK: {
 		CS_ATTACK_PACKET* p = reinterpret_cast<CS_ATTACK_PACKET*>(packet);
 		int r_id = p->roomid;
@@ -839,7 +840,6 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_PLAYER_HIT_PACKET* p = reinterpret_cast<CS_PLAYER_HIT_PACKET*>(packet);
 		clients[p->id]._isDamaged = p->isdamaged;
 		clients[p->id]._hp = p->hp;
-
 		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
 		{
 			if (pl->_stage != clients[p->id]._stage)continue;
@@ -895,7 +895,15 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_PLAYER_DEAD_PACKET* p = reinterpret_cast<CS_PLAYER_DEAD_PACKET*>(packet);
 		clients[p->id]._hp = 0;
 		clients[p->id].isDead = true;
+		clients[p->id].animationstate = animateState::BLACKOUT;
+		clients[p->id].prevanimationstate= clients[p->id].animationstate;
+
 		ingameroom[p->room_id].deadplayercnt++;
+		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+		{
+			if (pl->_id == p->id)continue;
+			pl->send_change_animate_packet(p->id);
+		}
 		if (ingameroom[p->room_id].deadplayercnt == 2)
 		{
 			for (auto& pl : ingameroom[p->room_id].ingamePlayer)

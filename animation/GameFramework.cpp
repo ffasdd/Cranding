@@ -1661,11 +1661,6 @@ void CGameFramework::FrameAdvance()
 				//
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 
-				if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
-				{
-					g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-
-				}
 			}
 		}
 		else if (isSceneChangetoFire) {
