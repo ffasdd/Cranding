@@ -487,6 +487,7 @@ void Server::ProcessPacket(int id, char* packet)
 			clients[id]._stage = 1;
 			clients[id]._attpow = 20;
 			clients[id]._hp = 100;
+			clients[id]._speed = 70;
 		}
 
 		matchingqueue.push(&clients[id]);
@@ -839,12 +840,15 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_PLAYER_HIT: {
 		CS_PLAYER_HIT_PACKET* p = reinterpret_cast<CS_PLAYER_HIT_PACKET*>(packet);
 		clients[p->id]._isDamaged = p->isdamaged;
+		clients[p->id]._hp = p->hp;
+
 		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
 		{
 			if (pl->_stage != clients[p->id]._stage)continue;
 			if (pl->_id == p->id)continue;
 			pl->send_player_hit(p->id);
 		}
+
 	}
 
 	case CS_BOSSMONSTER_DAMGED: {

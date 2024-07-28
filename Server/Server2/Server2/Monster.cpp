@@ -47,7 +47,7 @@ void Monster::Move()
 		XMStoreFloat3(&rightFloat3, rightVec);
 		// right 벡터를 업데이트
 		_right = rightFloat3;
-	
+
 		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
 		{
 			_speed = 0;
@@ -231,11 +231,35 @@ void Monster::FireMove()
 		_right = rightFloat3;
 
 		//else 
-		if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
+		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
+		{
+			_speed = 0;
 
+			if (_attackState != true)
+			{
+				_attackState = true;
+				for (auto& pl : ingamePlayer)
+				{
+					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					pl->send_monster_attack(_id, _m_type, true);
+				}
+			}
+		}
+		else
+		{
+			if (_attackState != false)
+			{
+				_attackState = false;
+				for (auto& pl : ingamePlayer)
+				{
+					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					pl->send_monster_attack(_id, _m_type, false);
+				}
+			}
+		}
 		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
-		_speed = 1.2f;
+		_speed = 0.6f;
 		m_SPBB.Center = _pos;
 		m_SPBB.Center.y = _pos.y;
 
@@ -300,7 +324,32 @@ void Monster::NatureMove()
 		_right = rightFloat3;
 
 		//else 
-		if (CollideCheckToPlayer(ingamePlayer[id])) _speed = 0;
+		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
+		{
+			_speed = 0;
+
+			if (_attackState != true)
+			{
+				_attackState = true;
+				for (auto& pl : ingamePlayer)
+				{
+					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					pl->send_monster_attack(_id, _m_type, true);
+				}
+			}
+		}
+		else
+		{
+			if (_attackState != false)
+			{
+				_attackState = false;
+				for (auto& pl : ingamePlayer)
+				{
+					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					pl->send_monster_attack(_id, _m_type, false);
+				}
+			}
+		}
 
 		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 
@@ -352,7 +401,7 @@ bool Monster::CollideCheckToPlayer(Session* _player)
 	if (_player->_stage != _stagenum)return false;
 
 	if (m_SPBB.Intersects(_player->m_SPBB) == true)return true;
-	
+
 	return false;
 }
 
@@ -448,7 +497,7 @@ void IceBossMonster::Move()
 
 	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
 	{
-		_fight = true; 
+		_fight = true;
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
 		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
 		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
@@ -470,7 +519,7 @@ void IceBossMonster::Move()
 		//else 
 		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
 		{
-			_speed = 0;	
+			_speed = 0;
 		}
 
 		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
@@ -536,7 +585,7 @@ void FireBossMonster::Move()
 	else
 	{
 		_fight = false;
-		
+
 	}
 }
 

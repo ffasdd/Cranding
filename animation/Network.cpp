@@ -193,6 +193,8 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setAnimation((p->a_state));
 		g_clients[my_id].setprevAnimation((p->prev_state));
 		g_clients[my_id].setAttackPower(p->att);
+		g_clients[my_id].setSpeed(p->speed);
+
 		g_clients[my_id].scene_num = p->stage_num;
 
 		gGameFramework.m_pPlayer->c_id = my_id;
@@ -224,6 +226,7 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setAnimation(p->a_state);
 		g_clients[ob_id].setprevAnimation(p->prev_state);
 		g_clients[ob_id].setAttackPower(p->att);
+		g_clients[ob_id].setSpeed(p->speed);
 		g_clients[ob_id].scene_num = p->stage_num;
 		g_clients_mutex.unlock();
 		break;
@@ -351,17 +354,25 @@ void Network::ProcessPacket(char* buf)
 		SC_DAYTIME_PACKET* p = reinterpret_cast<SC_DAYTIME_PACKET*>(buf);
 		gGameFramework.DayTime = true;
 		gGameFramework.Night = false;
-
+		Day++;
 
 		g_clients[my_id].m_firecnt = p->firecnt;
 		g_clients[my_id].m_icencnt = p->icecnt;
 		g_clients[my_id].m_naturecnt = p->naturecnt;
 
 
-		cout << " Day Time " << endl;
-		cout << " Fire Mosnter : " << g_clients[my_id].m_firecnt << endl;
-		cout << " Ice Mosnter : " << g_clients[my_id].m_icencnt << endl;
-		cout << " Nature Mosnter : " << g_clients[my_id].m_naturecnt << endl;
+		int att = g_clients[my_id].getAttackPower();
+		att += 5 * p->firecnt;
+		g_clients[my_id].setAttackPower(att);
+
+		int speed = g_clients[my_id].getSpeed();
+		speed += 3 * p->icecnt;
+		g_clients[my_id].setSpeed(speed);
+
+		int heal = g_clients[my_id].getHp();
+		heal += 3 * p->naturecnt;
+		g_clients[my_id].setHp(heal);
+
 		break;
 	}
 	case SC_NIGHT:
@@ -802,6 +813,7 @@ void Network::SendPlayerHIt(bool is_damaged)
 	p.id = my_id;
 	p.room_id = my_roomid;
 	p.isdamaged = is_damaged;
+	p.hp = g_clients[my_id].getHp();
 
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
