@@ -197,7 +197,6 @@ void Network::ProcessPacket(char* buf)
 
 		g_clients[my_id].scene_num = p->stage_num;
 
-		gGameFramework.m_pPlayer->c_id = my_id;
 		gGameFramework.cl_id = my_id;
 		g_clients_mutex.unlock();
 		gamestart = true;
