@@ -564,7 +564,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = true;
 	}*/
 
-	if (g_clients[gNetwork.my_id].getHp() < 0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
+	if (g_clients.size() != 0 && g_clients[gNetwork.my_id].getHp() < 0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
 		g_clients[gNetwork.my_id].setHp(0);
 		gNetwork.SendPlayerDead();
 		//m_pPlayer->SetHealth(0);

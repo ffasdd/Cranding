@@ -1493,7 +1493,11 @@ void CGameFramework::ProcessInput()
 
 				XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(temp, m_GameTimer.GetTimeElapsed(), false);
 				m_pPlayer->Move(cl_id, xmf3Velocity, false);
+				if (g_clients.size() != 0)
+				{
+
 				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
+				}
 				g_sendqueue.push(SENDTYPE::MOVE);
 
 			}
@@ -1631,6 +1635,7 @@ void CGameFramework::FrameAdvance()
 				sceneManager.GetCurrentScene() == SCENEKIND::ICE ||
 				sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
 			{
+				isshadow = true;
 				ChangeScene(SCENEKIND::SPACESHIP);
 				//
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
@@ -1749,10 +1754,10 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->SetGraphicsRootConstantBufferView(0, d3dGPUVirtualAddress);
 
 
-		if (m_pScene && m_pScene->isBiludobj) {
+		if (m_pScene && m_pScene->isBiludobj && isshadow == true) {
 			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
 		}
-		if(m_pPlayer && m_pPlayer->isplayermake ==true)
+		if(m_pPlayer && m_pPlayer->isplayermake ==true && isshadow == true)
 			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);

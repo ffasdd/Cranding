@@ -107,6 +107,8 @@ public:
 	ID3D12Resource* m_pBlurBuffer = NULL;
 	bool isBlurRender = false;
 
+	bool isshadow = false;
+
 	CPlayer* m_pPlayer = NULL;
 	float PlayerPosX = 0.0f;
 	float PlayerPosZ = 0.0f;

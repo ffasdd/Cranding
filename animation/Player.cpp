@@ -566,7 +566,7 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
-				if (g_clients[gNetwork.my_id].getAnimation() != animateState::SWORD_MOVE)
+				if (g_clients.size() != 0 &&g_clients[gNetwork.my_id].getAnimation() != animateState::SWORD_MOVE)
 				{
 					g_clients[gNetwork.my_id].setprevAnimation(g_clients[gNetwork.my_id].getAnimation());
 					g_clients[gNetwork.my_id].setAnimation(animateState::SWORD_MOVE);
@@ -604,7 +604,7 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
 				// �÷��̾� ���Ⱑ Į�̶�� Į idle
-				if (g_clients[gNetwork.my_id].getCharacterType() == 0)
+				if (g_clients.size() != 0 && g_clients[gNetwork.my_id].getCharacterType() == 0)
 				{
 					if (g_clients[gNetwork.my_id].getAnimation() != animateState::SWORD_IDLE)
 					{
@@ -614,7 +614,11 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				}
 
 				// �������� ������ ����� �ִ�num, ���� �ִ� num send
+				if (g_clients.size() != 0)
+				{
+
 				gNetwork.SendChangeAnimation(g_clients[gNetwork.my_id].getAnimation(), g_clients[gNetwork.my_id].getprevAnimation());
+				}
 			}
 		}
 
