@@ -1458,9 +1458,10 @@ void CGameFramework::ProcessInput()
 				if (pKeysBuffer[VK_RBUTTON] & 0xF0
 					&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
 
-					double yaw = cxDelta;
+					float  yaw = cxDelta;
 
-					yaw = clamp(yaw, 0.0, 360.0);
+					if (yaw > 360.0f) yaw -= 360.0f;
+					if (yaw < 0.f) yaw += 360.0f;
 
 					m_pPlayer->RotateYaw(yaw);
 					if (g_clients.size() != 0)
@@ -1548,13 +1549,11 @@ void CGameFramework::CreateShaderVariables()
 	m_pd3dcbTime->Map(0, NULL, (void**)&m_pTime);
 }
 
-void CGameFramework::UpdateShaderVariables()
+void CGameFramework::UpdateShaderVariables(float curSecond)
 {
-
 	TIME temp;
-	temp.fCurrentMin = curMinute;
+	temp.fCurrentMin = DayTime;
 	temp.fCurrentSec = curSecond;
-
 	::memcpy(m_pTime, &temp, sizeof(TIME));
 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbTime->GetGPUVirtualAddress();
@@ -1570,7 +1569,7 @@ void CGameFramework::UpdateTime()
 	float serverNightTime = 20.0f;  // 밤 시간 (예: 20초)
 
 	// 클라이언트에서 관리하는 누적 시간 변수 초기화
-	static float accumulatedTime = 0.0f;  // 현재 누적 시간
+
 	static int curDay = 0;  // 현재 날 수
 
 	// 경과 시간 가져오기
@@ -1582,6 +1581,7 @@ void CGameFramework::UpdateTime()
 	curMinute = totalSeconds / 60;
 	curSecond = totalSeconds % 60;
 
+	UpdateShaderVariables(totalSeconds);
 
 	// 전체 시간 (낮 + 밤)을 기준으로 하루 계산
 	float fullCycleTime = serverDayTime + serverNightTime;
@@ -1760,7 +1760,9 @@ void CGameFramework::FrameAdvance()
 
 		if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && sceneManager.GetCurrentScene() != SCENEKIND::LOBBY)
 			UpdateTime();
-		UpdateShaderVariables();
+
+		//UpdateShaderVariables();
+
 		m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera);
 
 
