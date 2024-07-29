@@ -606,13 +606,13 @@ void CGameFramework::InitXAudio2()
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	if (FAILED(hr) && hr != RPC_E_CHANGED_MODE) {
 		std::cerr << "CoInitializeEx 실패: " << std::hex << hr << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	HRESULT hResult = XAudio2Create(&m_pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	if (FAILED(hResult)) {
 		std::cerr << "XAudio2 초기화 실패: " << std::hex << hResult << std::endl;
-		exit(1);
+		//exit(1);
 	}
 	hResult = m_pXAudio2->CreateMasteringVoice(&m_pMasterVoice);
 	if (FAILED(hResult)) {
@@ -632,7 +632,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 
 	if (!file) {
 		std::cerr << "Failed to open sound file" << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	// RIFF 헤더를 읽습니다.
@@ -640,7 +640,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 	file.read(riffHeader, 4);
 	if (strncmp(riffHeader, "RIFF", 4) != 0) {
 		std::cerr << "Invalid WAV file: RIFF header not found" << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	// 파일 크기를 건너뜁니다.
@@ -651,7 +651,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 	file.read(waveHeader, 4);
 	if (strncmp(waveHeader, "WAVE", 4) != 0) {
 		std::cerr << "Invalid WAV file: WAVE header not found" << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	// 서브 청크들을 순회하면서 fmt 청크와 data 청크를 찾습니다.
@@ -673,7 +673,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 			}
 			else {
 				std::cerr << "Unexpected fmt chunk size" << std::endl;
-				exit(1);
+				//exit(1);
 			}
 		}
 		else if (strncmp(chunkHeader, "data", 4) == 0) {
@@ -692,7 +692,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 
 	if (soundData.buffer.AudioBytes == 0) {
 		std::cerr << "Failed to find data chunk" << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	return soundData;
@@ -1458,9 +1458,10 @@ void CGameFramework::ProcessInput()
 				if (pKeysBuffer[VK_RBUTTON] & 0xF0
 					&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
 
-					double yaw = cxDelta;
+					float  yaw = cxDelta;
 
-					yaw = clamp(yaw, 0.0, 360.0);
+					if (yaw > 360.0f) yaw -= 360.0f;
+					if (yaw < 0.f) yaw += 360.0f;
 
 					m_pPlayer->RotateYaw(yaw);
 					if (g_clients.size() != 0)
@@ -1548,13 +1549,11 @@ void CGameFramework::CreateShaderVariables()
 	m_pd3dcbTime->Map(0, NULL, (void**)&m_pTime);
 }
 
-void CGameFramework::UpdateShaderVariables()
+void CGameFramework::UpdateShaderVariables(float curSecond)
 {
-
 	TIME temp;
-	temp.fCurrentMin = curMinute;
+	temp.fCurrentMin = DayTime;
 	temp.fCurrentSec = curSecond;
-
 	::memcpy(m_pTime, &temp, sizeof(TIME));
 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbTime->GetGPUVirtualAddress();
@@ -1570,7 +1569,7 @@ void CGameFramework::UpdateTime()
 	float serverNightTime = 20.0f;  // 밤 시간 (예: 20초)
 
 	// 클라이언트에서 관리하는 누적 시간 변수 초기화
-	static float accumulatedTime = 0.0f;  // 현재 누적 시간
+
 	static int curDay = 0;  // 현재 날 수
 
 	// 경과 시간 가져오기
@@ -1582,6 +1581,7 @@ void CGameFramework::UpdateTime()
 	curMinute = totalSeconds / 60;
 	curSecond = totalSeconds % 60;
 
+	UpdateShaderVariables(totalSeconds);
 
 	// 전체 시간 (낮 + 밤)을 기준으로 하루 계산
 	float fullCycleTime = serverDayTime + serverNightTime;
@@ -1760,7 +1760,9 @@ void CGameFramework::FrameAdvance()
 
 		if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && sceneManager.GetCurrentScene() != SCENEKIND::LOBBY)
 			UpdateTime();
-		UpdateShaderVariables();
+
+		//UpdateShaderVariables();
+
 		m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera);
 
 

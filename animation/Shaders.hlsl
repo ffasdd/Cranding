@@ -183,7 +183,16 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedStandardMultipleRTs(VS_STANDARD_OUTP
     output.f4Texture.a = 1;
     
     input.normalW = normalize(input.normalW);
-    output.normal = float4(input.normalW, 0);
+    if (gnTexturesMask & MATERIAL_NORMAL_MAP)
+    {
+        float3x3 TBN = float3x3(normalize(input.tangentW), normalize(input.bitangentW), normalize(input.normalW));
+        float3 vNormal = gtxtNormalTexture.Sample(gssWrap, input.uv);
+        input.normalW = normalize(vNormal);
+    }
+    else
+    {
+        input.normalW = normalize(input.normalW);
+    }
     
     output.PositionW = float4(input.positionW, 1.0);
     
@@ -308,7 +317,17 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_STANDARD_OU
     //output.posW = float4(input.position.z, 0.0f,input.position.z, 1.0);
     
     output.normal = float4(input.normalW, 0);
-    input.normalW = normalize(input.normalW);
+    
+    if (gnTexturesMask & MATERIAL_NORMAL_MAP)
+    {
+        float3x3 TBN = float3x3(normalize(input.tangentW), normalize(input.bitangentW), normalize(input.normalW));
+        float3 vNormal = gtxtNormalTexture.Sample(gssWrap, input.uv);
+        input.normalW = normalize(vNormal);
+    }
+    else
+    {
+        input.normalW = normalize(input.normalW);
+    }
     
     output.PositionW = float4(input.positionW, 0.0);
     //output.diffuse = float4(1.0, 1.0, 1.0, 1.0);
@@ -377,11 +396,14 @@ float4 BlendSkyTextures(float3 direction)
     }
     else // Last 1 minutes
     {
-        blendFactor = (40.0 - totalSeconds) / 60.0; // Blend from 1 to 0
+        blendFactor = (20.0 - totalSeconds) / 20.0; // Blend from 1 to 0
     }
 
     return lerp(nightColor, dayColor, blendFactor);
 }
+
+
+
 
 VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)
 {
@@ -398,7 +420,7 @@ float4 PSSkyBox(VS_SKYBOX_CUBEMAP_OUTPUT input) : SV_TARGET
 {
     float3 direction = input.positionL;
     float4 cColor = BlendSkyTextures(direction);
-    //cColor = float4(.0, .0, 1.0, 0.0);
+    
     return (cColor);
 }
 
