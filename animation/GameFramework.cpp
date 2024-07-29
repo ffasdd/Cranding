@@ -606,13 +606,13 @@ void CGameFramework::InitXAudio2()
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	if (FAILED(hr) && hr != RPC_E_CHANGED_MODE) {
 		std::cerr << "CoInitializeEx 실패: " << std::hex << hr << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	HRESULT hResult = XAudio2Create(&m_pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	if (FAILED(hResult)) {
 		std::cerr << "XAudio2 초기화 실패: " << std::hex << hResult << std::endl;
-		exit(1);
+		//exit(1);
 	}
 	hResult = m_pXAudio2->CreateMasteringVoice(&m_pMasterVoice);
 	if (FAILED(hResult)) {
@@ -632,7 +632,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 
 	if (!file) {
 		std::cerr << "Failed to open sound file" << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	// RIFF 헤더를 읽습니다.
@@ -640,7 +640,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 	file.read(riffHeader, 4);
 	if (strncmp(riffHeader, "RIFF", 4) != 0) {
 		std::cerr << "Invalid WAV file: RIFF header not found" << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	// 파일 크기를 건너뜁니다.
@@ -651,7 +651,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 	file.read(waveHeader, 4);
 	if (strncmp(waveHeader, "WAVE", 4) != 0) {
 		std::cerr << "Invalid WAV file: WAVE header not found" << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	// 서브 청크들을 순회하면서 fmt 청크와 data 청크를 찾습니다.
@@ -673,7 +673,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 			}
 			else {
 				std::cerr << "Unexpected fmt chunk size" << std::endl;
-				exit(1);
+				//exit(1);
 			}
 		}
 		else if (strncmp(chunkHeader, "data", 4) == 0) {
@@ -692,7 +692,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 
 	if (soundData.buffer.AudioBytes == 0) {
 		std::cerr << "Failed to find data chunk" << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	return soundData;
