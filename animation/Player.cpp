@@ -568,12 +568,12 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
-				if (g_clients.size() != 0 &&g_clients[gNetwork.my_id].getAnimation() != animateState::SWORD_MOVE)
+				/*if (g_clients.size() != 0 &&g_clients[gNetwork.my_id].getAnimation() != animateState::SWORD_MOVE)
 				{
 					g_clients[gNetwork.my_id].setprevAnimation(g_clients[gNetwork.my_id].getAnimation());
 					g_clients[gNetwork.my_id].setAnimation(animateState::SWORD_MOVE);
 				}
-				g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
+				g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);*/
 			}
 			//gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 		}

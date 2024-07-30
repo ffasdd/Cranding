@@ -1464,11 +1464,11 @@ void CGameFramework::ProcessInput()
 					if (yaw < 0.f) yaw += 360.0f;
 
 					m_pPlayer->RotateYaw(yaw);
-					if (g_clients.size() != 0)
-					{
-						g_clients[gNetwork.Getmyid()].m_yaw = yaw;
-						//g_sendqueue.push(SENDTYPE::ROTATE);
-					}
+					//if (g_clients.size() != 0)
+					//{
+					//	g_clients[gNetwork.Getmyid()].m_yaw = yaw;
+					//	//g_sendqueue.push(SENDTYPE::ROTATE);
+					//}
 				}
 			}
 
@@ -1503,7 +1503,7 @@ void CGameFramework::ProcessInput()
 			}
 		}
 	}
-	//m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
+	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
 }
 
 void CGameFramework::AnimateObjects()
@@ -1591,20 +1591,20 @@ void CGameFramework::UpdateTime()
 	float fullCycleTime = serverDayTime + serverNightTime;
 
 	// 서버에서 낮과 밤 전환 여부에 따른 시간 조정
-	if (DayTime && !Night) {
-		if (accumulatedTime >= serverDayTime) {
-			curDay++;
-			accumulatedTime -= serverDayTime;  // 낮 시간 초기화 (밤으로 전환)
+	//if (DayTime && !Night) {
+	//	if (accumulatedTime >= serverDayTime) {
+	//		curDay++;
+	//		accumulatedTime -= serverDayTime;  // 낮 시간 초기화 (밤으로 전환)
 
-		}
-	}
-	else if (Night) {
-		if (accumulatedTime >= serverNightTime) {
+	//	}
+	//}
+	//else if (Night) {
+	//	if (accumulatedTime >= serverNightTime) {
 
-			accumulatedTime -= serverNightTime;  // 밤 시간 초기화 (낮으로 전환)
+	//		accumulatedTime -= serverNightTime;  // 밤 시간 초기화 (낮으로 전환)
 
-		}
-	}
+	//	}
+	//}
 
 	// 업데이트된 시간 계산
 	curMinute = static_cast<int>(accumulatedTime) / 60;
