@@ -154,8 +154,8 @@ void CPlayer::Move(int c_id, const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 	else
 	{
 		m_xmf3Position = Vector3::Add(m_xmf3Position, xmf3Shift);
-		if(g_clients.size() != 0)
-			g_clients[c_id].setPos(m_xmf3Position);
+		/*if(g_clients.size() != 0)
+			g_clients[c_id].setPos(m_xmf3Position);*/
 		m_pCamera->Move(xmf3Shift);
 	}
 }
@@ -234,7 +234,8 @@ void CPlayer::Update(float fTimeElapsed)
 	if (fLength > m_fMaxVelocityY) m_xmf3Velocity.y *= (fMaxVelocityY / fLength);
 
 	XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(m_xmf3Velocity, fTimeElapsed, false);
-	Move(c_id, xmf3Velocity, false);
+	//Move(c_id, xmf3Velocity, false);
+	Move(0, xmf3Velocity, false);
 
 	if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
 

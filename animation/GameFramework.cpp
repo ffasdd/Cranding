@@ -363,9 +363,9 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
 		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
-		if (g_clients.size() == 0)break;
+		/*if (g_clients.size() == 0)break;
 		g_clients[cl_id].setAttack(true);
-		g_sendqueue.push(SENDTYPE::ATTACK);
+		g_sendqueue.push(SENDTYPE::ATTACK);*/
 
 
 		break;
@@ -504,7 +504,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			//m_bRenderBoundingBox = !m_bRenderBoundingBox;
 			//isSceneChange = true;
 			isready = true;
-			g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+			//g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 		case 'L':
@@ -1467,7 +1467,7 @@ void CGameFramework::ProcessInput()
 					if (g_clients.size() != 0)
 					{
 						g_clients[gNetwork.Getmyid()].m_yaw = yaw;
-						g_sendqueue.push(SENDTYPE::ROTATE);
+						//g_sendqueue.push(SENDTYPE::ROTATE);
 					}
 				}
 			}
@@ -1493,17 +1493,17 @@ void CGameFramework::ProcessInput()
 
 				XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(temp, m_GameTimer.GetTimeElapsed(), false);
 				m_pPlayer->Move(cl_id, xmf3Velocity, false);
-				if (g_clients.size() != 0)
+				/*if (g_clients.size() != 0)
 				{
 
 				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
-				}
-				g_sendqueue.push(SENDTYPE::MOVE);
+				}*/
+				//g_sendqueue.push(SENDTYPE::MOVE);
 
 			}
 		}
 	}
-	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
+	//m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
 }
 
 void CGameFramework::AnimateObjects()
@@ -1621,14 +1621,14 @@ void CGameFramework::FrameAdvance()
 		{
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
-				gNetwork.SendLoginfo();
+				/*gNetwork.SendLoginfo();
 
 				while (cl_id != -1) {
 					cout << "==" << endl;
-				}
+				}*/
 
 				ChangeScene(SCENEKIND::LOBBY);
-				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			}
 			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ||
 				sceneManager.GetCurrentScene() == SCENEKIND::FIRE ||
@@ -1637,23 +1637,23 @@ void CGameFramework::FrameAdvance()
 			{
 				isshadow = true;
 				ChangeScene(SCENEKIND::SPACESHIP);
-				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			}
 		}
 		else if (isSceneChangetoFire) {
 			ChangeScene(SCENEKIND::FIRE);
 			//
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isSceneChangetoIce) {
 			ChangeScene(SCENEKIND::ICE);
 			//
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isSceneChangetoNature) {
 			ChangeScene(SCENEKIND::NATURE);
 			//
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isWin) {
 			ChangeScene(SCENEKIND::VICTORY);
@@ -1828,8 +1828,8 @@ void CGameFramework::FrameAdvance()
 		WaitForGpuComplete();
 #ifdef _FULLSCREEN
 
-		if (m_pUILayer && m_pScene->isBiludobj)
-			UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
+		//if (m_pUILayer && m_pScene->isBiludobj)
+			//UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
 
 #endif // _FULLSCREEN
 
