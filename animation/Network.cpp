@@ -282,15 +282,12 @@ void Network::ProcessPacket(char* buf)
 
 			switch (stage_num)
 			{
-			case 1:
-				// 로비씬.  아무것도안해도됨 
-				break;
 			case 2:
 				// 우주선 씬 ,
 				if (IngameScene == false)
 				{
 					IngameScene = true;
-					
+
 				}
 				else if (IngameScene == true)
 				{
@@ -310,8 +307,8 @@ void Network::ProcessPacket(char* buf)
 			}
 			// Id가 하나만 ㅁ거음 
 		}
-			break;
-		}
+		break;
+	}
 	case SC_INGAME_STRAT: {
 		gGameFramework.isSceneChange = true;
 		break;
@@ -663,206 +660,206 @@ void Network::ProcessPacket(char* buf)
 
 	}
 
-	}
+}
 
-	void Network::SendLoginfo()
+void Network::SendLoginfo()
+{
+	CS_LOGIN_PACKET p;
+	strcpy_s(p.name, "Test");
+	p.size = sizeof(CS_LOGIN_PACKET);
+	p.type = CS_LOGIN;
+	p.charactertype = 0;
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendTest()
+{
+	CS_TEST_PACKET p;
+	p.size = sizeof(CS_TEST_PACKET);
+	p.type = CS_TEST;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendMovePlayer(XMFLOAT3 _pos)
+{
+	CS_MOVE_PACKET p;
+	p.size = sizeof(CS_MOVE_PACKET);
+	p.type = CS_MOVE;
+	p.pos = _pos;
+	p.roomid = my_roomid;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendRotatePlayer(float _yaw)
+{
+	CS_ROTATE_PACKET p;
+	p.size = sizeof(CS_ROTATE_PACKET);
+	p.type = CS_ROTATE;
+	p.yaw = _yaw;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendChangeAnimation(animateState curanimate, animateState prevanimate)
+{
+	CS_CHANGE_ANIMATION_PACKET p;
+	p.size = sizeof(CS_CHANGE_ANIMATION_PACKET);
+	p.type = CS_CHANGE_ANIMATION;
+	p.a_state = curanimate;
+	p.prev_a_state = prevanimate;
+	p.roomid = my_roomid;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendChangeScene(int scenenum)
+{
+	CS_CHANGE_SCENE_PACKET p;
+	p.size = sizeof(CS_CHANGE_SCENE_PACKET);
+	p.type = CS_CHANGE_SCENE;
+	p.roomid = my_roomid;
+	p.scenenum = scenenum;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendIngameStart()
+{
+	CS_INGAME_START_PACKET p;
+	p.size = sizeof(CS_INGAME_START_PACKET);
+	p.type = CS_INGAME_START;
+	p.roomid = my_roomid;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendAttack(bool is_attack)
+{
+	CS_ATTACK_PACKET p;
+	p.size = sizeof(CS_ATTACK_PACKET);
+	p.type = CS_ATTACK;
+	p.isAttack = is_attack;
+	p.roomid = my_roomid;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendAttackCollision(int npc_id, MonsterType _mtype)
+{
+	CS_ATTACK_COLLISION_PACKET p;
+	p.size = sizeof(CS_ATTACK_COLLISION_PACKET);
+	p.type = CS_ATTACK_COLLISION;
+	p.npc_id = npc_id;
+	p.room_id = my_roomid;
+	p._montype = _mtype;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendReady()
+{
+	CS_READY_PACKET p;
+	p.size = sizeof(CS_READY_PACKET);
+	p.type = CS_READY_GAME;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendTime(int time)
+{
+	CS_TIME_CHECK_PACKET p;
+	p.size = sizeof(CS_TIME_CHECK_PACKET);
+	p.type = CS_TIME_CHECK;
+	p.roomid = my_roomid;
+	p.time = time;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendMonsterDie(int npc_id, MonsterType _mtype)
+{
+	CS_MONSTER_DIE_PACKET p;
+	p.type = CS_MONSTER_DIE;
+	p.size = sizeof(CS_MONSTER_DIE_PACKET);
+	p._montype = _mtype;
+	p.room_id = my_roomid;
+	p.npc_id = npc_id;
+	p.id = my_id;
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendMonsterHitSpaceship(int npc_id)
+{
+	CS_MONSTER_ATTACK_SPACESHIP_PACKET p;
+	p.size = sizeof(CS_MONSTER_ATTACK_SPACESHIP_PACKET);
+	p.type = CS_MONSTER_HIT_SPACESHIP;
+	p.room_id = my_roomid;
+	p.npc_id = npc_id;
+
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendPlayerHIt(bool is_damaged)
+{
+	CS_PLAYER_HIT_PACKET p;
+	p.size = sizeof(CS_PLAYER_HIT_PACKET);
+	p.type = CS_PLAYER_HIT;
+	p.id = my_id;
+	p.room_id = my_roomid;
+	p.isdamaged = is_damaged;
+	p.hp = g_clients[my_id].getHp();
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendBossDamage(int _hp, MonsterType _type)
+{
+	CS_BOSSMONSTER_DAMAGED_PACKET p;
+	p.size = sizeof(CS_BOSSMONSTER_DAMAGED_PACKET);
+	p.type = CS_BOSSMONSTER_DAMGED;
+	p.bosshp = _hp;
+	p._montype = _type;
+	p.room_id = my_roomid;
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendPlayerDead()
+{
+	CS_PLAYER_DEAD_PACKET p;
+	p.size = sizeof(CS_PLAYER_DEAD_PACKET);
+	p.type = CS_DEAD_PLAYER;
+	p.room_id = my_roomid;
+	p.id = my_id;
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendGetItem(int _type)
+{
+	CS_GET_ITEM_PACKET p;
+	p.size = sizeof(CS_GET_ITEM_PACKET);
+	p.type = CS_GET_ITEM;
+	p.room_id = my_roomid;
+	p.itemtype = _type;
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+bool Network::MonsterCollide(Session& _monster)
+{
+	return 0;
+}
+
+
+int Network::getmyid(int _id)
+{
+	if (_id > 2)
 	{
-		CS_LOGIN_PACKET p;
-		strcpy_s(p.name, "Test");
-		p.size = sizeof(CS_LOGIN_PACKET);
-		p.type = CS_LOGIN;
-		p.charactertype = 0;
-
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendTest()
-	{
-		CS_TEST_PACKET p;
-		p.size = sizeof(CS_TEST_PACKET);
-		p.type = CS_TEST;
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendMovePlayer(XMFLOAT3 _pos)
-	{
-		CS_MOVE_PACKET p;
-		p.size = sizeof(CS_MOVE_PACKET);
-		p.type = CS_MOVE;
-		p.pos = _pos;
-		p.roomid = my_roomid;
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendRotatePlayer(float _yaw)
-	{
-		CS_ROTATE_PACKET p;
-		p.size = sizeof(CS_ROTATE_PACKET);
-		p.type = CS_ROTATE;
-		p.yaw = _yaw;
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendChangeAnimation(animateState curanimate, animateState prevanimate)
-	{
-		CS_CHANGE_ANIMATION_PACKET p;
-		p.size = sizeof(CS_CHANGE_ANIMATION_PACKET);
-		p.type = CS_CHANGE_ANIMATION;
-		p.a_state = curanimate;
-		p.prev_a_state = prevanimate;
-		p.roomid = my_roomid;
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendChangeScene(int scenenum)
-	{
-		CS_CHANGE_SCENE_PACKET p;
-		p.size = sizeof(CS_CHANGE_SCENE_PACKET);
-		p.type = CS_CHANGE_SCENE;
-		p.roomid = my_roomid;
-		p.scenenum = scenenum;
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendIngameStart()
-	{
-		CS_INGAME_START_PACKET p;
-		p.size = sizeof(CS_INGAME_START_PACKET);
-		p.type = CS_INGAME_START;
-		p.roomid = my_roomid;
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendAttack(bool is_attack)
-	{
-		CS_ATTACK_PACKET p;
-		p.size = sizeof(CS_ATTACK_PACKET);
-		p.type = CS_ATTACK;
-		p.isAttack = is_attack;
-		p.roomid = my_roomid;
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendAttackCollision(int npc_id, MonsterType _mtype)
-	{
-		CS_ATTACK_COLLISION_PACKET p;
-		p.size = sizeof(CS_ATTACK_COLLISION_PACKET);
-		p.type = CS_ATTACK_COLLISION;
-		p.npc_id = npc_id;
-		p.room_id = my_roomid;
-		p._montype = _mtype;
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendReady()
-	{
-		CS_READY_PACKET p;
-		p.size = sizeof(CS_READY_PACKET);
-		p.type = CS_READY_GAME;
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendTime(int time)
-	{
-		CS_TIME_CHECK_PACKET p;
-		p.size = sizeof(CS_TIME_CHECK_PACKET);
-		p.type = CS_TIME_CHECK;
-		p.roomid = my_roomid;
-		p.time = time;
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendMonsterDie(int npc_id, MonsterType _mtype)
-	{
-		CS_MONSTER_DIE_PACKET p;
-		p.type = CS_MONSTER_DIE;
-		p.size = sizeof(CS_MONSTER_DIE_PACKET);
-		p._montype = _mtype;
-		p.room_id = my_roomid;
-		p.npc_id = npc_id;
-		p.id = my_id;
-
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendMonsterHitSpaceship(int npc_id)
-	{
-		CS_MONSTER_ATTACK_SPACESHIP_PACKET p;
-		p.size = sizeof(CS_MONSTER_ATTACK_SPACESHIP_PACKET);
-		p.type = CS_MONSTER_HIT_SPACESHIP;
-		p.room_id = my_roomid;
-		p.npc_id = npc_id;
-
-
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendPlayerHIt(bool is_damaged)
-	{
-		CS_PLAYER_HIT_PACKET p;
-		p.size = sizeof(CS_PLAYER_HIT_PACKET);
-		p.type = CS_PLAYER_HIT;
-		p.id = my_id;
-		p.room_id = my_roomid;
-		p.isdamaged = is_damaged;
-		p.hp = g_clients[my_id].getHp();
-
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendBossDamage(int _hp, MonsterType _type)
-	{
-		CS_BOSSMONSTER_DAMAGED_PACKET p;
-		p.size = sizeof(CS_BOSSMONSTER_DAMAGED_PACKET);
-		p.type = CS_BOSSMONSTER_DAMGED;
-		p.bosshp = _hp;
-		p._montype = _type;
-		p.room_id = my_roomid;
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendPlayerDead()
-	{
-		CS_PLAYER_DEAD_PACKET p;
-		p.size = sizeof(CS_PLAYER_DEAD_PACKET);
-		p.type = CS_DEAD_PLAYER;
-		p.room_id = my_roomid;
-		p.id = my_id;
-
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	void Network::SendGetItem(int _type)
-	{
-		CS_GET_ITEM_PACKET p;
-		p.size = sizeof(CS_GET_ITEM_PACKET);
-		p.type = CS_GET_ITEM;
-		p.room_id = my_roomid;
-		p.itemtype = _type;
-
-		send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
-	}
-
-	bool Network::MonsterCollide(Session & _monster)
-	{
-		return 0;
-	}
-
-
-	int Network::getmyid(int _id)
-	{
-		if (_id > 2)
+		if (_id % 3 == 0)
 		{
-			if (_id % 3 == 0)
-			{
-				return 0;
-			}
-			else if (_id % 2 == 0)
-				return 2;
-			else
-				return 1;
-
+			return 0;
 		}
+		else if (_id % 2 == 0)
+			return 2;
 		else
-			return _id;
+			return 1;
+
 	}
+	else
+		return _id;
+}

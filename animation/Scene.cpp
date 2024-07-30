@@ -564,9 +564,9 @@ void CScene::AnimateObjects(float fTimeElapsed)
 			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = true;
 	}*/
 
-	if (g_clients.size() != 0 && g_clients[gNetwork.my_id].getHp() < 0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
-		g_clients[gNetwork.my_id].setHp(0);
-		gNetwork.SendPlayerDead();
+	if (/*g_clients.size() != 0 && g_clients[gNetwork.my_id].getHp() < 0 && */m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
+		//g_clients[gNetwork.my_id].setHp(0);
+		//gNetwork.SendPlayerDead();
 		//m_pPlayer->SetHealth(0);
 		m_pPlayer->m_pSkinnedAnimationController->m_bIsDead = true;
 
@@ -1228,11 +1228,11 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 			{
 				//m_pPlayer->SetHealth(m_pPlayer->GetHealth() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
 
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				g_clients[gNetwork.my_id].is_damage = true;
-				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				//g_clients[gNetwork.my_id].is_damage = true;
+				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
 				//g_sendqueue.push(SENDTYPE::PLAYER_HIT);
 
 				return false;
@@ -1272,11 +1272,11 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 					||
 					m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
 			{
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				g_clients[gNetwork.my_id].is_damage = true;
-				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				//g_clients[gNetwork.my_id].is_damage = true;
+				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
 
 				return false;
 			}
@@ -1311,11 +1311,11 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
 			{
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				g_clients[gNetwork.my_id].is_damage = true;
-				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				//g_clients[gNetwork.my_id].is_damage = true;
+				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
 
 				return false;
 			}
@@ -1581,11 +1581,11 @@ bool CIceScene::CheckObjectByObjectCollisions()
 					m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				g_clients[gNetwork.my_id].is_damage = true;
-				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				//g_clients[gNetwork.my_id].is_damage = true;
+				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
 
 				return false;
 			}
@@ -1601,7 +1601,7 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
 				// 보스 체력 서버로 전송 
-				gNetwork.SendBossDamage(g_IceBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Ice_Boss);
+				//gNetwork.SendBossDamage(g_IceBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Ice_Boss);
 
 				return true;
 			}
@@ -1609,15 +1609,15 @@ bool CIceScene::CheckObjectByObjectCollisions()
 			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox)
-				&& gNetwork.IcebossSkill == true)
+				/*&& gNetwork.IcebossSkill == true*/)
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
 
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
-				g_clients[gNetwork.my_id].is_damage = true;
-				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
+				//g_clients[gNetwork.my_id].is_damage = true;
+				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
 
 				return false;
 			}
@@ -1632,7 +1632,7 @@ bool CIceScene::CheckObjectByObjectCollisions()
 			{
 				isIceitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
-				gNetwork.SendGetItem(3);
+				//gNetwork.SendGetItem(3);
 				// 아이템을 먹었다 send 
 
 
@@ -1876,11 +1876,11 @@ bool CFireScene::CheckObjectByObjectCollisions()
 					m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				g_clients[gNetwork.my_id].is_damage = true;
-				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+	/*			g_clients[gNetwork.my_id].is_damage = true;
+				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);*/
 				return false;
 			}
 		}
@@ -1895,7 +1895,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
 				// 보스 체력 서버로 전송 
-				gNetwork.SendBossDamage(g_FireBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Fire_Boss);
+				//gNetwork.SendBossDamage(g_FireBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Fire_Boss);
 
 				return true;
 			}
@@ -1909,9 +1909,9 @@ bool CFireScene::CheckObjectByObjectCollisions()
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
 
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
-				g_clients[gNetwork.my_id].is_damage = true;
-				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
+				//g_clients[gNetwork.my_id].is_damage = true;
+				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
 
 				return false;
 			}
@@ -1926,7 +1926,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 			{
 				isFireitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
-				gNetwork.SendGetItem(4);
+				//gNetwork.SendGetItem(4);
 			}
 		}
 	}
@@ -2169,7 +2169,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 
 				// 보스 체력 서버로 전송 
-				gNetwork.SendBossDamage(g_NatureBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Nature_Boss);
+				//gNetwork.SendBossDamage(g_NatureBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Nature_Boss);
 
 				return(true);
 			}
@@ -2179,11 +2179,11 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				g_clients[gNetwork.my_id].is_damage = true;
-				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				//g_clients[gNetwork.my_id].is_damage = true;
+				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
 				return false;
 			}
 		}

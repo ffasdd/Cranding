@@ -363,14 +363,10 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
 		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
-		if (g_clients.size() == 0)break;
-		g_clients[cl_id].setAttack(true);
-		g_sendqueue.push(SENDTYPE::ATTACK);
-
-
+		//if (g_clients.size() == 0)break;
+		//g_clients[cl_id].setAttack(true);
+		//g_sendqueue.push(SENDTYPE::ATTACK);
 		break;
-
-
 	case WM_RBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
@@ -504,7 +500,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			//m_bRenderBoundingBox = !m_bRenderBoundingBox;
 			//isSceneChange = true;
 			isready = true;
-			g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+			isSceneChange = true;
+			//g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 		case 'L':
@@ -745,7 +742,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 		//if (m_pPlayer)
 		ChangeSceneReleaseObject();
 
-
 		switch (nSceneKind)
 		{
 
@@ -766,7 +762,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-			ChangeBGM(0);
+			//ChangeBGM(0);
 
 			break;
 		}
@@ -787,7 +783,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			ChangeBGM(1);
+			//ChangeBGM(1);
 			break;
 		}
 		case SCENEKIND::ICE:
@@ -808,7 +804,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-			ChangeBGM(2);
+			//ChangeBGM(2);
 
 			break;
 
@@ -830,7 +826,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-			ChangeBGM(3);
+			//ChangeBGM(3);
 
 			break;
 		}
@@ -853,7 +849,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-			ChangeBGM(4);
+			//ChangeBGM(4);
 
 
 			break;
@@ -875,7 +871,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-			ChangeBGM(5);
+			//ChangeBGM(5);
 
 
 			break;
@@ -898,7 +894,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 	
-			ChangeBGM(6);
+			//ChangeBGM(6);
 
 
 	
@@ -1049,7 +1045,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, animateState prevAni, an
 
 			if (curAni == animateState::BLACKOUT) m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsDead = true;
 
-			g_clients[id].setprevAnimation(curAni);
+			//g_clients[id].setprevAnimation(curAni);
 		}
 	}
 }
@@ -1222,7 +1218,7 @@ void CGameFramework::myFunc_SetStatus(int FireCnt, int IceCnt, int NatureCnt)
 		attack = 100;
 	}
 	//m_pPlayer->SetAttackPower(attack);
-	g_clients[cl_id].setAttackPower(attack);
+	//g_clients[cl_id].setAttackPower(attack);
 
 	int speed = m_pPlayer->GetSpeed() + (IceCnt * 3);
 	m_pPlayer->SetSpeed(speed);
@@ -1385,6 +1381,7 @@ void CGameFramework::ReleaseObjects()
 void CGameFramework::ChangeSceneReleaseObject()
 {
 	m_pPlayer->isplayermake = false;
+
 	if (m_pPlayer) {
 		m_pPlayer->Release();
 		m_pPlayer = nullptr;
@@ -1464,11 +1461,11 @@ void CGameFramework::ProcessInput()
 					if (yaw < 0.f) yaw += 360.0f;
 
 					m_pPlayer->RotateYaw(yaw);
-					if (g_clients.size() != 0)
+	/*				if (g_clients.size() != 0)
 					{
 						g_clients[gNetwork.Getmyid()].m_yaw = yaw;
 						g_sendqueue.push(SENDTYPE::ROTATE);
-					}
+					}*/
 				}
 			}
 
@@ -1481,7 +1478,7 @@ void CGameFramework::ProcessInput()
 				XMFLOAT3 exGravity = m_pPlayer->GetGravity();
 				XMFLOAT3 temp = Vector3::Add(exveloctiy, { 0.0f,0.0f,0.f });
 				float fLength = sqrtf(temp.x * temp.x + temp.z * temp.z);
-				float fMaxVelocityXZ = m_pPlayer->GetMaxVelocityXZ();// m_fMaxVelocityXZ;
+				float fMaxVelocityXZ = m_pPlayer->GetMaxVelocityXZ();
 				if (fLength > m_pPlayer->GetMaxVelocityXZ())
 				{
 					temp.x *= (fMaxVelocityXZ / fLength);
@@ -1493,12 +1490,12 @@ void CGameFramework::ProcessInput()
 
 				XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(temp, m_GameTimer.GetTimeElapsed(), false);
 				m_pPlayer->Move(cl_id, xmf3Velocity, false);
-				if (g_clients.size() != 0)
-				{
 
-				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
-				}
-				g_sendqueue.push(SENDTYPE::MOVE);
+				//if (g_clients.size() != 0)
+				//{
+				//g_clients[cl_id].setPos(m_pPlayer->GetPosition());
+				//}
+				//g_sendqueue.push(SENDTYPE::MOVE);
 
 			}
 		}
@@ -1828,8 +1825,8 @@ void CGameFramework::FrameAdvance()
 		WaitForGpuComplete();
 #ifdef _FULLSCREEN
 
-		if (m_pUILayer && m_pScene->isBiludobj)
-			UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
+		//if (m_pUILayer && m_pScene->isBiludobj)
+			//UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
 
 #endif // _FULLSCREEN
 

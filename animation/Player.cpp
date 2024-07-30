@@ -154,8 +154,8 @@ void CPlayer::Move(int c_id, const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 	else
 	{
 		m_xmf3Position = Vector3::Add(m_xmf3Position, xmf3Shift);
-		if(g_clients.size() != 0)
-			g_clients[c_id].setPos(m_xmf3Position);
+		//if(g_clients.size() != 0)
+		//	g_clients[c_id].setPos(m_xmf3Position);
 		m_pCamera->Move(xmf3Shift);
 	}
 }
@@ -566,12 +566,12 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
-				if (g_clients.size() != 0 &&g_clients[gNetwork.my_id].getAnimation() != animateState::SWORD_MOVE)
-				{
-					g_clients[gNetwork.my_id].setprevAnimation(g_clients[gNetwork.my_id].getAnimation());
-					g_clients[gNetwork.my_id].setAnimation(animateState::SWORD_MOVE);
-				}
-				g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
+				//if (g_clients.size() != 0 &&g_clients[gNetwork.my_id].getAnimation() != animateState::SWORD_MOVE)
+				//{
+				//	g_clients[gNetwork.my_id].setprevAnimation(g_clients[gNetwork.my_id].getAnimation());
+				//	g_clients[gNetwork.my_id].setAnimation(animateState::SWORD_MOVE);
+				//}
+				//g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
 			}
 			//gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 		}
@@ -604,21 +604,21 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
 				// �÷��̾� ���Ⱑ Į�̶�� Į idle
-				if (g_clients.size() != 0 && g_clients[gNetwork.my_id].getCharacterType() == 0)
-				{
-					if (g_clients[gNetwork.my_id].getAnimation() != animateState::SWORD_IDLE)
-					{
-						g_clients[gNetwork.my_id].setprevAnimation(g_clients[gNetwork.my_id].getAnimation());
-						g_clients[gNetwork.my_id].setAnimation(animateState::SWORD_IDLE);
-					}
-				}
+				//if (g_clients.size() != 0 && g_clients[gNetwork.my_id].getCharacterType() == 0)
+				//{
+				//	if (g_clients[gNetwork.my_id].getAnimation() != animateState::SWORD_IDLE)
+				//	{
+				//		g_clients[gNetwork.my_id].setprevAnimation(g_clients[gNetwork.my_id].getAnimation());
+				//		g_clients[gNetwork.my_id].setAnimation(animateState::SWORD_IDLE);
+				//	}
+				//}
 
 				// �������� ������ ����� �ִ�num, ���� �ִ� num send
-				if (g_clients.size() != 0)
+	/*			if (g_clients.size() != 0)
 				{
 
 				gNetwork.SendChangeAnimation(g_clients[gNetwork.my_id].getAnimation(), g_clients[gNetwork.my_id].getprevAnimation());
-				}
+				}*/
 			}
 		}
 

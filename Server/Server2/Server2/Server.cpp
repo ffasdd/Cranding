@@ -693,7 +693,7 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ ingameroom[r_id].r_l };
 			ingameroom[r_id].readycnt++;
 		}
-		if (ingameroom[r_id].readycnt < 3) break;
+		if (ingameroom[r_id].readycnt < 2) break;
 
 		bool all_Start = all_of(ingameroom[r_id].ingamePlayer.begin(), ingameroom[r_id].ingamePlayer.end(), [](Session* s) {return s->_state == STATE::Start; });
 
