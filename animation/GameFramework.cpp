@@ -1752,10 +1752,10 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->SetGraphicsRootConstantBufferView(0, d3dGPUVirtualAddress);
 
 
-		if (m_pScene && m_pScene->isBiludobj && isshadow == true) {
+		//if (m_pScene && m_pScene->isBiludobj && isshadow == true) {
 			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
-		}
-		if(m_pPlayer && m_pPlayer->isplayermake ==true && isshadow == true)
+		//}
+		//if(m_pPlayer && m_pPlayer->isplayermake ==true && isshadow == true)
 			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
@@ -1778,9 +1778,9 @@ void CGameFramework::FrameAdvance()
 
 		
 
-		if (m_pScene->isBiludobj)
+		//if (m_pScene->isBiludobj)
 			m_pScene->Render(m_pd3dCommandList, m_pCamera);
-		if ( m_pPlayer->isplayermake == true)
+		//if ( m_pPlayer->isplayermake == true)
 			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
 		//if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
