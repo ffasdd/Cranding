@@ -1615,13 +1615,13 @@ void CGameFramework::FrameAdvance()
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
 
-				gNetwork.SendLoginfo();
+				/*gNetwork.SendLoginfo();
 
 				while (cl_id == -1)
-					this_thread::yield();
+					this_thread::yield();*/
 
 				ChangeScene(SCENEKIND::LOBBY);
-				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			}
 			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ||
 				sceneManager.GetCurrentScene() == SCENEKIND::FIRE ||
@@ -1630,29 +1630,29 @@ void CGameFramework::FrameAdvance()
 			{
 				ChangeScene(SCENEKIND::SPACESHIP);
 				//
-				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 
-				if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
-				{
-					g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+				//if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
+				//{
+				//	g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
 
-				}
+				//}
 			}
 		}
 		else if (isSceneChangetoFire) {
 			ChangeScene(SCENEKIND::FIRE);
 			//
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isSceneChangetoIce) {
 			ChangeScene(SCENEKIND::ICE);
 			//
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isSceneChangetoNature) {
 			ChangeScene(SCENEKIND::NATURE);
 			//
-			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isWin) {
 			ChangeScene(SCENEKIND::VICTORY);
