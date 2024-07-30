@@ -33,7 +33,7 @@ protected:
 	XMFLOAT3					m_xmf3Scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
 
 	float           			m_fPitch = 0.0f;
-	float           			m_fYaw = 0.0f;
+	double           			m_fYaw = 0.0f;
 	float           			m_fRoll = 0.0f;
 
 	XMFLOAT3					m_xmf3Velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -51,7 +51,9 @@ protected:
 	XMVECTOR m_look;
 	XMVECTOR m_right;
 	XMVECTOR m_up;
+
 public:
+	bool isplayermake = false;
 	int c_id = 0;
 public:
 	CPlayer();

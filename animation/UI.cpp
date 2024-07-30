@@ -233,7 +233,11 @@ float ConvertHPToPercentage(float hp) {
 
 void UILayer::SetHP()
 {
+    if (g_clients.size() != 0)
+    {
+
     m_playerHP = g_clients[gNetwork.my_id].getHp();
+    }
 
     float spaceshipHP = gGameFramework.spaceshipHP; // 0 ~ 2000 사이의 값
     m_spaceshipHP = ConvertHPToPercentage(spaceshipHP); // 0 ~ 100 사이의 값
@@ -339,7 +343,6 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         break;
     default:
         // ingame 
-
         m_pd2dDeviceContext->BeginDraw();
         
         // time

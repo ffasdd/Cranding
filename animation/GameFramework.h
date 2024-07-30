@@ -80,7 +80,7 @@ public:
 
 	void CreateShaderVariables();
 
-	void UpdateShaderVariables();
+	void UpdateShaderVariables(float sec);
 
 	ID3D12Device *GetDevice() { return (m_pd3dDevice); }
 
@@ -107,11 +107,13 @@ public:
 	ID3D12Resource* m_pBlurBuffer = NULL;
 	bool isBlurRender = false;
 
+	bool isshadow = false;
+
 	CPlayer* m_pPlayer = NULL;
 	float PlayerPosX = 0.0f;
 	float PlayerPosZ = 0.0f;
 
-
+	float accumulatedTime = 0.0f;  // 현재 누적 시간
 
 	int cl_id = -1;
 	void ChangeScene(SCENEKIND nSceneKind);

@@ -418,6 +418,7 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	SetAttackPower(5);
 
 	if (pAngrybotModel) delete pAngrybotModel;
+	isplayermake = true;
 }
 
 CTerrainPlayer::~CTerrainPlayer()
@@ -565,7 +566,7 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
-				if (g_clients[gNetwork.my_id].getAnimation() != animateState::SWORD_MOVE)
+				if (g_clients.size() != 0 &&g_clients[gNetwork.my_id].getAnimation() != animateState::SWORD_MOVE)
 				{
 					g_clients[gNetwork.my_id].setprevAnimation(g_clients[gNetwork.my_id].getAnimation());
 					g_clients[gNetwork.my_id].setAnimation(animateState::SWORD_MOVE);
@@ -603,7 +604,7 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
 				// �÷��̾� ���Ⱑ Į�̶�� Į idle
-				if (g_clients[gNetwork.my_id].getCharacterType() == 0)
+				if (g_clients.size() != 0 && g_clients[gNetwork.my_id].getCharacterType() == 0)
 				{
 					if (g_clients[gNetwork.my_id].getAnimation() != animateState::SWORD_IDLE)
 					{
@@ -613,7 +614,11 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				}
 
 				// �������� ������ ����� �ִ�num, ���� �ִ� num send
+				if (g_clients.size() != 0)
+				{
+
 				gNetwork.SendChangeAnimation(g_clients[gNetwork.my_id].getAnimation(), g_clients[gNetwork.my_id].getprevAnimation());
+				}
 			}
 		}
 
@@ -670,7 +675,7 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 
 CLoginPlayer::CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext)
 {
-	m_pCamera = ChangeCamera(INGAME_SCENE_CAMERA, 0.0f);
+	m_pCamera = ChangeCamera(LOGIN_SCENE_CAMERA, 0.0f);
 
 	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
@@ -701,6 +706,7 @@ CLoginPlayer::CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 	SetScale(XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 	if (pAngrybotModel) delete pAngrybotModel;
+	isplayermake = true;
 }
 
 CLoginPlayer::~CLoginPlayer()

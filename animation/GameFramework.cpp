@@ -606,13 +606,13 @@ void CGameFramework::InitXAudio2()
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	if (FAILED(hr) && hr != RPC_E_CHANGED_MODE) {
 		std::cerr << "CoInitializeEx 실패: " << std::hex << hr << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	HRESULT hResult = XAudio2Create(&m_pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
 	if (FAILED(hResult)) {
 		std::cerr << "XAudio2 초기화 실패: " << std::hex << hResult << std::endl;
-		exit(1);
+		//exit(1);
 	}
 	hResult = m_pXAudio2->CreateMasteringVoice(&m_pMasterVoice);
 	if (FAILED(hResult)) {
@@ -632,7 +632,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 
 	if (!file) {
 		std::cerr << "Failed to open sound file" << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	// RIFF 헤더를 읽습니다.
@@ -640,7 +640,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 	file.read(riffHeader, 4);
 	if (strncmp(riffHeader, "RIFF", 4) != 0) {
 		std::cerr << "Invalid WAV file: RIFF header not found" << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	// 파일 크기를 건너뜁니다.
@@ -651,7 +651,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 	file.read(waveHeader, 4);
 	if (strncmp(waveHeader, "WAVE", 4) != 0) {
 		std::cerr << "Invalid WAV file: WAVE header not found" << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	// 서브 청크들을 순회하면서 fmt 청크와 data 청크를 찾습니다.
@@ -673,7 +673,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 			}
 			else {
 				std::cerr << "Unexpected fmt chunk size" << std::endl;
-				exit(1);
+				//exit(1);
 			}
 		}
 		else if (strncmp(chunkHeader, "data", 4) == 0) {
@@ -692,7 +692,7 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 
 	if (soundData.buffer.AudioBytes == 0) {
 		std::cerr << "Failed to find data chunk" << std::endl;
-		exit(1);
+		//exit(1);
 	}
 
 	return soundData;
@@ -743,7 +743,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 	if (nSceneKind != sceneManager.GetCurrentScene())
 	{
 		//if (m_pPlayer)
-			ChangeSceneReleaseObject();
+		ChangeSceneReleaseObject();
 
 
 		switch (nSceneKind)
@@ -766,7 +766,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
 			ChangeBGM(0);
 
 			break;
@@ -787,7 +786,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
 
 			ChangeBGM(1);
 			break;
@@ -810,7 +808,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
 			ChangeBGM(2);
 
 			break;
@@ -833,7 +830,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
 			ChangeBGM(3);
 
 			break;
@@ -857,7 +853,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
 			ChangeBGM(4);
 
 
@@ -880,7 +875,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
 			ChangeBGM(5);
 
 
@@ -903,7 +897,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-
+	
 			ChangeBGM(6);
 
 
@@ -1390,6 +1384,7 @@ void CGameFramework::ReleaseObjects()
 
 void CGameFramework::ChangeSceneReleaseObject()
 {
+	m_pPlayer->isplayermake = false;
 	if (m_pPlayer) {
 		m_pPlayer->Release();
 		m_pPlayer = nullptr;
@@ -1463,7 +1458,7 @@ void CGameFramework::ProcessInput()
 				if (pKeysBuffer[VK_RBUTTON] & 0xF0
 					&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
 
-					float yaw = cxDelta;
+					float  yaw = cxDelta;
 
 					if (yaw > 360.0f) yaw -= 360.0f;
 					if (yaw < 0.f) yaw += 360.0f;
@@ -1498,7 +1493,11 @@ void CGameFramework::ProcessInput()
 
 				XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(temp, m_GameTimer.GetTimeElapsed(), false);
 				m_pPlayer->Move(cl_id, xmf3Velocity, false);
+				if (g_clients.size() != 0)
+				{
+
 				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
+				}
 				g_sendqueue.push(SENDTYPE::MOVE);
 
 			}
@@ -1554,13 +1553,11 @@ void CGameFramework::CreateShaderVariables()
 	m_pd3dcbTime->Map(0, NULL, (void**)&m_pTime);
 }
 
-void CGameFramework::UpdateShaderVariables()
+void CGameFramework::UpdateShaderVariables(float curSecond)
 {
-
 	TIME temp;
-	temp.fCurrentMin = curMinute;
+	temp.fCurrentMin = DayTime;
 	temp.fCurrentSec = curSecond;
-
 	::memcpy(m_pTime, &temp, sizeof(TIME));
 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbTime->GetGPUVirtualAddress();
@@ -1572,11 +1569,11 @@ void CGameFramework::UpdateShaderVariables()
 void CGameFramework::UpdateTime()
 {
 	// 서버에서 제공하는 낮과 밤의 시간 (초 단위)
-	float serverDayTime = 60.0f;  // 낮 시간 (예: 60초)
-	float serverNightTime = 30.0f;  // 밤 시간 (예: 30초)
+	float serverDayTime = 20.0f;  // 낮 시간 (예: 20초)
+	float serverNightTime = 20.0f;  // 밤 시간 (예: 20초)
 
 	// 클라이언트에서 관리하는 누적 시간 변수 초기화
-	static float accumulatedTime = 0.0f;  // 현재 누적 시간
+
 	static int curDay = 0;  // 현재 날 수
 
 	// 경과 시간 가져오기
@@ -1588,6 +1585,7 @@ void CGameFramework::UpdateTime()
 	curMinute = totalSeconds / 60;
 	curSecond = totalSeconds % 60;
 
+	UpdateShaderVariables(totalSeconds);
 
 	// 전체 시간 (낮 + 밤)을 기준으로 하루 계산
 	float fullCycleTime = serverDayTime + serverNightTime;
@@ -1625,7 +1623,9 @@ void CGameFramework::FrameAdvance()
 			{
 				gNetwork.SendLoginfo();
 
-				while (cl_id != -1);
+				while (cl_id != -1) {
+					cout << "==" << endl;
+				}
 
 				ChangeScene(SCENEKIND::LOBBY);
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
@@ -1635,6 +1635,7 @@ void CGameFramework::FrameAdvance()
 				sceneManager.GetCurrentScene() == SCENEKIND::ICE ||
 				sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
 			{
+				isshadow = true;
 				ChangeScene(SCENEKIND::SPACESHIP);
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			}
@@ -1751,10 +1752,10 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->SetGraphicsRootConstantBufferView(0, d3dGPUVirtualAddress);
 
 
-		if (m_pScene && m_pScene->isBiludobj) {
+		if (m_pScene && m_pScene->isBiludobj && isshadow == true) {
 			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
 		}
-		if(m_pPlayer && m_pScene->isBiludobj)
+		if(m_pPlayer && m_pPlayer->isplayermake ==true && isshadow == true)
 			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
@@ -1762,7 +1763,9 @@ void CGameFramework::FrameAdvance()
 
 		if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && sceneManager.GetCurrentScene() != SCENEKIND::LOBBY)
 			UpdateTime();
-		UpdateShaderVariables();
+
+		//UpdateShaderVariables();
+
 		m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera);
 
 
@@ -1773,31 +1776,12 @@ void CGameFramework::FrameAdvance()
 
 		m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], d3dDsvCPUDescriptorHandle);
 
-		// imgui
-		bool isActive = false;
+		
 
-		//if (ImGui::Begin("chat", &isActive))
-		//{
-		//	static char serverAddress[256] = "";
-
-		//	
-		//	ImGui::InputText("Server Address", serverAddress, sizeof(serverAddress));
-
-		//	if (ImGui::Button("Connect"))
-		//	{
-		//		// Connect to server logic can be added here
-		//		std::cout << "Connecting to server at: " << serverAddress << std::endl;
-		//		// Example: gNetwork.Connect(serverAddress);
-		//	}
-
-		//	ImGui::End();
-		//}
-		//ImGui::Render();
-		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_pd3dCommandList);
-
-
-		m_pScene->Render(m_pd3dCommandList, m_pCamera);
-		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+		if (m_pScene->isBiludobj)
+			m_pScene->Render(m_pd3dCommandList, m_pCamera);
+		if ( m_pPlayer->isplayermake == true)
+			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
 		//if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 
