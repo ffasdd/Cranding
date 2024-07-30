@@ -1636,9 +1636,7 @@ void CGameFramework::FrameAdvance()
 				sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
 			{
 				ChangeScene(SCENEKIND::SPACESHIP);
-				//
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-
 			}
 		}
 		else if (isSceneChangetoFire) {

@@ -288,7 +288,7 @@ void Network::ProcessPacket(char* buf)
 				if (IngameScene == false)
 				{
 					IngameScene = true;
-					ClientState = true;
+					
 				}
 				else if (IngameScene == true)
 				{
