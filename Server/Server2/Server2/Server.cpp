@@ -523,11 +523,9 @@ void Server::ProcessPacket(int id, char* packet)
 	{
 	case CS_READY_GAME: {
 		CS_READY_PACKET* p = reinterpret_cast<CS_READY_PACKET*>(packet);
-
 	}
 					  break;
 	case CS_LOGIN: {
-
 		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
 		strcpy_s(clients[id]._name, p->name);
 		clients[id].characterType = p->charactertype;
@@ -541,12 +539,10 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 
 		matchingqueue.push(&clients[id]);
-
 		while (clients[id].room_id == -1)
 		{
 			this_thread::yield();
 		}
-
 		clients[id].send_login_info_packet();
 	}
 				 break;
@@ -603,9 +599,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage) continue;
 			pl->send_change_animate_packet(id);
-
 		}
-
 	}
 							break;
 	case CS_CHANGE_SCENE: {
@@ -695,19 +689,14 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		if (ingameroom[r_id].readycnt < 2) break;
 
-		bool all_Start = all_of(ingameroom[r_id].ingamePlayer.begin(), ingameroom[r_id].ingamePlayer.end(), [](Session* s) {return s->_state == STATE::Start; });
+		ingameroom[r_id].BossMonsterInitialziedMonster();
+		ingameroom[r_id].IceNpcInitialized();
+		ingameroom[r_id].FireNpcInitialized();
+		ingameroom[r_id].NatureNpcInitialized();
 
+		bool all_Start = all_of(ingameroom[r_id].ingamePlayer.begin(), ingameroom[r_id].ingamePlayer.end(), [](Session* s) {return s->_state == STATE::Start; });
 		if (all_Start)
 		{
-			ingameroom[r_id].BossMonsterInitialziedMonster();
-			ingameroom[r_id].IceNpcInitialized();
-			ingameroom[r_id].FireNpcInitialized();
-			ingameroom[r_id].NatureNpcInitialized();
-
-			for (auto& pl : ingameroom[r_id].ingamePlayer)
-			{
-				pl->send_ingame_start();
-			}
 
 			ingameroom[r_id].start_time = chrono::system_clock::now();
 
@@ -737,6 +726,12 @@ void Server::ProcessPacket(int id, char* packet)
 
 			TIMER_EVENT ev9{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NATURE_BOSS_MOVE };
 			g_Timer.InitTimerQueue(ev9);
+
+			for (auto& pl : ingameroom[r_id].ingamePlayer)
+			{
+				pl->send_ingame_start();
+			}
+
 		}
 		else
 			break;
@@ -1126,7 +1121,8 @@ void Server::ReadyToStart()
 
 			// 접속하는 클라이언트 순서대로 array에 집어넣어야함, 
 			// id를 맞춰야하나? 
-
+			if (ingameroom[room_id].ingamePlayer.size() < MAX_ROOM_USER)continue;
+			cout << " Full " << room_id << " - Room " << endl;
 
 			for (auto& ingameplayer : ingameroom[room_id].ingamePlayer)
 			{

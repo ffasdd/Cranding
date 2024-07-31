@@ -40,10 +40,10 @@ bool Network::ReadytoConnect()
 	sockaddrIn.sin_port = htons(PORT_NUM);
 
 	// 사용자로부터 IP 주소 입력 받기
-	string ipAddress{};
+	string ipAddress{"127.0.0.1"};
 
-	cout << "IP address : ";
-	cin >> ipAddress;
+	//cout << "IP address : ";
+	//cin >> ipAddress;
 
 
 	// 문자열 형태의 IP 주소를 네트워크 바이트 순서로 변환하여 설정
@@ -183,7 +183,6 @@ void Network::ProcessPacket(char* buf)
 		my_id = getmyid(p->id);
 		my_id = (p->id);
 		my_roomid = p->room_id;
-		g_clients_mutex.lock();
 		g_clients[my_id].setState(STATE::Ingame);
 		g_clients[my_id].setId(my_id);
 		g_clients[my_id].setHp(p->hp);
@@ -196,12 +195,9 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setprevAnimation((p->prev_state));
 		g_clients[my_id].setAttackPower(p->att);
 		g_clients[my_id].setSpeed(p->speed);
-
 		g_clients[my_id].scene_num = p->stage_num;
 
 		gGameFramework.cl_id = my_id;
-		g_clients_mutex.unlock();
-		gamestart = true;
 
 
 		break;
@@ -256,13 +252,6 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setprevAnimation(p->prev_a_state);
 	}
 							break;
-	case SC_START_GAME: {
-		SC_GAMESTART_PACKET* p = reinterpret_cast<SC_GAMESTART_PACKET*>(buf);
-		my_roomid = p->roomid;
-		//Start가 되었을 때 인게임 씬으로 이동 
-
-		break;
-	}
 	case SC_ATTACK: {
 		SC_ATTACK_PACKET* p = reinterpret_cast<SC_ATTACK_PACKET*>(buf);
 		int ob_id = p->id;
@@ -310,7 +299,10 @@ void Network::ProcessPacket(char* buf)
 		break;
 	}
 	case SC_INGAME_STRAT: {
+		{
+		lock_guard<mutex>ll{ networklock };
 		gGameFramework.isSceneChange = true;
+		}
 		break;
 	}
 	case SC_REMOVE_OBJECT: {

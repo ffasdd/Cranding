@@ -437,7 +437,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			BuildObjects(sceneManager.GetCurrentScene());
 			break;
 
-			
+
 
 		case '2': {
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
@@ -500,8 +500,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			//m_bRenderBoundingBox = !m_bRenderBoundingBox;
 			//isSceneChange = true;
 			isready = true;
-			isSceneChange = true;
-			//g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+			gNetwork.SendIngameStart();
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 		case 'L':
@@ -740,7 +739,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 	if (nSceneKind != sceneManager.GetCurrentScene())
 	{
 		//if (m_pPlayer)
-		ChangeSceneReleaseObject();
+		ChangeSceneReleaseObject(); // 기존 씬을 릴리즈 
 
 		switch (nSceneKind)
 		{
@@ -758,7 +757,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			cout << "CLobbyScene BuildObjects" << endl;
 
 			CTerrainPlayer* pPlayer = new CTerrainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain, 2);
-
+			cout << " Lobby Player " << endl;
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
@@ -783,7 +782,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			//ChangeBGM(1);
+			//ChangeBGM(1);			
 			break;
 		}
 		case SCENEKIND::ICE:
@@ -893,20 +892,19 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
-	
+
 			//ChangeBGM(6);
 
 
-	
+
 			break;
 		}
 		default:
 			break;
 		}
 
-		if (S_OK != m_pd3dCommandList->Close()) {
-			cout << "CommandList Close Fail" << endl;
-		}
+		m_pd3dCommandList->Close();
+		
 		ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 		m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 
@@ -1461,11 +1459,11 @@ void CGameFramework::ProcessInput()
 					if (yaw < 0.f) yaw += 360.0f;
 
 					m_pPlayer->RotateYaw(yaw);
-	/*				if (g_clients.size() != 0)
-					{
-						g_clients[gNetwork.Getmyid()].m_yaw = yaw;
-						g_sendqueue.push(SENDTYPE::ROTATE);
-					}*/
+					/*				if (g_clients.size() != 0)
+									{
+										g_clients[gNetwork.Getmyid()].m_yaw = yaw;
+										g_sendqueue.push(SENDTYPE::ROTATE);
+									}*/
 				}
 			}
 
@@ -1560,7 +1558,6 @@ void CGameFramework::UpdateShaderVariables(float curSecond)
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbTime->GetGPUVirtualAddress();
 	m_pd3dCommandList->SetGraphicsRootConstantBufferView(16, d3dcbLightsGpuVirtualAddress);
 
-
 }
 
 void CGameFramework::UpdateTime()
@@ -1619,13 +1616,10 @@ void CGameFramework::FrameAdvance()
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
 				gNetwork.SendLoginfo();
-
-				while (cl_id != -1) {
-					cout << "==" << endl;
-				}
-
+				while (cl_id != -1);// 룸, 플레이어 정보를 받을때 까지 대기 
 				ChangeScene(SCENEKIND::LOBBY);
-				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				gNetwork.SendChangeScene(1);
+				gNetwork.gamestart = true; 
 			}
 			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ||
 				sceneManager.GetCurrentScene() == SCENEKIND::FIRE ||
@@ -1637,6 +1631,7 @@ void CGameFramework::FrameAdvance()
 				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			}
 		}
+		// Change Scene -> Buildobject -> network input 
 		else if (isSceneChangetoFire) {
 			ChangeScene(SCENEKIND::FIRE);
 			//
@@ -1685,81 +1680,81 @@ void CGameFramework::FrameAdvance()
 		D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 		d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBufferIndex * ::gnRtvDescriptorIncrementSize);
 
-		m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera, false);
+		//m_pScene->OnPrepareRender(m_pd3dCommandList, m_pCamera, false);
 
 
-		D3D12_VIEWPORT viewport = m_ShadowMap->Viewport();
-		m_pd3dCommandList->RSSetViewports(1, &viewport);
-		auto scissorRect = m_ShadowMap->ScissorRect();
-		m_pd3dCommandList->RSSetScissorRects(1, &scissorRect);
+		//D3D12_VIEWPORT viewport = m_ShadowMap->Viewport();
+		//m_pd3dCommandList->RSSetViewports(1, &viewport);
+		//auto scissorRect = m_ShadowMap->ScissorRect();
+		//m_pd3dCommandList->RSSetScissorRects(1, &scissorRect);
 
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+		//::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE);
 
-		m_pd3dCommandList->ClearDepthStencilView(m_ShadowMap->Dsv(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+		//m_pd3dCommandList->ClearDepthStencilView(m_ShadowMap->Dsv(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
-		auto dsv = m_ShadowMap->Dsv();
-		m_pd3dCommandList->OMSetRenderTargets(0, nullptr, false, &dsv);
-		if (m_ShadowMap->GetPipelineState())m_pd3dCommandList->SetPipelineState(m_ShadowMap->GetPipelineState());
+		//auto dsv = m_ShadowMap->Dsv();
+		//m_pd3dCommandList->OMSetRenderTargets(0, nullptr, false, &dsv);
+		//if (m_ShadowMap->GetPipelineState())m_pd3dCommandList->SetPipelineState(m_ShadowMap->GetPipelineState());
 
-		XMFLOAT3 pos;
-		XMFLOAT3 dir = XMFLOAT3(-0.3f, -0.85f, -0.3f);
-		float radius = 1000;
+		//XMFLOAT3 pos;
+		//XMFLOAT3 dir = XMFLOAT3(-0.3f, -0.85f, -0.3f);
+		//float radius = 1000;
 
-		XMFLOAT3 targetpos = m_pPlayer->GetPosition();
-		XMVECTOR lightDir = XMLoadFloat3(&dir);
-		XMVECTOR targetPos = XMLoadFloat3(&targetpos);
-		XMVECTOR lightPos = targetPos - 2.0f * radius * lightDir;
-		XMVECTOR lightUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-		XMMATRIX lightView = XMMatrixLookAtLH(lightPos, targetPos, lightUp);
+		//XMFLOAT3 targetpos = m_pPlayer->GetPosition();
+		//XMVECTOR lightDir = XMLoadFloat3(&dir);
+		//XMVECTOR targetPos = XMLoadFloat3(&targetpos);
+		//XMVECTOR lightPos = targetPos - 2.0f * radius * lightDir;
+		//XMVECTOR lightUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+		//XMMATRIX lightView = XMMatrixLookAtLH(lightPos, targetPos, lightUp);
 
-		XMStoreFloat3(&pos, lightPos);
+		//XMStoreFloat3(&pos, lightPos);
 
-		// Transform bounding sphere to light space.
-		XMFLOAT3 sphereCenterLS;
-		XMStoreFloat3(&sphereCenterLS, XMVector3TransformCoord(targetPos, lightView));
-		float l = sphereCenterLS.x - radius;
-		float b = sphereCenterLS.y - radius;
-		float n = sphereCenterLS.z - radius;
-		float r = sphereCenterLS.x + radius;
-		float t = sphereCenterLS.y + radius;
-		float f = sphereCenterLS.z + radius;
+		//// Transform bounding sphere to light space.
+		//XMFLOAT3 sphereCenterLS;
+		//XMStoreFloat3(&sphereCenterLS, XMVector3TransformCoord(targetPos, lightView));
+		//float l = sphereCenterLS.x - radius;
+		//float b = sphereCenterLS.y - radius;
+		//float n = sphereCenterLS.z - radius;
+		//float r = sphereCenterLS.x + radius;
+		//float t = sphereCenterLS.y + radius;
+		//float f = sphereCenterLS.z + radius;
 
-		XMMATRIX lightProj = XMMatrixOrthographicOffCenterLH(l, r, b, t, n, f);
-		XMMATRIX T(0.5f, 0.0f, 0.0f, 0.0f,
-			0.0f, -0.5f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.5f, 0.5f, 0.0f, 1.0f);
-		XMMATRIX S = lightView * lightProj * T;
+		//XMMATRIX lightProj = XMMatrixOrthographicOffCenterLH(l, r, b, t, n, f);
+		//XMMATRIX T(0.5f, 0.0f, 0.0f, 0.0f,
+		//	0.0f, -0.5f, 0.0f, 0.0f,
+		//	0.0f, 0.0f, 1.0f, 0.0f,
+		//	0.5f, 0.5f, 0.0f, 1.0f);
+		//XMMATRIX S = lightView * lightProj * T;
 
-		XMFLOAT4X4 proj;
-		XMStoreFloat4x4(&proj, lightProj);
+		//XMFLOAT4X4 proj;
+		//XMStoreFloat4x4(&proj, lightProj);
 
-		XMFLOAT4X4 view;
-		XMStoreFloat4x4(&view, lightView);
+		//XMFLOAT4X4 view;
+		//XMStoreFloat4x4(&view, lightView);
 
-		XMStoreFloat4x4(&m_pShadowMappedCamera->m_xmf4x4View, XMMatrixTranspose(XMLoadFloat4x4(&view)));
-		XMStoreFloat4x4(&m_pShadowMappedCamera->m_xmf4x4Projection, XMMatrixTranspose(XMLoadFloat4x4(&proj)));
-		XMStoreFloat4x4(&m_pShadowMappedCamera->m_xm4x4ShadowTransform, XMMatrixTranspose(S));
-		XMStoreFloat4x4(&m_pCamera->GetCameraInfo()->m_xm4x4ShadowTransform, XMMatrixTranspose(S));
+		//XMStoreFloat4x4(&m_pShadowMappedCamera->m_xmf4x4View, XMMatrixTranspose(XMLoadFloat4x4(&view)));
+		//XMStoreFloat4x4(&m_pShadowMappedCamera->m_xmf4x4Projection, XMMatrixTranspose(XMLoadFloat4x4(&proj)));
+		//XMStoreFloat4x4(&m_pShadowMappedCamera->m_xm4x4ShadowTransform, XMMatrixTranspose(S));
+		//XMStoreFloat4x4(&m_pCamera->GetCameraInfo()->m_xm4x4ShadowTransform, XMMatrixTranspose(S));
 
-		::memcpy(&m_pShadowMappedCamera->m_xmf3Position, &pos, sizeof(XMFLOAT3));
+		//::memcpy(&m_pShadowMappedCamera->m_xmf3Position, &pos, sizeof(XMFLOAT3));
 
-		D3D12_GPU_VIRTUAL_ADDRESS d3dGPUVirtualAddress = m_pShadowCamera->GetGPUVirtualAddress();
-		m_pd3dCommandList->SetDescriptorHeaps(1, &m_pScene->m_pd3dCbvSrvDescriptorHeap);
-		m_pd3dCommandList->SetGraphicsRootConstantBufferView(0, d3dGPUVirtualAddress);
-
-
-		if (m_pScene && m_pScene->isBiludobj && isshadow == true) {
-			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
-		}
-		if(m_pPlayer && m_pPlayer->isplayermake ==true && isshadow == true)
-			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
-
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
+		//D3D12_GPU_VIRTUAL_ADDRESS d3dGPUVirtualAddress = m_pShadowCamera->GetGPUVirtualAddress();
+		//m_pd3dCommandList->SetDescriptorHeaps(1, &m_pScene->m_pd3dCbvSrvDescriptorHeap);
+		//m_pd3dCommandList->SetGraphicsRootConstantBufferView(0, d3dGPUVirtualAddress);
 
 
-		if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && sceneManager.GetCurrentScene() != SCENEKIND::LOBBY)
-			UpdateTime();
+		//if (m_pScene && m_pScene->isBiludobj && isshadow == true) {
+		//	m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
+		//}
+		//if (m_pPlayer && m_pPlayer->isplayermake == true && isshadow == true)
+		//	m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+
+		//::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+
+		//if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && sceneManager.GetCurrentScene() != SCENEKIND::LOBBY)
+		//	UpdateTime();
 
 		//UpdateShaderVariables();
 
@@ -1773,12 +1768,11 @@ void CGameFramework::FrameAdvance()
 
 		m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], d3dDsvCPUDescriptorHandle);
 
-		
 
-		if (m_pScene->isBiludobj)
-			m_pScene->Render(m_pd3dCommandList, m_pCamera);
-		if ( m_pPlayer->isplayermake == true)
-			m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+
+
+		m_pScene->Render(m_pd3dCommandList, m_pCamera);
+		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
 		//if (m_bRenderBoundingBox) m_pScene->RenderBoundingBox(m_pd3dCommandList, m_pCamera);
 

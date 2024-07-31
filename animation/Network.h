@@ -94,7 +94,7 @@ public:
 	int index = 0;
 public:
 	mutex g_clients_mutex;
-	
+	mutex networklock;
 private:
 	SOCKET clientsocket;
 	 char _buf[BUF_SIZE];
