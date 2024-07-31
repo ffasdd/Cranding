@@ -531,17 +531,6 @@ void CScene::CreateShaderResourceViews(ID3D12Device* pd3dDevice, int nResources,
 	}
 }
 
-void CScene::RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
-{
-	m_pBoundingBoxShader->Render(pd3dCommandList, pCamera);
-	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
-	{
-		if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->RenderBoundingBox(pd3dCommandList, pCamera);
-	}
-
-	m_pPlayer->RenderBoundingBox(pd3dCommandList, pCamera);
-}
-
 bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	return(false);

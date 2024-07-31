@@ -514,7 +514,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 
 		case 'B':
-			//m_bRenderBoundingBox = !m_bRenderBoundingBox;
 			//isSceneChange = true;
 			g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);

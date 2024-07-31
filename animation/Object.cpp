@@ -869,9 +869,6 @@ CGameObject::CGameObject(int nMaterials, ID3D12Device* pd3dDevice, ID3D12Graphic
 	}
 
 	m_xmf4x4World = Matrix4x4::Identity();
-
-	CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
-	SetBoundingBoxMesh(pBoundingBoxMesh);
 }
 
 CGameObject::~CGameObject()
@@ -905,22 +902,6 @@ void CGameObject::UpdateBoundingBox()
 		m_pMesh->m_xmBoundingBox.Transform(m_xmBoundingBox, XMLoadFloat4x4(&m_xmf4x4World));
 		XMStoreFloat4(&m_xmBoundingBox.Orientation, XMQuaternionNormalize(XMLoadFloat4(&m_xmBoundingBox.Orientation)));
 	}
-}
-
-void CGameObject::RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
-{
-	if (m_pBoundingBoxMesh)
-	{
-		m_pBoundingBoxMesh->UpdateVertexPosition(&m_xmBoundingBox);
-		m_pBoundingBoxMesh->Render(pd3dCommandList);
-	}
-}
-
-void CGameObject::SetBoundingBoxMesh(CBoundingBoxMesh* pMesh)
-{
-	if (m_pBoundingBoxMesh) m_pBoundingBoxMesh->Release();
-	m_pBoundingBoxMesh = pMesh;
-	if (pMesh) pMesh->AddRef();
 }
 
 void CGameObject::AddRef() 
@@ -1498,10 +1479,6 @@ CGameObject *CGameObject::LoadFrameHierarchyFromFile(ID3D12Device *pd3dDevice, I
 			CStandardMesh* pMesh = new CStandardMesh(pd3dDevice, pd3dCommandList);
 			pMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
 			pGameObject->SetMesh(pMesh);
-
-			CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
-			// 애니메이션 x인 애들 바운딩 박스 셋
-			pGameObject->SetBoundingBoxMesh(pBoundingBoxMesh);
 		}
 		else if (!strcmp(pstrToken, "<SkinningInfo>:"))
 		{
@@ -1514,10 +1491,6 @@ CGameObject *CGameObject::LoadFrameHierarchyFromFile(ID3D12Device *pd3dDevice, I
 			if (!strcmp(pstrToken, "<Mesh>:"))
 				{
 				pSkinnedMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
-
-				CBoundingBoxMesh* pBoundingBoxMesh = new CBoundingBoxMesh(pd3dDevice, pd3dCommandList);
-				// 애니메이션 o인 애들 바운딩 박스 셋
-				pGameObject->SetBoundingBoxMesh(pBoundingBoxMesh);
 			}
 
 			pGameObject->SetMesh(pSkinnedMesh);
