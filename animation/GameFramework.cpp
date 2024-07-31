@@ -1253,8 +1253,7 @@ void CGameFramework::OnDestroy()
 
 	if (m_pd3dFence) m_pd3dFence->Release();
 
-	//if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
-	//if (m_pPipelineState) m_pPipelineState->Release();
+
 
 	if (m_pShadowCamera)
 	{
@@ -1263,7 +1262,6 @@ void CGameFramework::OnDestroy()
 	}
 	if (m_pShadowMappedCamera)
 	{
-		//delete m_pShadowMappedCamera;
 		m_pShadowMappedCamera = nullptr;
 	}
 
@@ -1275,10 +1273,6 @@ void CGameFramework::OnDestroy()
 		m_pd3dcbTime->Release();
 	}
 
-	//imgui
-	//ImGui_ImplDX12_Shutdown();
-	//ImGui_ImplWin32_Shutdown();
-	//ImGui::DestroyContext();
 
 #if defined(_DEBUG)
 	IDXGIDebug1* pdxgiDebug = NULL;
