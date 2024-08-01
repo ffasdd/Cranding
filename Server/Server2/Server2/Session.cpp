@@ -53,11 +53,9 @@ void Session::send_login_info_packet()
 	p.att = clients[_id]._attpow;
 	p.speed = clients[_id]._speed;
 
-	if (clients[_id].characterType == 0)
-	{
-		p.a_state = animateState::SWORD_IDLE;
-		p.prev_state = animateState::SWORD_IDLE;
-	}
+	p.a_state = animateState::SWORD_IDLE;
+	p.prev_state = animateState::SWORD_IDLE;
+
 
 	do_send(&p);
 }
@@ -112,7 +110,7 @@ void Session::send_remove_packet(int client_id)
 	p.type = SC_REMOVE_OBJECT;
 	do_send(&p);
 }
- 
+
 void Session::send_rotate_packet(int client_id)
 {
 	SC_ROTATE_OBJECT_PACKET p;
@@ -171,7 +169,7 @@ void Session::send_ingame_start()
 	SC_INGAME_START_PACKET p;
 	p.type = SC_INGAME_STRAT;
 	p.size = sizeof(SC_INGAME_START_PACKET);
-	
+
 	do_send(&p);
 }
 
@@ -188,7 +186,7 @@ void Session::send_add_monster(int npc_id)
 	do_send(&p);
 }
 
-void Session::send_player_attack_mosnter(int npc_id, bool isattack , MonsterType montype)
+void Session::send_player_attack_mosnter(int npc_id, bool isattack, MonsterType montype)
 {
 	SC_MONSTER_DIE_PACKET p;
 	p.size = sizeof(SC_MONSTER_DIE_PACKET);

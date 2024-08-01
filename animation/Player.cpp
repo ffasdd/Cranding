@@ -541,7 +541,6 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 					g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
 					g_clients[c_id].setAnimation(animateState::SWORD_MOVE);
 				}
-				g_sendqueue.push(SENDTYPE::CHANGE_ANIMATION);
 			}
 			//gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 		}

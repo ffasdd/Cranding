@@ -7,7 +7,6 @@
 //#include"../Server/Server2/Server2/protocol.h"
 #pragma comment(lib,"WS2_32.lib")
 
-#define SERVER_IP "121.170.72.178"
 extern unordered_map<int, Session> g_clients;
 extern unordered_map<int, Session> g_monsters;
 extern unordered_map<int, Session> g_ice_monsters;
@@ -17,9 +16,7 @@ extern unordered_map<int, Session> g_nature_monsters;
 extern Session g_IceBossMonster;
 extern Session g_FireBossMonster;
 extern Session g_NatureBossMonster;
-extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
-extern HANDLE loginevent;
-extern HANDLE startevent;
+
 enum class animateState;
 
 class Network
@@ -44,12 +41,9 @@ public:
 	int Getmyid() { return my_id; }
 public: // thread send 
 	
-	void SendThreadFunc();
-	void SendProcess(SENDTYPE sendtype);
 	void SendLoginfo();
 	void SendTest();
 	void SendMovePlayer(XMFLOAT3 _pos);
-	//void SendRotatePlayer(XMFLOAT3 _look,XMFLOAT3 _right, XMFLOAT3 _up);
 	void SendRotatePlayer(float _yaw);
 	void SendChangeAnimation(animateState curanimate, animateState prevanimate);
 	void SendChangeScene(int scenenum);
@@ -66,7 +60,6 @@ public: // thread send
 
 	void SendPlayerDead();
 
-	bool MonsterCollide(Session& _monster);
 	
 public: // utils
 	int getmyid(int _id);
@@ -101,7 +94,7 @@ private:
 	clock_t end;
 	int second{ 30 };
 	unsigned int curTimer = 0;
-	//CPlayer* PlayerInfo;
+
 
 	float                           m_fBoundingSize{ 3.0f };
 	BoundingSphere					m_SPBB = BoundingSphere(XMFLOAT3(0.0f, 0.0f, 0.0f), m_fBoundingSize);

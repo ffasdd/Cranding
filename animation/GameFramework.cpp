@@ -369,7 +369,6 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
 		if (g_clients.size() == 0)break;
 		g_clients[cl_id].setAttack(true);
-		g_sendqueue.push(SENDTYPE::ATTACK);
 
 
 		break;
@@ -437,8 +436,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		}
 
 		case '0':
-			// ������ȭ��
-			//SceneNum = 0;
 			sceneManager.SetCurrentScene(SCENEKIND::LOGIN);
 			ReleaseObjects();
 			BuildObjects(sceneManager.GetCurrentScene());
@@ -450,8 +447,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 1;
 				isSceneChange = true;
 				isready = false;
-
-
 				break;
 			}
 			break;
@@ -459,9 +454,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case '2': {
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// spaceship map
-			SceneNum = 2;
-			isready = true;
-			isSceneChange = true;
+			gNetwork.SendIngameStart();
+			//isready = true;
 		}
 				break;
 
@@ -516,8 +510,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case 'B':
 			//m_bRenderBoundingBox = !m_bRenderBoundingBox;
 			//isSceneChange = true;
-			g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 		case 'L':
 			m_pScene->m_ppHierarchicalGameObjects[13]->SetHealth(-100);
@@ -1457,7 +1449,6 @@ void CGameFramework::ProcessInput()
 					if (g_clients.size() != 0)
 					{
 						g_clients[gNetwork.Getmyid()].m_yaw = yaw;
-						g_sendqueue.push(SENDTYPE::ROTATE);
 					}
 				}
 			}
@@ -1484,7 +1475,7 @@ void CGameFramework::ProcessInput()
 				XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(temp, m_GameTimer.GetTimeElapsed(), false);
 				m_pPlayer->Move(cl_id, xmf3Velocity, false);
 				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
-				g_sendqueue.push(SENDTYPE::MOVE);
+	
 
 			}
 		}
@@ -1604,18 +1595,16 @@ void CGameFramework::FrameAdvance()
 {
 	// Scene Change 변경
 	try {
+
 		if (isSceneChange && SceneNum < 3)
 		{
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
-
-				/*gNetwork.SendLoginfo();
-
-				while (cl_id == -1)
-					this_thread::yield();*/
-
+				gNetwork.SendLoginfo();
+				while (cl_id != -1);
+				// 매칭, 룸 배정 완료 이후 로비 씬 진입 
 				ChangeScene(SCENEKIND::LOBBY);
-				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				gNetwork.SendChangeScene(1);
 			}
 			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ||
 				sceneManager.GetCurrentScene() == SCENEKIND::FIRE ||
@@ -1623,14 +1612,7 @@ void CGameFramework::FrameAdvance()
 				sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
 			{
 				ChangeScene(SCENEKIND::SPACESHIP);
-				//
-				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
-
-				//if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
-				//{
-				//	g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-
-				//}
+				gNetwork.SendChangeScene(2); 
 			}
 		}
 		else if (isSceneChangetoFire) {

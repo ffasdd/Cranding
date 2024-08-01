@@ -575,9 +575,9 @@ void Server::ProcessPacket(int id, char* packet)
 		{
 		case 2: {
 			clients[id]._stage = scenenum;
-			std::uniform_real_distribution<float> xpos(210, 240);
-			std::uniform_real_distribution<float> zpos(710, 760);
-			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
+			//std::uniform_real_distribution<float> xpos(210, 240);
+			//std::uniform_real_distribution<float> zpos(710, 760);
+			//clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 		}
 			  break;
 		case 3: {
@@ -621,9 +621,8 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 			  break;
 		}
-
-		clients[id].send_change_scene(id, scenenum); // 나한테 나의 씬넘버를 보냄 
-
+		//clients[id].send_change_scene(id, scenenum); // 나한테 나의 씬넘버를 보냄 
+		// 할필요가없음 
 		for (auto& pl : ingameroom[r_id].ingamePlayer) // 나의 씬번호를 다른 플레이어들한테 보냄 
 		{
 			if (pl->_id == id)continue;
@@ -643,56 +642,57 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ ingameroom[r_id].r_l };
 			ingameroom[r_id].readycnt++;
 		}
-		if (ingameroom[r_id].readycnt < 2) break;
+		if (ingameroom[r_id].readycnt < MAX_ROOM_USER) break;
 
-		bool all_Start = all_of(ingameroom[r_id].ingamePlayer.begin(), ingameroom[r_id].ingamePlayer.end(), [](Session* s) {return s->_state == STATE::Start; });
+		//bool all_Start = all_of(ingameroom[r_id].ingamePlayer.begin(), ingameroom[r_id].ingamePlayer.end(), [](Session* s) {return s->_state == STATE::Start; });
 
-		if (all_Start)
+	/*	if (all_Start)
+		{*/
+		ingameroom[r_id].BossMonsterInitialziedMonster();
+		ingameroom[r_id].IceNpcInitialized();
+		ingameroom[r_id].FireNpcInitialized();
+		ingameroom[r_id].NatureNpcInitialized();
+
+		ingameroom[r_id].start_time = chrono::system_clock::now();
+
+		TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
+		g_Timer.InitTimerQueue(ev1);
+
+		TIMER_EVENT ev{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_UPDATE };
+		g_Timer.InitTimerQueue(ev);
+
+		TIMER_EVENT ev2{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NIGHT };
+		g_Timer.InitTimerQueue(ev2);
+
+		TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_DAYTIME };
+		g_Timer.InitTimerQueue(ev3);
+
+		TIMER_EVENT ev4{ ingameroom[r_id].start_time ,r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
+		g_Timer.InitTimerQueue(ev4);
+
+		TIMER_EVENT ev5{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_FIRE_NPC_UPDATE };
+		g_Timer.InitTimerQueue(ev5);
+
+		TIMER_EVENT ev6{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NATURE_NPC_UPDATE };
+		g_Timer.InitTimerQueue(ev6);
+
+		TIMER_EVENT ev7{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_ICE_BOSS_MOVE };
+		g_Timer.InitTimerQueue(ev7);
+
+		TIMER_EVENT ev8{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_FIRE_BOSS_MOVE };
+		g_Timer.InitTimerQueue(ev8);
+
+		TIMER_EVENT ev9{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NATURE_BOSS_MOVE };
+		g_Timer.InitTimerQueue(ev9);
+
+		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
-			ingameroom[r_id].BossMonsterInitialziedMonster();
-			ingameroom[r_id].IceNpcInitialized();
-			ingameroom[r_id].FireNpcInitialized();
-			ingameroom[r_id].NatureNpcInitialized();
-
-			for (auto& pl : ingameroom[r_id].ingamePlayer)
-			{
-				pl->send_ingame_start();
-			}
-
-			ingameroom[r_id].start_time = chrono::system_clock::now();
-
-			TIMER_EVENT ev1{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_INITIALIZE };
-			g_Timer.InitTimerQueue(ev1);
-
-			TIMER_EVENT ev{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NPC_UPDATE };
-			g_Timer.InitTimerQueue(ev);
-
-			TIMER_EVENT ev2{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NIGHT };
-			g_Timer.InitTimerQueue(ev2);
-
-			TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_DAYTIME };
-			g_Timer.InitTimerQueue(ev3);
-
-			TIMER_EVENT ev4{ ingameroom[r_id].start_time ,r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
-			g_Timer.InitTimerQueue(ev4);
-
-			TIMER_EVENT ev5{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_FIRE_NPC_UPDATE };
-			g_Timer.InitTimerQueue(ev5);
-
-			TIMER_EVENT ev6{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NATURE_NPC_UPDATE };
-			g_Timer.InitTimerQueue(ev6);
-
-			TIMER_EVENT ev7{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_ICE_BOSS_MOVE };
-			g_Timer.InitTimerQueue(ev7);
-
-			TIMER_EVENT ev8{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_FIRE_BOSS_MOVE };
-			g_Timer.InitTimerQueue(ev8);
-
-			TIMER_EVENT ev9{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NATURE_BOSS_MOVE };
-			g_Timer.InitTimerQueue(ev9);
+			pl->send_ingame_start();
 		}
-		else
-			break;
+
+		//}
+		//else
+		//	break;
 	}
 						break;
 	case CS_ATTACK: {
@@ -757,7 +757,7 @@ void Server::ProcessPacket(int id, char* packet)
 		case MonsterType::Ice_Boss:
 		{
 			ingameroom[p->room_id].IceBoss._is_alive = false;
-			break; 
+			break;
 		}
 		case MonsterType::Nature_Boss:
 		{

@@ -24,9 +24,6 @@ Session g_FireBossMonster;
 Session g_NatureBossMonster;
 
 
-concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
-HANDLE loginevent = CreateEvent(NULL, FALSE, FALSE, NULL);
-HANDLE startevent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -46,12 +43,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	MyRegisterClass(hInstance);
 
 
-	//while (!gNetwork.ReadytoConnect());
-
-
-	//// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
-	//while (!gNetwork.StartServer());
-
+	while (!gNetwork.ReadytoConnect());
 
 	// 로그인 완료 
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);

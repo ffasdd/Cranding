@@ -7,7 +7,6 @@
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "xaudio2.lib")
 
-extern concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
 extern Network							gNetwork;
 ID3D12DescriptorHeap* CScene::m_pd3dCbvSrvDescriptorHeap = NULL;
 
