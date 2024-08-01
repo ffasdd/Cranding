@@ -88,7 +88,7 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 		//if (dwDirection & DIR_UP) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, fDistance);
 		//if (dwDirection & DIR_DOWN) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, -fDistance);
 
-		Move(c_id, xmf3Shift, bUpdateVelocity);
+		Move( xmf3Shift, bUpdateVelocity);
 	}
 }
 
@@ -127,6 +127,7 @@ void CPlayer::RotateYaw(float yaw) {
 		}
 	}
 	else if (nCurrentCameraMode == SPACESHIP_CAMERA) {
+
 		if (yaw != 0.0f) {
 			m_fYaw += yaw;
 			if (m_fYaw > 360.0f) m_fYaw -= 360.0f;
@@ -145,7 +146,7 @@ void CPlayer::RotateYaw(float yaw) {
 	}
 }
 
-void CPlayer::Move(int c_id, const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
+void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 {
 	if (bUpdateVelocity)
 	{
@@ -154,8 +155,6 @@ void CPlayer::Move(int c_id, const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 	else
 	{
 		m_xmf3Position = Vector3::Add(m_xmf3Position, xmf3Shift);
-		if(g_clients.size() != 0)
-			g_clients[c_id].setPos(m_xmf3Position);
 		m_pCamera->Move(xmf3Shift);
 	}
 }
@@ -234,7 +233,7 @@ void CPlayer::Update(float fTimeElapsed)
 	if (fLength > m_fMaxVelocityY) m_xmf3Velocity.y *= (fMaxVelocityY / fLength);
 
 	XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(m_xmf3Velocity, fTimeElapsed, false);
-	Move(c_id, xmf3Velocity, false);
+	Move( xmf3Velocity, false);
 
 	if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
 
@@ -542,7 +541,7 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 					g_clients[c_id].setAnimation(animateState::SWORD_MOVE);
 				}
 			}
-			//gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
+			gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 		}
 	}
 	CPlayer::Move(dwDirection, fDistance, bUpdateVelocity);

@@ -56,7 +56,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	CreateDirect3DDevice();
 	CreateCommandQueueAndList();
 	CreateRtvAndDsvAndImGuiDescriptorHeaps();
-	
+
 	CreateSwapChain();
 
 	CreateSwapChainRenderTargetViews();
@@ -769,7 +769,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			isSceneChange = false;
 			sceneManager.SetCurrentScene(nSceneKind);
 			cout << "CSpaceShipScene BuildObjects" << endl;
-			//this_thread::sleep_for(10ms);
+
 			m_pScene = new CSpaceShipScene();
 			m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
@@ -1213,7 +1213,7 @@ void CGameFramework::myFunc_SetStatus(int FireCnt, int IceCnt, int NatureCnt)
 	curDay++;
 
 	int attack = g_clients[cl_id].getAttackPower() + (FireCnt * 5);
-	
+
 	if (attack > 100) {
 		attack = 100;
 	}
@@ -1301,10 +1301,10 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	m_SceneSounds[2] = LoadWaveFile(L"Sound/Fire.wav");
 	m_SceneSounds[3] = LoadWaveFile(L"Sound/Grass.wav");
 
-		// bgm
-	//SoundData IceBgm = m_pScene->LoadWaveFile(L"Scene2BGM.wav");
-	//SoundData FireBgm = m_pScene->LoadWaveFile(L"Scene3BGM.wav");
-	//SoundData GrassBgm = m_pScene->LoadWaveFile(L"Scene4BGM.wav");
+	// bgm
+//SoundData IceBgm = m_pScene->LoadWaveFile(L"Scene2BGM.wav");
+//SoundData FireBgm = m_pScene->LoadWaveFile(L"Scene3BGM.wav");
+//SoundData GrassBgm = m_pScene->LoadWaveFile(L"Scene4BGM.wav");
 
 	CreateShaderVariables();
 
@@ -1440,16 +1440,25 @@ void CGameFramework::ProcessInput()
 				if (pKeysBuffer[VK_RBUTTON] & 0xF0
 					&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
 
-					float yaw = cxDelta;
-
-					if (yaw > 360.0f) yaw -= 360.0f;
-					if (yaw < 0.f) yaw += 360.0f;
-
-					m_pPlayer->RotateYaw(yaw);
-					if (g_clients.size() != 0)
+					if (SceneNum > 0)
 					{
+						float yaw = cxDelta;
+
+						if (yaw > 360.0f) yaw -= 360.0f;
+						if (yaw < 0.f) yaw += 360.0f;
+
+						m_pPlayer->RotateYaw(yaw);
+						g_clients[cl_id].setLook(m_pPlayer->GetLook());
+						g_clients[cl_id].setRight(m_pPlayer->GetRight());
+						g_clients[cl_id].setUp(m_pPlayer->GetUp());
 						g_clients[gNetwork.Getmyid()].m_yaw = yaw;
+						// 서버에게 클라이언트의 회전각을 전송, 
+						// 회전동기화문제가 생기는 이유는? 
+						// 서버에서 받은 회전각으로 다른 클라이언트 회전계산을 해야하는데 가지고 있는 look right up 값이 다른듯,
+						// 즉 회전 기준이 다름 
+						gNetwork.SendRotatePlayer(g_clients[cl_id].m_yaw);
 					}
+
 				}
 			}
 
@@ -1473,9 +1482,10 @@ void CGameFramework::ProcessInput()
 				if (fLength > m_pPlayer->GetMaxVelocityY()) temp.y *= (fMaxVelocityY / fLength);
 
 				XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(temp, m_GameTimer.GetTimeElapsed(), false);
-				m_pPlayer->Move(cl_id, xmf3Velocity, false);
+				m_pPlayer->Move(xmf3Velocity, false);
 				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
-	
+				// 이동된 좌표를 서버에게 전송 
+				gNetwork.SendMovePlayer(g_clients[cl_id].getPos());
 
 			}
 		}
@@ -1612,21 +1622,31 @@ void CGameFramework::FrameAdvance()
 				sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
 			{
 				ChangeScene(SCENEKIND::SPACESHIP);
-				gNetwork.SendChangeScene(2); 
+				gNetwork.SendChangeScene(2);
+				if (monsterinit == false)
+				{
+					monsterinit = true;
+					gNetwork.SendMonsterInit();
+				}
 			}
 		}
 		else if (isSceneChangetoFire) {
 			ChangeScene(SCENEKIND::FIRE);
-			//
+			gNetwork.SendChangeScene(4);
+			gNetwork.stage_num = 4;
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isSceneChangetoIce) {
 			ChangeScene(SCENEKIND::ICE);
 			//
+			gNetwork.SendChangeScene(3);
+			gNetwork.stage_num = 3;
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isSceneChangetoNature) {
 			ChangeScene(SCENEKIND::NATURE);
+			gNetwork.SendChangeScene(5);
+			gNetwork.stage_num = 5;
 			//
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
@@ -1639,7 +1659,6 @@ void CGameFramework::FrameAdvance()
 
 		m_GameTimer.Tick(60.0f);
 		ProcessInput();
-
 		AnimateObjects();
 		HRESULT hResult = m_pd3dCommandAllocator->Reset();
 		hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -1673,7 +1692,7 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->OMSetRenderTargets(0, nullptr, false, &dsv);
 		if (m_ShadowMap->GetPipelineState())m_pd3dCommandList->SetPipelineState(m_ShadowMap->GetPipelineState());
 
-		XMFLOAT3 pos;
+		XMFLOAT3 pos{ XMFLOAT3(0.0f,0.0f,0.0f) };
 		XMFLOAT3 dir = XMFLOAT3(-0.3f, -0.85f, -0.3f);
 		float radius = 1000;
 
@@ -1722,7 +1741,7 @@ void CGameFramework::FrameAdvance()
 
 
 		if (m_pScene) {
-			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);			
+			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
 		}
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
@@ -1811,8 +1830,8 @@ void CGameFramework::FrameAdvance()
 		WaitForGpuComplete();
 #ifdef _FULLSCREEN
 
-		if (m_pUILayer)
-			UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
+		//if (m_pUILayer)
+		//	UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
 
 #endif // _FULLSCREEN
 

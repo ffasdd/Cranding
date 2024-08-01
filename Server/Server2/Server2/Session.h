@@ -36,7 +36,11 @@ public:
 	XMFLOAT3 _right;
 	XMFLOAT3 _up;
 
-	float yaw;
+
+	float           			m_fPitch = 0.0f;
+	float           			m_fYaw = 0.0f;
+	float           			m_fRoll = 0.0f;
+
 	char _name[100];
 	int _prevremain;
 
@@ -211,7 +215,7 @@ public:
 	}
 	~Session() { closesocket(_socket); }
 
-	void Rotate();
+	void Rotate(float yaw);
 
 	void do_recv()
 	{

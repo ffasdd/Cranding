@@ -29,6 +29,7 @@ constexpr char CS_MONSTER_HIT_SPACESHIP = 17;
 constexpr char CS_PLAYER_HIT = 18;
 constexpr char CS_BOSSMONSTER_DAMGED = 19;
 constexpr char CS_DEAD_PLAYER = 20;
+constexpr char CS_MONSTER_INITIALIZE = 21;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -432,6 +433,11 @@ struct CS_PLAYER_DEAD_PACKET {
 	unsigned char size;
 	char type;
 	int id;
+	int room_id;
+};
+struct CS_MOSNTSER_INITIALIZED_PACKET {
+	unsigned char size;
+	char type;
 	int room_id;
 };
 

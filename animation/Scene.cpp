@@ -1091,6 +1091,8 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	const int TotalMonsters = FireMonsterNum + IceMonsterNum + GrassMonsterNum; // 30
 
 	for (int i = 0; i < TotalMonsters; ++i) {
+
+	
 		if (i < FireMonsterNum) {
 			m_ppHierarchicalGameObjects[FireMonsterStartIndex + i] = new CPlayerObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireMonModels[i], 6);
 			for (int j = 0; j <= 5; ++j) {
@@ -1098,6 +1100,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 				m_ppHierarchicalGameObjects[FireMonsterStartIndex + i]->m_pSkinnedAnimationController->SetTrackEnable(j, !(j == 0 || j == 2 || j == 3 || j == 4 || j == 5));
 			}
 			m_ppHierarchicalGameObjects[FireMonsterStartIndex + i]->SetScale(20.0f, 20.0f, 20.0f);
+			m_ppHierarchicalGameObjects[FireMonsterStartIndex + i]->SetPosition(0.f, -500.0f, -0.f);
 			m_ppHierarchicalGameObjects[FireMonsterStartIndex + i]->SetMonsType(MONSTERTYPE::NIGHT);
 		}
 		else if (i < FireMonsterNum + IceMonsterNum) {
@@ -1108,6 +1111,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 				m_ppHierarchicalGameObjects[IceMonsterStartIndex + iceIndex]->m_pSkinnedAnimationController->SetTrackEnable(j, !(j == 0 || j == 2 || j == 3 || j == 4 || j == 5 || j == 6));
 			}
 			m_ppHierarchicalGameObjects[IceMonsterStartIndex + iceIndex]->SetScale(20.0f, 20.0f, 20.0f);
+			m_ppHierarchicalGameObjects[IceMonsterStartIndex + iceIndex]->SetPosition(0.f, -500.0f, -0.f);
 			m_ppHierarchicalGameObjects[IceMonsterStartIndex + iceIndex]->SetMonsType(MONSTERTYPE::NIGHT);
 		}
 		else {
@@ -1118,8 +1122,10 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 				m_ppHierarchicalGameObjects[GrassMonsterStartIndex + grassIndex]->m_pSkinnedAnimationController->SetTrackEnable(j, !(j == 0 || j == 2 || j == 3 || j == 4 || j == 5));
 			}
 			m_ppHierarchicalGameObjects[GrassMonsterStartIndex + grassIndex]->SetScale(20.0f, 20.0f, 20.0f);
+			m_ppHierarchicalGameObjects[GrassMonsterStartIndex + grassIndex]->SetPosition(0.f, -500.0f, -0.f);
 			m_ppHierarchicalGameObjects[GrassMonsterStartIndex + grassIndex]->SetMonsType(MONSTERTYPE::NIGHT);
 		}
+
 	}
 
 	//PlayBGM(L"Sound/Day.wav");

@@ -60,6 +60,8 @@ public: // thread send
 
 	void SendPlayerDead();
 
+	void SendMonsterInit();
+
 	
 public: // utils
 	int getmyid(int _id);
@@ -74,7 +76,7 @@ public:
 	int my_roomid = -1;
 	int stage_num = -1;
 	bool isNight = false;
-
+	bool mosnterinit = false;
 	int Day = 0;
 	int index = 0;
 public:

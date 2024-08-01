@@ -277,12 +277,15 @@ void Network::ProcessPacket(char* buf)
 
 		break;
 	}
-	case SC_INGAME_STRAT: {
+
+	case SC_INGAME_STRAT: { // 게임시작 패킷 
+
 		gGameFramework.isready = true; 
 		gGameFramework.isSceneChange = true;
 		gGameFramework.SceneNum = 2;
 		g_clients[my_id].scene_num = 2;
 		stage_num = 2;
+		
 		break;
 	}
 	case SC_REMOVE_OBJECT: {
@@ -327,7 +330,6 @@ void Network::ProcessPacket(char* buf)
 		break;
 	}
 	case SC_MONSTER_UPDATE_POS: {
-
 		if (stage_num != 2)break;
 		// 10 개로 받아줘야한다. 
 		NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
@@ -342,6 +344,7 @@ void Network::ProcessPacket(char* buf)
 
 		break;
 	}
+
 	case SC_ICE_MONSTER_UPDATE:
 	{
 		if (stage_num != 3) break;
@@ -777,6 +780,16 @@ void Network::SendPlayerDead()
 	p.type = CS_DEAD_PLAYER;
 	p.room_id = my_roomid;
 	p.id = my_id;
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendMonsterInit()
+{
+	CS_MOSNTSER_INITIALIZED_PACKET p;
+	p.size = sizeof(CS_MOSNTSER_INITIALIZED_PACKET);
+	p.type = CS_MONSTER_INITIALIZE;
+	p.room_id = my_roomid;
 
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }

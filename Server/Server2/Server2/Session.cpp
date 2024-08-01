@@ -120,7 +120,7 @@ void Session::send_rotate_packet(int client_id)
 	//p.look = clients[client_id]._look;
 	//p.right = clients[client_id]._right;
 	//p.up = { 0.f,1.0f,0.f };
-	p.yaw = clients[client_id].yaw;
+	p.yaw = clients[client_id].m_fYaw;
 	do_send(&p);
 }
 
@@ -254,12 +254,22 @@ void Session::send_player_hit(int client_id)
 	do_send(&p);
 }
 
-void Session::Rotate()
+void Session::Rotate(float yaw)
 {
-	float radian = XMConvertToRadians(yaw);
+	if (yaw != 0.0f) {
+		m_fYaw += yaw;
+		if (m_fYaw > 360.0f) m_fYaw -= 360.0f;
+		if (m_fYaw < 0.0f) m_fYaw += 360.0f;
 
-	XMFLOAT4 q{};
-	XMStoreFloat4(&q, XMQuaternionRotationRollPitchYaw(0.f, radian, 0.f));
+	
+		XMMATRIX xmmtxRotate = XMMatrixRotationAxis(XMLoadFloat3(&_up), XMConvertToRadians(yaw));
+		_look = Vector3::TransformNormal(_look, xmmtxRotate);
+		_right = Vector3::TransformNormal(_right, xmmtxRotate);
+
+		_look = Vector3::Normalize(_look);
+		_right = Vector3::CrossProduct(_up, _look, true);
+		_up = Vector3::CrossProduct(_look, _right, true);
+	}
 }
 
 void Session::send_game_start(int r_id)
