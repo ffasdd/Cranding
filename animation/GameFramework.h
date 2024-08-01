@@ -53,7 +53,7 @@ public:
 	void CreateDirect3DDevice();
 	void CreateCommandQueueAndList();
 
-	void CreateRtvAndDsvAndImGuiDescriptorHeaps();
+	void CreateRtvAndDsvDescriptorHeaps();
 
 	void CreateSwapChainRenderTargetViews();
 	void CreateDepthStencilView();
@@ -151,6 +151,8 @@ public:
 
 	bool isWin = false;
 	bool isLose = false;
+
+	bool SceneChange = false;
 
 	int spaceshipHP = 2000;
 

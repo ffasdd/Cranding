@@ -55,7 +55,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	CreateDirect3DDevice();
 	CreateCommandQueueAndList();
-	CreateRtvAndDsvAndImGuiDescriptorHeaps();
+	CreateRtvAndDsvDescriptorHeaps();
 	
 	CreateSwapChain();
 
@@ -203,7 +203,7 @@ void CGameFramework::CreateCommandQueueAndList()
 	hResult = m_pd3dCommandList->Close();
 }
 
-void CGameFramework::CreateRtvAndDsvAndImGuiDescriptorHeaps()
+void CGameFramework::CreateRtvAndDsvDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC d3dDescriptorHeapDesc;
 	::ZeroMemory(&d3dDescriptorHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
@@ -227,19 +227,6 @@ void CGameFramework::CreateRtvAndDsvAndImGuiDescriptorHeaps()
 		m_pd3dDsvDescriptorHeap->SetName(L"CGameFramework::CreateRtvAndDsvDescriptorHeaps 2");
 	}
 	::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-
-	//imgui
-	//d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	//d3dDescriptorHeapDesc.NumDescriptors = 1;
-	//d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	//d3dDescriptorHeapDesc.NodeMask = 0;
-	//hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dImGuiDescriptorHeap);
-	//if (SUCCEEDED(hResult))
-	//{
-	//	m_pd3dImGuiDescriptorHeap->SetName(L"ImGUIDescriptorHeaps");
-	//}
-	//::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
 }
 
 void CGameFramework::CreateSwapChainRenderTargetViews()
@@ -1612,8 +1599,9 @@ void CGameFramework::FrameAdvance()
 
 				while (cl_id == -1)
 					this_thread::yield();*/
-
+				SceneChange = true;
 				ChangeScene(SCENEKIND::LOBBY);
+				SceneChange = false;
 				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			}
 			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ||
@@ -1621,7 +1609,9 @@ void CGameFramework::FrameAdvance()
 				sceneManager.GetCurrentScene() == SCENEKIND::ICE ||
 				sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
 			{
+				SceneChange = true;
 				ChangeScene(SCENEKIND::SPACESHIP);
+				SceneChange = false;
 				//
 				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 
@@ -1633,25 +1623,35 @@ void CGameFramework::FrameAdvance()
 			}
 		}
 		else if (isSceneChangetoFire) {
+			SceneChange = true;
 			ChangeScene(SCENEKIND::FIRE);
+			SceneChange = false;
 			//
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isSceneChangetoIce) {
+			SceneChange = true;
 			ChangeScene(SCENEKIND::ICE);
+			SceneChange = false;
 			//
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isSceneChangetoNature) {
+			SceneChange = true;
 			ChangeScene(SCENEKIND::NATURE);
+			SceneChange = false;
 			//
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isWin) {
+			SceneChange = true;
 			ChangeScene(SCENEKIND::VICTORY);
+			SceneChange = false;
 		}
 		else if (isLose) {
+			SceneChange = true;
 			ChangeScene(SCENEKIND::DEFEAT);
+			SceneChange = false;
 		}
 
 		m_GameTimer.Tick(60.0f);
@@ -1757,28 +1757,6 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, NULL);
 
 		m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], d3dDsvCPUDescriptorHandle);
-
-		// imgui
-		bool isActive = false;
-
-		//if (ImGui::Begin("chat", &isActive))
-		//{
-		//	static char serverAddress[256] = "";
-
-		//	
-		//	ImGui::InputText("Server Address", serverAddress, sizeof(serverAddress));
-
-		//	if (ImGui::Button("Connect"))
-		//	{
-		//		// Connect to server logic can be added here
-		//		std::cout << "Connecting to server at: " << serverAddress << std::endl;
-		//		// Example: gNetwork.Connect(serverAddress);
-		//	}
-
-		//	ImGui::End();
-		//}
-		//ImGui::Render();
-		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_pd3dCommandList);
 
 
 		m_pScene->Render(m_pd3dCommandList, m_pCamera);
