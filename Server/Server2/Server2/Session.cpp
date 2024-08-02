@@ -111,7 +111,7 @@ void Session::send_remove_packet(int client_id)
 	do_send(&p);
 }
 
-void Session::send_rotate_packet(int client_id)
+void Session::send_rotate_packet(int client_id, float packetyaw)
 {
 	SC_ROTATE_OBJECT_PACKET p;
 	p.id = client_id;
@@ -120,7 +120,8 @@ void Session::send_rotate_packet(int client_id)
 	//p.look = clients[client_id]._look;
 	//p.right = clients[client_id]._right;
 	//p.up = { 0.f,1.0f,0.f };
-	p.yaw = clients[client_id].m_fYaw;
+	//p.yaw = clients[client_id].m_fYaw;
+	p.yaw = packetyaw;
 	do_send(&p);
 }
 

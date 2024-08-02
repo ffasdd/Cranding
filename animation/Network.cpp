@@ -190,8 +190,11 @@ void Network::ProcessPacket(char* buf)
 		SC_ROTATE_OBJECT_PACKET* p = reinterpret_cast<SC_ROTATE_OBJECT_PACKET*>(buf);
 		int ob_id = (p->id);
 		//int ob_id = getmyid(p->id);
-		float _yaw = p->yaw;
-		g_clients[ob_id].Rotate(_yaw);
+		float yaw = p->yaw;
+		cout <<" ID - " << ob_id << " Yaw - " <<  yaw << endl;
+		if (yaw > 360.0f) yaw -= 360.0f;
+		if (yaw < 0.f) yaw += 360.0f;
+		g_clients[ob_id].Rotate(yaw);
 	}
 						 break;
 	case SC_CHANGE_ANIMATION: {
@@ -433,12 +436,12 @@ void Network::ProcessPacket(char* buf)
 			if (p->is_attack)
 			{
 				g_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << " Night Attack " << endl;
+				//cout << " Night Attack " << endl;
 			}
 			else
 			{
 				g_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << " Player run " << endl;
+				//cout << " Player run " << endl;
 			}
 			break;
 		}
@@ -446,12 +449,12 @@ void Network::ProcessPacket(char* buf)
 			if (p->is_attack)
 			{
 				g_fire_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << "(Fire Attack) " << endl;
+				//cout << "(Fire Attack) " << endl;
 			}
 			else
 			{
 				g_fire_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << " Player run " << endl;
+				//cout << " Player run " << endl;
 			}
 			break;
 		}
@@ -459,12 +462,12 @@ void Network::ProcessPacket(char* buf)
 			if (p->is_attack)
 			{
 				g_ice_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << "(Ice Attack) " << endl;
+				//cout << "(Ice Attack) " << endl;
 			}
 			else
 			{
 				g_ice_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << " Player run " << endl;
+				//cout << " Player run " << endl;
 			}
 			break;
 		}
@@ -472,12 +475,12 @@ void Network::ProcessPacket(char* buf)
 			if (p->is_attack)
 			{
 				g_nature_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << "(Nature Attack) " << endl;
+				//cout << "(Nature Attack) " << endl;
 			}
 			else
 			{
 				g_nature_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << " Player run " << endl;
+				//cout << " Player run " << endl;
 			}
 			break;
 		}
@@ -487,12 +490,12 @@ void Network::ProcessPacket(char* buf)
 				g_IceBossMonster.setNpcAttack(p->is_attack);
 				g_IceBossMonster.setBossAttackType(4);
 
-				cout << " IceBoss Player Attack " << endl;
+				//cout << " IceBoss Player Attack " << endl;
 			}
 			else
 			{
 				g_IceBossMonster.setNpcAttack(p->is_attack);
-				cout << " IceBoss Run  " << endl;
+				//cout << " IceBoss Run  " << endl;
 			}
 			break;
 		}
@@ -503,7 +506,7 @@ void Network::ProcessPacket(char* buf)
 	case  SC_MONSTER_DIE:
 	{
 		SC_MONSTER_DIE_PACKET* p = reinterpret_cast<SC_MONSTER_DIE_PACKET*>(buf);
-		cout << " SC_MONSTER_DIE" << endl;
+		//cout << " SC_MONSTER_DIE" << endl;
 
 		switch (p->_montype)
 		{
@@ -553,7 +556,7 @@ void Network::ProcessPacket(char* buf)
 	case SC_SPACESHIP_UPDATE:
 	{
 		SC_SPACESHIP_PACKET* p = reinterpret_cast<SC_SPACESHIP_PACKET*>(buf);
-		cout << " HP : " << p->hp << endl;
+		//cout << " HP : " << p->hp << endl;
 		gGameFramework.spaceshipHP = p->hp;
 		break;
 	}
@@ -561,13 +564,13 @@ void Network::ProcessPacket(char* buf)
 	{
 		SC_ICEBOSS_SKILL_PACKET* p = reinterpret_cast<SC_ICEBOSS_SKILL_PACKET*>(buf);
 		if (p->_isattacked) {
-			cout << " ICE BOSS SKILL " << endl;
+			//cout << " ICE BOSS SKILL " << endl;
 			g_IceBossMonster.setNpcAttack(true);
 			g_IceBossMonster.setBossAttackType(5);
 		}
 		else
 		{
-			cout << " Ice Boss SKill Cancle" << endl;
+			//cout << " Ice Boss SKill Cancle" << endl;
 			g_IceBossMonster.setNpcAttack(false);
 			g_IceBossMonster.setBossAttackType(3);
 		}
@@ -577,13 +580,13 @@ void Network::ProcessPacket(char* buf)
 	{
 		SC_FIREBOSS_SKILL_PACKET* p = reinterpret_cast<SC_FIREBOSS_SKILL_PACKET*>(buf);
 		if (p->_isattacked) {
-			cout << " FIRE BOSS SKILL " << endl;
+			//cout << " FIRE BOSS SKILL " << endl;
 			g_FireBossMonster.setNpcAttack(true);
 			g_FireBossMonster.setBossAttackType(5);
 		}
 		else
 		{
-			cout << " Fire Boss SKill Cancle" << endl;
+			//cout << " Fire Boss SKill Cancle" << endl;
 			g_FireBossMonster.setNpcAttack(false);
 			g_FireBossMonster.setBossAttackType(3);
 		}
@@ -593,13 +596,13 @@ void Network::ProcessPacket(char* buf)
 	{
 		SC_NATUREBOSS_SKILL_PACKET* p = reinterpret_cast<SC_NATUREBOSS_SKILL_PACKET*>(buf);
 		if (p->_isattacked) {
-			cout << " NATURE BOSS SKILL " << endl;
+			//cout << " NATURE BOSS SKILL " << endl;
 			g_NatureBossMonster.setNpcAttack(true);
 			g_NatureBossMonster.setBossAttackType(5);
 		}
 		else
 		{
-			cout << " Nature Boss SKill Cancle" << endl;
+			//cout << " Nature Boss SKill Cancle" << endl;
 			g_NatureBossMonster.setNpcAttack(false);
 			g_NatureBossMonster.setBossAttackType(3);
 		}
@@ -608,7 +611,7 @@ void Network::ProcessPacket(char* buf)
 	case SC_PLAYER_HIT:
 	{
 		SC_PLAYER_HIT_PACKET* p = reinterpret_cast<SC_PLAYER_HIT_PACKET*>(buf);
-		cout << p->id << " < - Player Hit " << endl;
+		//cout << p->id << " < - Player Hit " << endl;
 		g_clients[p->id].is_damage = p->isdamaged;
 
 		break;

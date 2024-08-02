@@ -1448,14 +1448,16 @@ void CGameFramework::ProcessInput()
 						if (yaw < 0.f) yaw += 360.0f;
 
 						m_pPlayer->RotateYaw(yaw);
-						g_clients[cl_id].setLook(m_pPlayer->GetLook());
+						
+	/*					g_clients[cl_id].setLook(m_pPlayer->GetLook());
 						g_clients[cl_id].setRight(m_pPlayer->GetRight());
-						g_clients[cl_id].setUp(m_pPlayer->GetUp());
+						g_clients[cl_id].setUp(m_pPlayer->GetUp());*/
 						g_clients[gNetwork.Getmyid()].m_yaw = yaw;
 						// 서버에게 클라이언트의 회전각을 전송, 
 						// 회전동기화문제가 생기는 이유는? 
 						// 서버에서 받은 회전각으로 다른 클라이언트 회전계산을 해야하는데 가지고 있는 look right up 값이 다른듯,
 						// 즉 회전 기준이 다름 
+						cout << g_clients[cl_id].m_yaw << " -  send Yaw " << endl; 
 						gNetwork.SendRotatePlayer(g_clients[cl_id].m_yaw);
 					}
 
@@ -1483,8 +1485,8 @@ void CGameFramework::ProcessInput()
 
 				XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(temp, m_GameTimer.GetTimeElapsed(), false);
 				m_pPlayer->Move(xmf3Velocity, false);
-				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
 				// 이동된 좌표를 서버에게 전송 
+				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
 				gNetwork.SendMovePlayer(g_clients[cl_id].getPos());
 
 			}

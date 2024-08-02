@@ -243,7 +243,7 @@ public:
 
 	void send_remove_packet(int client_id);
 
-	void send_rotate_packet(int client_id);
+	void send_rotate_packet(int client_id, float packetyaw);
 
 	void send_test_packet(int client_id);
 
