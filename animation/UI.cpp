@@ -370,7 +370,6 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         break;
     default:
         // ingame 
-
         m_pd2dDeviceContext->BeginDraw();
         
         // time
@@ -416,7 +415,6 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         m_pd2dDeviceContext->FillRectangle(m_spaceshipHPBar, m_brushes[BRUSH_COLOR::RED]);
         m_pd2dDeviceContext->DrawText(m_vecItem[3], (UINT)wcslen(m_vecItem[3]), m_textFormats[TEXT_SIZE::SIZE_15], m_spaceshipBar, m_brushes[BRUSH_COLOR::BLACK]);
 
-
         // item UI        
         m_pd2dDeviceContext->DrawText(m_vecItem[0], (UINT)wcslen(m_vecItem[0]), m_textFormats[TEXT_SIZE::SIZE_15], m_IceItemBar, m_brushes[BRUSH_COLOR::ABLACK]);
         if(gGameFramework.m_pScene->isIceitem)
@@ -430,15 +428,12 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         if (gGameFramework.m_pScene->isNatureitem)
             m_pd2dDeviceContext->DrawText(m_vecItem[2], (UINT)wcslen(m_vecItem[2]), m_textFormats[TEXT_SIZE::SIZE_15], m_NatureItemBar, m_brushes[BRUSH_COLOR::BLACK]);
 
-
-
-
         m_pd2dDeviceContext->EndDraw();
         break;
     }
 
-
     m_pd3d11On12Device->ReleaseWrappedResources(ppResources, _countof(ppResources));
+    
     m_pd3d11DeviceContext->Flush();
 }
 

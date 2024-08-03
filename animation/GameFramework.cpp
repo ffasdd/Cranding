@@ -1692,7 +1692,7 @@ void CGameFramework::FrameAdvance()
 
 		XMFLOAT3 pos;
 		XMFLOAT3 dir = XMFLOAT3(-0.3f, -0.85f, -0.3f);
-		float radius = 1000;
+		float radius = sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ? 150 : 1000;
 
 		XMFLOAT3 targetpos = m_pPlayer->GetPosition();
 		XMVECTOR lightDir = XMLoadFloat3(&dir);
@@ -1739,7 +1739,9 @@ void CGameFramework::FrameAdvance()
 
 
 		if (m_pScene) {
+			
 			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);			
+			
 		}
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
