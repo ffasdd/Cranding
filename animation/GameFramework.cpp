@@ -403,7 +403,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 	{
 		m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	}
-
+	
 	switch (nMessageID)
 	{
 	case WM_KEYUP:
@@ -1829,8 +1829,8 @@ void CGameFramework::FrameAdvance()
 		WaitForGpuComplete();
 #ifdef _FULLSCREEN
 
-		if (m_pUILayer)
-			UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
+		/*if (m_pUILayer)
+			UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);*/
 
 #endif // _FULLSCREEN
 
