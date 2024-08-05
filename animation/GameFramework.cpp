@@ -1596,8 +1596,8 @@ void CGameFramework::FrameAdvance()
 
 				gNetwork.SendLoginfo();
 
-				while (cl_id == -1)
-					this_thread::yield();*/
+				while (cl_id == -1);
+				
 				SceneChange = true;
 				ChangeScene(SCENEKIND::LOBBY);
 				SceneChange = false;
