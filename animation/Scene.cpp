@@ -530,17 +530,6 @@ void CScene::CreateShaderResourceViews(ID3D12Device* pd3dDevice, int nResources,
 	}
 }
 
-void CScene::RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
-{
-	m_pBoundingBoxShader->Render(pd3dCommandList, pCamera);
-	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
-	{
-		if (m_ppHierarchicalGameObjects[i]) m_ppHierarchicalGameObjects[i]->RenderBoundingBox(pd3dCommandList, pCamera);
-	}
-
-	m_pPlayer->RenderBoundingBox(pd3dCommandList, pCamera);
-}
-
 bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	return(false);
@@ -716,8 +705,8 @@ void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera
 	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
 	//if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
 
-	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Render(pd3dCommandList, pCamera, pipelinestate);
-	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera, pipelinestate);
+	for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Render(pd3dCommandList, pCamera);
+	for (int i = 0; i < m_nShaders; i++) if (m_ppShaders[i]) m_ppShaders[i]->Render(pd3dCommandList, pCamera);
 
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
@@ -1454,7 +1443,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 		float posX = float((rand() % 2000) / 10.0);
 		float posY = float((rand() % 2000) / 10.0);
 
-		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
+		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, -200.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
 		m_ppHierarchicalGameObjects[3 + i]->SetMonsType(MONSTERTYPE::ICE);
 	}
@@ -1481,7 +1470,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
 
-	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
+	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -200.0f, 735.0f);
 	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[13]->SetMonsType(MONSTERTYPE::ICEBOSS);
 
@@ -1491,7 +1480,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceItemModel, 0);
 
-	m_ppHierarchicalGameObjects[14]->SetPosition(-12.0f, 10.0f, -220.f);
+	m_ppHierarchicalGameObjects[14]->SetPosition(-12.0f, -200.0f, -220.f);
 	m_ppHierarchicalGameObjects[14]->Rotate(45, 0, 0);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
@@ -1730,7 +1719,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 		float posX = (rand() % 2000) / 10.0f;
 		float posY = (rand() % 2000) / 10.0f;
 
-		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
+		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, -200.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
 		m_ppHierarchicalGameObjects[3 + i]->SetMonsType(MONSTERTYPE::FIRE);
 	}
@@ -1759,7 +1748,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
 	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(6, false);
 
-	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
+	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -200.0f, 735.0f);
 	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[13]->SetMonsType(MONSTERTYPE::FIREBOSS);
 	if (pFireBossModel) delete pFireBossModel;
@@ -1768,7 +1757,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireItemModel, 0);
 
-	m_ppHierarchicalGameObjects[14]->SetPosition(-60.0, 10.0f, 1327.0f);
+	m_ppHierarchicalGameObjects[14]->SetPosition(-60.0, -200.0f, 1327.0f);
 	m_ppHierarchicalGameObjects[14]->Rotate(90, 90, 0);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
@@ -2012,7 +2001,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 		float posX = (rand() % 2000) / 10.0f;
 		float posY = (rand() % 2000) / 10.0f;
 
-		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, 0.0f, posY);
+		m_ppHierarchicalGameObjects[3 + i]->SetPosition(posX, -200.0f, posY);
 		m_ppHierarchicalGameObjects[3 + i]->SetScale(10.0f, 10.0f, 10.0f);
 		m_ppHierarchicalGameObjects[3 + i]->SetMonsType(MONSTERTYPE::NATURE);
 	}
@@ -2039,7 +2028,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(4, false);
 	m_ppHierarchicalGameObjects[13]->m_pSkinnedAnimationController->SetTrackEnable(5, false);
 
-	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -50.0f, 735.0f);
+	m_ppHierarchicalGameObjects[13]->SetPosition(410.0f, -200.0f, 735.0f);
 	m_ppHierarchicalGameObjects[13]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[13]->SetMonsType(MONSTERTYPE::NATUREBOSS);
 	if (pGrassBossModel) delete pGrassBossModel;
@@ -2048,7 +2037,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pNatureItemModel, 0);
 
-	m_ppHierarchicalGameObjects[14]->SetPosition(77.0f, 10.0f, -408.0f);
+	m_ppHierarchicalGameObjects[14]->SetPosition(77.0f, -200.0f, -408.0f);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
 
@@ -2121,11 +2110,11 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				g_clients[gNetwork.my_id].is_damage = true;
-				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				//g_clients[gNetwork.my_id].is_damage = true;
+				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
 				return false;
 			}
 		}

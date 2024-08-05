@@ -55,8 +55,8 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	CreateDirect3DDevice();
 	CreateCommandQueueAndList();
-	CreateRtvAndDsvAndImGuiDescriptorHeaps();
-
+	CreateRtvAndDsvDescriptorHeaps();
+	
 	CreateSwapChain();
 
 	CreateSwapChainRenderTargetViews();
@@ -203,7 +203,7 @@ void CGameFramework::CreateCommandQueueAndList()
 	hResult = m_pd3dCommandList->Close();
 }
 
-void CGameFramework::CreateRtvAndDsvAndImGuiDescriptorHeaps()
+void CGameFramework::CreateRtvAndDsvDescriptorHeaps()
 {
 	D3D12_DESCRIPTOR_HEAP_DESC d3dDescriptorHeapDesc;
 	::ZeroMemory(&d3dDescriptorHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
@@ -227,19 +227,6 @@ void CGameFramework::CreateRtvAndDsvAndImGuiDescriptorHeaps()
 		m_pd3dDsvDescriptorHeap->SetName(L"CGameFramework::CreateRtvAndDsvDescriptorHeaps 2");
 	}
 	::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-
-	//imgui
-	//d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	//d3dDescriptorHeapDesc.NumDescriptors = 1;
-	//d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	//d3dDescriptorHeapDesc.NodeMask = 0;
-	//hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dImGuiDescriptorHeap);
-	//if (SUCCEEDED(hResult))
-	//{
-	//	m_pd3dImGuiDescriptorHeap->SetName(L"ImGUIDescriptorHeaps");
-	//}
-	//::gnDsvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
 }
 
 void CGameFramework::CreateSwapChainRenderTargetViews()
@@ -402,7 +389,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 	{
 		m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	}
-
+	
 	switch (nMessageID)
 	{
 	case WM_KEYUP:
@@ -447,6 +434,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 1;
 				isSceneChange = true;
 				isready = false;
+
 				break;
 			}
 			break;
@@ -508,7 +496,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 
 		case 'B':
-			//m_bRenderBoundingBox = !m_bRenderBoundingBox;
 			//isSceneChange = true;
 			break;
 		case 'L':
@@ -1611,52 +1598,52 @@ void CGameFramework::FrameAdvance()
 		if (isSceneChange && SceneNum < 3)
 		{
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
-			{
 				gNetwork.SendLoginfo();
 				while (cl_id != -1);
 				// 매칭, 룸 배정 완료 이후 로비 씬 진입 
-				ChangeScene(SCENEKIND::LOBBY);
+
 				gNetwork.SendChangeScene(1);
+				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			}
 			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ||
 				sceneManager.GetCurrentScene() == SCENEKIND::FIRE ||
 				sceneManager.GetCurrentScene() == SCENEKIND::ICE ||
 				sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
-			{
-				ChangeScene(SCENEKIND::SPACESHIP);
+				SceneChange = true;
 				gNetwork.SendChangeScene(2);
 				if (monsterinit == false)
 				{
 					monsterinit = true;
 					gNetwork.SendMonsterInit();
 				}
+				//}
 			}
 		}
-		else if (isSceneChangetoFire) {
-			ChangeScene(SCENEKIND::FIRE);
+			SceneChange = true;
 			gNetwork.SendChangeScene(4);
 			gNetwork.stage_num = 4;
+			//
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
-		else if (isSceneChangetoIce) {
-			ChangeScene(SCENEKIND::ICE);
+			SceneChange = true;
+			SceneChange = false;
 			//
 			gNetwork.SendChangeScene(3);
 			gNetwork.stage_num = 3;
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
-		else if (isSceneChangetoNature) {
-			ChangeScene(SCENEKIND::NATURE);
+			SceneChange = true;
 			gNetwork.SendChangeScene(5);
 			gNetwork.stage_num = 5;
+			ChangeScene(SCENEKIND::NATURE);
 			//
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
-		else if (isWin) {
-			ChangeScene(SCENEKIND::VICTORY);
+			SceneChange = true;
+			SceneChange = false;
 		}
-		else if (isLose) {
-			ChangeScene(SCENEKIND::DEFEAT);
+			SceneChange = true;
+			SceneChange = false;
 		}
 
 		m_GameTimer.Tick(60.0f);
@@ -1696,7 +1683,7 @@ void CGameFramework::FrameAdvance()
 
 		XMFLOAT3 pos{ XMFLOAT3(0.0f,0.0f,0.0f) };
 		XMFLOAT3 dir = XMFLOAT3(-0.3f, -0.85f, -0.3f);
-		float radius = 1000;
+		float radius = sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ? 150 : 1000;
 
 		XMFLOAT3 targetpos = m_pPlayer->GetPosition();
 		XMVECTOR lightDir = XMLoadFloat3(&dir);
@@ -1742,8 +1729,9 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->SetGraphicsRootConstantBufferView(0, d3dGPUVirtualAddress);
 
 
-		if (m_pScene) {
-			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
+			
+			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);			
+			
 		}
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
@@ -1761,28 +1749,6 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, NULL);
 
 		m_pPostProcessingShader->OnPrepareRenderTarget(m_pd3dCommandList, 1, &m_pd3dSwapChainBackBufferRTVCPUHandles[m_nSwapChainBufferIndex], d3dDsvCPUDescriptorHandle);
-
-		// imgui
-		bool isActive = false;
-
-		//if (ImGui::Begin("chat", &isActive))
-		//{
-		//	static char serverAddress[256] = "";
-
-		//	
-		//	ImGui::InputText("Server Address", serverAddress, sizeof(serverAddress));
-
-		//	if (ImGui::Button("Connect"))
-		//	{
-		//		// Connect to server logic can be added here
-		//		std::cout << "Connecting to server at: " << serverAddress << std::endl;
-		//		// Example: gNetwork.Connect(serverAddress);
-		//	}
-
-		//	ImGui::End();
-		//}
-		//ImGui::Render();
-		//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_pd3dCommandList);
 
 
 		m_pScene->Render(m_pd3dCommandList, m_pCamera);
@@ -1832,8 +1798,8 @@ void CGameFramework::FrameAdvance()
 		WaitForGpuComplete();
 #ifdef _FULLSCREEN
 
-		//if (m_pUILayer)
-		//	UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
+		if (m_pUILayer)
+			UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
 
 #endif // _FULLSCREEN
 

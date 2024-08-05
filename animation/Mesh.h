@@ -257,17 +257,3 @@ public:
 
 	virtual void OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext);
 };
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-class CBoundingBoxMesh : public CMesh
-{
-public:
-	CBoundingBoxMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
-	virtual ~CBoundingBoxMesh();
-
-	XMFLOAT3* m_pcbMappedPositions = NULL;
-
-	void UpdateVertexPosition(BoundingOrientedBox* pxmBoundingBox);
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList);
-};

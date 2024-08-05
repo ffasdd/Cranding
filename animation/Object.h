@@ -54,7 +54,7 @@ private:
 
 public:
 	void AddRef() { m_nReferences++; }
-	void Release() { if (--m_nReferences <= 0) delete this; }
+	void Release() { if (--m_nReferences <= 0 && --m_nReferences >= -1) delete this; }
 
 	void SetSampler(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSamplerGpuDescriptorHandle);
 
@@ -196,6 +196,7 @@ public:
 
 	int								m_nKeyFrames = 0;
 	float							*m_pfKeyFrameTimes = NULL;
+	volatile bool isinit = false;
 	XMFLOAT4X4						**m_ppxmf4x4KeyFrameTransforms = NULL;
 
 	// 행렬이 필요없을듯?
@@ -406,9 +407,7 @@ public:
 	int nChilds = 0;				// 
 	void UpdateBoundingBox();
 	BoundingOrientedBox				m_xmBoundingBox = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
-	void RenderBoundingBox(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
-	CBoundingBoxMesh* m_pBoundingBoxMesh = NULL;
-	void SetBoundingBoxMesh(CBoundingBoxMesh* pMesh);
+
 
 	// 상하체 분리 변수
 	bool							m_bUpperBody = false;

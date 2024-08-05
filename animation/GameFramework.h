@@ -54,7 +54,7 @@ public:
 	void CreateDirect3DDevice();
 	void CreateCommandQueueAndList();
 
-	void CreateRtvAndDsvAndImGuiDescriptorHeaps();
+	void CreateRtvAndDsvDescriptorHeaps();
 
 	void CreateSwapChainRenderTargetViews();
 	void CreateDepthStencilView();
@@ -154,6 +154,8 @@ public:
 	bool isWin = false;
 	bool isLose = false;
 
+	bool SceneChange = false;
+
 	int spaceshipHP = 2000;
 
 	// ½Ã°è
@@ -213,7 +215,6 @@ private:
 #if defined(_DEBUG)
 	ID3D12Debug					*m_pd3dDebugController;
 #endif
-	bool						m_bRenderBoundingBox = false;
 
 	CGameTimer					m_GameTimer;
 
