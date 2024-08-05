@@ -196,6 +196,7 @@ public:
 
 	int								m_nKeyFrames = 0;
 	float							*m_pfKeyFrameTimes = NULL;
+	volatile bool isinit = false;
 	XMFLOAT4X4						**m_ppxmf4x4KeyFrameTransforms = NULL;
 
 	// 행렬이 필요없을듯?

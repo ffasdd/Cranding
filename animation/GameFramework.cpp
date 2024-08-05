@@ -438,7 +438,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				isSceneChange = true;
 				isready = false;
 
-
 				break;
 			}
 			break;
@@ -1618,7 +1617,6 @@ void CGameFramework::FrameAdvance()
 				//if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
 				//{
 				//	g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-
 				//}
 			}
 		}

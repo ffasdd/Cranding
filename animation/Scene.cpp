@@ -2105,11 +2105,11 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				g_clients[gNetwork.my_id].is_damage = true;
-				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				//g_clients[gNetwork.my_id].is_damage = true;
+				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
 				return false;
 			}
 		}
