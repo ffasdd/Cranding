@@ -1654,9 +1654,26 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoaded
 
 CLoadedModelInfo* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader)
 {
-	FILE* pInFile = NULL;
-	::fopen_s(&pInFile, pstrFileName, "rb");
-	::rewind(pInFile);
+	FILE *pInFile = NULL;
+
+	int retryCount = 0;
+	const int maxRetries = 100;
+
+	while (retryCount < maxRetries) {
+		if (::fopen_s(&pInFile, pstrFileName, "rb") == 0 && pInFile != NULL) {
+			::rewind(pInFile); // 파일 포인터를 시작으로 돌립니다.
+			break; // 파일이 성공적으로 열렸다면 루프를 탈출합니다.
+		}
+		else {
+			std::cerr << "Failed to open file. Retrying... (" << retryCount + 1 << "/" << maxRetries << ")" << std::endl;
+			retryCount++;
+		}
+	}
+
+	if (pInFile == NULL) {
+		std::cerr << "Error: Unable to open file after " << maxRetries << " attempts." << std::endl;
+		// 필요에 따라 추가 처리 (예: 프로그램 종료)
+	}
 
 	CLoadedModelInfo* pLoadedModel = new CLoadedModelInfo();
 	// 

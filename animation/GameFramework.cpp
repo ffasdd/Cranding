@@ -390,7 +390,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 	{
 		m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	}
-
+	
 	switch (nMessageID)
 	{
 	case WM_KEYUP:
@@ -1594,7 +1594,7 @@ void CGameFramework::FrameAdvance()
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
 
-				/*gNetwork.SendLoginfo();
+				gNetwork.SendLoginfo();
 
 				while (cl_id == -1)
 					this_thread::yield();*/
