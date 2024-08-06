@@ -32,9 +32,9 @@ public:
 	bool _isDamaged = false;
 	SOCKET _socket;
 	XMFLOAT3 _pos;
-	XMFLOAT3 _look;
-	XMFLOAT3 _right;
-	XMFLOAT3 _up;
+	XMFLOAT3 _look = { 0.f,0.f,1.0f };
+	XMFLOAT3 _right = { 1.0f,0.f,0.f };
+	XMFLOAT3 _up = { 0.f,1.f,0.f };
 
 
 	float           			m_fPitch = 0.0f;

@@ -140,15 +140,12 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setprevAnimation((p->prev_state));
 		g_clients[my_id].setAttackPower(p->att);
 		g_clients[my_id].setSpeed(p->speed);
-
 		g_clients[my_id].scene_num = p->stage_num;
-
+		stage_num = p->stage_num;
 		gGameFramework.m_pPlayer->c_id = my_id;
 		gGameFramework.cl_id = my_id;
 		g_clients_mutex.unlock();
 		gamestart = true;
-
-
 		break;
 	}
 
@@ -215,18 +212,12 @@ void Network::ProcessPacket(char* buf)
 	case SC_CHANGE_SCENE: {
 		SC_CHANGE_SCENE_PACKET* p = reinterpret_cast<SC_CHANGE_SCENE_PACKET*>(buf);
 		int ob_id = p->id;
-
 		g_clients[ob_id].scene_num = p->stage;
 		g_clients[ob_id].setPos(p->pos);
 		if (ob_id == my_id) // 내가 씬전환을 했다면
 		{
-			stage_num = p->stage;
-
 			switch (stage_num)
 			{
-			case 1:
-				// 로비씬.  아무것도안해도됨 
-				break;
 			case 2:
 				// 우주선 씬 ,
 				if (IngameScene == false)
@@ -239,45 +230,8 @@ void Network::ProcessPacket(char* buf)
 					gGameFramework.isSceneChange = true;
 				}
 				break;
-
-			case 3:
-			{
-				for (int i = 0; i < g_clients.size(); ++i)
-				{
-					if (g_clients[i].getId() == my_id)continue;
-				}
-
-			}
-			break;
-			case 4:
-			{
-				for (int i = 0; i < g_clients.size(); ++i)
-				{
-					if (g_clients[i].getId() == my_id)continue;
-				}
-
-			}
-			break;
-			case 5:
-			{
-				for (int i = 0; i < g_clients.size(); ++i)
-				{
-					if (g_clients[i].getId() == my_id)continue;
-				}
-			}
-			break;
 			}
 		}
-		else
-		{
-			for (int i = 0; i < g_clients.size(); ++i)
-			{
-				if (p->stage == 1)continue;
-				if (g_clients[i].getId() == my_id)continue;
-			}
-		}
-		// Id가 하나만 ㅁ거음 
-
 		break;
 	}
 
@@ -294,7 +248,9 @@ void Network::ProcessPacket(char* buf)
 	case SC_REMOVE_OBJECT: {
 		SC_REMOVE_OBJECT_PACKET* p = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(buf);
 		int ob_id = p->id;
+		g_clients_mutex.lock();
 		g_clients.erase(ob_id);
+		g_clients_mutex.unlock();
 		break;
 	}
 	case SC_DAYTIME:

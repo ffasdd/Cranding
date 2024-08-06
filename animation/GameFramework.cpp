@@ -56,7 +56,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	CreateDirect3DDevice();
 	CreateCommandQueueAndList();
 	CreateRtvAndDsvDescriptorHeaps();
-	
+
 	CreateSwapChain();
 
 	CreateSwapChainRenderTargetViews();
@@ -354,12 +354,10 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 			UILayer::GetInstance()->ProcessMouseClick(SCENEKIND::LOGIN, m_ptOldCursorPos);
 		}
 		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
+	
 		if (g_clients.size() == 0)break;
 		g_clients[cl_id].setAttack(true);
-
-
 		break;
-
 
 	case WM_RBUTTONDOWN:
 		::SetCapture(hWnd);
@@ -389,7 +387,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 	{
 		m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	}
-	
+
 	switch (nMessageID)
 	{
 	case WM_KEYUP:
@@ -401,13 +399,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 		case VK_RETURN:
 			break;
-
-			//case VK_F1:
-			//case VK_F2:
-			//case VK_F3:
-			//case VK_F4:
-			//	m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
-				//break;
 
 		case VK_F9:
 			ChangeSwapChainState();
@@ -434,16 +425,15 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				SceneNum = 1;
 				isSceneChange = true;
 				isready = false;
-
 				break;
 			}
 			break;
 
 		case '2': {
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
-			// spaceship map
-			gNetwork.SendIngameStart();
-			//isready = true;
+			SceneNum = 2;
+			isSceneChange = true;
+			isready = true;
 		}
 				break;
 
@@ -451,26 +441,14 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// ice map
 			SceneNum = 3;
-			//isSceneChange = true;
 			isSceneChangetoIce = true;
-			//sceneManager.SetCurrentScene(SCENEKIND::ICE);
 			isready = false;
-			//ReleaseObjects();
-			//BuildObjects(sceneManager.GetCurrentScene());
-
-
 			break;
-
 		case '4':
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// fire map
 			SceneNum = 4;
-			//sceneManager.SetCurrentScene(SCENEKIND::FIRE);
-			//ReleaseObjects();
-			//BuildObjects(sceneManager.GetCurrentScene());
-			//isSceneChange = true;
 			isSceneChangetoFire = true;
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 
 			break;
 
@@ -478,12 +456,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// grass map
 			SceneNum = 5;
-			/*	sceneManager.SetCurrentScene(SCENEKIND::NATURE);
-				ReleaseObjects();
-				BuildObjects(sceneManager.GetCurrentScene());*/
-				//isSceneChange = true;
 			isSceneChangetoNature = true;
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 
 		case VK_SPACE:
@@ -495,8 +468,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			isready = true;
 			break;
 
-		case 'B':
-			//isSceneChange = true;
+		case 'R':
+			if (sceneManager.GetCurrentScene() != SCENEKIND::LOBBY) break;
+			gNetwork.SendIngameStart();
+			isready = true;
 			break;
 		case 'L':
 			m_pScene->m_ppHierarchicalGameObjects[13]->SetHealth(-100);
@@ -507,41 +482,41 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case 'K':
 			isLose = true;
 			break;
-		case 'F':
-			// 맵 이동 관련
-			PlayerPosX = m_pPlayer->GetPosition().x;
-			PlayerPosZ = m_pPlayer->GetPosition().z;
-			if (PlayerPosX > 0 && PlayerPosZ > 0)
-			{
-				if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
-				// ice map
-				SceneNum = 3;
-				isSceneChangetoIce = true;
-				isready = false;
+		//case 'F':
+		//	// 맵 이동 관련
+		//	PlayerPosX = m_pPlayer->GetPosition().x;
+		//	PlayerPosZ = m_pPlayer->GetPosition().z;
+		//	if (PlayerPosX > 0 && PlayerPosZ > 0)
+		//	{
+		//		if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
+		//		// ice map
+		//		SceneNum = 3;
+		//		isSceneChangetoIce = true;
+		//		isready = false;
 
-				break;
-			}
-			else if (PlayerPosX > 0 && PlayerPosZ < 0)
-			{
-				if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
-				// fire map
-				SceneNum = 4;
-				isSceneChangetoFire = true;
-				isready = false;
-				break;
-			}
-			else if (PlayerPosX < 0 && PlayerPosZ > 0)
-			{
-				if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
-				// grass map
-				SceneNum = 5;
-				isSceneChangetoNature = true;
-				isready = false;
-				break;
-			}
-			else
-				break;
-			break;
+		//		break;
+		//	}
+		//	else if (PlayerPosX > 0 && PlayerPosZ < 0)
+		//	{
+		//		if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
+		//		// fire map
+		//		SceneNum = 4;
+		//		isSceneChangetoFire = true;
+		//		isready = false;
+		//		break;
+		//	}
+		//	else if (PlayerPosX < 0 && PlayerPosZ > 0)
+		//	{
+		//		if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
+		//		// grass map
+		//		SceneNum = 5;
+		//		isSceneChangetoNature = true;
+		//		isready = false;
+		//		break;
+		//	}
+		//	else
+		//		break;
+		//	break;
 
 		default:
 			break;
@@ -1435,16 +1410,16 @@ void CGameFramework::ProcessInput()
 						if (yaw < 0.f) yaw += 360.0f;
 
 						m_pPlayer->RotateYaw(yaw);
-						
-	/*					g_clients[cl_id].setLook(m_pPlayer->GetLook());
-						g_clients[cl_id].setRight(m_pPlayer->GetRight());
-						g_clients[cl_id].setUp(m_pPlayer->GetUp());*/
+
+						/*					g_clients[cl_id].setLook(m_pPlayer->GetLook());
+											g_clients[cl_id].setRight(m_pPlayer->GetRight());
+											g_clients[cl_id].setUp(m_pPlayer->GetUp());*/
 						g_clients[gNetwork.Getmyid()].m_yaw = yaw;
 						// 서버에게 클라이언트의 회전각을 전송, 
 						// 회전동기화문제가 생기는 이유는? 
 						// 서버에서 받은 회전각으로 다른 클라이언트 회전계산을 해야하는데 가지고 있는 look right up 값이 다른듯,
 						// 즉 회전 기준이 다름 
-						cout << g_clients[cl_id].m_yaw << " -  send Yaw " << endl; 
+						cout << g_clients[cl_id].m_yaw << " -  send Yaw " << endl;
 						gNetwork.SendRotatePlayer(g_clients[cl_id].m_yaw);
 					}
 
@@ -1594,60 +1569,75 @@ void CGameFramework::FrameAdvance()
 {
 	// Scene Change 변경
 	try {
-
 		if (isSceneChange && SceneNum < 3)
 		{
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
+			{
 				gNetwork.SendLoginfo();
 				while (cl_id != -1);
-				// 매칭, 룸 배정 완료 이후 로비 씬 진입 
-
-				gNetwork.SendChangeScene(1);
-				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				SceneChange = true;
+				ChangeScene(SCENEKIND::LOBBY);
+				SceneChange = false;
 			}
 			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ||
 				sceneManager.GetCurrentScene() == SCENEKIND::FIRE ||
 				sceneManager.GetCurrentScene() == SCENEKIND::ICE ||
 				sceneManager.GetCurrentScene() == SCENEKIND::NATURE)
+			{
 				SceneChange = true;
+				ChangeScene(SCENEKIND::SPACESHIP);
+				SceneChange = false;
 				gNetwork.SendChangeScene(2);
-				if (monsterinit == false)
+				if (gNetwork.mosnterinit == false)
 				{
-					monsterinit = true;
 					gNetwork.SendMonsterInit();
 				}
+				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+
+				//if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
+				//{
+				//   g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
 				//}
 			}
 		}
+		else if (isSceneChangetoFire) {
 			SceneChange = true;
+			ChangeScene(SCENEKIND::FIRE);
+			SceneChange = false;
+
 			gNetwork.SendChangeScene(4);
-			gNetwork.stage_num = 4;
-			//
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
+		else if (isSceneChangetoIce) {
 			SceneChange = true;
+			ChangeScene(SCENEKIND::ICE);
 			SceneChange = false;
-			//
+
 			gNetwork.SendChangeScene(3);
-			gNetwork.stage_num = 3;
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
+		else if (isSceneChangetoNature) {
 			SceneChange = true;
-			gNetwork.SendChangeScene(5);
-			gNetwork.stage_num = 5;
 			ChangeScene(SCENEKIND::NATURE);
-			//
+			SceneChange = false;
+
+			gNetwork.SendChangeScene(6);
 			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
+		else if (isWin) {
 			SceneChange = true;
+			ChangeScene(SCENEKIND::VICTORY);
 			SceneChange = false;
 		}
+		else if (isLose) {
 			SceneChange = true;
+			ChangeScene(SCENEKIND::DEFEAT);
 			SceneChange = false;
 		}
 
 		m_GameTimer.Tick(60.0f);
 		ProcessInput();
+
 		AnimateObjects();
 		HRESULT hResult = m_pd3dCommandAllocator->Reset();
 		hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -1681,7 +1671,7 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->OMSetRenderTargets(0, nullptr, false, &dsv);
 		if (m_ShadowMap->GetPipelineState())m_pd3dCommandList->SetPipelineState(m_ShadowMap->GetPipelineState());
 
-		XMFLOAT3 pos{ XMFLOAT3(0.0f,0.0f,0.0f) };
+		XMFLOAT3 pos;
 		XMFLOAT3 dir = XMFLOAT3(-0.3f, -0.85f, -0.3f);
 		float radius = sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ? 150 : 1000;
 
@@ -1729,9 +1719,10 @@ void CGameFramework::FrameAdvance()
 		m_pd3dCommandList->SetGraphicsRootConstantBufferView(0, d3dGPUVirtualAddress);
 
 
-			
-			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);			
-			
+		if (m_pScene) {
+
+			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
+
 		}
 		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
@@ -1830,4 +1821,3 @@ void CGameFramework::FrameAdvance()
 		cout << "Err: " << ex.what() << endl;
 	}
 }
-

@@ -42,19 +42,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	::LoadString(hInstance, IDC_CRANDING, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
-
 	while (!gNetwork.ReadytoConnect());
-
-
-	//// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
-	//while (!gNetwork.StartServer());
-
 
 	// 로그인 완료 
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CRANDING));
-
 
 	while (1)
 	{
@@ -99,13 +92,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());
 						gGameFramework.myFunc_SetAttacked(i, g_clients[i].getId(), g_clients[i].is_damage);
 					}
-
 					switch (gGameFramework.sceneManager.GetCurrentScene())
 					{
 					case SCENEKIND::SPACESHIP:
 					{
-						// spaceship map // 0  ~ 9 fire  10 ~ 19 ice 20  ~ 29 nature
-
 						for (int i = 0; i < g_monsters.size(); ++i)
 						{
 							gGameFramework.myFunc_SetMonPosition(i, g_monsters[i].getPos());
@@ -164,16 +154,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 					default:
 						break;
 					}
-
-
 				}
 			}
 
 			gGameFramework.FrameAdvance();
 		}
 	}
-
-
 
 	gGameFramework.OnDestroy();
 

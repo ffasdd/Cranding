@@ -49,7 +49,7 @@ void Session::send_login_info_packet()
 	p.right = { 1.0f,0.0f,0.0f };
 	p.charactertype = clients[_id].characterType;
 	p.room_id = clients[_id].room_id;
-	p.stage_num = clients[_id]._stage;
+	p.stage_num = 1;
 	p.att = clients[_id]._attpow;
 	p.speed = clients[_id]._speed;
 

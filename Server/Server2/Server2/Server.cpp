@@ -519,8 +519,7 @@ void Server::ProcessPacket(int id, char* packet)
 
 		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
 		int r_id = p->roomid;
-		clients[id].Rotate(p->yaw);// 클라에서 회전하여 look up right값을 가지고있음 
-		//clients[id].send_rotate_packet(id); // 왜 나의 회전각을 보내야함? 
+		clients[id].Rotate(p->yaw);
 		for (auto& pl : clients)
 		{
 			if (pl._state == STATE::Alloc || pl._state == STATE::Free) continue;
@@ -535,12 +534,9 @@ void Server::ProcessPacket(int id, char* packet)
 	case CS_CHANGE_ANIMATION: {
 
 		CS_CHANGE_ANIMATION_PACKET* p = reinterpret_cast<CS_CHANGE_ANIMATION_PACKET*>(packet);
-
 		int r_id = p->roomid;
-
 		clients[id].animationstate = (animateState)p->a_state;
 		clients[id].prevanimationstate = (animateState)p->prev_a_state;
-
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
@@ -548,9 +544,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage) continue;
 			pl->send_change_animate_packet(id);
-
 		}
-
 	}
 							break;
 	case CS_CHANGE_SCENE: {
@@ -565,12 +559,10 @@ void Server::ProcessPacket(int id, char* packet)
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._stage = scenenum;
 		}
-
 		switch (scenenum)
 		{
 		case 2: {
 			clients[id]._stage = scenenum;
-
 		}
 			  break;
 		case 3: {
