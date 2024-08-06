@@ -88,7 +88,7 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 		//if (dwDirection & DIR_UP) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, fDistance);
 		//if (dwDirection & DIR_DOWN) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, -fDistance);
 
-		Move( xmf3Shift, bUpdateVelocity);
+		Move(xmf3Shift, bUpdateVelocity);
 	}
 }
 
@@ -233,7 +233,7 @@ void CPlayer::Update(float fTimeElapsed)
 	if (fLength > m_fMaxVelocityY) m_xmf3Velocity.y *= (fMaxVelocityY / fLength);
 
 	XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(m_xmf3Velocity, fTimeElapsed, false);
-	Move( xmf3Velocity, false);
+	Move(xmf3Velocity, false);
 
 	if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
 
@@ -314,7 +314,7 @@ void CPlayer::OnPrepareRender()
 void CPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int pipelinestate)
 {
 	DWORD nCameraMode = (pCamera) ? pCamera->GetMode() : 0x00;
-	if (nCameraMode == THIRD_PERSON_CAMERA || nCameraMode == INGAME_SCENE_CAMERA) CGameObject::Render(pd3dCommandList, pCamera,0, pipelinestate);
+	if (nCameraMode == THIRD_PERSON_CAMERA || nCameraMode == INGAME_SCENE_CAMERA) CGameObject::Render(pd3dCommandList, pCamera, 0, pipelinestate);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -360,7 +360,7 @@ CTerrainPlayer::CTerrainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_pSkinnedAnimationController->SetTrackSpeed(6, 1.5);
 	m_pSkinnedAnimationController->SetTrackSpeed(7, 1.5);
-	
+
 	m_pSkinnedAnimationController->SetTrackEnable(1, false);
 	m_pSkinnedAnimationController->SetTrackEnable(2, false);
 	m_pSkinnedAnimationController->SetTrackEnable(3, false);
@@ -539,9 +539,10 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 				{
 					g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
 					g_clients[c_id].setAnimation(animateState::SWORD_MOVE);
+					cout << " Send Move" << endl;
+					gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 				}
 			}
-			gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 		}
 	}
 	CPlayer::Move(dwDirection, fDistance, bUpdateVelocity);
@@ -572,17 +573,17 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
 				// �÷��̾� ���Ⱑ Į�̶�� Į idle
-				if (g_clients[c_id].getCharacterType() == 0)
+
+				if (g_clients[c_id].getAnimation() != animateState::SWORD_IDLE)
 				{
-					if (g_clients[c_id].getAnimation() != animateState::SWORD_IDLE)
-					{
-						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
-						g_clients[c_id].setAnimation(animateState::SWORD_IDLE);
-					}
+					g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
+					g_clients[c_id].setAnimation(animateState::SWORD_IDLE);
+					cout << " Send Idle" << endl;
+					gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 				}
 
+
 				// �������� ������ ����� �ִ�num, ���� �ִ� num send
-				gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
 			}
 		}
 

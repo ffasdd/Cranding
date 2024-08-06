@@ -188,7 +188,7 @@ void Network::ProcessPacket(char* buf)
 		int ob_id = (p->id);
 		//int ob_id = getmyid(p->id);
 		float yaw = p->yaw;
-		cout <<" ID - " << ob_id << " Yaw - " <<  yaw << endl;
+		cout << " ID - " << ob_id << " Yaw - " << yaw << endl;
 		if (yaw > 360.0f) yaw -= 360.0f;
 		if (yaw < 0.f) yaw += 360.0f;
 		g_clients[ob_id].Rotate(yaw);
@@ -199,8 +199,9 @@ void Network::ProcessPacket(char* buf)
 		int ob_id = (p->id);
 		g_clients[ob_id].setAnimation(p->a_state);
 		g_clients[ob_id].setprevAnimation(p->prev_a_state);
+		cout << " Recv " << ob_id << " - " << int(p->a_state) << endl;
+		break;
 	}
-							break;
 	case SC_ATTACK: {
 		SC_ATTACK_PACKET* p = reinterpret_cast<SC_ATTACK_PACKET*>(buf);
 		int ob_id = p->id;
@@ -237,12 +238,12 @@ void Network::ProcessPacket(char* buf)
 
 	case SC_INGAME_STRAT: { // 게임시작 패킷 
 
-		gGameFramework.isready = true; 
+		gGameFramework.isready = true;
 		gGameFramework.isSceneChange = true;
 		gGameFramework.SceneNum = 2;
 		g_clients[my_id].scene_num = 2;
 		stage_num = 2;
-		
+
 		break;
 	}
 	case SC_REMOVE_OBJECT: {
@@ -721,7 +722,7 @@ void Network::SendPlayerHIt(bool is_damaged)
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
-void Network::SendBossDamage(int _hp , MonsterType _type)
+void Network::SendBossDamage(int _hp, MonsterType _type)
 {
 	CS_BOSSMONSTER_DAMAGED_PACKET p;
 	p.size = sizeof(CS_BOSSMONSTER_DAMAGED_PACKET);

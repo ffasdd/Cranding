@@ -357,6 +357,7 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	
 		if (g_clients.size() == 0)break;
 		g_clients[cl_id].setAttack(true);
+		gNetwork.SendAttack(g_clients[cl_id].getAttack());
 		break;
 
 	case WM_RBUTTONDOWN:

@@ -544,6 +544,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage) continue;
 			pl->send_change_animate_packet(id);
+			cout << " Animation" << endl;
 		}
 	}
 							break;
