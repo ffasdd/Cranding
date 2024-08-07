@@ -556,6 +556,11 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_CHANGE_SCENE_PACKET* p = reinterpret_cast<CS_CHANGE_SCENE_PACKET*>(packet);
 		int scenenum = p->scenenum;
 		int r_id = p->roomid;
+
+		clients[id]._look = { 0.f,0.f,1.0f };
+		clients[id]._right = { 1.f,0.f,0.f };
+		clients[id]._up = { 0.f,1.f,0.f };
+
 		{
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._stage = scenenum;

@@ -215,6 +215,9 @@ void Network::ProcessPacket(char* buf)
 		int ob_id = p->id;
 		g_clients[ob_id].scene_num = p->stage;
 		g_clients[ob_id].setPos(p->pos);
+		g_clients[ob_id].setLook(p->look);
+		g_clients[ob_id].setRight(p->right);
+		g_clients[ob_id].setUp(p->up);
 		if (ob_id == my_id) // 내가 씬전환을 했다면
 		{
 			switch (stage_num)
@@ -634,6 +637,9 @@ void Network::SendChangeScene(int scenenum)
 	p.type = CS_CHANGE_SCENE;
 	p.roomid = my_roomid;
 	p.scenenum = scenenum;
+	p.look = g_clients[my_id].getLook();
+	p.right = g_clients[my_id].getRight();
+	p.up = g_clients[my_id].getUp();
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 

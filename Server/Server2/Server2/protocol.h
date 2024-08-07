@@ -371,6 +371,10 @@ struct CS_CHANGE_SCENE_PACKET {
 	char type;
 	int scenenum;
 	int roomid;
+	XMFLOAT3 look;
+	XMFLOAT3 right;
+	XMFLOAT3 up;
+
 
 };
 struct CS_INGAME_START_PACKET {
@@ -572,6 +576,10 @@ struct SC_CHANGE_SCENE_PACKET {
 	int stage;
 	int id;
 	XMFLOAT3 pos;
+	XMFLOAT3 look;
+	XMFLOAT3 right;
+	XMFLOAT3 up;
+
 };
 struct SC_INGAME_START_PACKET {
 	unsigned char size;

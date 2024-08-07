@@ -162,6 +162,9 @@ void Session::send_change_scene(int client_id, int stagenum)
 	p.stage = stagenum;
 	p.id = client_id;
 	p.pos = clients[client_id]._pos;
+	p.look = clients[client_id]._look;
+	p.right = clients[client_id]._right;
+	p.up = clients[client_id]._up;
 	do_send(&p);
 }
 
