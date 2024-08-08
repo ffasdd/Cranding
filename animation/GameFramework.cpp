@@ -455,12 +455,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// ice map
 			SceneNum = 3;
-			//isSceneChange = true;
 			isSceneChangetoIce = true;
-			//sceneManager.SetCurrentScene(SCENEKIND::ICE);
 			isready = false;
-			//ReleaseObjects();
-			//BuildObjects(sceneManager.GetCurrentScene());
 
 
 			break;
@@ -469,12 +465,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// fire map
 			SceneNum = 4;
-			//sceneManager.SetCurrentScene(SCENEKIND::FIRE);
-			//ReleaseObjects();
-			//BuildObjects(sceneManager.GetCurrentScene());
-			//isSceneChange = true;
 			isSceneChangetoFire = true;
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 
 			break;
 
@@ -482,12 +473,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
 			// grass map
 			SceneNum = 5;
-			/*	sceneManager.SetCurrentScene(SCENEKIND::NATURE);
-				ReleaseObjects();
-				BuildObjects(sceneManager.GetCurrentScene());*/
-				//isSceneChange = true;
 			isSceneChangetoNature = true;
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 
 		case VK_SPACE:
@@ -500,9 +486,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 
 		case 'B':
-			//isSceneChange = true;
+			isSceneChange = true;
+			isready = true;
 			g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			break;
 		case 'L':
 			m_pScene->m_ppHierarchicalGameObjects[13]->SetHealth(-100);
@@ -1597,11 +1583,11 @@ void CGameFramework::FrameAdvance()
 				gNetwork.SendLoginfo();
 
 				while (cl_id == -1);
-				
+
 				SceneChange = true;
 				ChangeScene(SCENEKIND::LOBBY);
 				SceneChange = false;
-				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 			}
 			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ||
 				sceneManager.GetCurrentScene() == SCENEKIND::FIRE ||
@@ -1611,35 +1597,35 @@ void CGameFramework::FrameAdvance()
 				SceneChange = true;
 				ChangeScene(SCENEKIND::SPACESHIP);
 				SceneChange = false;
-				//
-				//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 
-				//if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
-				//{
-				//	g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
-				//}
+				g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+
+
+				if (gNetwork.ClientState == false) // 처음 로비에서 -> 인게임으로 들어가는 상태, 
+				{
+					g_sendqueue.push(SENDTYPE::CHANGE_SCENE_INGAME_START);
+
+				}
+
 			}
 		}
 		else if (isSceneChangetoFire) {
 			SceneChange = true;
 			ChangeScene(SCENEKIND::FIRE);
-			SceneChange = false;
-			//
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			SceneChange = false;			
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isSceneChangetoIce) {
 			SceneChange = true;
 			ChangeScene(SCENEKIND::ICE);
 			SceneChange = false;
-			//
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isSceneChangetoNature) {
 			SceneChange = true;
 			ChangeScene(SCENEKIND::NATURE);
-			SceneChange = false;
-			//
-			//g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
+			SceneChange = false;			
+			g_sendqueue.push(SENDTYPE::CHANGE_STAGE);
 		}
 		else if (isWin) {
 			SceneChange = true;

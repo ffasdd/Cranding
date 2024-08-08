@@ -74,104 +74,104 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
-			//if (gGameFramework.SceneChange == false)
-			//{
-			//	if (gNetwork.gamestart)
-			//	{
-			//		for (int i = 0; i < g_clients.size(); ++i)
-			//		{
-			//			if (gNetwork.stage_num != g_clients[i].scene_num)
-			//			{
-			//				gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), false);
-			//				continue;
-			//			}
-			//			else 
-			//				gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), true);
-			//			
-			//			if (gGameFramework.DayTime && gGameFramework.beforeTimeState == 0)
-			//			{
-			//				gGameFramework.myFunc_SetStatus(g_clients[i].m_firecnt, g_clients[i].m_icencnt, g_clients[i].m_naturecnt);
-			//				gGameFramework.isDayTimeProcessed = true;
-			//			}
-			//			if (gGameFramework.DayTime) gGameFramework.beforeTimeState = 1;
-			//			else if(gGameFramework.Night) gGameFramework.beforeTimeState = 0;
+			if (gGameFramework.SceneChange == false)
+			{
+				if (gNetwork.gamestart)
+				{
+					for (int i = 0; i < g_clients.size(); ++i)
+					{
+						if (gNetwork.stage_num != g_clients[i].scene_num)
+						{
+							gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), false);
+							continue;
+						}
+						else 
+							gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), true);
+						
+						if (gGameFramework.DayTime && gGameFramework.beforeTimeState == 0)
+						{
+							gGameFramework.myFunc_SetStatus(g_clients[i].m_firecnt, g_clients[i].m_icencnt, g_clients[i].m_naturecnt);
+							gGameFramework.isDayTimeProcessed = true;
+						}
+						if (gGameFramework.DayTime) gGameFramework.beforeTimeState = 1;
+						else if(gGameFramework.Night) gGameFramework.beforeTimeState = 0;
 
-			//			gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
-			//			gGameFramework.myFunc_SetLookRightUp(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
-			//			gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
-			//			gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());
-			//			gGameFramework.myFunc_SetAttacked(i, g_clients[i].getId(), g_clients[i].is_damage);
-			//		}
+						gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
+						gGameFramework.myFunc_SetLookRightUp(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
+						gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
+						gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());
+						gGameFramework.myFunc_SetAttacked(i, g_clients[i].getId(), g_clients[i].is_damage);
+					}
 
-			//		switch (gGameFramework.sceneManager.GetCurrentScene())
-			//		{
-			//		case SCENEKIND::SPACESHIP:
-			//		{
-			//			// spaceship map // 0  ~ 9 fire  10 ~ 19 ice 20  ~ 29 nature
+					switch (gGameFramework.sceneManager.GetCurrentScene())
+					{
+					case SCENEKIND::SPACESHIP:
+					{
+						// spaceship map // 0  ~ 9 fire  10 ~ 19 ice 20  ~ 29 nature
 
-			//			for (int i = 0; i < g_monsters.size(); ++i)
-			//			{
+						for (int i = 0; i < g_monsters.size(); ++i)
+						{
 
-			//				gGameFramework.myFunc_SetMonPosition(i, g_monsters[i].getPos());
-			//				gGameFramework.myFunc_SetMonLookRightUp(i, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
-			//				gGameFramework.myFunc_SetMonAnimation(i, g_monsters[i].getNpcAttacked(), g_monsters[i].getNpcAttack());
-			//			}
-			//			break;
-			//		}
-			//		case SCENEKIND::ICE:
-			//		{
-			//			// ice map
-			//			for (int i = 0; i < g_ice_monsters.size(); ++i)
-			//			{
-			//				gGameFramework.myFunc_SetMonPosition(i, g_ice_monsters[i].getPos());
-			//				gGameFramework.myFunc_SetMonLookRightUp(i, g_ice_monsters[i].getLook(), g_ice_monsters[i].getUp(), g_ice_monsters[i].getRight());
-			//				gGameFramework.myFunc_SetMonAnimation(i, g_ice_monsters[i].getNpcAttacked(), g_ice_monsters[i].getNpcAttack());
-			//			}
+							gGameFramework.myFunc_SetMonPosition(i, g_monsters[i].getPos());
+							gGameFramework.myFunc_SetMonLookRightUp(i, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
+							gGameFramework.myFunc_SetMonAnimation(i, g_monsters[i].getNpcAttacked(), g_monsters[i].getNpcAttack());
+						}
+						break;
+					}
+					case SCENEKIND::ICE:
+					{
+						// ice map
+						for (int i = 0; i < g_ice_monsters.size(); ++i)
+						{
+							gGameFramework.myFunc_SetMonPosition(i, g_ice_monsters[i].getPos());
+							gGameFramework.myFunc_SetMonLookRightUp(i, g_ice_monsters[i].getLook(), g_ice_monsters[i].getUp(), g_ice_monsters[i].getRight());
+							gGameFramework.myFunc_SetMonAnimation(i, g_ice_monsters[i].getNpcAttacked(), g_ice_monsters[i].getNpcAttack());
+						}
 
-			//			gGameFramework.myFunc_SetBossMonPosition(g_IceBossMonster.getPos());
-			//			gGameFramework.myFunc_SetBossMonLookRightUp(g_IceBossMonster.getLook(), g_IceBossMonster.getUp(), g_IceBossMonster.getRight());
-			//			gGameFramework.myFunc_SetBossMonAnimation(g_IceBossMonster.getNpcAttacked(),g_IceBossMonster.getNpcAttack(),g_IceBossMonster.getBossAttackType());
+						gGameFramework.myFunc_SetBossMonPosition(g_IceBossMonster.getPos());
+						gGameFramework.myFunc_SetBossMonLookRightUp(g_IceBossMonster.getLook(), g_IceBossMonster.getUp(), g_IceBossMonster.getRight());
+						gGameFramework.myFunc_SetBossMonAnimation(g_IceBossMonster.getNpcAttacked(),g_IceBossMonster.getNpcAttack(),g_IceBossMonster.getBossAttackType());
 
-			//			break;
-			//		}
-			//		case SCENEKIND::FIRE:
-			//		{
-			//			// fire map
-			//			for (int i = 0; i < g_fire_monsters.size(); ++i)
-			//			{
-			//				gGameFramework.myFunc_SetMonPosition(i, g_fire_monsters[i].getPos());
-			//				gGameFramework.myFunc_SetMonLookRightUp(i, g_fire_monsters[i].getLook(), g_fire_monsters[i].getUp(), g_fire_monsters[i].getRight());
-			//				gGameFramework.myFunc_SetMonAnimation(i, g_fire_monsters[i].getNpcAttacked(), g_fire_monsters[i].getNpcAttack());
-			//			}
-			//			gGameFramework.myFunc_SetBossMonPosition(g_FireBossMonster.getPos());
-			//			gGameFramework.myFunc_SetBossMonLookRightUp(g_FireBossMonster.getLook(), g_FireBossMonster.getUp(), g_FireBossMonster.getRight());
-			//			gGameFramework.myFunc_SetBossMonAnimation(g_FireBossMonster.getNpcAttacked(), g_FireBossMonster.getNpcAttack(), g_FireBossMonster.getBossAttackType());
+						break;
+					}
+					case SCENEKIND::FIRE:
+					{
+						// fire map
+						for (int i = 0; i < g_fire_monsters.size(); ++i)
+						{
+							gGameFramework.myFunc_SetMonPosition(i, g_fire_monsters[i].getPos());
+							gGameFramework.myFunc_SetMonLookRightUp(i, g_fire_monsters[i].getLook(), g_fire_monsters[i].getUp(), g_fire_monsters[i].getRight());
+							gGameFramework.myFunc_SetMonAnimation(i, g_fire_monsters[i].getNpcAttacked(), g_fire_monsters[i].getNpcAttack());
+						}
+						gGameFramework.myFunc_SetBossMonPosition(g_FireBossMonster.getPos());
+						gGameFramework.myFunc_SetBossMonLookRightUp(g_FireBossMonster.getLook(), g_FireBossMonster.getUp(), g_FireBossMonster.getRight());
+						gGameFramework.myFunc_SetBossMonAnimation(g_FireBossMonster.getNpcAttacked(), g_FireBossMonster.getNpcAttack(), g_FireBossMonster.getBossAttackType());
 
-			//			break;
-			//		}
-			//		case SCENEKIND::NATURE:
-			//		{
-			//			// fire map
-			//			for (int i = 0; i < g_nature_monsters.size(); ++i)
-			//			{
-			//				gGameFramework.myFunc_SetMonPosition(i, g_nature_monsters[i].getPos());
-			//				gGameFramework.myFunc_SetMonLookRightUp(i, g_nature_monsters[i].getLook(), g_nature_monsters[i].getUp(), g_nature_monsters[i].getRight());
-			//				gGameFramework.myFunc_SetMonAnimation(i, g_nature_monsters[i].getNpcAttacked(), g_nature_monsters[i].getNpcAttack());
+						break;
+					}
+					case SCENEKIND::NATURE:
+					{
+						// fire map
+						for (int i = 0; i < g_nature_monsters.size(); ++i)
+						{
+							gGameFramework.myFunc_SetMonPosition(i, g_nature_monsters[i].getPos());
+							gGameFramework.myFunc_SetMonLookRightUp(i, g_nature_monsters[i].getLook(), g_nature_monsters[i].getUp(), g_nature_monsters[i].getRight());
+							gGameFramework.myFunc_SetMonAnimation(i, g_nature_monsters[i].getNpcAttacked(), g_nature_monsters[i].getNpcAttack());
 
-			//			}
-			//			gGameFramework.myFunc_SetBossMonPosition(g_NatureBossMonster.getPos());
-			//			gGameFramework.myFunc_SetBossMonLookRightUp(g_NatureBossMonster.getLook(), g_NatureBossMonster.getUp(), g_NatureBossMonster.getRight());
-			//			gGameFramework.myFunc_SetBossMonAnimation(g_NatureBossMonster.getNpcAttacked(), g_NatureBossMonster.getNpcAttack(), g_NatureBossMonster.getBossAttackType());
-			//			break;
-			//		}
+						}
+						gGameFramework.myFunc_SetBossMonPosition(g_NatureBossMonster.getPos());
+						gGameFramework.myFunc_SetBossMonLookRightUp(g_NatureBossMonster.getLook(), g_NatureBossMonster.getUp(), g_NatureBossMonster.getRight());
+						gGameFramework.myFunc_SetBossMonAnimation(g_NatureBossMonster.getNpcAttacked(), g_NatureBossMonster.getNpcAttack(), g_NatureBossMonster.getBossAttackType());
+						break;
+					}
 
-			//		default:
-			//			break;
-			//		}
+					default:
+						break;
+					}
 
 
-			//	}
-			//}
+				}
+			}
 
 			gGameFramework.FrameAdvance();
 		}
