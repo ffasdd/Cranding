@@ -4,7 +4,7 @@
 class Session;
 enum class MonsterType : char;
 extern Timer g_Timer;
-
+#define INGAME_USER 3
 class Monster
 {
 	//Monster() = delete;
@@ -51,7 +51,7 @@ public:
 public:
 
 	//vector<Session*> ingamePlayer;
-	array<Session*, 2> ingamePlayer;
+	array<Session*, INGAME_USER > ingamePlayer;
 	vector<pair<float, XMFLOAT3>> playerdisPos;
 public:
 	virtual void Move();

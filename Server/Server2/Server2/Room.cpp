@@ -445,12 +445,12 @@ void Room::BossMonsterInitialziedMonster()
 
 	sendNatureBossMonsterInitialziedpacket._boss._hp = NatureBoss._hp;
 
-	for (auto& pl : ingamePlayer)
-	{
-		pl->do_send(&sendIceBossMonsterInitialziedpacket);
-		pl->do_send(&sendFireBossMonsterInitialziedpacket);
-		pl->do_send(&sendNatureBossMonsterInitialziedpacket);
-	}
+	//for (auto& pl : ingamePlayer)
+	//{
+	//	pl->do_send(&sendIceBossMonsterInitialziedpacket);
+	//	pl->do_send(&sendFireBossMonsterInitialziedpacket);
+	//	pl->do_send(&sendNatureBossMonsterInitialziedpacket);
+	//}
 }
 
 void Room::IceNpcInitialized()
@@ -500,15 +500,15 @@ void Room::IceNpcInitialized()
 		idx++;
 	}
 
-	for (auto& pl : ingamePlayer)
-	{
-		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
-		for (auto& packet : sendIceMonsterUpdatePacket)
-		{
-			//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
-			pl->do_send(&packet);
-		}
-	}
+	//for (auto& pl : ingamePlayer)
+	//{
+	//	// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
+	//	for (auto& packet : sendIceMonsterUpdatePacket)
+	//	{
+	//		//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+	//		pl->do_send(&packet);
+	//	}
+	//}
 }
 
 void Room::FireNpcInitialized()
@@ -559,15 +559,15 @@ void Room::FireNpcInitialized()
 		idx++;
 	}
 
-	for (auto& pl : ingamePlayer)
-	{
-		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
-		for (auto& packet : sendFireMonsterUpdatePacket)
-		{
-			//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
-			pl->do_send(&packet);
-		}
-	}
+	//for (auto& pl : ingamePlayer)
+	//{
+	//	// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
+	//	for (auto& packet : sendFireMonsterUpdatePacket)
+	//	{
+	//		//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+	//		pl->do_send(&packet);
+	//	}
+	//}
 
 }
 
@@ -618,15 +618,15 @@ void Room::NatureNpcInitialized()
 		idx++;
 	}
 
-	for (auto& pl : ingamePlayer)
-	{
-		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
-		for (auto& packet : sendNatureMonsterUpdatePacket)
-		{
-			//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
-			pl->do_send(&packet);
-		}
-	}
+	//for (auto& pl : ingamePlayer)
+	//{
+	//	// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
+	//	for (auto& packet : sendNatureMonsterUpdatePacket)
+	//	{
+	//		//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
+	//		pl->do_send(&packet);
+	//	}
+	//}
 }
 
 void Room::NightMonsterCollide(Monster& _monster)

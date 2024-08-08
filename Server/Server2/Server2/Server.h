@@ -161,8 +161,6 @@ public:
 	int readycnt = 0;
 	//bool lobbyrun = false;
 
-	bool icebossskill = false;
-	bool firebossskill = false;
-	bool naturebossskill = false;
+
 };
 

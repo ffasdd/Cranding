@@ -57,6 +57,10 @@ bool Network::ReadytoConnect()
 	}
 
 	std::cout << " Success Connect " << std::endl;
+
+	if (!StartServer())return false;
+	std::cout << " Recv Thread on " << std::endl;
+
 	return true;
 }
 // 연결 완료 
@@ -72,7 +76,6 @@ bool Network::StartServer()
 	ServerStart = true;
 
 	netThread = std::thread([this]() {NetThreadFunc(); });
-	sendThread = std::thread([this]() {SendThreadFunc(); });
 
 	return true;
 }
@@ -84,63 +87,6 @@ void Network::NetThreadFunc()
 		int ioByte = recv(clientsocket, _buf, BUF_SIZE, 0);
 		ProcessData(ioByte);
 	}
-}
-void Network::SendThreadFunc()
-{
-	while (ServerStart)
-	{
-		if (!g_sendqueue.empty())
-		{
-			SENDTYPE _sendtype;
-			bool getcheck = g_sendqueue.try_pop(_sendtype);
-			if (getcheck)
-				SendProcess(_sendtype);
-		}
-		else
-			std::this_thread::sleep_for(std::chrono::milliseconds(30ms));
-	}
-}
-
-void Network::SendProcess(SENDTYPE sendtype)
-{
-	switch (sendtype)
-	{
-	case SENDTYPE::MOVE: {
-		SendMovePlayer(g_clients[my_id].getPos());
-		break;
-	}
-	case SENDTYPE::ROTATE: {
-		SendRotatePlayer(g_clients[my_id].m_yaw);
-		break;
-	}
-	case SENDTYPE::CHANGE_ANIMATION: {
-		SendChangeAnimation(g_clients[my_id].getAnimation(), g_clients[my_id].getprevAnimation());
-		break;
-	}
-	case SENDTYPE::CHANGE_SCENE_INGAME_START: {
-		SendIngameStart();
-		break;
-	}
-	case SENDTYPE::ATTACK: {
-		SendAttack(g_clients[my_id].getAttack());
-		break;
-	}
-	case SENDTYPE::CHANGE_STAGE: {
-
-		index = static_cast<int>(gGameFramework.sceneManager.GetCurrentScene());
-
-		SendChangeScene(index);
-		break;
-	}
-	case SENDTYPE::PLAYER_HIT:
-	{
-		SendPlayerHIt(g_clients[my_id].is_damage);
-		break;
-	}
-
-	}
-
-
 }
 
 void Network::ProcessData(size_t _size)
@@ -194,15 +140,12 @@ void Network::ProcessPacket(char* buf)
 		g_clients[my_id].setprevAnimation((p->prev_state));
 		g_clients[my_id].setAttackPower(p->att);
 		g_clients[my_id].setSpeed(p->speed);
-
 		g_clients[my_id].scene_num = p->stage_num;
-
+		stage_num = p->stage_num;
 		gGameFramework.m_pPlayer->c_id = my_id;
 		gGameFramework.cl_id = my_id;
 		g_clients_mutex.unlock();
 		gamestart = true;
-
-
 		break;
 	}
 
@@ -244,8 +187,11 @@ void Network::ProcessPacket(char* buf)
 		SC_ROTATE_OBJECT_PACKET* p = reinterpret_cast<SC_ROTATE_OBJECT_PACKET*>(buf);
 		int ob_id = (p->id);
 		//int ob_id = getmyid(p->id);
-		float _yaw = p->yaw;
-		g_clients[ob_id].Rotate(_yaw);
+		float yaw = p->yaw;
+		cout << " ID - " << ob_id << " Yaw - " << yaw << endl;
+		if (yaw > 360.0f) yaw -= 360.0f;
+		if (yaw < 0.f) yaw += 360.0f;
+		g_clients[ob_id].Rotate(yaw);
 	}
 						 break;
 	case SC_CHANGE_ANIMATION: {
@@ -253,13 +199,7 @@ void Network::ProcessPacket(char* buf)
 		int ob_id = (p->id);
 		g_clients[ob_id].setAnimation(p->a_state);
 		g_clients[ob_id].setprevAnimation(p->prev_a_state);
-	}
-							break;
-	case SC_START_GAME: {
-		SC_GAMESTART_PACKET* p = reinterpret_cast<SC_GAMESTART_PACKET*>(buf);
-		my_roomid = p->roomid;
-		//Start가 되었을 때 인게임 씬으로 이동 
-
+		cout << " Recv " << ob_id << " - " << int(p->a_state) << endl;
 		break;
 	}
 	case SC_ATTACK: {
@@ -273,18 +213,15 @@ void Network::ProcessPacket(char* buf)
 	case SC_CHANGE_SCENE: {
 		SC_CHANGE_SCENE_PACKET* p = reinterpret_cast<SC_CHANGE_SCENE_PACKET*>(buf);
 		int ob_id = p->id;
-
 		g_clients[ob_id].scene_num = p->stage;
 		g_clients[ob_id].setPos(p->pos);
+		g_clients[ob_id].setLook(p->look);
+		g_clients[ob_id].setRight(p->right);
+		g_clients[ob_id].setUp(p->up);
 		if (ob_id == my_id) // 내가 씬전환을 했다면
 		{
-			stage_num = p->stage;
-
 			switch (stage_num)
 			{
-			case 1:
-				// 로비씬.  아무것도안해도됨 
-				break;
 			case 2:
 				// 우주선 씬 ,
 				if (IngameScene == false)
@@ -297,56 +234,27 @@ void Network::ProcessPacket(char* buf)
 					gGameFramework.isSceneChange = true;
 				}
 				break;
-
-			case 3:
-			{
-				for (int i = 0; i < g_clients.size(); ++i)
-				{
-					if (g_clients[i].getId() == my_id)continue;
-				}
-
-			}
-			break;
-			case 4:
-			{
-				for (int i = 0; i < g_clients.size(); ++i)
-				{
-					if (g_clients[i].getId() == my_id)continue;
-				}
-
-			}
-			break;
-			case 5:
-			{
-				for (int i = 0; i < g_clients.size(); ++i)
-				{
-					if (g_clients[i].getId() == my_id)continue;
-				}
-			}
-			break;
 			}
 		}
-		else
-		{
-			for (int i = 0; i < g_clients.size(); ++i)
-			{
-				if (p->stage == 1)continue;
-				if (g_clients[i].getId() == my_id)continue;
-			}
-		}
-		// Id가 하나만 ㅁ거음 
-
 		break;
 	}
-	case SC_INGAME_STRAT: {
+
+	case SC_INGAME_STRAT: { // 게임시작 패킷 
+
+		gGameFramework.isready = true;
 		gGameFramework.isSceneChange = true;
+		gGameFramework.SceneNum = 2;
+		g_clients[my_id].scene_num = 2;
+		stage_num = 2;
 
 		break;
 	}
 	case SC_REMOVE_OBJECT: {
 		SC_REMOVE_OBJECT_PACKET* p = reinterpret_cast<SC_REMOVE_OBJECT_PACKET*>(buf);
 		int ob_id = p->id;
+		g_clients_mutex.lock();
 		g_clients.erase(ob_id);
+		g_clients_mutex.unlock();
 		break;
 	}
 	case SC_DAYTIME:
@@ -385,7 +293,6 @@ void Network::ProcessPacket(char* buf)
 		break;
 	}
 	case SC_MONSTER_UPDATE_POS: {
-
 		if (stage_num != 2)break;
 		// 10 개로 받아줘야한다. 
 		NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
@@ -400,6 +307,7 @@ void Network::ProcessPacket(char* buf)
 
 		break;
 	}
+
 	case SC_ICE_MONSTER_UPDATE:
 	{
 		if (stage_num != 3) break;
@@ -488,12 +396,12 @@ void Network::ProcessPacket(char* buf)
 			if (p->is_attack)
 			{
 				g_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << " Night Attack " << endl;
+				//cout << " Night Attack " << endl;
 			}
 			else
 			{
 				g_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << " Player run " << endl;
+				//cout << " Player run " << endl;
 			}
 			break;
 		}
@@ -501,12 +409,12 @@ void Network::ProcessPacket(char* buf)
 			if (p->is_attack)
 			{
 				g_fire_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << "(Fire Attack) " << endl;
+				//cout << "(Fire Attack) " << endl;
 			}
 			else
 			{
 				g_fire_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << " Player run " << endl;
+				//cout << " Player run " << endl;
 			}
 			break;
 		}
@@ -514,12 +422,12 @@ void Network::ProcessPacket(char* buf)
 			if (p->is_attack)
 			{
 				g_ice_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << "(Ice Attack) " << endl;
+				//cout << "(Ice Attack) " << endl;
 			}
 			else
 			{
 				g_ice_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << " Player run " << endl;
+				//cout << " Player run " << endl;
 			}
 			break;
 		}
@@ -527,12 +435,12 @@ void Network::ProcessPacket(char* buf)
 			if (p->is_attack)
 			{
 				g_nature_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << "(Nature Attack) " << endl;
+				//cout << "(Nature Attack) " << endl;
 			}
 			else
 			{
 				g_nature_monsters[p->id].setNpcAttack(p->is_attack);
-				cout << " Player run " << endl;
+				//cout << " Player run " << endl;
 			}
 			break;
 		}
@@ -542,12 +450,12 @@ void Network::ProcessPacket(char* buf)
 				g_IceBossMonster.setNpcAttack(p->is_attack);
 				g_IceBossMonster.setBossAttackType(4);
 
-				cout << " IceBoss Player Attack " << endl;
+				//cout << " IceBoss Player Attack " << endl;
 			}
 			else
 			{
 				g_IceBossMonster.setNpcAttack(p->is_attack);
-				cout << " IceBoss Run  " << endl;
+				//cout << " IceBoss Run  " << endl;
 			}
 			break;
 		}
@@ -558,7 +466,7 @@ void Network::ProcessPacket(char* buf)
 	case  SC_MONSTER_DIE:
 	{
 		SC_MONSTER_DIE_PACKET* p = reinterpret_cast<SC_MONSTER_DIE_PACKET*>(buf);
-		cout << " SC_MONSTER_DIE" << endl;
+		//cout << " SC_MONSTER_DIE" << endl;
 
 		switch (p->_montype)
 		{
@@ -608,7 +516,7 @@ void Network::ProcessPacket(char* buf)
 	case SC_SPACESHIP_UPDATE:
 	{
 		SC_SPACESHIP_PACKET* p = reinterpret_cast<SC_SPACESHIP_PACKET*>(buf);
-		cout << " HP : " << p->hp << endl;
+		//cout << " HP : " << p->hp << endl;
 		gGameFramework.spaceshipHP = p->hp;
 		break;
 	}
@@ -616,13 +524,13 @@ void Network::ProcessPacket(char* buf)
 	{
 		SC_ICEBOSS_SKILL_PACKET* p = reinterpret_cast<SC_ICEBOSS_SKILL_PACKET*>(buf);
 		if (p->_isattacked) {
-			cout << " ICE BOSS SKILL " << endl;
+			//cout << " ICE BOSS SKILL " << endl;
 			g_IceBossMonster.setNpcAttack(true);
 			g_IceBossMonster.setBossAttackType(5);
 		}
 		else
 		{
-			cout << " Ice Boss SKill Cancle" << endl;
+			//cout << " Ice Boss SKill Cancle" << endl;
 			g_IceBossMonster.setNpcAttack(false);
 			g_IceBossMonster.setBossAttackType(3);
 		}
@@ -632,13 +540,13 @@ void Network::ProcessPacket(char* buf)
 	{
 		SC_FIREBOSS_SKILL_PACKET* p = reinterpret_cast<SC_FIREBOSS_SKILL_PACKET*>(buf);
 		if (p->_isattacked) {
-			cout << " FIRE BOSS SKILL " << endl;
+			//cout << " FIRE BOSS SKILL " << endl;
 			g_FireBossMonster.setNpcAttack(true);
 			g_FireBossMonster.setBossAttackType(5);
 		}
 		else
 		{
-			cout << " Fire Boss SKill Cancle" << endl;
+			//cout << " Fire Boss SKill Cancle" << endl;
 			g_FireBossMonster.setNpcAttack(false);
 			g_FireBossMonster.setBossAttackType(3);
 		}
@@ -648,13 +556,13 @@ void Network::ProcessPacket(char* buf)
 	{
 		SC_NATUREBOSS_SKILL_PACKET* p = reinterpret_cast<SC_NATUREBOSS_SKILL_PACKET*>(buf);
 		if (p->_isattacked) {
-			cout << " NATURE BOSS SKILL " << endl;
+			//cout << " NATURE BOSS SKILL " << endl;
 			g_NatureBossMonster.setNpcAttack(true);
 			g_NatureBossMonster.setBossAttackType(5);
 		}
 		else
 		{
-			cout << " Nature Boss SKill Cancle" << endl;
+			//cout << " Nature Boss SKill Cancle" << endl;
 			g_NatureBossMonster.setNpcAttack(false);
 			g_NatureBossMonster.setBossAttackType(3);
 		}
@@ -663,7 +571,7 @@ void Network::ProcessPacket(char* buf)
 	case SC_PLAYER_HIT:
 	{
 		SC_PLAYER_HIT_PACKET* p = reinterpret_cast<SC_PLAYER_HIT_PACKET*>(buf);
-		cout << p->id << " < - Player Hit " << endl;
+		//cout << p->id << " < - Player Hit " << endl;
 		g_clients[p->id].is_damage = p->isdamaged;
 
 		break;
@@ -729,6 +637,9 @@ void Network::SendChangeScene(int scenenum)
 	p.type = CS_CHANGE_SCENE;
 	p.roomid = my_roomid;
 	p.scenenum = scenenum;
+	p.look = g_clients[my_id].getLook();
+	p.right = g_clients[my_id].getRight();
+	p.up = g_clients[my_id].getUp();
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
@@ -801,7 +712,6 @@ void Network::SendMonsterHitSpaceship(int npc_id)
 	p.room_id = my_roomid;
 	p.npc_id = npc_id;
 
-
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
@@ -818,7 +728,7 @@ void Network::SendPlayerHIt(bool is_damaged)
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
-void Network::SendBossDamage(int _hp , MonsterType _type)
+void Network::SendBossDamage(int _hp, MonsterType _type)
 {
 	CS_BOSSMONSTER_DAMAGED_PACKET p;
 	p.size = sizeof(CS_BOSSMONSTER_DAMAGED_PACKET);
@@ -840,10 +750,16 @@ void Network::SendPlayerDead()
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
 
-bool Network::MonsterCollide(Session& _monster)
+void Network::SendMonsterInit()
 {
-	return 0;
+	CS_MOSNTSER_INITIALIZED_PACKET p;
+	p.size = sizeof(CS_MOSNTSER_INITIALIZED_PACKET);
+	p.type = CS_MONSTER_INITIALIZE;
+	p.room_id = my_roomid;
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
+
 
 
 int Network::getmyid(int _id)

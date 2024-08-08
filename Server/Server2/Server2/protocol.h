@@ -6,7 +6,7 @@ constexpr int CHAT_SIZE = 100;
 constexpr int MAX_USER = 15;
 constexpr int MAX_ROOM = 5;
 
-constexpr int MAX_ROOM_USER = 2;
+constexpr int MAX_ROOM_USER = 3;
 
 constexpr char CS_LOGIN = 0;
 constexpr char CS_MOVE = 1;
@@ -29,6 +29,7 @@ constexpr char CS_MONSTER_HIT_SPACESHIP = 17;
 constexpr char CS_PLAYER_HIT = 18;
 constexpr char CS_BOSSMONSTER_DAMGED = 19;
 constexpr char CS_DEAD_PLAYER = 20;
+constexpr char CS_MONSTER_INITIALIZE = 21;
 
 constexpr char SC_LOGIN_INFO = 2;
 constexpr char SC_ADD_OBJECT = 3;
@@ -370,6 +371,10 @@ struct CS_CHANGE_SCENE_PACKET {
 	char type;
 	int scenenum;
 	int roomid;
+	XMFLOAT3 look;
+	XMFLOAT3 right;
+	XMFLOAT3 up;
+
 
 };
 struct CS_INGAME_START_PACKET {
@@ -432,6 +437,11 @@ struct CS_PLAYER_DEAD_PACKET {
 	unsigned char size;
 	char type;
 	int id;
+	int room_id;
+};
+struct CS_MOSNTSER_INITIALIZED_PACKET {
+	unsigned char size;
+	char type;
 	int room_id;
 };
 
@@ -566,6 +576,10 @@ struct SC_CHANGE_SCENE_PACKET {
 	int stage;
 	int id;
 	XMFLOAT3 pos;
+	XMFLOAT3 look;
+	XMFLOAT3 right;
+	XMFLOAT3 up;
+
 };
 struct SC_INGAME_START_PACKET {
 	unsigned char size;

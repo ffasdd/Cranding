@@ -84,6 +84,16 @@ void Monster::Move()
 	}
 	else
 	{
+		if (_attackState == true)
+		{
+			_attackState = false;
+			for (auto& pl : ingamePlayer)
+			{
+				if (id == -1)continue; 
+				if (pl->_stage != ingamePlayer[id]->_stage)continue;
+				pl->send_monster_attack(_id, _m_type, false);
+			}
+		}
 		// 플레이어와의 최대거리가 가시거리 밖이라면 우주선을 향해 간다. 
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
 		XMVECTOR spaceshipVec = XMLoadFloat3(&_spaceship->getPos());
@@ -175,6 +185,16 @@ void Monster::IceMove()
 	}
 	else
 	{
+		if (_attackState == true)
+		{
+			_attackState = false;
+			for (auto& pl : ingamePlayer)
+			{
+				if (id == -1)continue;
+				if (pl->_stage != ingamePlayer[id]->_stage)continue;
+				pl->send_monster_attack(_id, _m_type, false);
+			}
+		}
 		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
 		{
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
@@ -267,6 +287,18 @@ void Monster::FireMove()
 	}
 	else
 	{
+
+		if (_attackState == true)
+		{
+			_attackState = false;
+			for (auto& pl : ingamePlayer)
+			{
+				if (id == -1)continue;
+				if (pl->_stage != ingamePlayer[id]->_stage)continue;
+				pl->send_monster_attack(_id, _m_type, false);
+			}
+		}
+
 		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
 		{
 			XMVECTOR posVec = XMLoadFloat3(&_pos);
@@ -361,6 +393,17 @@ void Monster::NatureMove()
 	}
 	else
 	{
+		if (_attackState == true)
+		{
+			_attackState = false;
+			for (auto& pl : ingamePlayer)
+			{
+				if (id == -1)continue;
+				if (pl->_stage != ingamePlayer[id]->_stage)continue;
+				pl->send_monster_attack(_id, _m_type, false);
+			}
+		}
+
 		if (int(_pos.x) != int(_initPos.x) && int(_pos.z) != int(_initPos.z))
 		{
 			XMVECTOR posVec = XMLoadFloat3(&_pos);

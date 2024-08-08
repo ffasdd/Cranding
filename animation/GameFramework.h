@@ -30,6 +30,7 @@
 #include "Scenemanager.h"
 
 
+
 extern Network							gNetwork;
 
 struct TIME
@@ -113,6 +114,7 @@ public:
 	float PlayerPosZ = 0.0f;
 
 	int cl_id = -1;
+	bool monsterinit = false;
 	void ChangeScene(SCENEKIND nSceneKind);
 	void ChangeBGM(int nSceneKind);
 

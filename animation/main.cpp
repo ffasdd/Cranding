@@ -24,9 +24,6 @@ Session g_FireBossMonster;
 Session g_NatureBossMonster;
 
 
-concurrency::concurrent_queue<SENDTYPE> g_sendqueue;
-HANDLE loginevent = CreateEvent(NULL, FALSE, FALSE, NULL);
-HANDLE startevent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -45,19 +42,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	::LoadString(hInstance, IDC_CRANDING, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
-
 	while (!gNetwork.ReadytoConnect());
-
-
-	// 정보를 여기서?  send client infO? 로그인 정보를 보낼까 ? 
-	while (!gNetwork.StartServer());
-
 
 	// 로그인 완료 
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CRANDING));
-
 
 	while (1)
 	{
@@ -74,7 +64,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
-			if (gGameFramework.SceneChange == false)
+			if (gGameFramework.m_pPlayer != NULL && gGameFramework.m_pScene->m_ppHierarchicalGameObjects != NULL)
 			{
 				if (gNetwork.gamestart)
 				{
@@ -95,23 +85,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 						}
 						if (gGameFramework.DayTime) gGameFramework.beforeTimeState = 1;
 						else if(gGameFramework.Night) gGameFramework.beforeTimeState = 0;
-
+						if (i == gGameFramework.cl_id)continue; 
 						gGameFramework.myFunc_SetPosition(i, g_clients[i].getId(), g_clients[i].getPos());
 						gGameFramework.myFunc_SetLookRightUp(i, g_clients[i].getId(), g_clients[i].getLook(), g_clients[i].getUp(), g_clients[i].getRight());
 						gGameFramework.myFunc_SetAnimation(i, g_clients[i].getId(), g_clients[i].getprevAnimation(), g_clients[i].getAnimation());
 						gGameFramework.myFunc_SetAttack(i, g_clients[i].getId(), g_clients[i].getAttack());
 						gGameFramework.myFunc_SetAttacked(i, g_clients[i].getId(), g_clients[i].is_damage);
 					}
-
 					switch (gGameFramework.sceneManager.GetCurrentScene())
 					{
 					case SCENEKIND::SPACESHIP:
 					{
-						// spaceship map // 0  ~ 9 fire  10 ~ 19 ice 20  ~ 29 nature
-
 						for (int i = 0; i < g_monsters.size(); ++i)
 						{
-
 							gGameFramework.myFunc_SetMonPosition(i, g_monsters[i].getPos());
 							gGameFramework.myFunc_SetMonLookRightUp(i, g_monsters[i].getLook(), g_monsters[i].getUp(), g_monsters[i].getRight());
 							gGameFramework.myFunc_SetMonAnimation(i, g_monsters[i].getNpcAttacked(), g_monsters[i].getNpcAttack());
@@ -168,16 +154,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 					default:
 						break;
 					}
-
-
 				}
 			}
 
 			gGameFramework.FrameAdvance();
 		}
 	}
-
-
 
 	gGameFramework.OnDestroy();
 

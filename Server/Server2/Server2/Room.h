@@ -50,6 +50,13 @@ public:
 	//// Nature Monster 
 	//array<Monster, 30> NatureMonster;
 
+	bool iceupdate = false;
+	bool fireupdate = false;
+	bool natureupdate = false;
+
+	bool icebossskill = false;
+	bool firebossskill = false;
+	bool naturebossskill = false;
 
 public:
 	void SendMoveNightMonster(int npc_id);

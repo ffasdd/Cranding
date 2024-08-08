@@ -94,12 +94,6 @@ private:
 
 	animateState m_animationstate = animateState::FREE;
 	animateState m_prevanimationstate = animateState::FREE;
-	
-	//int m_animationstate = 0;
-	//int m_prevanimationstate = 0;
-
-
-	
 
 };
 

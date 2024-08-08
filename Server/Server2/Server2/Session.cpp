@@ -49,15 +49,13 @@ void Session::send_login_info_packet()
 	p.right = { 1.0f,0.0f,0.0f };
 	p.charactertype = clients[_id].characterType;
 	p.room_id = clients[_id].room_id;
-	p.stage_num = clients[_id]._stage;
+	p.stage_num = 1;
 	p.att = clients[_id]._attpow;
 	p.speed = clients[_id]._speed;
 
-	if (clients[_id].characterType == 0)
-	{
-		p.a_state = animateState::SWORD_IDLE;
-		p.prev_state = animateState::SWORD_IDLE;
-	}
+	p.a_state = animateState::SWORD_IDLE;
+	p.prev_state = animateState::SWORD_IDLE;
+
 
 	do_send(&p);
 }
@@ -112,8 +110,8 @@ void Session::send_remove_packet(int client_id)
 	p.type = SC_REMOVE_OBJECT;
 	do_send(&p);
 }
- 
-void Session::send_rotate_packet(int client_id)
+
+void Session::send_rotate_packet(int client_id, float packetyaw)
 {
 	SC_ROTATE_OBJECT_PACKET p;
 	p.id = client_id;
@@ -122,7 +120,8 @@ void Session::send_rotate_packet(int client_id)
 	//p.look = clients[client_id]._look;
 	//p.right = clients[client_id]._right;
 	//p.up = { 0.f,1.0f,0.f };
-	p.yaw = clients[client_id].yaw;
+	//p.yaw = clients[client_id].m_fYaw;
+	p.yaw = packetyaw;
 	do_send(&p);
 }
 
@@ -163,6 +162,9 @@ void Session::send_change_scene(int client_id, int stagenum)
 	p.stage = stagenum;
 	p.id = client_id;
 	p.pos = clients[client_id]._pos;
+	p.look = clients[client_id]._look;
+	p.right = clients[client_id]._right;
+	p.up = clients[client_id]._up;
 	do_send(&p);
 }
 
@@ -171,7 +173,7 @@ void Session::send_ingame_start()
 	SC_INGAME_START_PACKET p;
 	p.type = SC_INGAME_STRAT;
 	p.size = sizeof(SC_INGAME_START_PACKET);
-	
+
 	do_send(&p);
 }
 
@@ -188,7 +190,7 @@ void Session::send_add_monster(int npc_id)
 	do_send(&p);
 }
 
-void Session::send_player_attack_mosnter(int npc_id, bool isattack , MonsterType montype)
+void Session::send_player_attack_mosnter(int npc_id, bool isattack, MonsterType montype)
 {
 	SC_MONSTER_DIE_PACKET p;
 	p.size = sizeof(SC_MONSTER_DIE_PACKET);
@@ -256,12 +258,22 @@ void Session::send_player_hit(int client_id)
 	do_send(&p);
 }
 
-void Session::Rotate()
+void Session::Rotate(float yaw)
 {
-	float radian = XMConvertToRadians(yaw);
+	if (yaw != 0.0f) {
+		m_fYaw += yaw;
+		if (m_fYaw > 360.0f) m_fYaw -= 360.0f;
+		if (m_fYaw < 0.0f) m_fYaw += 360.0f;
 
-	XMFLOAT4 q{};
-	XMStoreFloat4(&q, XMQuaternionRotationRollPitchYaw(0.f, radian, 0.f));
+	
+		XMMATRIX xmmtxRotate = XMMatrixRotationAxis(XMLoadFloat3(&_up), XMConvertToRadians(yaw));
+		_look = Vector3::TransformNormal(_look, xmmtxRotate);
+		_right = Vector3::TransformNormal(_right, xmmtxRotate);
+
+		_look = Vector3::Normalize(_look);
+		_right = Vector3::CrossProduct(_up, _look, true);
+		_up = Vector3::CrossProduct(_look, _right, true);
+	}
 }
 
 void Session::send_game_start(int r_id)

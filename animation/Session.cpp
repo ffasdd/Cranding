@@ -235,28 +235,42 @@ void Session::Rotate(float yaw)
 		if (m_yaw > 360.0f) m_yaw -= 360.0f;
 		if (m_yaw < 0.0f) m_yaw += 360.0f;
 
-		// Load current vectors
-		XMVECTOR upVec = XMLoadFloat3(&m_up);
-		XMVECTOR lookVec = XMLoadFloat3(&m_look);
-		XMVECTOR rightVec = XMLoadFloat3(&m_right);
 
-		// Create rotation matrix
-		XMMATRIX xmmtxRotate = XMMatrixRotationAxis(upVec, XMConvertToRadians(yaw));
+		if (m_yaw > 360.0f) m_yaw -= 360.0f;
+		if (m_yaw < 0.0f) m_yaw += 360.0f;
 
-		// Transform vectors
-		lookVec = XMVector3TransformNormal(lookVec, xmmtxRotate);
-		rightVec = XMVector3TransformNormal(rightVec, xmmtxRotate);
 
-		// Normalize vectors
-		lookVec = XMVector3Normalize(lookVec);
-		rightVec = XMVector3Normalize(XMVector3Cross(upVec, lookVec));
 
-		// Store back to member variables
-		XMStoreFloat3(&m_look, lookVec);
-		XMStoreFloat3(&m_right, rightVec);
+		XMMATRIX xmmtxRotate = XMMatrixRotationAxis(XMLoadFloat3(&m_up), XMConvertToRadians(yaw));
+		m_look = Vector3::TransformNormal(m_look, xmmtxRotate);
+		m_right = Vector3::TransformNormal(m_right, xmmtxRotate);
 
-		// Ensure up vector is orthogonal and normalized
-		upVec = XMVector3Normalize(XMVector3Cross(lookVec, rightVec));
-		XMStoreFloat3(&m_up, upVec);
+		m_look = Vector3::Normalize(m_look);
+		m_right = Vector3::CrossProduct(m_up, m_look, true);
+		m_up = Vector3::CrossProduct(m_look, m_right, true);
+
+		//// Load current vectors
+		//XMVECTOR upVec = XMLoadFloat3(&m_up);
+		//XMVECTOR lookVec = XMLoadFloat3(&m_look);
+		//XMVECTOR rightVec = XMLoadFloat3(&m_right);
+
+		//// Create rotation matrix
+		//XMMATRIX xmmtxRotate = XMMatrixRotationAxis(upVec, XMConvertToRadians(yaw));
+
+		//// Transform vectors
+		//lookVec = XMVector3TransformNormal(lookVec, xmmtxRotate);
+		//rightVec = XMVector3TransformNormal(rightVec, xmmtxRotate);
+
+		//// Normalize vectors
+		//lookVec = XMVector3Normalize(lookVec);
+		//rightVec = XMVector3Normalize(XMVector3Cross(upVec, lookVec));
+
+		//// Store back to member variables
+		//XMStoreFloat3(&m_look, lookVec);
+		//XMStoreFloat3(&m_right, rightVec);
+
+		//// Ensure up vector is orthogonal and normalized
+		//upVec = XMVector3Normalize(XMVector3Cross(lookVec, rightVec));
+		//XMStoreFloat3(&m_up, upVec);
 	}
 }

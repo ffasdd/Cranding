@@ -907,7 +907,7 @@ CGameObject::~CGameObject()
 	{
 		for (int i = 0; i < m_nMaterials; i++)
 		{
-			if (m_ppMaterials[i] != nullptr) {
+			if (m_ppMaterials[i]) {
 				std::cout << "Releasing material " << i << std::endl;
 				m_ppMaterials[i]->Release();
 				m_ppMaterials[i] = nullptr;
