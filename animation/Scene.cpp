@@ -603,6 +603,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 					cout << "Night" << endl;
 
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = false;
+					//m_ppHierarchicalGameObjects[i]->isdraw = false;
 					gNetwork.SendAttackCollision(g_monsters[i - 3].getId(), MonsterType::Night);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, false);
 					m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, true);
