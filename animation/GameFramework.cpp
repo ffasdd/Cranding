@@ -1052,9 +1052,6 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, animateState prevAni, an
 			break;
 		}
 
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 1.5);
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 1.5);
-
 		if (prevAni != curAni)
 		{
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsBlending = true;
@@ -1156,9 +1153,6 @@ void CGameFramework::myFunc_SetAttack(int n, int id, bool isAttack)
 			break;
 		}
 
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 1.0);
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 1.0);
-
 		if (isAttack == true)
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsAttack = true;
 	}
@@ -1181,9 +1175,6 @@ void CGameFramework::myFunc_SetAttacked(int n, int id, bool isAttacked)
 			others_id = n;
 			break;
 		}
-
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(6, 1.0);
-		m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackSpeed(7, 1.0);
 
 		if (isAttacked == true)
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
@@ -1362,8 +1353,11 @@ void CGameFramework::ReleaseObjects()
 {
 #ifdef _FULLSCRREN
 	if (m_pUILayer) m_pUILayer->ReleaseResources();
-	if (m_pUILayer) delete m_pUILayer;
-
+	if (m_pUILayer)
+	{
+		delete m_pUILayer;
+		m_pUILayer = nullptr;
+	}
 #endif // _FULLSCRREN
 
 	//if (m_pScene->m_pPlayer) m_pScene->m_pPlayer->Release();
@@ -1835,8 +1829,8 @@ void CGameFramework::FrameAdvance()
 		WaitForGpuComplete();
 #ifdef _FULLSCREEN
 
-		if (m_pUILayer)
-			UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
+		//if (m_pUILayer)
+		//	UILayer::GetInstance()->Render(m_nSwapChainBufferIndex, sceneManager.GetCurrentScene(), isready, curDay, curMinute, curSecond);
 
 #endif // _FULLSCREEN
 
