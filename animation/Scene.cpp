@@ -857,6 +857,7 @@ void CLoginScene::ReleaseObjects()
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //
+
 void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
