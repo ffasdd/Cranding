@@ -860,31 +860,6 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			break;
 		}
 
-
-		//m_pPostProcessingShader = new CTextureToFullScreenShader();
-		//m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), 1, NULL, DXGI_FORMAT_D32_FLOAT);
-		//m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, &m_nDrawOption);
-
-		//D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-		//d3dRtvCPUDescriptorHandle.ptr += (::gnRtvDescriptorIncrementSize * m_nSwapChainBuffers);
-
-		//DXGI_FORMAT pdxgiResourceFormats[5] = { DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM };
-		//m_pPostProcessingShader->CreateResourcesAndRtvsSrvs(m_pd3dDevice, m_pd3dCommandList, 5, pdxgiResourceFormats, d3dRtvCPUDescriptorHandle, 6); //SRV to (Render Targets) + (Depth Buffer)
-
-		//// ���� SRV ��¼��..
-		////D3D12_GPU_DESCRIPTOR_HANDLE d3dDsvGPUDescriptorHandle = CScene::CreateShaderResourceView(m_pd3dDevice, m_pd3dDepthStencilBuffer, DXGI_FORMAT_R32_FLOAT);
-
-		//DXGI_FORMAT pdxgiDepthSrvFormats[1] = { DXGI_FORMAT_R32_FLOAT };
-		//m_pPostProcessingShader->CreateShaderResourceViews(m_pd3dDevice, 1, &m_pd3dDepthStencilBuffer, pdxgiDepthSrvFormats);
-
-		//CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0, 1);
-		//m_pBlurBuffer = pTexture->CreateTexture(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_NONE, D3D12_RESOURCE_STATE_COMMON, NULL, RESOURCE_TEXTURE2D, 0, 1);
-		//m_pBlurBuffer->AddRef();
-
-		//m_BlurShader = make_unique<CBlurShader>();
-		//m_BlurShader->CreateShader(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
-		//m_BlurShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), NULL, pTexture);
-
 		m_pd3dCommandList->Close();
 		ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 		m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
@@ -1332,6 +1307,7 @@ void CGameFramework::ChangeSceneReleaseObject()
 {
 	if (m_pPlayer) {
 		m_pPlayer->Release();
+		m_pPlayer = nullptr;
 	}
 
 	if (m_pScene) m_pScene->ReleaseObjects();
@@ -1354,7 +1330,7 @@ void CGameFramework::ProcessInput()
 		POINT ptCursorPos;
 		if (GetCapture() == m_hWnd)
 		{
-			SetCursor(NULL);
+			SetCursor(nullptr);
 			GetCursorPos(&ptCursorPos);
 			cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
 			cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;

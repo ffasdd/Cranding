@@ -105,11 +105,11 @@ public:
 	IXAudio2* m_pXAudio2 = nullptr;
 	IXAudio2MasteringVoice* m_pMasterVoice = nullptr;
 
-	unique_ptr<CBlurShader> m_BlurShader = NULL;
+	unique_ptr<CBlurShader> m_BlurShader = nullptr;
 	ID3D12Resource* m_pBlurBuffer = NULL;
 	bool isBlurRender = false;
 
-	CPlayer* m_pPlayer = NULL;
+	CPlayer* m_pPlayer = nullptr;
 	float PlayerPosX = 0.0f;
 	float PlayerPosZ = 0.0f;
 
@@ -141,7 +141,7 @@ public:
 
 	void myFunc_SetStatus(int FireCnt, int IceCnt, int NatureCnt);
 
-	CScene* m_pScene = NULL;
+	CScene* m_pScene = nullptr;
 
 	int SceneNum = 0;
 	bool isready = false;
@@ -171,7 +171,7 @@ public:
 
 
 	ID3D12Resource* m_pd3dcbTime = NULL;
-	TIME* m_pTime = NULL;
+	TIME* m_pTime = nullptr;
 
 	SceneManager& sceneManager = SceneManager::GetInstance();
 
@@ -220,12 +220,12 @@ private:
 
 
 
-	CCamera						*m_pCamera = NULL;
+	CCamera						*m_pCamera = nullptr;
 
-	UILayer* m_pUILayer = NULL;
+	UILayer* m_pUILayer = nullptr;
 
 
-	CPostProcessingShader* m_pPostProcessingShader = NULL;
+	CPostProcessingShader* m_pPostProcessingShader = nullptr;
 
 	int								m_nDrawOption = DRAW_SCENE_COLOR;
 
@@ -234,9 +234,9 @@ private:
 	_TCHAR						m_pszFrameRate[70];
 
 	//Shadow
-	unique_ptr<ShadowMap> m_ShadowMap = NULL;
+	unique_ptr<ShadowMap> m_ShadowMap = nullptr;
 	ID3D12PipelineState* m_pPipelineState;
 	ID3D12Resource* m_pShadowCamera = NULL;
-	VS_CB_CAMERA_INFO* m_pShadowMappedCamera = NULL;
+	VS_CB_CAMERA_INFO* m_pShadowMappedCamera = nullptr;
 };
 

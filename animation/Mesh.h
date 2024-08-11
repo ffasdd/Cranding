@@ -57,15 +57,15 @@ protected:
 protected:
 	int								m_nVertices = 0;
 
-	XMFLOAT3						*m_pxmf3Positions = NULL;
+	XMFLOAT3						*m_pxmf3Positions = nullptr;
 
 	ID3D12Resource					*m_pd3dPositionBuffer = NULL;
 	ID3D12Resource					*m_pd3dPositionUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dPositionBufferView;
 
 	int								m_nSubMeshes = 0;
-	int								*m_pnSubSetIndices = NULL;
-	UINT							**m_ppnSubSetIndices = NULL;
+	int								*m_pnSubSetIndices = nullptr;
+	UINT							**m_ppnSubSetIndices = nullptr;
 
 	ID3D12Resource					**m_ppd3dSubSetIndexBuffers = NULL;
 	ID3D12Resource					**m_ppd3dSubSetIndexUploadBuffers = NULL;
@@ -120,9 +120,9 @@ protected:
 	XMFLOAT3						m_xmf3Scale;
 
 protected:
-	XMFLOAT4						*m_pxmf4Colors = NULL;
-	XMFLOAT2						*m_pxmf2TextureCoords0 = NULL;
-	XMFLOAT2						*m_pxmf2TextureCoords1 = NULL;
+	XMFLOAT4						*m_pxmf4Colors = nullptr;
+	XMFLOAT2						*m_pxmf2TextureCoords0 = nullptr;
+	XMFLOAT2						*m_pxmf2TextureCoords1 = nullptr;
 
 	ID3D12Resource					*m_pd3dColorBuffer = NULL;
 	ID3D12Resource					*m_pd3dColorUploadBuffer = NULL;
@@ -170,13 +170,13 @@ public:
 	virtual ~CStandardMesh();
 
 protected:
-	XMFLOAT4						*m_pxmf4Colors = NULL;
-	XMFLOAT3						*m_pxmf3Normals = NULL;
-	XMFLOAT3						*m_pxmf3Tangents = NULL;
-	XMFLOAT3						*m_pxmf3BiTangents = NULL;
+	XMFLOAT4						*m_pxmf4Colors = nullptr;
+	XMFLOAT3						*m_pxmf3Normals = nullptr;
+	XMFLOAT3						*m_pxmf3Tangents = nullptr;
+	XMFLOAT3						*m_pxmf3BiTangents = nullptr;
 
-	XMFLOAT2						*m_pxmf2TextureCoords0 = NULL;
-	XMFLOAT2						*m_pxmf2TextureCoords1 = NULL;
+	XMFLOAT2						*m_pxmf2TextureCoords0 = nullptr;
+	XMFLOAT2						*m_pxmf2TextureCoords1 = nullptr;
 
 	ID3D12Resource					*m_pd3dTextureCoord0Buffer = NULL;
 	ID3D12Resource					*m_pd3dTextureCoord0UploadBuffer = NULL;
@@ -228,22 +228,22 @@ protected:
 protected:
 	int								m_nBonesPerVertex = 4;
 
-	XMINT4*							m_pxmn4BoneIndices = NULL;
-	XMFLOAT4*						m_pxmf4BoneWeights = NULL;
+	XMINT4*							m_pxmn4BoneIndices = nullptr;
+	XMFLOAT4*						m_pxmf4BoneWeights = nullptr;
 
 public:
 	int								m_nSkinningBones = 0; 
 
 	char							(*m_ppstrSkinningBoneNames)[64]; //[m_nSkinningBones]
-	CGameObject						**m_ppSkinningBoneFrameCaches = NULL; //[m_nSkinningBones]
+	CGameObject						**m_ppSkinningBoneFrameCaches = nullptr; //[m_nSkinningBones]
 
-	XMFLOAT4X4						*m_pxmf4x4BindPoseBoneOffsets = NULL; //[m_nSkinningBones], Transposed
+	XMFLOAT4X4						*m_pxmf4x4BindPoseBoneOffsets = nullptr; //[m_nSkinningBones], Transposed
 
 	ID3D12Resource					*m_pd3dcbBindPoseBoneOffsets = NULL; //[m_nSkinningBones]
-	XMFLOAT4X4						*m_pcbxmf4x4MappedBindPoseBoneOffsets = NULL; //[m_nSkinningBones]
+	XMFLOAT4X4						*m_pcbxmf4x4MappedBindPoseBoneOffsets = nullptr; //[m_nSkinningBones]
 
 	ID3D12Resource					*m_pd3dcbSkinningBoneTransforms = NULL; //[m_nSkinningBones], Pointer Only
-	XMFLOAT4X4						*m_pcbxmf4x4MappedSkinningBoneTransforms = NULL; //[m_nSkinningBones]
+	XMFLOAT4X4						*m_pcbxmf4x4MappedSkinningBoneTransforms = nullptr; //[m_nSkinningBones]
 
 public:
 	void PrepareSkinning(CGameObject *pModelRootObject);

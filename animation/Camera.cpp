@@ -20,7 +20,7 @@ CCamera::CCamera()
 	m_fTimeLag = 0.0f;
 	m_xmf3LookAtWorld = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_nMode = 0x00;
-	m_pPlayer = NULL;
+	m_pPlayer = nullptr;
 }
 
 CCamera::CCamera(CCamera *pCamera)
@@ -46,7 +46,7 @@ CCamera::CCamera(CCamera *pCamera)
 		m_fTimeLag = 0.0f;
 		m_xmf3LookAtWorld = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		m_nMode = 0x00;
-		m_pPlayer = NULL;
+		m_pPlayer = nullptr;
 	}
 }
 
@@ -136,7 +136,7 @@ void CCamera::ReleaseShaderVariables()
 {
 	if (m_pd3dcbCamera)
 	{
-		m_pd3dcbCamera->Unmap(0, NULL);
+		m_pd3dcbCamera->Unmap(0, nullptr);
 		m_pd3dcbCamera->Release();
 	}
 }
