@@ -461,7 +461,7 @@ XMFLOAT4X4 CAnimationSet::GetSRT(int nBone, float fPosition)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CAnimationSets::CAnimationSets(int nAnimationSets):m_pAnimationSets(nullptr)
+CAnimationSets::CAnimationSets(int nAnimationSets) :m_pAnimationSets(nullptr)
 {
 	m_nAnimationSets = nAnimationSets;
 	m_pAnimationSets = new CAnimationSet * [nAnimationSets];
@@ -902,7 +902,6 @@ CGameObject::~CGameObject()
 {
 	if (m_pMesh) m_pMesh->Release();
 
-
 	if (m_nMaterials > 0)
 	{
 		for (int i = 0; i < m_nMaterials; i++)
@@ -914,8 +913,14 @@ CGameObject::~CGameObject()
 			}
 		}
 	}
-	if (m_ppMaterials) delete[] m_ppMaterials;
-
+	//if (m_nMaterials <= 1)
+	//{
+	//	if (m_ppMaterials)delete *m_ppMaterials;
+	//}
+	//else
+	//{
+	//	if (m_ppMaterials) delete[] m_ppMaterials;
+	//}
 	if (m_pSkinnedAnimationController) delete m_pSkinnedAnimationController;
 
 	ReleaseShaderVariables();
@@ -1541,9 +1546,9 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 					_stprintf_s(pstrDebug, 256, "(Frame: %p) (Parent: %p)\n"), pChild, pGameObject);
 					OutputDebugString(pstrDebug);
 #endif
-			}
 		}
 	}
+}
 		else if (!strcmp(pstrToken, "</Frame>"))
 		{
 			break;
@@ -1603,7 +1608,7 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoaded
 				size_t nConverted = 0;
 				mbstowcs_s(&nConverted, pwstrAnimationBoneName, 64, pstrToken, _TRUNCATE);
 				mbstowcs_s(&nConverted, pwstrBoneCacheName, 64, pLoadedModel->m_ppBoneFrameCaches[j]->m_pstrFrameName, _TRUNCATE);
-					_stprintf_s(pstrDebug, 256, _T("AnimationBoneFrame:: Cache(%s) AnimationBone(%s)\n"), pwstrBoneCacheName, pwstrAnimationBoneName);
+				_stprintf_s(pstrDebug, 256, _T("AnimationBoneFrame:: Cache(%s) AnimationBone(%s)\n"), pwstrBoneCacheName, pwstrAnimationBoneName);
 				OutputDebugString(pstrDebug);
 #endif
 			}
@@ -1642,19 +1647,19 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoaded
 
 					nReads = (UINT)::fread(pAnimationSet->m_ppxmf4x4KeyFrameTransforms[i], sizeof(XMFLOAT4X4), pLoadedModel->m_pAnimationSets->m_nBoneFrames, pInFile);
 #endif
-				}
 			}
 		}
+	}
 		else if (!strcmp(pstrToken, "</AnimationSets>"))
 		{
 			break;
 		}
-	}
+}
 }
 
 CLoadedModelInfo* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader)
 {
-	FILE *pInFile = NULL;
+	FILE* pInFile = NULL;
 
 	int retryCount = 0;
 	const int maxRetries = 100;
@@ -1713,7 +1718,7 @@ CLoadedModelInfo* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd
 #endif
 	fclose(pInFile);
 	return(pLoadedModel);
-		}
+	}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
