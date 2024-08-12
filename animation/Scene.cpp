@@ -1541,7 +1541,7 @@ bool CIceScene::CheckObjectByObjectCollisions()
 		}
 
 		// collision check with ice monster
-		else if (i > 2 && i < 13)
+		else if (i > 2 && i < 13 && m_ppHierarchicalGameObjects[i]->GetMonsType() == MONSTERTYPE::ICE)
 		{
 			// monster with player's sword(attack mode)
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
@@ -1769,6 +1769,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 {
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
+	
 		// �ʰ� �浹�� ���
 		if (i == 0)
 		{
@@ -1814,7 +1815,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 		}
 
 		// collision check with fire monster
-		else if (i > 2 && i < 13)
+		else if (i > 2 && i < 13 && m_ppHierarchicalGameObjects[i]->GetMonsType() == MONSTERTYPE::FIRE)
 		{
 			// monster with player's sword(attack mode)
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
@@ -2093,7 +2094,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 		}
 
 		// collision check with nature monster
-		else if (i > 2 && i < 13)
+		else if (i > 2 && i < 13 && m_ppHierarchicalGameObjects[i]->GetMonsType() == MONSTERTYPE::NATURE)
 		{
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
 				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
