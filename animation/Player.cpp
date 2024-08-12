@@ -645,14 +645,20 @@ CLoginPlayer::CLoginPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/dance.bin", NULL);
 	SetChild(pAngrybotModel->m_pModelRootObject, true);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 3, pAngrybotModel);
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 5, pAngrybotModel);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(1, 1);
 	m_pSkinnedAnimationController->SetTrackAnimationSet(2, 2);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(3, 3);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(4, 4);
+
 
 	m_pSkinnedAnimationController->SetTrackEnable(0, true);
 	m_pSkinnedAnimationController->SetTrackEnable(1, false);
 	m_pSkinnedAnimationController->SetTrackEnable(2, false);
+	m_pSkinnedAnimationController->SetTrackEnable(3, false);
+	m_pSkinnedAnimationController->SetTrackEnable(4, false);
+
 
 	//CAnimationCallbackHandler* pAnimationCallbackHandler = new CSoundCallbackHandler();
 	//m_pSkinnedAnimationController->SetAnimationCallbackHandler(0, pAnimationCallbackHandler);
