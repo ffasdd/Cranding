@@ -6,7 +6,7 @@ constexpr int CHAT_SIZE = 100;
 constexpr int MAX_USER = 15;
 constexpr int MAX_ROOM = 5;
 
-constexpr int MAX_ROOM_USER = 2;
+constexpr int MAX_ROOM_USER = 3;
 
 constexpr char CS_LOGIN = 0;
 constexpr char CS_MOVE = 1;
