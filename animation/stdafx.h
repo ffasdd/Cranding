@@ -94,7 +94,7 @@ constexpr int DEFERREDNUM = 5;
 
 enum class SCENEKIND
 {
-	NONE,
+	NONE = 10,
 	LOGIN = 0,
 	LOBBY = 1,
 	LOADING = 6,

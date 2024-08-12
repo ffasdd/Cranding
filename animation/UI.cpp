@@ -328,6 +328,9 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
 
     switch (scenekind)
     {
+    case SCENEKIND::NONE:
+        break;
+
     case SCENEKIND::LOGIN:
         // login
         m_pd2dDeviceContext->BeginDraw();
@@ -368,6 +371,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         m_pd2dDeviceContext->DrawText(m_vecResultScene[1], (UINT)wcslen(m_vecResultScene[1]), m_textFormats[TEXT_SIZE::SIZE_60], m_Title, m_brushes[BRUSH_COLOR::WHITE]);
         m_pd2dDeviceContext->EndDraw();
         break;
+
     default:
         // ingame 
         m_pd2dDeviceContext->BeginDraw();
