@@ -1572,12 +1572,12 @@ void CGameFramework::FrameAdvance()
 		{
 			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN)
 			{
-				gNetwork.SendLoginfo();
-				while (cl_id != -1);
 				SceneChange = true;
 				ChangeScene(SCENEKIND::LOBBY);
 			
 				SceneChange = false;
+				gNetwork.SendLoginfo();
+				while (cl_id != -1);
 			}
 			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ||
 				sceneManager.GetCurrentScene() == SCENEKIND::FIRE ||

@@ -4,7 +4,7 @@
 class Session;
 enum class MonsterType : char;
 extern Timer g_Timer;
-#define INGAME_USER 3
+#define INGAME_USER 2
 class Monster
 {
 	//Monster() = delete;
