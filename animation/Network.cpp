@@ -12,20 +12,24 @@ Network::Network()
 		std::cout << "WSAStart Up Error " << endl;
 
 	clientsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	int DelayZeroOpt = 1;
-	setsockopt(clientsocket, SOL_SOCKET, TCP_NODELAY, (const char*)&DelayZeroOpt, sizeof(DelayZeroOpt)); // Nodelay  네이클 알고리즘 종료 
+
+	if (clientsocket == INVALID_SOCKET) {
+		std::cerr << "Client socket creation failed" << std::endl;
+		WSACleanup(); // Cleanup if socket creation fails
+		return;
+	}
+	//int DelayZeroOpt = 1;
+	//setsockopt(clientsocket, SOL_SOCKET, TCP_NODELAY, (const char*)&DelayZeroOpt, sizeof(DelayZeroOpt)); // Nodelay  네이클 알고리즘 종료 
 
 	LINGER _linger;
 	_linger.l_linger = 0;
 	_linger.l_onoff = 1;
-	setsockopt(clientsocket, SOL_SOCKET, SO_LINGER, (const char*)&_linger, sizeof(_linger));
-	// Linger option
-
-	if (clientsocket == INVALID_SOCKET)
-	{
-		std::cout << " client socket Error " << std::endl;
+	if (setsockopt(clientsocket, SOL_SOCKET, SO_LINGER, (const char*)&_linger, sizeof(_linger)) == SOCKET_ERROR) {
+		std::cerr << "Failed to set SO_LINGER option" << std::endl;
+		closesocket(clientsocket);
+		WSACleanup();
+		return;
 	}
-
 }
 
 Network::~Network()
@@ -35,17 +39,18 @@ Network::~Network()
 
 bool Network::ReadytoConnect()
 {
-	sockaddr_in sockaddrIn;
+	sockaddr_in sockaddrIn = {};
 	sockaddrIn.sin_family = AF_INET;
 	sockaddrIn.sin_port = htons(PORT_NUM);
 
 	// 사용자로부터 IP 주소 입력 받기
 	//string ipAddress = { "221.165.49.99" };
 	string ipAddress = { "127.0.0.1" };
-
-
 	// 문자열 형태의 IP 주소를 네트워크 바이트 순서로 변환하여 설정
-	inet_pton(AF_INET, ipAddress.c_str(), &sockaddrIn.sin_addr);
+	if (inet_pton(AF_INET, ipAddress.c_str(), &sockaddrIn.sin_addr) <= 0) {
+		cout << " Invalid Ip Address format " << endl;
+		return false;
+	}
 
 	int ret = connect(clientsocket, reinterpret_cast<sockaddr*>(&sockaddrIn), sizeof(sockaddrIn));
 	if (ret)
@@ -58,7 +63,11 @@ bool Network::ReadytoConnect()
 
 	std::cout << " Success Connect " << std::endl;
 
-	if (!StartServer())return false;
+	if (!StartServer())
+	{
+		closesocket(clientsocket);
+		return false;
+	}
 	std::cout << " Recv Thread on " << std::endl;
 
 	return true;
@@ -69,6 +78,12 @@ bool Network::ReadytoConnect()
 // 리시브 하는 쓰레들 새로, 
 void Network::End()
 {
+	// recv쓰레드 종료 
+	if (clientsocket != INVALID_SOCKET) {
+		closesocket(clientsocket);
+		clientsocket = INVALID_SOCKET;
+	}
+	WSACleanup();
 }
 
 bool Network::StartServer()
@@ -80,12 +95,33 @@ bool Network::StartServer()
 	return true;
 }
 
-void Network::NetThreadFunc()
-{
-	while (ServerStart)
-	{
+void Network::NetThreadFunc() {
+	while (ServerStart) {
 		int ioByte = recv(clientsocket, _buf, BUF_SIZE, 0);
-		ProcessData(ioByte);
+
+		// recv가 에러를 반환하면 데이터가 없거나, 소켓에 문제가 있는 것
+		if (ioByte == SOCKET_ERROR) {
+			int err = WSAGetLastError();
+			if (err == WSAEWOULDBLOCK) {
+				// 데이터가 없는 경우 스레드를 양보
+				std::this_thread::yield();
+				continue;
+			}
+			else {
+				// 다른 소켓 에러 처리
+				std::cerr << "Socket error: " << err << std::endl;
+				break;
+			}
+		}
+		else if (ioByte > 0) {
+			// 데이터를 정상적으로 수신한 경우
+			ProcessData(ioByte);
+		}
+		else {
+			// 서버 연결이 끊어진 경우 (ioByte == 0)
+			std::cerr << "Connection closed by server." << std::endl;
+			break;
+		}
 	}
 }
 
@@ -188,7 +224,7 @@ void Network::ProcessPacket(char* buf)
 		int ob_id = (p->id);
 		//int ob_id = getmyid(p->id);
 		float yaw = p->yaw;
-		cout << " ID - " << ob_id << " Yaw - " << yaw << endl;
+		//cout << " ID - " << ob_id << " Yaw - " << yaw << endl;
 		if (yaw > 360.0f) yaw -= 360.0f;
 		if (yaw < 0.f) yaw += 360.0f;
 		g_clients[ob_id].Rotate(yaw);
@@ -294,7 +330,7 @@ void Network::ProcessPacket(char* buf)
 	}
 	case SC_MONSTER_UPDATE_POS: {
 		if (stage_num != 2)break;
-		// 10 개로 받아줘야한다. 
+
 		NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
 		int npc_id = p->_monster._id;
 		g_monsters[npc_id].setId(npc_id);
@@ -393,72 +429,30 @@ void Network::ProcessPacket(char* buf)
 		switch (p->monstertype)
 		{
 		case MonsterType::Night: {
-			if (p->is_attack)
-			{
-				g_monsters[p->id].setNpcAttack(p->is_attack);
-				//cout << " Night Attack " << endl;
-			}
-			else
-			{
-				g_monsters[p->id].setNpcAttack(p->is_attack);
-				//cout << " Player run " << endl;
-			}
+
+			g_monsters[p->id].setNpcAttack(p->is_attack);
+
 			break;
 		}
 		case MonsterType::Fire: {
-			if (p->is_attack)
-			{
-				g_fire_monsters[p->id].setNpcAttack(p->is_attack);
-				//cout << "(Fire Attack) " << endl;
-			}
-			else
-			{
-				g_fire_monsters[p->id].setNpcAttack(p->is_attack);
-				//cout << " Player run " << endl;
-			}
+
+			g_fire_monsters[p->id].setNpcAttack(p->is_attack);
+
 			break;
 		}
 		case MonsterType::Ice: {
-			if (p->is_attack)
-			{
-				g_ice_monsters[p->id].setNpcAttack(p->is_attack);
-				//cout << "(Ice Attack) " << endl;
-			}
-			else
-			{
-				g_ice_monsters[p->id].setNpcAttack(p->is_attack);
-				//cout << " Player run " << endl;
-			}
+
+			g_ice_monsters[p->id].setNpcAttack(p->is_attack);
+
 			break;
 		}
 		case MonsterType::Nature: {
-			if (p->is_attack)
-			{
-				g_nature_monsters[p->id].setNpcAttack(p->is_attack);
-				//cout << "(Nature Attack) " << endl;
-			}
-			else
-			{
-				g_nature_monsters[p->id].setNpcAttack(p->is_attack);
-				//cout << " Player run " << endl;
-			}
-			break;
-		}
-		case MonsterType::Ice_Boss: {
-			if (p->is_attack)
-			{
-				g_IceBossMonster.setNpcAttack(p->is_attack);
-				g_IceBossMonster.setBossAttackType(4);
 
-				//cout << " IceBoss Player Attack " << endl;
-			}
-			else
-			{
-				g_IceBossMonster.setNpcAttack(p->is_attack);
-				//cout << " IceBoss Run  " << endl;
-			}
+			g_nature_monsters[p->id].setNpcAttack(p->is_attack);
+
 			break;
 		}
+		default: break;
 		}
 
 	}

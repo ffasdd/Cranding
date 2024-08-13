@@ -53,7 +53,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	{
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
-			//cout << msg.message << endl;
 			if (msg.message == WM_QUIT)
 				break;
 			if (!::TranslateAccelerator(msg.hwnd, hAccelTable, &msg))

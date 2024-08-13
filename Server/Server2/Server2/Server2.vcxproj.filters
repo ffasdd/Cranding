@@ -30,9 +30,6 @@
     <ClCompile Include="Room.cpp">
       <Filter>Room</Filter>
     </ClCompile>
-    <ClCompile Include="Roommanger.cpp">
-      <Filter>Room</Filter>
-    </ClCompile>
     <ClCompile Include="Server.cpp">
       <Filter>Server</Filter>
     </ClCompile>
@@ -51,24 +48,12 @@
     <ClCompile Include="Monster.cpp">
       <Filter>Object\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="FlameMonster.cpp">
-      <Filter>Object\Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="IceMonster.cpp">
-      <Filter>Object\Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="NatureMonster.cpp">
-      <Filter>Object\Monster</Filter>
-    </ClCompile>
     <ClCompile Include="Spaceship.cpp">
       <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Room.h">
-      <Filter>Room</Filter>
-    </ClInclude>
-    <ClInclude Include="Roommanger.h">
       <Filter>Room</Filter>
     </ClInclude>
     <ClInclude Include="Over_Exp.h">
@@ -90,15 +75,6 @@
       <Filter>pch</Filter>
     </ClInclude>
     <ClInclude Include="Monster.h">
-      <Filter>Object\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="FlameMonster.h">
-      <Filter>Object\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="IceMonster.h">
-      <Filter>Object\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="NatureMonster.h">
       <Filter>Object\Monster</Filter>
     </ClInclude>
     <ClInclude Include="Spaceship.h">

@@ -230,7 +230,7 @@ void Server::WorkerThread()
 		case COMP_TYPE::NPC_UPDATE: {
 			int r_id = static_cast<int>(key);
 			ingameroom[r_id].UpdateNpc();
-			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(20ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(30ms),r_id,EVENT_TYPE::EV_NPC_UPDATE };
 			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
@@ -246,7 +246,7 @@ void Server::WorkerThread()
 		case COMP_TYPE::NIGHT_TIMER: {
 			int r_id = static_cast<int>(key);
 			ingameroom[r_id].NightSend();
-			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(60s),r_id,EVENT_TYPE::EV_NIGHT };
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(30s),r_id,EVENT_TYPE::EV_DAYTIME };
 			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
@@ -254,7 +254,7 @@ void Server::WorkerThread()
 		case COMP_TYPE::DAYTIME_TIMER: {
 			int r_id = static_cast<int>(key);
 			ingameroom[r_id].DayTimeSend();
-			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(30s),r_id,EVENT_TYPE::EV_DAYTIME };
+			TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::seconds(30s),r_id,EVENT_TYPE::EV_NIGHT };
 			g_Timer.InitTimerQueue(ev);
 			delete ex_over;
 			break;
@@ -526,7 +526,7 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl._id == id)continue;
 			if (pl.room_id != clients[id].room_id)continue;
 			if (pl._stage != clients[id]._stage)continue;
-			pl.send_rotate_packet(id,p->yaw);
+			pl.send_rotate_packet(id, p->yaw);
 		}
 		break;
 	}
@@ -582,7 +582,7 @@ void Server::ProcessPacket(int id, char* packet)
 			{
 				ingameroom[r_id].iceupdate = true;
 
-				TIMER_EVENT ev4{ std::chrono::system_clock::now() ,r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE};
+				TIMER_EVENT ev4{ std::chrono::system_clock::now() ,r_id,EVENT_TYPE::EV_ICE_NPC_UPDATE };
 				g_Timer.InitTimerQueue(ev4);
 
 				TIMER_EVENT ev7{ std::chrono::system_clock::now(),r_id,EVENT_TYPE::EV_ICE_BOSS_MOVE };
@@ -606,11 +606,11 @@ void Server::ProcessPacket(int id, char* packet)
 			if (ingameroom[r_id].fireupdate == false)
 			{
 				ingameroom[r_id].fireupdate = true;
-			TIMER_EVENT ev5{ std::chrono::system_clock::now(),r_id,EVENT_TYPE::EV_FIRE_NPC_UPDATE };
-			g_Timer.InitTimerQueue(ev5);
+				TIMER_EVENT ev5{ std::chrono::system_clock::now(),r_id,EVENT_TYPE::EV_FIRE_NPC_UPDATE };
+				g_Timer.InitTimerQueue(ev5);
 
-			TIMER_EVENT ev8{ std::chrono::system_clock::now(),r_id,EVENT_TYPE::EV_FIRE_BOSS_MOVE };
-			g_Timer.InitTimerQueue(ev8);
+				TIMER_EVENT ev8{ std::chrono::system_clock::now(),r_id,EVENT_TYPE::EV_FIRE_BOSS_MOVE };
+				g_Timer.InitTimerQueue(ev8);
 			}
 			if (ingameroom[r_id].firebossskill == false)
 			{
@@ -626,9 +626,9 @@ void Server::ProcessPacket(int id, char* packet)
 			std::uniform_real_distribution<float> zpos(531, 580);
 			clients[id]._pos = XMFLOAT3(xpos(dre), 10.0f, zpos(dre));
 
-			if (ingameroom[r_id].natureupdate)
+			if (ingameroom[r_id].natureupdate == false)
 			{
-				ingameroom[r_id].natureupdate = true; 
+				ingameroom[r_id].natureupdate = true;
 				TIMER_EVENT ev6{ std::chrono::system_clock::now(),r_id,EVENT_TYPE::EV_NATURE_NPC_UPDATE };
 				g_Timer.InitTimerQueue(ev6);
 
@@ -667,7 +667,6 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		if (ingameroom[r_id].readycnt < MAX_ROOM_USER) break;
 
-
 		ingameroom[r_id].BossMonsterInitialziedMonster();
 		ingameroom[r_id].IceNpcInitialized();
 		ingameroom[r_id].FireNpcInitialized();
@@ -677,9 +676,6 @@ void Server::ProcessPacket(int id, char* packet)
 
 		TIMER_EVENT ev2{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NIGHT };
 		g_Timer.InitTimerQueue(ev2);
-
-		TIMER_EVENT ev3{ ingameroom[r_id].start_time + chrono::seconds(10s),r_id,EVENT_TYPE::EV_DAYTIME };
-		g_Timer.InitTimerQueue(ev3);
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
@@ -773,8 +769,8 @@ void Server::ProcessPacket(int id, char* packet)
 			break;
 		}
 		}
+		break;
 	}
-	break;
 	case CS_MONSTER_DIE: {
 		CS_MONSTER_DIE_PACKET* p = reinterpret_cast<CS_MONSTER_DIE_PACKET*>(packet);
 		// 다른 플레이어들 한테 NPC 타격 상황을 보냄 
@@ -1005,10 +1001,8 @@ void Server::ReadyToStart()
 			// 접속하는 클라이언트 순서대로 array에 집어넣어야함, 
 			// id를 맞춰야하나? 
 			if (ingameroom[room_id].ingamePlayer.size() < MAX_ROOM_USER)continue;
-
-
+			
 			// 무조건 방에 2명이 진행 됐을 때에만 add, 서로에게 보내준다. 
-
 
 			for (auto& NightMonsters : ingameroom[room_id].NightMonster)
 			{

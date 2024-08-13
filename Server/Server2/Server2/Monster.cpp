@@ -436,7 +436,6 @@ void Monster::NightAttack(int cl_id)
 {
 	cout << "Attack " << endl;
 	_attackState = true;
-	//this_thread::yield();
 }
 
 bool Monster::CollideCheckToPlayer(Session* _player)
