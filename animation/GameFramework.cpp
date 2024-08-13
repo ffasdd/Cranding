@@ -1330,9 +1330,9 @@ void CGameFramework::ReleaseObjects()
 
 void CGameFramework::ChangeSceneReleaseObject()
 {
-	if (m_pPlayer) {
+	/*if (m_pPlayer) {
 		m_pPlayer->Release();
-	}
+	}*/
 
 	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) {
