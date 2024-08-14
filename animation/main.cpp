@@ -71,7 +71,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 					{
 						if (gNetwork.stage_num != g_clients[i].scene_num)
 						{
-							gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), false);
+						gGameFramework.myFunc_SetBlind(i, g_clients[i].getId(), false);
 							continue;
 						}
 						else 

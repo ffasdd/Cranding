@@ -1631,9 +1631,12 @@ void CGameFramework::FrameAdvance()
 		}
 
 		m_GameTimer.Tick(60.0f);
-		ProcessInput();
+		if (gNetwork.my_id != -1)
+		{
+			ProcessInput();
+			AnimateObjects();
+		}
 
-		AnimateObjects();
 		HRESULT hResult = m_pd3dCommandAllocator->Reset();
 		hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
