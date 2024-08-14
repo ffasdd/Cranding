@@ -107,6 +107,7 @@ void CScene::ReleaseObjects()
 	{
 		for (int i = 0; i < m_nGameObjects; i++) if (m_ppGameObjects[i]) m_ppGameObjects[i]->Release();
 		delete[] m_ppGameObjects;
+		m_ppGameObjects = nullptr;
 	}
 
 	if (m_ppShaders)
@@ -136,6 +137,7 @@ void CScene::ReleaseObjects()
 				cout << "=========================================" << endl;
 			}
 		delete[] m_ppHierarchicalGameObjects;
+		m_ppHierarchicalGameObjects = nullptr;
 	}
 
 	ReleaseShaderVariables();
@@ -1568,12 +1570,12 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				}
 				pMapObject = pMapObject->m_pSibling;
 
-				if (pMapObject == NULL)break;
+				if (pMapObject == nullptr)break;
 			}
 		}
 
 		// collision check with ice monster
-		else if (i > 2 && i < 13 && m_ppHierarchicalGameObjects[i] != NULL)
+		else if (i > 2 && i < 13 && m_ppHierarchicalGameObjects[i] != nullptr)
 		{
 			// monster with player's sword(attack mode)
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
@@ -1842,12 +1844,12 @@ bool CFireScene::CheckObjectByObjectCollisions()
 				}
 				pMapObject = pMapObject->m_pSibling;
 
-				if (pMapObject == NULL)break;
+				if (pMapObject == nullptr)break;
 			}
 		}
 
 		// collision check with fire monster
-		else if (i > 2 && i < 13 && m_ppHierarchicalGameObjects[i] !=  NULL)
+		else if (i > 2 && i < 13 && m_ppHierarchicalGameObjects[i] !=  nullptr)
 		{
 			// monster with player's sword(attack mode)
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
@@ -2121,12 +2123,12 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				}
 				pMapObject = pMapObject->m_pSibling;
 
-				if (pMapObject == NULL)break;
+				if (pMapObject == nullptr)break;
 			}
 		}
 
 		// collision check with nature monster
-		else if (i > 2 && i < 13 && m_ppHierarchicalGameObjects[i] != NULL)
+		else if (i > 2 && i < 13 && m_ppHierarchicalGameObjects[i] != nullptr)
 		{
 			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
 				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0

@@ -35,11 +35,13 @@ UILayer* UILayer::Create(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevic
 {
     UILayer* pInstance = new UILayer();
     s_instance = pInstance;
+    cout << "ui start" << endl;
     if (FAILED(pInstance->Initialize(nFrames, nTextBlocks, pd3dDevice, pd3dCommandQueue, ppd3dRenderTargets, nWidth, nHeight)))
     {
         SafeDelete(pInstance);
         return nullptr;
     }
+    cout << "ui end" << endl;
 
     return pInstance;
 }
