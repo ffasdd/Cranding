@@ -60,6 +60,7 @@ public:
 
 	bool m_blind = false;
 	bool is_damage = false;
+	bool is_dead = false;
 	int scene_num = -1;
 	float m_yaw = 0.0f;
 

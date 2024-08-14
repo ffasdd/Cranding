@@ -570,7 +570,13 @@ void Network::ProcessPacket(char* buf)
 
 		break;
 	}
+	case SC_PLAYER_DEAD: {
+		SC_PLAYER_DEAD_PACKET* p = reinterpret_cast<SC_PLAYER_DEAD_PACKET*>(buf);
+		g_clients[p->id].is_dead = true;
+		cout << " Clients " << p->id << "is_dead " << endl;
 
+		break; 
+	}
 	}
 
 }
