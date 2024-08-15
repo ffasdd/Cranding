@@ -1,8 +1,8 @@
 ﻿#include "stdafx.h"
 #include "main.h"
 #include "GameFramework.h"
-#include "Network.h"
-#include "Session.h"
+//#include "Network.h"
+//#include "Session.h"
 
 #define MAX_LOADSTRING 100
 
@@ -11,17 +11,17 @@ TCHAR							szTitle[MAX_LOADSTRING];
 TCHAR							szWindowClass[MAX_LOADSTRING];
 
 CGameFramework					gGameFramework;
-Network							gNetwork;
-
-std::unordered_map<int, Session> g_clients;
-unordered_map<int, Session> g_monsters;
-unordered_map<int, Session> g_ice_monsters;
-unordered_map<int, Session> g_fire_monsters;
-unordered_map<int, Session> g_nature_monsters;
-
-Session g_IceBossMonster;
-Session g_FireBossMonster;
-Session g_NatureBossMonster;
+//Network							gNetwork;
+//
+//std::unordered_map<int, Session> g_clients;
+//unordered_map<int, Session> g_monsters;
+//unordered_map<int, Session> g_ice_monsters;
+//unordered_map<int, Session> g_fire_monsters;
+//unordered_map<int, Session> g_nature_monsters;
+//
+//Session g_IceBossMonster;
+//Session g_FireBossMonster;
+//Session g_NatureBossMonster;
 
 
 
@@ -155,7 +155,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			//		}
 			//	}
 			//}
-
 			gGameFramework.FrameAdvance();
 		}
 	}

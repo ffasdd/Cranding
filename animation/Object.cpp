@@ -8,7 +8,7 @@
 #include "Scene.h"
 #include "Scenemanager.h"
 
-extern Network gNetwork;
+//extern Network gNetwork;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers, int nRootParameters)
@@ -760,8 +760,8 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							this->m_nCntValidAttack = 0;
 							this->m_bIsAttack = false;
 							this->m_bIsValidAttack = false;
-							g_clients[gNetwork.my_id].setAttack(false);
-							gNetwork.SendAttack(g_clients[gNetwork.my_id].getAttack());
+							//g_clients[gNetwork.my_id].setAttack(false);
+							//gNetwork.SendAttack(g_clients[gNetwork.my_id].getAttack());
 						}
 					}
 
@@ -801,8 +801,8 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						if (m_bIsPlayerAttacked && fPosition == 0.0f)
 						{
 							m_bIsPlayerAttacked = false;
-							g_clients[gNetwork.my_id].is_damage = false;
-							gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+							//g_clients[gNetwork.my_id].is_damage = false;
+							//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
 						}
 					}
 

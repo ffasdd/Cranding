@@ -26,12 +26,12 @@
 #include "Timer.h"
 #include "Player.h"
 #include "Scene.h"
-#include "Network.h"
+//#include "Network.h"
 #include "Scenemanager.h"
 
 
 
-extern Network							gNetwork;
+//extern Network							gNetwork;
 
 struct TIME
 {

@@ -1,7 +1,7 @@
 #pragma once
 #include <functional>
 #include "Network.h"
-extern Network							gNetwork;
+//extern Network							gNetwork;
 extern HANDLE loginevent;
 struct TextBlock
 {

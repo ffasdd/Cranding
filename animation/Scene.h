@@ -14,7 +14,7 @@
 #define SPOT_LIGHT						2
 #define DIRECTIONAL_LIGHT				3
 
-extern Network							gNetwork;
+//extern Network							gNetwork;
 
 struct LIGHT
 {

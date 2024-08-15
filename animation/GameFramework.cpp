@@ -352,10 +352,10 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 		}
 		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
 
-		if (g_clients.find(cl_id) == g_clients.end())break;
+		//if (g_clients.find(cl_id) == g_clients.end())break;
 
-		g_clients[cl_id].setAttack(true);
-		gNetwork.SendAttack(g_clients[cl_id].getAttack());
+		//g_clients[cl_id].setAttack(true);
+		//gNetwork.SendAttack(g_clients[cl_id].getAttack());
 		break;
 
 	case WM_RBUTTONDOWN:
@@ -1023,7 +1023,7 @@ void CGameFramework::myFunc_SetAnimation(int n, int id, animateState prevAni, an
 			m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->m_pSkinnedAnimationController->SetTrackPosition(int(prevAni), 0.0f);
 
 
-			g_clients[id].setprevAnimation(curAni);
+			//g_clients[id].setprevAnimation(curAni);
 		}
 	}
 }
@@ -1175,13 +1175,13 @@ void CGameFramework::myFunc_SetStatus(int FireCnt, int IceCnt, int NatureCnt)
 {
 	curDay++;
 
-	int attack = g_clients[cl_id].getAttackPower() + (FireCnt * 5);
+	//int attack = g_clients[cl_id].getAttackPower() + (FireCnt * 5);
 
-	if (attack > 100) {
-		attack = 100;
-	}
+	//if (attack > 100) {
+	//	attack = 100;
+	//}
 	//m_pPlayer->SetAttackPower(attack);
-	g_clients[cl_id].setAttackPower(attack);
+	//g_clients[cl_id].setAttackPower(attack);
 
 	int speed = m_pPlayer->GetSpeed() + (IceCnt * 3);
 	m_pPlayer->SetSpeed(speed);
@@ -1411,16 +1411,16 @@ void CGameFramework::ProcessInput()
 
 						m_pPlayer->RotateYaw(yaw);
 
-						g_clients[cl_id].setLook(m_pPlayer->GetLook());
-						g_clients[cl_id].setRight(m_pPlayer->GetRight());
-						g_clients[cl_id].setUp(m_pPlayer->GetUp());
-						g_clients[gNetwork.Getmyid()].m_yaw = yaw;
+						//g_clients[cl_id].setLook(m_pPlayer->GetLook());
+						//g_clients[cl_id].setRight(m_pPlayer->GetRight());
+						//g_clients[cl_id].setUp(m_pPlayer->GetUp());
+						//g_clients[gNetwork.Getmyid()].m_yaw = yaw;
 						// 서버에게 클라이언트의 회전각을 전송, 
 						// 회전동기화문제가 생기는 이유는? 
 						// 서버에서 받은 회전각으로 다른 클라이언트 회전계산을 해야하는데 가지고 있는 look right up 값이 다른듯,
 						// 즉 회전 기준이 다름 
 						//cout << g_clients[cl_id].m_yaw << " -  send Yaw " << endl;
-						gNetwork.SendRotatePlayer(g_clients[cl_id].m_yaw);
+						//gNetwork.SendRotatePlayer(g_clients[cl_id].m_yaw);
 					}
 
 				}
@@ -1448,8 +1448,8 @@ void CGameFramework::ProcessInput()
 				XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(temp, m_GameTimer.GetTimeElapsed(), false);
 				m_pPlayer->Move(xmf3Velocity, false);
 				// 이동된 좌표를 서버에게 전송 
-				g_clients[cl_id].setPos(m_pPlayer->GetPosition());
-				gNetwork.SendMovePlayer(g_clients[cl_id].getPos());
+				//g_clients[cl_id].setPos(m_pPlayer->GetPosition());
+				//gNetwork.SendMovePlayer(g_clients[cl_id].getPos());
 
 			}
 		}

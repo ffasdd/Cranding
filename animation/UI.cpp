@@ -266,7 +266,7 @@ float ConvertHPToPercentage(float hp) {
 void UILayer::SetHP()
 {
 
-    m_playerHP = g_clients[gNetwork.my_id].getHp();
+    //m_playerHP = g_clients[gNetwork.my_id].getHp();
 
     float spaceshipHP = gGameFramework.spaceshipHP; // 0 ~ 2000 사이의 값
     m_spaceshipHP = ConvertHPToPercentage(spaceshipHP); // 0 ~ 100 사이의 값
@@ -382,7 +382,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         WCHAR pstrOutputText[256];
         std::wstring DnN[2] = { L"Day", L"Night" };
         int timenum = gGameFramework.Night;
-        swprintf_s(pstrOutputText, 256, L"Day: %d  Time:%02d:%02d %s", gNetwork.Day, curMinute, curSecond, DnN[timenum].c_str());
+        //swprintf_s(pstrOutputText, 256, L"Day: %d  Time:%02d:%02d %s", gNetwork.Day, curMinute, curSecond, DnN[timenum].c_str());
         m_pd2dDeviceContext->DrawText(pstrOutputText, (UINT)wcslen(pstrOutputText), m_textFormats[TEXT_SIZE::SIZE_18], m_Timer, m_brushes[BRUSH_COLOR::PINK]);
 
         // hp
@@ -392,13 +392,13 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
 
         // status
         WCHAR elementText[256];
-        swprintf_s(elementText, 256, L"HP: %d", g_clients[gNetwork.my_id].getHp());
+        //swprintf_s(elementText, 256, L"HP: %d", g_clients[gNetwork.my_id].getHp());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], iceRect, m_brushes[BRUSH_COLOR::BLACK]);
 
-        swprintf_s(elementText, 256, L"Attack Power: %d", g_clients[gNetwork.my_id].getAttackPower());
+        //swprintf_s(elementText, 256, L"Attack Power: %d", g_clients[gNetwork.my_id].getAttackPower());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], fireRect, m_brushes[BRUSH_COLOR::BLACK]);
 
-        swprintf_s(elementText, 256, L"Speed: %d", g_clients[gNetwork.my_id].getSpeed());
+        //swprintf_s(elementText, 256, L"Speed: %d", g_clients[gNetwork.my_id].getSpeed());
         m_pd2dDeviceContext->DrawText(elementText, (UINT)wcslen(elementText), m_textFormats[TEXT_SIZE::SIZE_15], natureRect, m_brushes[BRUSH_COLOR::BLACK]);
 
         // Map 이동 메시지

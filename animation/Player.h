@@ -11,15 +11,15 @@
 #include "Camera.h"
 #include"Session.h"
 //
-class Network;
-extern Network gNetwork;
+//class Network;
+//extern Network gNetwork;
 
 struct CB_PLAYER_INFO
 {
 	XMFLOAT4X4					m_xmf4x4World;
 };
 
-extern unordered_map<int, Session> g_clients;
+//extern unordered_map<int, Session> g_clients;
 
 class CPlayer : public CGameObject
 {
