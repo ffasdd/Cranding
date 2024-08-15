@@ -470,7 +470,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 		case 'R':
 			if (sceneManager.GetCurrentScene() != SCENEKIND::LOBBY) break;
-			gNetwork.SendIngameStart();
+			//gNetwork.SendIngameStart();
 
 			isready = true;
 			break;
@@ -1575,8 +1575,8 @@ void CGameFramework::FrameAdvance()
 				SceneChange = true;
 				ChangeScene(SCENEKIND::LOBBY);
 				SceneChange = false;
-				gNetwork.SendLoginfo();
-				while (cl_id != -1);
+				//gNetwork.SendLoginfo();
+				//while (cl_id != -1);
 			}
 			else if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY ||
 				sceneManager.GetCurrentScene() == SCENEKIND::FIRE ||
@@ -1586,38 +1586,38 @@ void CGameFramework::FrameAdvance()
 				SceneChange = true;
 				ChangeScene(SCENEKIND::SPACESHIP);
 				SceneChange = false;
-				gNetwork.stage_num = 2;
-				gNetwork.SendChangeScene(2);
+				//gNetwork.stage_num = 2;
+				//gNetwork.SendChangeScene(2);
 				m_pPlayer->SetLook({ 0.f,0.f,1.f });
 				m_pPlayer->SetUp({ 0.f,1.f,0.f });
 				m_pPlayer->SetRight({ 1.f,0.f,0.f });
-				if (gNetwork.mosnterinit == false)
-				{
-					gNetwork.SendMonsterInit();
-				}
+				//if (gNetwork.mosnterinit == false)
+				//{
+				//	gNetwork.SendMonsterInit();
+				//}
 			}
 		}
 		else if (isSceneChangetoFire) {
 			SceneChange = true;
 			ChangeScene(SCENEKIND::FIRE);
 			SceneChange = false;
-			gNetwork.stage_num = 4;
-			gNetwork.SendChangeScene(4);
+			//gNetwork.stage_num = 4;
+			//gNetwork.SendChangeScene(4);
 		}
 		else if (isSceneChangetoIce) {
 			SceneChange = true;
 			ChangeScene(SCENEKIND::ICE);
-			gNetwork.stage_num = 3;
+			//gNetwork.stage_num = 3;
 			SceneChange = false;
 
-			gNetwork.SendChangeScene(3);
+			//gNetwork.SendChangeScene(3);
 		}
 		else if (isSceneChangetoNature) {
 			SceneChange = true;
 			ChangeScene(SCENEKIND::NATURE);
-			gNetwork.stage_num = 5;
+			//gNetwork.stage_num = 5;
 			SceneChange = false;
-			gNetwork.SendChangeScene(5);
+			//gNetwork.SendChangeScene(5);
 		}
 		else if (isWin) {
 			SceneChange = true;
@@ -1631,7 +1631,7 @@ void CGameFramework::FrameAdvance()
 		}
 
 		m_GameTimer.Tick(60.0f);
-		if (gNetwork.my_id != -1)
+		//if (gNetwork.my_id != -1)
 		{
 			ProcessInput();
 			AnimateObjects();
@@ -1803,7 +1803,7 @@ void CGameFramework::FrameAdvance()
 #ifdef _WITH_SYNCH_SWAPCHAIN
 		m_pdxgiSwapChain->Present(1, 0);
 #else
-		m_pdxgiSwapChain->Present(0, 0);
+		m_pdxgiSwapChain->Present(1, 0);
 #endif
 #endif
 
