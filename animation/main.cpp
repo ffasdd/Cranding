@@ -262,7 +262,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		::PostQuitMessage(0);
 		break;
 	default:
-		return(::DefWindowProc(hWnd, message, wParam, lParam));
+		// 여기 if문 넣는게 맞는지 아닌지 아직 확신 못함 
+		if (::IsWindow(hWnd))
+			return(::DefWindowProc(hWnd, message, wParam, lParam));
+		break;
 	}
 	return 0;
 }
