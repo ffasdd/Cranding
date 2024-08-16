@@ -471,7 +471,7 @@ CAnimationSets::~CAnimationSets()
 {
 	for (int i = 0; i < m_nAnimationSets; i++)
 	{
-		if (m_pAnimationSets[i]) {
+		if (m_pAnimationSets[i] && m_pAnimationSets[i] != nullptr) {
 			delete m_pAnimationSets[i];
 			m_pAnimationSets[i] = nullptr;
 		}
