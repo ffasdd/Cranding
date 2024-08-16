@@ -39,16 +39,53 @@ CTexture::~CTexture()
 {
 	if (m_ppd3dTextures)
 	{
-		for (int i = 0; i < m_nTextures; i++) if (m_ppd3dTextures[i]) m_ppd3dTextures[i]->Release();
+		for (int i = 0; i < m_nTextures; i++) {
+			if (m_ppd3dTextures[i]) {
+				m_ppd3dTextures[i]->Release();
+			}
+		}
 		delete[] m_ppd3dTextures;
+		m_ppd3dTextures = nullptr;
 	}
-	if (m_pnResourceTypes) delete[] m_pnResourceTypes;
-	if (m_pdxgiBufferFormats) delete[] m_pdxgiBufferFormats;
-	if (m_pnBufferElements) delete[] m_pnBufferElements;
 
-	if (m_pnRootParameterIndices) delete[] m_pnRootParameterIndices;
-	if (m_pd3dSrvGpuDescriptorHandles) delete[] m_pd3dSrvGpuDescriptorHandles;
-	if (m_pd3dSamplerGpuDescriptorHandles) delete[] m_pd3dSamplerGpuDescriptorHandles;
+	if (m_pnResourceTypes)
+	{
+		delete[] m_pnResourceTypes;
+		m_pnResourceTypes = nullptr;
+	}
+	/*if (m_pdxgiBufferFormats && m_pdxgiBufferFormats != nullptr && !IsBadReadPtr(m_pdxgiBufferFormats, sizeof(*m_pdxgiBufferFormats)))
+	{
+		delete[] m_pdxgiBufferFormats;
+		m_pdxgiBufferFormats = nullptr;
+	}*/
+	if (m_pdxgiBufferFormats) 
+	{
+		delete[] m_pdxgiBufferFormats;
+		m_pdxgiBufferFormats = nullptr;
+	}
+	if (m_pnBufferElements) 
+	{
+		delete[] m_pnBufferElements;
+		m_pnBufferElements = nullptr;
+	}
+
+	if (m_pnRootParameterIndices) 
+	{
+		delete[] m_pnRootParameterIndices;
+		m_pnRootParameterIndices = nullptr;
+	}
+
+	if (m_pd3dSrvGpuDescriptorHandles) 
+	{
+		delete[] m_pd3dSrvGpuDescriptorHandles;
+		m_pd3dSrvGpuDescriptorHandles = nullptr;
+	}
+
+	if (m_pd3dSamplerGpuDescriptorHandles) 
+	{
+		delete[] m_pd3dSamplerGpuDescriptorHandles;
+		m_pd3dSamplerGpuDescriptorHandles = nullptr;
+	}
 }
 
 void CTexture::SetRootParameterIndex(int nIndex, UINT nRootParameterIndex)
@@ -469,18 +506,19 @@ CAnimationSets::CAnimationSets(int nAnimationSets) :m_pAnimationSets(nullptr)
 
 CAnimationSets::~CAnimationSets()
 {
-	for (int i = 0; i < m_nAnimationSets; i++)
-	{
-		if (m_pAnimationSets[i] && m_pAnimationSets[i] != nullptr) {
-			delete m_pAnimationSets[i];
-			m_pAnimationSets[i] = nullptr;
-		}
-	}
-	if (m_pAnimationSets)
-	{
-		delete[] m_pAnimationSets;
-		m_pAnimationSets = nullptr;
-	}
+	//if (m_pAnimationSets != nullptr)
+	//{
+	//	for (int i = 0; i < m_nAnimationSets; i++)
+	//	{
+	//		if (m_pAnimationSets[i]) {
+	//			delete m_pAnimationSets[i];
+	//			m_pAnimationSets[i] = nullptr;
+	//		}
+	//	}
+	//	delete[] m_pAnimationSets;
+	//	m_pAnimationSets = nullptr;
+	//}
+
 	if (m_ppBoneFrameCaches) {
 		delete[] m_ppBoneFrameCaches;
 		m_ppBoneFrameCaches = nullptr;

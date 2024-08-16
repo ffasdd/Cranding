@@ -109,6 +109,8 @@ public:
 	ID3D12Resource* m_pBlurBuffer = NULL;
 	bool isBlurRender = false;
 
+	bool isChangingScene = true;
+
 	CPlayer* m_pPlayer = NULL;
 	float PlayerPosX = 0.0f;
 	float PlayerPosZ = 0.0f;

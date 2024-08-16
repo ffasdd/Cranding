@@ -340,37 +340,47 @@ void CGameFramework::ChangeSwapChainState()
 
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	if (m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+	//if (m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
 	case WM_LBUTTONDOWN:
-		::SetCapture(hWnd);
-		::GetCursorPos(&m_ptOldCursorPos);
-		if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN && FRAME_BUFFER_HEIGHT > 1000)
+		if (isChangingScene == false)
 		{
-			UILayer::GetInstance()->ProcessMouseClick(SCENEKIND::LOGIN, m_ptOldCursorPos);
+			::SetCapture(hWnd);
+			::GetCursorPos(&m_ptOldCursorPos);
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN && FRAME_BUFFER_HEIGHT > 1000)
+			{
+				UILayer::GetInstance()->ProcessMouseClick(SCENEKIND::LOGIN, m_ptOldCursorPos);
+			}
+			// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
+
+			if (g_clients.find(cl_id) == g_clients.end())break;
+
+			g_clients[cl_id].setAttack(true);
+			gNetwork.SendAttack(g_clients[cl_id].getAttack());
 		}
-		// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
-
-		if (g_clients.find(cl_id) == g_clients.end())break;
-
-		g_clients[cl_id].setAttack(true);
-		gNetwork.SendAttack(g_clients[cl_id].getAttack());
 		break;
 
 	case WM_RBUTTONDOWN:
-		::SetCapture(hWnd);
-		::GetCursorPos(&m_ptOldCursorPos);
-		m_pPlayer->m_pSkinnedAnimationController->m_bisRotate = true;
+		if (isChangingScene == false)
+		{
+			::SetCapture(hWnd);
+			::GetCursorPos(&m_ptOldCursorPos);
+			m_pPlayer->m_pSkinnedAnimationController->m_bisRotate = true;
+		}
 		break;
 
 	case WM_LBUTTONUP:
-		::ReleaseCapture();
+		if (isChangingScene == false)
+			::ReleaseCapture();
 		break;
 
 	case WM_RBUTTONUP:
-		::ReleaseCapture();
-		m_pPlayer->m_pSkinnedAnimationController->m_bisRotate = false;
+		if (isChangingScene == false)
+		{
+			::ReleaseCapture();
+			m_pPlayer->m_pSkinnedAnimationController->m_bisRotate = false;
+		}
 		break;
 	case WM_MOUSEMOVE:
 		break;
@@ -420,43 +430,49 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 		case '1':
 
-			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) {
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN && SceneNum != 1) 
+			{
 				SceneNum = 1;
 				isSceneChange = true;
 				isready = false;
+				isChangingScene = true;
 				break;
 			}
 			break;
 
-		case '2': {
-			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
+		case '2':
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOGIN && SceneNum != 2) break;
 			SceneNum = 2;
 			isSceneChange = true;
 			isready = true;
-		}
-				break;
+			isChangingScene = true;
+			break;
 
 		case '3':
-			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN && SceneNum != 3) break;
 			// ice map
 			SceneNum = 3;
 			isSceneChangetoIce = true;
 			isready = false;
+			isChangingScene = true;
 			break;
+
 		case '4':
-			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN && SceneNum != 4) break;
 			// fire map
 			SceneNum = 4;
 			isSceneChangetoFire = true;
 			isready = true;
+			isChangingScene = true;
 			break;
 
 		case '5':
-			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN) break;
+			if (sceneManager.GetCurrentScene() == SCENEKIND::LOBBY || sceneManager.GetCurrentScene() == SCENEKIND::LOGIN && SceneNum != 5) break;
 			// grass map
 			SceneNum = 5;
 			isSceneChangetoNature = true;
 			isready = true;
+			isChangingScene = true;
 			break;
 
 		case VK_SPACE:
@@ -474,12 +490,15 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 			isready = true;
 			break;
+
 		case 'L':
 			m_pScene->m_ppHierarchicalGameObjects[13]->SetHealth(-100);
 			break;
+
 		case 'M':
 			isWin = true;
 			break;
+
 		case 'K':
 			isLose = true;
 			break;
@@ -527,10 +546,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 	case WM_KEYDOWN:
 		switch (wParam)
 		{
-		case VK_F8:
-			isBlurRender = !isBlurRender;
-			//ChangeSwapChainState();
-			break;
+		//case VK_F8:
+		//	isBlurRender = !isBlurRender;
+		//	//ChangeSwapChainState();
+		//	break;
 		}
 		break;
 	}
@@ -722,6 +741,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
+			isChangingScene = false;
 			break;
 		}
 		case SCENEKIND::SPACESHIP:
@@ -743,7 +763,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			//SoundData SpaceshipBgm = LoadWaveFile(L"Sound/Day.wav");
 			//ChangeBGM(0);
-
+			isChangingScene = false;
 			break;
 		}
 		case SCENEKIND::ICE:
@@ -766,6 +786,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 
 			//ChangeBGM(1);
+			isChangingScene = false;
 
 			break;
 
@@ -788,6 +809,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 
 			//ChangeBGM(2);
+			isChangingScene = false;
 
 			break;
 		}
@@ -811,6 +833,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 
 			//ChangeBGM(3);
+			isChangingScene = false;
 
 			break;
 		}
@@ -832,6 +855,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
+			isChangingScene = false;
 
 			break;
 		}
@@ -853,6 +877,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
+			isChangingScene = false;
 
 			break;
 		}

@@ -417,12 +417,30 @@ CStandardMesh::~CStandardMesh()
 	if (m_pd3dTangentBuffer) m_pd3dTangentBuffer->Release();
 	if (m_pd3dBiTangentBuffer) m_pd3dBiTangentBuffer->Release();
 
-	if (m_pxmf4Colors) delete[] m_pxmf4Colors;
-	if (m_pxmf3Normals) delete[] m_pxmf3Normals;
-	if (m_pxmf3Tangents) delete[] m_pxmf3Tangents;
-	if (m_pxmf3BiTangents) delete[] m_pxmf3BiTangents;
-	if (m_pxmf2TextureCoords0) delete[] m_pxmf2TextureCoords0;
-	if (m_pxmf2TextureCoords1) delete[] m_pxmf2TextureCoords1;
+	if (m_pxmf4Colors) {
+		delete[] m_pxmf4Colors;
+		m_pxmf4Colors = nullptr;
+	}
+	if (m_pxmf3Normals) {
+		delete[] m_pxmf3Normals;
+		m_pxmf3Normals = nullptr;
+	}
+	if (m_pxmf3Tangents) {
+		delete[] m_pxmf3Tangents;
+		m_pxmf3Tangents = nullptr;
+	}
+	if (m_pxmf3BiTangents) {
+		delete[] m_pxmf3BiTangents;
+		m_pxmf3BiTangents = nullptr;
+	}
+	if (m_pxmf2TextureCoords0) {
+		delete[] m_pxmf2TextureCoords0;
+		m_pxmf2TextureCoords0 = nullptr;
+	}
+	if (m_pxmf2TextureCoords1) {
+		delete[] m_pxmf2TextureCoords1;
+		m_pxmf2TextureCoords1 = nullptr;
+	}
 }
 
 void CStandardMesh::ReleaseUploadBuffers()
