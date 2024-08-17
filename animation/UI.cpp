@@ -318,7 +318,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
     ID3D11Resource* ppResources[] = { m_ppd3d11WrappedRenderTargets[nFrame] };
 
     m_pd2dDeviceContext->SetTarget(m_ppd2dRenderTargets[nFrame]);
-    m_pd3d11On12Device->AcquireWrappedResources(ppResources, _countof(ppResources));
+    //m_pd3d11On12Device->AcquireWrappedResources(ppResources, _countof(ppResources));
     std::wstring wideUsername{};
     std::wstring widePassword{};
 
@@ -438,7 +438,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         break;
     }
 
-    m_pd3d11On12Device->ReleaseWrappedResources(ppResources, _countof(ppResources));
+   // m_pd3d11On12Device->ReleaseWrappedResources(ppResources, _countof(ppResources));
     
     m_pd3d11DeviceContext->Flush();
 }
