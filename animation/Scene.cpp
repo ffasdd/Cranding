@@ -943,6 +943,8 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
 
+	PlaySound(TEXT("Sound/Lobby.wav"), NULL, SND_LOOP | SND_ASYNC);
+
 	if (pPlayerModel1) delete pPlayerModel1;
 	if (pPlayerModel2) delete pPlayerModel2;
 }
@@ -1153,7 +1155,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	}
 
 	//PlayBGM(L"Sound/Day.wav");
-
+	PlaySound(TEXT("Sound/Day.wav"), NULL, SND_LOOP | SND_ASYNC);
 	// spaceship boundingsphere
 	SpaceshipBS.Center = { 250.0f, 10.0f, 750.0f };
 	SpaceshipBS.Radius = 50.0f;
@@ -1522,6 +1524,8 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	if (pIceItemModel) delete pIceItemModel;
 
+	PlaySound(TEXT("Sound/Ice.wav"), NULL, SND_LOOP | SND_ASYNC);
+
 	//PlayBGM(L"Sound/Ice.wav");
 
 }
@@ -1614,8 +1618,11 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
-				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
+				g_IceBossMonster.setHp(g_IceBossMonster.getHp() - 20);
+				gNetwork.SendBossDamage(g_IceBossMonster.getHp(), MonsterType::Ice_Boss);
+				
 				return true;
+
 			}
 			//// ice boss hand with player
 			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
@@ -1624,11 +1631,12 @@ bool CIceScene::CheckObjectByObjectCollisions()
 					||
 					m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
 			{
-				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
+
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				g_IceBossMonster.setHp(g_IceBossMonster.getHp() - 20);
-				gNetwork.SendBossDamage(g_IceBossMonster.getHp(), MonsterType::Ice_Boss);
+				
+
 				return false;
 			}
 		}
@@ -1642,15 +1650,11 @@ bool CIceScene::CheckObjectByObjectCollisions()
 			{
 				isIceitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
+				// 아이템 정보 서버한테 보내기 해당 정보 받으면 isiceitem true로 바꿔주기
 			}
 		}
 	}
 
-
-	//if (m_ppHierarchicalGameObjects[0]->m_bWasColliding && !m_ppHierarchicalGameObjects[0]->m_bIsColliding) {
-	//	// 충돌이 종료되었을 때 수행할 작업
-	//	HandleCollisionEnd(m_ppHierarchicalGameObjects[0]);
-	//}
 	return(false);
 }
 
@@ -1795,6 +1799,8 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[14]->Rotate(90, 90, 0);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
+
+	PlaySound(TEXT("Sound/Fire.wav"), NULL, SND_LOOP | SND_ASYNC);
 
 	if (pFireItemModel) delete pFireItemModel;
 }
@@ -2076,8 +2082,11 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
 
+	PlaySound(TEXT("Sound/Grass.wav"), NULL, SND_LOOP | SND_ASYNC);
+
 	if (pNatureItemModel) delete pNatureItemModel;
 }
+
 bool CGrassScene::CheckObjectByObjectCollisions()
 {
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
@@ -2170,7 +2179,21 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 
 				return(true);
 			}
+			// grass monster's head with player (when grass monster attack)
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				//g_clients[gNetwork.my_id].is_damage = true;
+				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				return false;
+			}
 		}
+		
 
 		// collision check with nature item
 		else if (i == 14 ) {
@@ -2240,6 +2263,8 @@ void CWInScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[3]->SetScale(30.0f, 30.0f, 30.0f);
 	m_ppHierarchicalGameObjects[3]->Rotate(-20.0f, 170.0f, 0.0f);
 
+	PlaySound(TEXT("Sound/Win.wav"), NULL, SND_LOOP | SND_ASYNC);
+
 	if (pPlayerModel) delete pPlayerModel;
 }
 void CWInScene::ReleaseUploadBuffers()
@@ -2288,6 +2313,8 @@ void CLoseScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[3]->SetScale(20.0f, 20.0f, 20.0f);
 	m_ppHierarchicalGameObjects[3]->Rotate(0.0f, 0.0f, 0.0f);
 	m_ppHierarchicalGameObjects[3]->SetPosition(-60.0f, 0.0f, -30.0f);
+
+	PlaySound(TEXT("Sound/Lose.wav"), NULL, SND_LOOP | SND_ASYNC);
 
 	if (pPlayerModel) delete pPlayerModel;
 }
