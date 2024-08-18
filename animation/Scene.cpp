@@ -1517,7 +1517,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pIceItemModel, 0);
 
-	m_ppHierarchicalGameObjects[14]->SetPosition(-12.0f, -200.0f, -220.f);
+	m_ppHierarchicalGameObjects[14]->SetPosition(-12.0f, 10.0f, -220.f);
 	m_ppHierarchicalGameObjects[14]->Rotate(45, 0, 0);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
@@ -1794,7 +1794,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pFireItemModel, 0);
 
-	m_ppHierarchicalGameObjects[14]->SetPosition(-60.0, -200.0f, 1327.0f);
+	m_ppHierarchicalGameObjects[14]->SetPosition(-60.0, 10.0f, 1327.0f);
 	m_ppHierarchicalGameObjects[14]->Rotate(90, 90, 0);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
@@ -2078,7 +2078,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_ppHierarchicalGameObjects[14] = new CMapObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, pNatureItemModel, 0);
 
-	m_ppHierarchicalGameObjects[14]->SetPosition(77.0f, -200.0f, -408.0f);
+	m_ppHierarchicalGameObjects[14]->SetPosition(77.0f, 10.0f, -408.0f);
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
 
