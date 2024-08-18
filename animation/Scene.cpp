@@ -1468,6 +1468,9 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 bool CIceScene::CheckObjectByObjectCollisions()
 {
+	if(gNetwork.IceItem == false)
+		m_ppHierarchicalGameObjects[14]->isdraw = false;
+
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// �ʰ� �浹�� ���
@@ -1742,6 +1745,8 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 }
 bool CFireScene::CheckObjectByObjectCollisions()
 {
+	if (gNetwork.FireItem == false)
+		m_ppHierarchicalGameObjects[14]->isdraw = false;
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 	
@@ -2030,6 +2035,8 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 bool CGrassScene::CheckObjectByObjectCollisions()
 {
+	if (gNetwork.NatureItem == false)
+		m_ppHierarchicalGameObjects[14]->isdraw = false;
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// �ʰ� �浹�� ���
@@ -2108,7 +2115,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 		{
 			// monster with player(attack mode)
 			if (gNetwork.my_id != -1 && m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
-				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				//send attacked monster num
 				CAnimationSet* pAnimationSet = m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationSets->m_pAnimationSets[m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_pAnimationTracks[4].m_nAnimationSet];
@@ -2129,11 +2136,11 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
-				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				//g_clients[gNetwork.my_id].is_damage = true;
-				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				g_clients[gNetwork.my_id].is_damage = true;
+				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
 				return false;
 			}
 		}
