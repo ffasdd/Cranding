@@ -230,7 +230,15 @@ CMaterial::~CMaterial()
 
 	if (m_nTextures > 0 && m_ppTextures != nullptr)
 	{
-		for (int i = 0; i < m_nTextures; i++) if (m_ppTextures[i]) m_ppTextures[i]->Release();
+		for (int i = 0; i < m_nTextures; i++)
+		{
+			if (m_ppTextures[i])
+			{
+				m_ppTextures[i]->Release();
+				m_ppTextures[i] = nullptr;
+			}
+		}
+
 		delete[] m_ppTextures;
 
 		if (m_ppstrTextureNames) delete[] m_ppstrTextureNames;
