@@ -1742,9 +1742,9 @@ void CGameFramework::FrameAdvance()
 
 
 		if (m_pScene) {
-			m_pScene->Render(m_pd3dCommandList, m_pCamera, false, -1);
+			m_pScene->Render(m_pd3dCommandList, m_pCamera, false);
 		}
-		m_pPlayer->Render(m_pd3dCommandList, m_pCamera, -1);
+		m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ShadowMap->Resource(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 
