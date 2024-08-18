@@ -1485,6 +1485,10 @@ void CGameFramework::AnimateObjects()
 	//m_pPlayer->UpdateBoundingBox();
 	if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
+	// iswin
+	if (m_pScene->isIceitem && m_pScene->isFireitem && m_pScene->isNatureitem)
+		isWin = true;
+
 	m_pPlayer->Animate(fTimeElapsed);
 
 	if (sceneManager.GetCurrentScene() != SCENEKIND::LOGIN && m_pScene->CheckObjectByObjectCollisions() && m_pScene)
