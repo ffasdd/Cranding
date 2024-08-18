@@ -42,8 +42,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	::LoadString(hInstance, IDC_CRANDING, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
-	while (!gNetwork.ReadytoConnect());
-
+	if (!gNetwork.ReadytoConnect())
+		gNetwork.ReadytoConnect(); // 실패시 재시도 while문을 도는것보단 이게나아보임
+	
 	// 로그인 완료 
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
@@ -198,7 +199,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	if (!hMainWnd) return(FALSE);
 
 	gGameFramework.OnCreate(hInstance, hMainWnd);
-
+	
 	::ShowWindow(hMainWnd, nCmdShow);
 	::UpdateWindow(hMainWnd);
 

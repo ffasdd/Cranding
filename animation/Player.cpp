@@ -534,13 +534,14 @@ void CTerrainPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVeloci
 				m_pSkinnedAnimationController->SetTrackEnable(1, true);
 				m_pSkinnedAnimationController->SetTrackEnable(m_pSkinnedAnimationController->m_nAnimationBefore, false);
 				m_pSkinnedAnimationController->SetTrackEnable(2, false);
-
-				if (g_clients[c_id].getAnimation() != animateState::SWORD_MOVE)
+				if (gNetwork.my_id != -1)
 				{
-					g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
-					g_clients[c_id].setAnimation(animateState::SWORD_MOVE);
-					cout << " Send Move" << endl;
-					gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
+					if (g_clients[c_id].getAnimation() != animateState::SWORD_MOVE)
+					{
+						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
+						g_clients[c_id].setAnimation(animateState::SWORD_MOVE);
+						gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
+					}
 				}
 			}
 		}
@@ -573,13 +574,13 @@ void CTerrainPlayer::Update(float fTimeElapsed)
 				m_pSkinnedAnimationController->SetTrackEnable(2, false);
 
 				// �÷��̾� ���Ⱑ Į�̶�� Į idle
-
-				if (g_clients[c_id].getAnimation() != animateState::SWORD_IDLE)
-				{
-					g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
-					g_clients[c_id].setAnimation(animateState::SWORD_IDLE);
-					cout << " Send Idle" << endl;
-					gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
+				if (gNetwork.my_id != -1) {
+					if (g_clients[c_id].getAnimation() != animateState::SWORD_IDLE)
+					{
+						g_clients[c_id].setprevAnimation(g_clients[c_id].getAnimation());
+						g_clients[c_id].setAnimation(animateState::SWORD_IDLE);
+						gNetwork.SendChangeAnimation(g_clients[c_id].getAnimation(), g_clients[c_id].getprevAnimation());
+					}
 				}
 
 

@@ -579,8 +579,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		if (m_ppHierarchicalGameObjects[i]->GetHealth() <= 0)
 			m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsDead = true;
 	}*/
-
-	if (g_clients[gNetwork.my_id].getHp() < 0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
+	
+	if (gNetwork.my_id != -1 && g_clients[gNetwork.my_id].getHp() < 0 && m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false) {
 		g_clients[gNetwork.my_id].setHp(0);
 		gNetwork.SendPlayerDead();
 		//m_pPlayer->SetHealth(0);
@@ -1234,7 +1234,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 		else if (i > 2 && i < 13)
 		{
 			// monster with player's sword(attack mode)
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
+			if (gNetwork.my_id != -1 && m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
 				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild
 					->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
@@ -1246,7 +1246,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				return false;
 			}
 			// fire monster's hand with player (when firemonster attack)
-			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_xmBoundingBox)
 					||
@@ -1264,7 +1264,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				return false;
 			}
 			// fire monster's hand with spaceship
-			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& (this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_xmBoundingBox)
 					||
@@ -1281,7 +1281,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 		else if (i >= 13 && i < 23)
 		{
 			// monster with player's sword(attack mode)
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
+			if (gNetwork.my_id != -1 && m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
 				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
@@ -1292,7 +1292,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				return false;
 			}
 			// ice monster's hand with player (when ice monster attack)
-			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)
 					||
@@ -1307,7 +1307,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				return false;
 			}
 			// ice monster's hand with spaceship
-			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& (this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)
 					||
@@ -1322,7 +1322,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 		// grass monster와의 충돌 체크
 		else if (i >= 23 && i < 33)
 		{
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
+			if (gNetwork.my_id != -1 && m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
 				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
@@ -1333,7 +1333,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				return false;
 			}
 			// grass monster's head with player (when grass monster attack)
-			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
 			{
@@ -1346,7 +1346,7 @@ bool CSpaceShipScene::CheckObjectByObjectCollisions()
 				return false;
 			}
 			// grass monster's head with spaceship
-			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& this->SpaceshipBS.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
 			{
@@ -1580,7 +1580,7 @@ bool CIceScene::CheckObjectByObjectCollisions()
 		else if (i > 2 && i < 13 && m_ppHierarchicalGameObjects[i] != nullptr)
 		{
 			// monster with player's sword(attack mode)
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
+			if (gNetwork.my_id != -1 && m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
 				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
@@ -1591,7 +1591,7 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				return true;
 			}
 			// ice monster's hand with player (when ice monster attack)
-			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)
 					||
@@ -1611,29 +1611,28 @@ bool CIceScene::CheckObjectByObjectCollisions()
 		else if (i == 13)
 		{
 			// monster with player's sword
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
+			if (gNetwork.my_id != -1 && m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
 				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
-				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
-				//gNetwork.SendMonsterDie(g_monsters[i - 3].getId(), MonsterType::Ice);
-
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
 				return true;
 			}
 			//// ice boss hand with player
-			//else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
-			//	&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
-			//	&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)
-			//		||
-			//		m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
-			//{
-			//	// 여기에 hp 닳는 코드 넣어주랑
-			//	m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
-			//	m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-
-			//	return false;
-			//}
+			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_xmBoundingBox)
+					||
+					m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				g_IceBossMonster.setHp(g_IceBossMonster.getHp() - 20);
+				gNetwork.SendBossDamage(g_IceBossMonster.getHp(), MonsterType::Ice_Boss);
+				return false;
+			}
 		}
 
 		// collision check with ice item
@@ -1854,7 +1853,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 		else if (i > 2 && i < 13 && m_ppHierarchicalGameObjects[i] !=  nullptr)
 		{
 			// monster with player's sword(attack mode)
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
+			if (gNetwork.my_id != -1 && m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
 				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild
 					->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
@@ -1866,7 +1865,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 				return true;
 			}
 			// fire monster's hand with player (when firemonster attack)
-			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				// 왼손
 				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_xmBoundingBox)
@@ -1886,7 +1885,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 		else if (i == 13)
 		{
 			// fire boss with player(attack mode)
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
+			if (gNetwork.my_id != -1 && m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox)
 				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0)
 			{
@@ -1898,7 +1897,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 				return true;
 			}
 			// fire boss hand with player
-			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& (m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)
 					||
@@ -2132,7 +2131,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 		// collision check with nature monster
 		else if (i > 2 && i < 13 && m_ppHierarchicalGameObjects[i] != nullptr)
 		{
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
+			if (gNetwork.my_id != -1 && m_pPlayer->m_pSkinnedAnimationController->m_bIsValidAttack == true
 				&& m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack == 0
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
@@ -2143,7 +2142,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				return true;
 			}
 			// grass monster's head with player (when grass monster attack)
-			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_xmBoundingBox))
 			{
@@ -2160,7 +2159,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 		else if (i == 13)
 		{
 			// monster with player(attack mode)
-			if (m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
+			if (gNetwork.my_id != -1 && m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				//send attacked monster num
