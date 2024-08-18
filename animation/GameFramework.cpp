@@ -1191,7 +1191,7 @@ void CGameFramework::myFunc_SetBlind(int n, int id, bool _isblind)
 			others_id = n;
 			break;
 		}
-		if (m_pScene->m_ppHierarchicalGameObjects[others_id + 1])m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->isdraw = _isblind;
+	if (m_pScene->m_ppHierarchicalGameObjects[others_id + 1])m_pScene->m_ppHierarchicalGameObjects[others_id + 1]->isdraw = _isblind;
 	}
 
 }
