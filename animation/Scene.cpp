@@ -1532,6 +1532,8 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 bool CIceScene::CheckObjectByObjectCollisions()
 {
+	if (g_IceBossMonster.getHp() < 0)
+		m_ppHierarchicalGameObjects[14]->isdraw = true;
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// �ʰ� �浹�� ���
@@ -1621,7 +1623,6 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				g_IceBossMonster.setHp(g_IceBossMonster.getHp() - 20);
 				gNetwork.SendBossDamage(g_IceBossMonster.getHp(), MonsterType::Ice_Boss);
 				
-				m_ppHierarchicalGameObjects[14]->isdraw = true;
 
 				return true;
 
@@ -1806,6 +1807,8 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 }
 bool CFireScene::CheckObjectByObjectCollisions()
 {
+	if (g_FireBossMonster.getHp() < 0)
+		m_ppHierarchicalGameObjects[14]->isdraw = true;
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 	
@@ -1888,6 +1891,8 @@ bool CFireScene::CheckObjectByObjectCollisions()
 		// collision check with fire boss monster
 		else if (i == 13)
 		{
+
+
 			// fire boss with player(attack mode)
 			if (gNetwork.my_id != -1 && m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox)
@@ -1897,7 +1902,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 
 				// 보스 체력 서버로 전송 
 				gNetwork.SendBossDamage(g_FireBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Fire_Boss);
-				m_ppHierarchicalGameObjects[14]->isdraw = true;
+			
 				return true;
 			}
 
@@ -2091,6 +2096,8 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 bool CGrassScene::CheckObjectByObjectCollisions()
 {
+	if (g_NatureBossMonster.getHp() < 0)
+		m_ppHierarchicalGameObjects[14]->isdraw = true;
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// �ʰ� �浹�� ���
@@ -2179,7 +2186,6 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
 
-				m_ppHierarchicalGameObjects[14]->isdraw = true;
 
 				return(true);
 			}
