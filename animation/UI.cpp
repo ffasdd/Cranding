@@ -320,14 +320,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
 
     m_pd2dDeviceContext->SetTarget(m_ppd2dRenderTargets[nFrame]);
     m_pd3d11On12Device->AcquireWrappedResources(ppResources, _countof(ppResources));
-    std::wstring wideUsername{};
-    std::wstring widePassword{};
-
-    float caretX = 0.f;
-    float caretY = 0.f;
-
-    WCHAR username[256] = L"";
-    WCHAR password[256] = L"";
+   
 
     switch (scenekind)
     {

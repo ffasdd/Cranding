@@ -76,6 +76,9 @@ public:
     bool bOnUsername =false;
     bool bOnPassword = false;
     bool bPasswordVisible = false;
+
+    std::wstring wideUsername{};
+    std::wstring widePassword{};
 private:
     array<vector<UIRect>, 3> m_uiRects;
 
