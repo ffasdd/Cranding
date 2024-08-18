@@ -432,7 +432,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
 
         m_pd2dDeviceContext->DrawText(m_vecItem[2], (UINT)wcslen(m_vecItem[2]), m_textFormats[TEXT_SIZE::SIZE_15], m_NatureItemBar, m_brushes[BRUSH_COLOR::ABLACK]);
         if (gNetwork.my_id != -1 && gNetwork.NatureItem)
-            m_pd2dDeviceContext->DrawText(m_vecItem[2], (UINT)wcslen(m_vecItem[2]), m_textFormats[TEXT_SIZE::SIZE_15], m_NatureItemBar, m_brushes[BRUSH_COLOR::BRUSH_COUNT]);
+            m_pd2dDeviceContext->DrawText(m_vecItem[2], (UINT)wcslen(m_vecItem[2]), m_textFormats[TEXT_SIZE::SIZE_15], m_NatureItemBar, m_brushes[BRUSH_COLOR::PINK]);
 
         m_pd2dDeviceContext->EndDraw();
         break;

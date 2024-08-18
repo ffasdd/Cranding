@@ -596,6 +596,8 @@ void Network::ProcessPacket(char* buf)
 			break;
 		}
 		}
+		if (IceItem == true && FireItem == true && NatureItem == true)
+			gGameFramework.isWin = true; 
 		break; 
 	}
 	}
