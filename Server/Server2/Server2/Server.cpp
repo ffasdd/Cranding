@@ -420,6 +420,31 @@ void Server::WorkerThread()
 				ingameroom[r_id].NightMonster[ex_over->_ai_target_obj]._is_alive = false;
 				break;
 			}
+			case MonsterType::Ice: {
+				ingameroom[r_id].IceMonster[ex_over->_ai_target_obj]._is_alive = false;
+				break;
+			}
+			case MonsterType::Fire: {
+				ingameroom[r_id].FireMonster[ex_over->_ai_target_obj]._is_alive = false;
+				break;
+			}
+			case MonsterType::Nature: {
+				ingameroom[r_id].NatureMonster[ex_over->_ai_target_obj]._is_alive = false;
+				break;
+			}
+			case MonsterType::Ice_Boss: {
+				ingameroom[r_id].IceBoss._is_alive = false;
+				break;
+			}
+			case MonsterType::Fire_Boss: {
+				ingameroom[r_id].FireBoss._is_alive = false;
+				break;
+			}
+			case MonsterType::Nature_Boss: {
+				ingameroom[r_id].NatureBoss._is_alive = false;
+				break;
+			}
+
 			}
 		}
 		default:
@@ -730,60 +755,6 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 	}
 				  break;
-	case CS_ATTACK_COLLISION:
-	{
-		CS_ATTACK_COLLISION_PACKET* p = reinterpret_cast<CS_ATTACK_COLLISION_PACKET*>(packet);
-		
-		switch (p->_montype)
-		{
-		case MonsterType::Night:
-		{
-
-			//ingameroom[p->room_id].NightMonster[p->npc_id].MonsterLock.lock();
-			//ingameroom[p->room_id].NightMonster[p->npc_id]._is_alive = false;
-			//ingameroom[p->room_id].NightMonster[p->npc_id].MonsterLock.unlock();
-
-			break;
-		}
-		case MonsterType::Fire:
-		{
-			ingameroom[p->room_id].FireMonster[p->npc_id].MonsterLock.lock();
-			ingameroom[p->room_id].FireMonster[p->npc_id]._is_alive = false;
-			ingameroom[p->room_id].FireMonster[p->npc_id].MonsterLock.unlock();
-			break;
-		}
-		case MonsterType::Ice:
-		{
-			ingameroom[p->room_id].IceMonster[p->npc_id].MonsterLock.lock();
-			ingameroom[p->room_id].IceMonster[p->npc_id]._is_alive = false;
-			ingameroom[p->room_id].IceMonster[p->npc_id].MonsterLock.unlock();
-			break;
-		}
-		case MonsterType::Nature:
-		{
-			ingameroom[p->room_id].NatureMonster[p->npc_id].MonsterLock.lock();
-			ingameroom[p->room_id].NatureMonster[p->npc_id]._is_alive = false;
-			ingameroom[p->room_id].NatureMonster[p->npc_id].MonsterLock.unlock();
-			break;
-		}
-		case MonsterType::Fire_Boss:
-		{
-			ingameroom[p->room_id].FireBoss._is_alive = false;
-			break;
-		}
-		case MonsterType::Ice_Boss:
-		{
-			ingameroom[p->room_id].IceBoss._is_alive = false;
-			break;
-		}
-		case MonsterType::Nature_Boss:
-		{
-			ingameroom[p->room_id].NatureBoss._is_alive = false;
-			break;
-		}
-		}
-		break;
-	}
 	case CS_MONSTER_DIE: {
 		CS_MONSTER_DIE_PACKET* p = reinterpret_cast<CS_MONSTER_DIE_PACKET*>(packet);
 		// 다른 플레이어들 한테 NPC 타격 상황을 보냄 
@@ -835,7 +806,7 @@ void Server::ProcessPacket(int id, char* packet)
 			TIMER_EVENT ev{ attacktime + 1s ,p->room_id,EVENT_TYPE::EV_PLAYER_ATTACK_NPC,p->npc_id,p->_montype };
 			g_Timer.InitTimerQueue(ev);
 		}
-		TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(800ms),p->room_id,EVENT_TYPE::EV_MONSTER_DEAD,p->npc_id, p->_montype};
+		TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(800ms),p->room_id,EVENT_TYPE::EV_MONSTER_DEAD,p->npc_id, p->_montype };
 		g_Timer.InitTimerQueue(ev);
 		break;
 	}
@@ -1033,7 +1004,7 @@ void Server::ReadyToStart()
 			// 접속하는 클라이언트 순서대로 array에 집어넣어야함, 
 			// id를 맞춰야하나? 
 			if (ingameroom[room_id].ingamePlayer.size() < MAX_ROOM_USER)continue;
-			
+
 			// 무조건 방에 2명이 진행 됐을 때에만 add, 서로에게 보내준다. 
 
 			for (auto& NightMonsters : ingameroom[room_id].NightMonster)
