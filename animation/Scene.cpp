@@ -1618,8 +1618,11 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
-				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
+				g_IceBossMonster.setHp(g_IceBossMonster.getHp() - 20);
+				gNetwork.SendBossDamage(g_IceBossMonster.getHp(), MonsterType::Ice_Boss);
+				
 				return true;
+
 			}
 			//// ice boss hand with player
 			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
@@ -1628,11 +1631,12 @@ bool CIceScene::CheckObjectByObjectCollisions()
 					||
 					m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_xmBoundingBox)))
 			{
-				// 여기에 hp 닳는 코드 넣어주랑
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 20);
+
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				g_IceBossMonster.setHp(g_IceBossMonster.getHp() - 20);
-				gNetwork.SendBossDamage(g_IceBossMonster.getHp(), MonsterType::Ice_Boss);
+				
+
 				return false;
 			}
 		}
@@ -1646,15 +1650,11 @@ bool CIceScene::CheckObjectByObjectCollisions()
 			{
 				isIceitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
+				// 아이템 정보 서버한테 보내기 해당 정보 받으면 isiceitem true로 바꿔주기
 			}
 		}
 	}
 
-
-	//if (m_ppHierarchicalGameObjects[0]->m_bWasColliding && !m_ppHierarchicalGameObjects[0]->m_bIsColliding) {
-	//	// 충돌이 종료되었을 때 수행할 작업
-	//	HandleCollisionEnd(m_ppHierarchicalGameObjects[0]);
-	//}
 	return(false);
 }
 
@@ -2179,7 +2179,21 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 
 				return(true);
 			}
+			// grass monster's head with player (when grass monster attack)
+			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
+				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
+			{
+				// 여기에 hp 닳는 코드 넣어주랑
+				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
+				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
+				//g_clients[gNetwork.my_id].is_damage = true;
+				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				return false;
+			}
 		}
+		
 
 		// collision check with nature item
 		else if (i == 14 ) {
