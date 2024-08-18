@@ -1621,6 +1621,8 @@ bool CIceScene::CheckObjectByObjectCollisions()
 				g_IceBossMonster.setHp(g_IceBossMonster.getHp() - 20);
 				gNetwork.SendBossDamage(g_IceBossMonster.getHp(), MonsterType::Ice_Boss);
 				
+				m_ppHierarchicalGameObjects[14]->isdraw = true;
+
 				return true;
 
 			}
@@ -1897,7 +1899,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 
 				// 보스 체력 서버로 전송 
 				gNetwork.SendBossDamage(g_FireBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Fire_Boss);
-
+				m_ppHierarchicalGameObjects[14]->isdraw = true;
 				return true;
 			}
 			// fire boss hand with player
@@ -2176,6 +2178,8 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
+
+				m_ppHierarchicalGameObjects[14]->isdraw = true;
 
 				return(true);
 			}
