@@ -1153,7 +1153,7 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	}
 
 	//PlayBGM(L"Sound/Day.wav");
-
+	PlaySound(TEXT("Sound/Day.wav"), NULL, SND_LOOP | SND_ASYNC);
 	// spaceship boundingsphere
 	SpaceshipBS.Center = { 250.0f, 10.0f, 750.0f };
 	SpaceshipBS.Radius = 50.0f;
@@ -1521,6 +1521,8 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
 
 	if (pIceItemModel) delete pIceItemModel;
+
+	PlaySound(TEXT("Sound/Ice.wav"), NULL, SND_LOOP | SND_ASYNC);
 
 	//PlayBGM(L"Sound/Ice.wav");
 
