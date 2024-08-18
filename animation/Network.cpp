@@ -91,7 +91,7 @@ bool Network::StartServer()
 	ServerStart = true;
 
 	netThread = std::thread([this]() {NetThreadFunc(); });
-
+	netThread.detach();
 	return true;
 }
 
@@ -104,7 +104,7 @@ void Network::NetThreadFunc() {
 			int err = WSAGetLastError();
 			if (err == WSAEWOULDBLOCK) {
 				// 데이터가 없는 경우 스레드를 양보
-				std::this_thread::yield();
+				//std::this_thread::yield();
 				continue;
 			}
 			else {

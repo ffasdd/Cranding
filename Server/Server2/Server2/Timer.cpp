@@ -159,6 +159,15 @@ void Timer::TimerThread()
 					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
 				}
+				case EVENT_TYPE::EV_MONSTER_DEAD: {
+					Over_Exp* ov = new Over_Exp;
+					ov->_comptype = COMP_TYPE::MONTSER_DELETE;
+					ov->_ai_target_obj = ev.targetId;
+					ov->_monstertype = ev.monsterType;
+					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
+					break;
+
+				}
 
 				}
 			}

@@ -798,8 +798,11 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 							this->m_nCntValidAttack = 0;
 							this->m_bIsAttack = false;
 							this->m_bIsValidAttack = false;
-							g_clients[gNetwork.my_id].setAttack(false);
-							gNetwork.SendAttack(g_clients[gNetwork.my_id].getAttack());
+							if (gNetwork.my_id != -1)
+							{
+								g_clients[gNetwork.my_id].setAttack(false);
+								gNetwork.SendAttack(g_clients[gNetwork.my_id].getAttack());
+							}
 						}
 					}
 
@@ -839,8 +842,11 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CGameObject* pRootGam
 						if (m_bIsPlayerAttacked && fPosition == 0.0f)
 						{
 							m_bIsPlayerAttacked = false;
-							g_clients[gNetwork.my_id].is_damage = false;
-							gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+							if (gNetwork.my_id != -1) {
+
+								g_clients[gNetwork.my_id].is_damage = false;
+								gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+							}
 						}
 					}
 
