@@ -1467,7 +1467,7 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 bool CIceScene::CheckObjectByObjectCollisions()
 {
-	if(gNetwork.IceItem == false)
+	if(gNetwork.IceItem == true)
 		m_ppHierarchicalGameObjects[14]->isdraw = false;
 
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
@@ -1744,7 +1744,7 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 }
 bool CFireScene::CheckObjectByObjectCollisions()
 {
-	if (gNetwork.FireItem == false)
+	if (gNetwork.FireItem == true)
 		m_ppHierarchicalGameObjects[14]->isdraw = false;
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
@@ -2034,7 +2034,7 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 bool CGrassScene::CheckObjectByObjectCollisions()
 {
-	if (gNetwork.NatureItem == false)
+	if (gNetwork.NatureItem == true)
 		m_ppHierarchicalGameObjects[14]->isdraw = false;
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
