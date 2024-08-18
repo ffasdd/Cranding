@@ -1649,6 +1649,7 @@ bool CIceScene::CheckObjectByObjectCollisions()
 			{
 				isIceitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
+				gNetwork.SendGetItem(1);
 				// 아이템 정보 서버한테 보내기 해당 정보 받으면 isiceitem true로 바꿔주기
 			}
 		}
@@ -1927,6 +1928,7 @@ bool CFireScene::CheckObjectByObjectCollisions()
 			{
 				isFireitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
+				gNetwork.SendGetItem(2);
 			}
 		}
 	}
@@ -2206,6 +2208,7 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 			{
 				isNatureitem = true;
 				m_ppHierarchicalGameObjects[i]->isdraw = false;
+				gNetwork.SendGetItem(3);
 			}
 		}
 	}

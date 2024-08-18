@@ -430,16 +430,16 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
 
         // item UI        
         m_pd2dDeviceContext->DrawText(m_vecItem[0], (UINT)wcslen(m_vecItem[0]), m_textFormats[TEXT_SIZE::SIZE_15], m_IceItemBar, m_brushes[BRUSH_COLOR::ABLACK]);
-        if(gGameFramework.m_pScene->isIceitem)
-            m_pd2dDeviceContext->DrawText(m_vecItem[0], (UINT)wcslen(m_vecItem[0]), m_textFormats[TEXT_SIZE::SIZE_15], m_IceItemBar, m_brushes[BRUSH_COLOR::BLACK]);
+        if(gNetwork.my_id != -1 && gNetwork.IceItem)
+            m_pd2dDeviceContext->DrawText(m_vecItem[0], (UINT)wcslen(m_vecItem[0]), m_textFormats[TEXT_SIZE::SIZE_15], m_IceItemBar, m_brushes[BRUSH_COLOR::WHITE]);
 
         m_pd2dDeviceContext->DrawText(m_vecItem[1], (UINT)wcslen(m_vecItem[1]), m_textFormats[TEXT_SIZE::SIZE_15], m_FireItemBar, m_brushes[BRUSH_COLOR::ABLACK]);
-        if (gGameFramework.m_pScene->isFireitem)
-            m_pd2dDeviceContext->DrawText(m_vecItem[1], (UINT)wcslen(m_vecItem[1]), m_textFormats[TEXT_SIZE::SIZE_15], m_FireItemBar, m_brushes[BRUSH_COLOR::BLACK]);
+        if (gNetwork.my_id != -1 && gNetwork.FireItem)
+            m_pd2dDeviceContext->DrawText(m_vecItem[1], (UINT)wcslen(m_vecItem[1]), m_textFormats[TEXT_SIZE::SIZE_15], m_FireItemBar, m_brushes[BRUSH_COLOR::RED]);
 
         m_pd2dDeviceContext->DrawText(m_vecItem[2], (UINT)wcslen(m_vecItem[2]), m_textFormats[TEXT_SIZE::SIZE_15], m_NatureItemBar, m_brushes[BRUSH_COLOR::ABLACK]);
-        if (gGameFramework.m_pScene->isNatureitem)
-            m_pd2dDeviceContext->DrawText(m_vecItem[2], (UINT)wcslen(m_vecItem[2]), m_textFormats[TEXT_SIZE::SIZE_15], m_NatureItemBar, m_brushes[BRUSH_COLOR::BLACK]);
+        if (gNetwork.my_id != -1 && gNetwork.NatureItem)
+            m_pd2dDeviceContext->DrawText(m_vecItem[2], (UINT)wcslen(m_vecItem[2]), m_textFormats[TEXT_SIZE::SIZE_15], m_NatureItemBar, m_brushes[BRUSH_COLOR::BRUSH_COUNT]);
 
         m_pd2dDeviceContext->EndDraw();
         break;

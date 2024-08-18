@@ -61,6 +61,7 @@ public: // thread send
 	void SendPlayerDead();
 
 	void SendMonsterInit();
+	void SendGetItem(int i_num);
 
 	
 public: // utils
@@ -79,6 +80,11 @@ public:
 	bool mosnterinit = false;
 	int Day = 0;
 	int index = 0;
+	
+	bool IceItem = false;
+	bool FireItem = false;
+	bool NatureItem = false;
+
 public:
 	mutex g_clients_mutex;
 	

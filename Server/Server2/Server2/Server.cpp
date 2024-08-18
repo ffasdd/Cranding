@@ -924,6 +924,33 @@ void Server::ProcessPacket(int id, char* packet)
 
 
 	}
+	case CS_GET_ITEM: {
+		CS_GET_ITEM_PACKET* p = reinterpret_cast<CS_GET_ITEM_PACKET*>(packet);
+		switch (p->item_num)
+		{
+		case 1: {
+			// ICE 
+			ingameroom[p->room_id].IceItem = true;
+			break;
+		}
+		case 2: {
+			// FIRE 
+			ingameroom[p->room_id].FireItem = true;
+			break;
+		}
+		case 3: {
+			// NATURE 
+			ingameroom[p->room_id].NatureItem = true;
+			break;
+		}
+		}
+
+		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
+		{
+			pl->send_get_item(p->item_num);
+		}
+		break;
+	}
 	}
 }
 

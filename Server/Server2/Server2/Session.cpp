@@ -258,6 +258,15 @@ void Session::send_player_hit(int client_id)
 	do_send(&p);
 }
 
+void Session::send_get_item(int item_num)
+{
+	SC_GET_ITEM_PACKET p;
+	p.size = sizeof(SC_GET_ITEM_PACKET);
+	p.type = SC_GET_ITEM;
+	p.item_num = item_num;
+	do_send(&p);
+}
+
 void Session::Rotate(float yaw)
 {
 	if (yaw != 0.0f) {
