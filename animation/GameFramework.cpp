@@ -391,10 +391,7 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	DWORD dwDirection = 0;
-	if (m_pScene)
-	{
-		m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
-	}
+
 
 	switch (nMessageID)
 	{
