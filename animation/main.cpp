@@ -42,8 +42,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	::LoadString(hInstance, IDC_CRANDING, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
-	while (!gNetwork.ReadytoConnect());
-
+	if (!gNetwork.ReadytoConnect())
+		gNetwork.ReadytoConnect();
 	// 로그인 완료 
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
