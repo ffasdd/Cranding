@@ -803,71 +803,6 @@ void CLoginScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 }
 
-
-void  CLoginScene::HandleSpecialKeyInput(WPARAM wParam)
-{
-	if (wParam == VK_TAB) // Switch input mode when Tab key is pressed
-	{
-		m_isUsernameInput = !m_isUsernameInput;
-	}
-}
-
-void CLoginScene::ProcessLogin()
-{
-	// Implement login processing logic here
-	// For example, validate credentials, communicate with a server, etc.
-	// For demonstration, we'll just output to console
-	printf("Username: %s\n", m_username.c_str());
-	printf("Password: %s\n", m_password.c_str());
-}
-
-void CLoginScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
-{
-	switch (nMessageID)
-	{
-
-	case WM_KEYDOWN:
-		if (m_isUsernameInput)
-		{
-			// Add character to username
-			if (wParam == '\r') // Enter key, switch to password input
-			{
-				m_isUsernameInput = false;
-			}
-			else if (wParam == '\b') // Backspace key
-			{
-				if (!m_username.empty())
-					m_username.pop_back();
-			}
-			else if (wParam >= ' ' && wParam <= '~') // Valid printable characters
-			{
-				m_username += wParam;
-			}
-		}
-		else
-		{
-			// Add character to password
-			if (wParam == '\r') // Enter key, process login
-			{
-				ProcessLogin();
-			}
-			else if (wParam == '\b') // Backspace key
-			{
-				if (!m_password.empty())
-					m_password.pop_back();
-			}
-			else if (wParam >= ' ' && wParam <= '~') // Valid printable characters
-			{
-				m_password += wParam;
-			}
-		}
-		HandleSpecialKeyInput(wParam);
-		break;
-	default:
-		break;
-	}
-}
-
 void CLoginScene::ReleaseUploadBuffers()
 {
 	CScene::ReleaseUploadBuffers();
@@ -1532,6 +1467,9 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 bool CIceScene::CheckObjectByObjectCollisions()
 {
+	if(gNetwork.IceItem == false)
+		m_ppHierarchicalGameObjects[14]->isdraw = false;
+
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// �ʰ� �浹�� ���
@@ -1806,6 +1744,8 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 }
 bool CFireScene::CheckObjectByObjectCollisions()
 {
+	if (gNetwork.FireItem == false)
+		m_ppHierarchicalGameObjects[14]->isdraw = false;
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 	
@@ -2094,6 +2034,8 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 bool CGrassScene::CheckObjectByObjectCollisions()
 {
+	if (gNetwork.NatureItem == false)
+		m_ppHierarchicalGameObjects[14]->isdraw = false;
 	for (int i = 0; i < m_nHierarchicalGameObjects; i++)
 	{
 		// �ʰ� �浹�� ���
@@ -2193,11 +2135,11 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{
 				// 여기에 hp 닳는 코드 넣어주랑
-				//g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
+				g_clients[gNetwork.my_id].setHp(g_clients[gNetwork.my_id].getHp() - 5);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt++;
 				m_pPlayer->m_pSkinnedAnimationController->m_bIsPlayerAttacked = true;
-				//g_clients[gNetwork.my_id].is_damage = true;
-				//gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
+				g_clients[gNetwork.my_id].is_damage = true;
+				gNetwork.SendPlayerHIt(g_clients[gNetwork.my_id].is_damage);
 				return false;
 			}
 		}

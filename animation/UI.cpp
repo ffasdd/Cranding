@@ -102,7 +102,7 @@ HRESULT UILayer::Initialize(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDe
         plobbytext[i] = new WCHAR[256];
     }
 
-    wcscpy_s(plobbytext[0], 256, L"게임 시작을 위해 '2'를 눌러주세요");
+    wcscpy_s(plobbytext[0], 256, L"게임 시작을 위해 'R'를 눌러주세요");
     wcscpy_s(plobbytext[1], 256, L"ready");
     for (int i = 0; i < lobbyUI_num; ++i) {
         m_vecLobbyScene.push_back(plobbytext[i]);
@@ -319,7 +319,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
     ID3D11Resource* ppResources[] = { m_ppd3d11WrappedRenderTargets[nFrame] };
 
     m_pd2dDeviceContext->SetTarget(m_ppd2dRenderTargets[nFrame]);
-    m_pd3d11On12Device->AcquireWrappedResources(ppResources, _countof(ppResources));
+    //m_pd3d11On12Device->AcquireWrappedResources(ppResources, _countof(ppResources));
    
 
     switch (scenekind)
@@ -331,21 +331,21 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         // login
         m_pd2dDeviceContext->BeginDraw();
         m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[0], (UINT)wcslen(m_vecLoginSceneMenu[0]), m_textFormats[TEXT_SIZE::SIZE_60], m_Title, m_brushes[BRUSH_COLOR::BLACK]);
-        m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[1], (UINT)wcslen(m_vecLoginSceneMenu[1]), m_textFormats[TEXT_SIZE::SIZE_40], m_GameStart, m_brushes[BRUSH_COLOR::BLACK]);
-        // 변환 함수 호출
+        //m_pd2dDeviceContext->DrawText(m_vecLoginSceneMenu[1], (UINT)wcslen(m_vecLoginSceneMenu[1]), m_textFormats[TEXT_SIZE::SIZE_40], m_GameStart, m_brushes[BRUSH_COLOR::BLACK]);
+        
+        //// 변환 함수 호출
+        //wideUsername = StringToWString(gGameFramework.m_pScene->getname());
+        //widePassword = StringToWString(gGameFramework.m_pScene->getpassword());
 
-        wideUsername = StringToWString(gGameFramework.m_pScene->getname());
-        widePassword = StringToWString(gGameFramework.m_pScene->getpassword());
+        //// wcsncpy_s 사용
+        //wcsncpy_s(username, wideUsername.c_str(), _TRUNCATE);
+        //wcsncpy_s(password, widePassword.c_str(), _TRUNCATE);
 
-        // wcsncpy_s 사용
-        wcsncpy_s(username, wideUsername.c_str(), _TRUNCATE);
-        wcsncpy_s(password, widePassword.c_str(), _TRUNCATE);
+        //m_pd2dDeviceContext->FillRectangle(m_usernameRect, m_brushes[BRUSH_COLOR::ABLACK]);
+        //m_pd2dDeviceContext->DrawText(username, (UINT)wcslen(username), m_textFormats[TEXT_SIZE::SIZE_35], m_usernameRect, m_brushes[BRUSH_COLOR::LIGHTBLACK]);
 
-        m_pd2dDeviceContext->FillRectangle(m_usernameRect, m_brushes[BRUSH_COLOR::ABLACK]);
-        m_pd2dDeviceContext->DrawText(username, (UINT)wcslen(username), m_textFormats[TEXT_SIZE::SIZE_35], m_usernameRect, m_brushes[BRUSH_COLOR::LIGHTBLACK]);
-
-        m_pd2dDeviceContext->FillRectangle(m_passwordRect, m_brushes[BRUSH_COLOR::ABLACK]);
-        m_pd2dDeviceContext->DrawText(password, (UINT)wcslen(password), m_textFormats[TEXT_SIZE::SIZE_35], m_passwordRect, m_brushes[BRUSH_COLOR::LIGHTBLACK]);
+        //m_pd2dDeviceContext->FillRectangle(m_passwordRect, m_brushes[BRUSH_COLOR::ABLACK]);
+        //m_pd2dDeviceContext->DrawText(password, (UINT)wcslen(password), m_textFormats[TEXT_SIZE::SIZE_35], m_passwordRect, m_brushes[BRUSH_COLOR::LIGHTBLACK]);
 
         m_pd2dDeviceContext->EndDraw();
         break;
@@ -438,7 +438,7 @@ void UILayer::Render(UINT nFrame, SCENEKIND scenekind, bool isready, int curDay,
         break;
     }
 
-    m_pd3d11On12Device->ReleaseWrappedResources(ppResources, _countof(ppResources));
+    //m_pd3d11On12Device->ReleaseWrappedResources(ppResources, _countof(ppResources));
     
     m_pd3d11DeviceContext->Flush();
 }
