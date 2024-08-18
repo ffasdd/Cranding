@@ -1619,8 +1619,9 @@ bool CIceScene::CheckObjectByObjectCollisions()
 			{
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 				g_IceBossMonster.setHp(g_IceBossMonster.getHp() - 20);
+				//if(g_IceBossMonster.getHp() <= 0)
 				gNetwork.SendBossDamage(g_IceBossMonster.getHp(), MonsterType::Ice_Boss);
-				
+				if (g_IceBossMonster.getHp() <= 0)
 				m_ppHierarchicalGameObjects[14]->isdraw = true;
 
 				return true;
@@ -1897,7 +1898,8 @@ bool CFireScene::CheckObjectByObjectCollisions()
 
 				// 보스 체력 서버로 전송 
 				gNetwork.SendBossDamage(g_FireBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Fire_Boss);
-				m_ppHierarchicalGameObjects[14]->isdraw = true;
+				if(g_FireBossMonster.getHp() <= 0)
+					m_ppHierarchicalGameObjects[14]->isdraw = true;
 				return true;
 			}
 
@@ -2178,13 +2180,14 @@ bool CGrassScene::CheckObjectByObjectCollisions()
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(1, false);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->SetTrackEnable(3, true);
 				m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bIsAttacked = true;
-
-				m_ppHierarchicalGameObjects[14]->isdraw = true;
+				gNetwork.SendBossDamage(g_NatureBossMonster.getHp() - g_clients[gNetwork.my_id].getAttackPower(), MonsterType::Nature_Boss);
+				if (g_NatureBossMonster.getHp() <= 0)
+					m_ppHierarchicalGameObjects[14]->isdraw = true;
 
 				return(true);
 			}
 			// grass monster's head with player (when grass monster attack)
-			else if (m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
+			else if (gNetwork.my_id != -1 && m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_bMonsterValidAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pSkinnedAnimationController->m_nMonsterAttackCnt == 0
 				&& m_pPlayer->m_pChild->m_pChild->m_xmBoundingBox.Intersects(m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox))
 			{

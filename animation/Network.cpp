@@ -395,6 +395,7 @@ void Network::ProcessPacket(char* buf)
 		g_IceBossMonster.setPos(p->_boss._x, p->_boss._y, p->_boss._z);
 		g_IceBossMonster.setLook(p->_boss._lx, p->_boss._ly, p->_boss._lz);
 		g_IceBossMonster.setRight(p->_boss._rx, p->_boss._ry, p->_boss._rz);
+		//cout << p->_boss._hp << endl;
 		g_IceBossMonster.setHp(p->_boss._hp);
 		g_IceBossMonster.setUp({ 0.f,1.f,0.f });
 	}

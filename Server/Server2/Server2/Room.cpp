@@ -234,7 +234,7 @@ void Room::IceBossUpdate()
 	sendIceBossUpdatePacket._boss._ry = IceBoss._right.y;
 	sendIceBossUpdatePacket._boss._rz = IceBoss._right.z;
 
-	sendIceBossUpdatePacket._boss._id = IceBoss._hp;
+	sendIceBossUpdatePacket._boss._hp = IceBoss._hp;
 
 	for (auto& cl : ingamePlayer)
 	{
@@ -357,72 +357,16 @@ void Room::BossMonsterInitialziedMonster()
 	IceBoss._m_type = MonsterType::Ice_Boss;
 	IceBoss._initPos = IceBoss._pos;
 	IceBoss.m_fBoundingSize = 15.0f;
-	IceBoss._hp = 500;
+	IceBoss._hp = 40;
 
 	NatureBoss._pos = XMFLOAT3(77.0f, 10.0f, -408.0f);
 	NatureBoss._is_alive = true;
 	NatureBoss._stagenum = 5;
 	NatureBoss._m_type = MonsterType::Nature_Boss;
 	NatureBoss._initPos = NatureBoss._pos;
-	NatureBoss._hp = 500;
+	NatureBoss._hp = 40;
 
-	BossUpdate_Fire sendFireBossMonsterInitialziedpacket;
-	BossUpdate_Ice sendIceBossMonsterInitialziedpacket;
-	BossUpdate_Nature sendNatureBossMonsterInitialziedpacket;
-
-	sendFireBossMonsterInitialziedpacket.size = sizeof(BossUpdate_Fire);
-	sendFireBossMonsterInitialziedpacket.type = SC_FIRE_BOSS_UPDATE;
-	sendFireBossMonsterInitialziedpacket._boss._x = FireBoss._pos.x;
-	sendFireBossMonsterInitialziedpacket._boss._y = FireBoss._pos.y;
-	sendFireBossMonsterInitialziedpacket._boss._z = FireBoss._pos.z;
-
-	sendFireBossMonsterInitialziedpacket._boss._lx = FireBoss._look.x;
-	sendFireBossMonsterInitialziedpacket._boss._ly = FireBoss._look.y;
-	sendFireBossMonsterInitialziedpacket._boss._lz = FireBoss._look.z;
-
-	sendFireBossMonsterInitialziedpacket._boss._rx = FireBoss._right.x;
-	sendFireBossMonsterInitialziedpacket._boss._ry = FireBoss._right.y;
-	sendFireBossMonsterInitialziedpacket._boss._rz = FireBoss._right.z;
-	sendFireBossMonsterInitialziedpacket._boss._hp = FireBoss._hp;
-
-	sendIceBossMonsterInitialziedpacket.size = sizeof(BossUpdate_Ice);
-	sendIceBossMonsterInitialziedpacket.type = SC_ICE_BOSS_UPDATE;
-	sendIceBossMonsterInitialziedpacket._boss._x = IceBoss._pos.x;
-	sendIceBossMonsterInitialziedpacket._boss._y = IceBoss._pos.y;
-	sendIceBossMonsterInitialziedpacket._boss._z = IceBoss._pos.z;
-
-	sendIceBossMonsterInitialziedpacket._boss._lx = IceBoss._look.x;
-	sendIceBossMonsterInitialziedpacket._boss._ly = IceBoss._look.y;
-	sendIceBossMonsterInitialziedpacket._boss._lz = IceBoss._look.z;
-
-	sendIceBossMonsterInitialziedpacket._boss._rx = IceBoss._right.x;
-	sendIceBossMonsterInitialziedpacket._boss._ry = IceBoss._right.y;
-	sendIceBossMonsterInitialziedpacket._boss._rz = IceBoss._right.z;
 	
-	sendIceBossMonsterInitialziedpacket._boss._hp = IceBoss._hp;
-
-	sendNatureBossMonsterInitialziedpacket.size = sizeof(BossUpdate_Nature);
-	sendNatureBossMonsterInitialziedpacket.type = SC_NATURE_BOSS_UPDATE;
-	sendNatureBossMonsterInitialziedpacket._boss._x = NatureBoss._pos.x;
-	sendNatureBossMonsterInitialziedpacket._boss._y = NatureBoss._pos.y;
-	sendNatureBossMonsterInitialziedpacket._boss._z = NatureBoss._pos.z;
-
-	sendNatureBossMonsterInitialziedpacket._boss._lx = NatureBoss._look.x;
-	sendNatureBossMonsterInitialziedpacket._boss._ly = NatureBoss._look.y;
-	sendNatureBossMonsterInitialziedpacket._boss._lz = NatureBoss._look.z;
-
-	sendNatureBossMonsterInitialziedpacket._boss._rx = NatureBoss._right.x;
-	sendNatureBossMonsterInitialziedpacket._boss._ry = NatureBoss._right.y;
-	sendNatureBossMonsterInitialziedpacket._boss._rz = NatureBoss._right.z;
-
-	sendNatureBossMonsterInitialziedpacket._boss._hp = NatureBoss._hp;
-
-	//for (auto& pl : ingamePlayer)
-	//{
-	//	pl->do_send(&sendIceBossMonsterInitialziedpacket);
-	//	pl->do_send(&sendFireBossMonsterInitialziedpacket);
-	//	pl->do_send(&sendNatureBossMonsterInitialziedpacket);
-	//}
 }
 
 void Room::IceNpcInitialized()
@@ -447,40 +391,7 @@ void Room::IceNpcInitialized()
 		IceMonster[i]._initPos = IceMonster[i]._pos;
 	}
 
-	IceMonstersUpdate sendIceMonsterUpdatePacket[10];
-	int idx = 0;
-
-	for (auto& npc : IceMonster)
-	{
-		sendIceMonsterUpdatePacket[idx].size = sizeof(IceMonstersUpdate);
-		sendIceMonsterUpdatePacket[idx].type = SC_ICE_MONSTER_UPDATE;
-		sendIceMonsterUpdatePacket[idx]._monster._id = idx;
-
-		sendIceMonsterUpdatePacket[idx]._monster._x = npc._pos.x;
-		sendIceMonsterUpdatePacket[idx]._monster._y = npc._pos.y;
-		sendIceMonsterUpdatePacket[idx]._monster._z = npc._pos.z;
-
-		sendIceMonsterUpdatePacket[idx]._monster._lx = npc._look.x;
-		sendIceMonsterUpdatePacket[idx]._monster._ly = npc._look.y;
-		sendIceMonsterUpdatePacket[idx]._monster._lz = npc._look.z;
-
-		sendIceMonsterUpdatePacket[idx]._monster._rx = npc._right.x;
-		sendIceMonsterUpdatePacket[idx]._monster._ry = npc._right.y;
-		sendIceMonsterUpdatePacket[idx]._monster._rz = npc._right.z;
-
-
-		idx++;
-	}
-
-	//for (auto& pl : ingamePlayer)
-	//{
-	//	// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
-	//	for (auto& packet : sendIceMonsterUpdatePacket)
-	//	{
-	//		//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
-	//		pl->do_send(&packet);
-	//	}
-	//}
+	
 }
 
 void Room::FireNpcInitialized()
@@ -506,40 +417,8 @@ void Room::FireNpcInitialized()
 		FireMonster[i]._initPos = FireMonster[i]._pos;
 	}
 
-	FireMonsterUpdate sendFireMonsterUpdatePacket[10];
-	int idx = 0;
+	
 
-	for (auto& npc : FireMonster)
-	{
-		sendFireMonsterUpdatePacket[idx].size = sizeof(FireMonsterUpdate);
-		sendFireMonsterUpdatePacket[idx].type = SC_FIRE_MONSTER_UPDATE;
-		sendFireMonsterUpdatePacket[idx]._monster._id = idx;
-
-		sendFireMonsterUpdatePacket[idx]._monster._x = npc._pos.x;
-		sendFireMonsterUpdatePacket[idx]._monster._y = npc._pos.y;
-		sendFireMonsterUpdatePacket[idx]._monster._z = npc._pos.z;
-
-		sendFireMonsterUpdatePacket[idx]._monster._lx = npc._look.x;
-		sendFireMonsterUpdatePacket[idx]._monster._ly = npc._look.y;
-		sendFireMonsterUpdatePacket[idx]._monster._lz = npc._look.z;
-
-		sendFireMonsterUpdatePacket[idx]._monster._rx = npc._right.x;
-		sendFireMonsterUpdatePacket[idx]._monster._ry = npc._right.y;
-		sendFireMonsterUpdatePacket[idx]._monster._rz = npc._right.z;
-
-
-		idx++;
-	}
-
-	//for (auto& pl : ingamePlayer)
-	//{
-	//	// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
-	//	for (auto& packet : sendFireMonsterUpdatePacket)
-	//	{
-	//		//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
-	//		pl->do_send(&packet);
-	//	}
-	//}
 
 }
 
@@ -565,40 +444,7 @@ void Room::NatureNpcInitialized()
 		NatureMonster[i]._initPos = NatureMonster[i]._pos;
 	}
 
-	NatureMonsterUpdate sendNatureMonsterUpdatePacket[10];
-	int idx = 0;
-
-	for (auto& npc : NatureMonster)
-	{
-		sendNatureMonsterUpdatePacket[idx].size = sizeof(NatureMonsterUpdate);
-		sendNatureMonsterUpdatePacket[idx].type = SC_NATURE_MONSTER_UPDATE;
-		sendNatureMonsterUpdatePacket[idx]._monster._id = idx;
-
-		sendNatureMonsterUpdatePacket[idx]._monster._x = npc._pos.x;
-		sendNatureMonsterUpdatePacket[idx]._monster._y = npc._pos.y;
-		sendNatureMonsterUpdatePacket[idx]._monster._z = npc._pos.z;
-
-		sendNatureMonsterUpdatePacket[idx]._monster._lx = npc._look.x;
-		sendNatureMonsterUpdatePacket[idx]._monster._ly = npc._look.y;
-		sendNatureMonsterUpdatePacket[idx]._monster._lz = npc._look.z;
-
-		sendNatureMonsterUpdatePacket[idx]._monster._rx = npc._right.x;
-		sendNatureMonsterUpdatePacket[idx]._monster._ry = npc._right.y;
-		sendNatureMonsterUpdatePacket[idx]._monster._rz = npc._right.z;
-
-
-		idx++;
-	}
-
-	//for (auto& pl : ingamePlayer)
-	//{
-	//	// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
-	//	for (auto& packet : sendNatureMonsterUpdatePacket)
-	//	{
-	//		//if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
-	//		pl->do_send(&packet);
-	//	}
-	//}
+	
 }
 
 void Room::NightMonsterCollide(Monster& _monster)
