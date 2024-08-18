@@ -44,6 +44,10 @@ public:
 	bool firebossskill = false;
 	bool naturebossskill = false;
 
+	bool IceItem = false;
+	bool FireItem = false;
+	bool NatureItem = false;
+
 public:
 	void UpdateNpc();
 	void DeleteNpc();

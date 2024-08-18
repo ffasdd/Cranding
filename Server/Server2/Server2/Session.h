@@ -271,5 +271,7 @@ public:
 	
 	void send_player_hit(int client_id);
 
+	void send_get_item(int item_num);
+
 };
 extern array<Session, MAX_USER> clients;

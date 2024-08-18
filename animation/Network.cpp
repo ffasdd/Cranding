@@ -573,6 +573,28 @@ void Network::ProcessPacket(char* buf)
 		g_clients[p->id].is_dead = true;
 		cout << " Clients " << p->id << "is_dead " << endl;
 
+		break;
+	}
+	case SC_GET_ITEM: {
+		SC_GET_ITEM_PACKET* p = reinterpret_cast<SC_GET_ITEM_PACKET*>(buf);
+		switch (p->item_num)
+		{
+		case 1: {
+			//Ice 
+			IceItem = true;
+			break;
+		}
+		case 2:{
+			// Fire
+			FireItem = true;
+			break;
+		}
+		case 3: {
+			//Nature
+			NatureItem = true;
+			break;
+		}
+		}
 		break; 
 	}
 	}
@@ -754,6 +776,17 @@ void Network::SendMonsterInit()
 	p.size = sizeof(CS_MOSNTSER_INITIALIZED_PACKET);
 	p.type = CS_MONSTER_INITIALIZE;
 	p.room_id = my_roomid;
+
+	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
+}
+
+void Network::SendGetItem(int i_num)
+{
+	CS_GET_ITEM_PACKET p;
+	p.size = sizeof(CS_GET_ITEM_PACKET);
+	p.type = CS_GET_ITEM;
+	p.room_id = my_roomid;
+	p.item_num = i_num;
 
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);
 }
