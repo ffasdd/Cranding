@@ -1586,6 +1586,9 @@ void CGameFramework::UpdateTime()
 	curMinute = static_cast<int>(accumulatedTime) / 60;
 	curSecond = static_cast<int>(accumulatedTime) % 60;
 
+	if (curDay > 5) {
+		isLose = true;
+	}
 }
 
 void CGameFramework::FrameAdvance()
@@ -1660,7 +1663,7 @@ void CGameFramework::FrameAdvance()
 			ProcessInput();
 			AnimateObjects();
 		}
-
+		
 		HRESULT hResult = m_pd3dCommandAllocator->Reset();
 		hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
