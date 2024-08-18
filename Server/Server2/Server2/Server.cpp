@@ -460,8 +460,6 @@ void Server::InitialziedMonster(int room_Id)
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y = 20.0f;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 8.0f;
 			ingameroom[room_Id].NightMonster[i]._spaceship = &ingameroom[room_Id]._spaceship;
-
-
 		}
 	}
 
@@ -899,10 +897,7 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_PLAYER_DEAD_PACKET* p = reinterpret_cast<CS_PLAYER_DEAD_PACKET*>(packet);
 		clients[p->id]._hp = 0;
 		clients[p->id].isDead = true;
-
 		break;
-
-
 	}
 	}
 }
@@ -1001,7 +996,7 @@ void Server::ReadyToStart()
 			// 접속하는 클라이언트 순서대로 array에 집어넣어야함, 
 			// id를 맞춰야하나? 
 			if (ingameroom[room_id].ingamePlayer.size() < MAX_ROOM_USER)continue;
-			
+
 			// 무조건 방에 2명이 진행 됐을 때에만 add, 서로에게 보내준다. 
 
 			for (auto& NightMonsters : ingameroom[room_id].NightMonster)
@@ -1055,7 +1050,7 @@ void Server::ReadyToStart()
 			cout << " Full " << room_id << " - Room " << endl;
 		}
 		else
-			this_thread::sleep_for(500ms);
+			this_thread::yield();
 
 	}
 }
