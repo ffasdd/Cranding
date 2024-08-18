@@ -1619,7 +1619,6 @@ bool CIceScene::CheckObjectByObjectCollisions()
 			{
 				m_pPlayer->m_pSkinnedAnimationController->m_nCntValidAttack++;
 				g_IceBossMonster.setHp(g_IceBossMonster.getHp() - 20);
-				//if(g_IceBossMonster.getHp() <= 0)
 				gNetwork.SendBossDamage(g_IceBossMonster.getHp(), MonsterType::Ice_Boss);
 				if (g_IceBossMonster.getHp() <= 0)
 				m_ppHierarchicalGameObjects[14]->isdraw = true;
@@ -1889,6 +1888,8 @@ bool CFireScene::CheckObjectByObjectCollisions()
 		// collision check with fire boss monster
 		else if (i == 13)
 		{
+
+
 			// fire boss with player(attack mode)
 			if (gNetwork.my_id != -1 && m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == true
 				&& m_ppHierarchicalGameObjects[i]->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox.Intersects(m_pPlayer->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pChild->m_pChild->m_pChild->m_pChild->m_pSibling->m_pSibling->m_pSibling->m_xmBoundingBox)
