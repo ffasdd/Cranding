@@ -1414,6 +1414,7 @@ void CGameFramework::ProcessInput()
 			&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false)
 		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
+			//PlaySound()
 		}
 
 		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))

@@ -879,7 +879,8 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[2]->SetPosition(410.0f, 20.0f, 735.0f);
 	m_ppHierarchicalGameObjects[2]->SetScale(20.0f, 20.0f, 20.0f);
 
-	PlaySound(TEXT("Sound/Lobby.wav"), NULL, SND_LOOP | SND_ASYNC);
+	//PlaySound(TEXT("Sound/Lobby.wav"), NULL, SND_LOOP | SND_ASYNC);
+	//PlayBGM(L"Sound/Lobby.wav");
 
 	if (pPlayerModel1) delete pPlayerModel1;
 	if (pPlayerModel2) delete pPlayerModel2;
@@ -1090,8 +1091,8 @@ void CSpaceShipScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 	}
 
-	//PlayBGM(L"Sound/Day.wav");
-	PlaySound(TEXT("Sound/Day.wav"), NULL, SND_LOOP | SND_ASYNC);
+	PlayBGM(L"Sound/Day.wav");
+	//PlaySound(TEXT("Sound/Day.wav"), NULL, SND_LOOP | SND_ASYNC);
 	// spaceship boundingsphere
 	SpaceshipBS.Center = { 250.0f, 10.0f, 750.0f };
 	SpaceshipBS.Radius = 50.0f;
@@ -1460,9 +1461,9 @@ void CIceScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 	if (pIceItemModel) delete pIceItemModel;
 
-	PlaySound(TEXT("Sound/Ice.wav"), NULL, SND_LOOP | SND_ASYNC);
+	//PlaySound(TEXT("Sound/Ice.wav"), NULL, SND_LOOP | SND_ASYNC);
 
-	//PlayBGM(L"Sound/Ice.wav");
+	PlayBGM(L"Sound/Ice.wav");
 
 }
 
@@ -1739,7 +1740,8 @@ void CFireScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
 
-	PlaySound(TEXT("Sound/Fire.wav"), NULL, SND_LOOP | SND_ASYNC);
+	//PlaySound(TEXT("Sound/Fire.wav"), NULL, SND_LOOP | SND_ASYNC);
+	PlayBGM(L"Sound/Fire.wav");
 
 	if (pFireItemModel) delete pFireItemModel;
 }
@@ -2028,7 +2030,8 @@ void CGrassScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_ppHierarchicalGameObjects[14]->SetScale(60.0f, 60.0f, 60.0f);
 	m_ppHierarchicalGameObjects[14]->isdraw = false;
 
-	PlaySound(TEXT("Sound/Grass.wav"), NULL, SND_LOOP | SND_ASYNC);
+	//PlaySound(TEXT("Sound/Grass.wav"), NULL, SND_LOOP | SND_ASYNC);
+	PlayBGM(L"Sound/Grass.wav");
 
 	if (pNatureItemModel) delete pNatureItemModel;
 }
@@ -2215,7 +2218,9 @@ void CWInScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_ppHierarchicalGameObjects[3]->SetScale(30.0f, 30.0f, 30.0f);
 	m_ppHierarchicalGameObjects[3]->Rotate(-20.0f, 170.0f, 0.0f);
 
-	PlaySound(TEXT("Sound/Win.wav"), NULL, SND_LOOP | SND_ASYNC);
+	//PlaySound(TEXT("Sound/Win.wav"), NULL, SND_LOOP | SND_ASYNC);
+	PlayBGM(L"Sound/Win.wav");
+
 
 	if (pPlayerModel) delete pPlayerModel;
 }
@@ -2266,7 +2271,8 @@ void CLoseScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ppHierarchicalGameObjects[3]->Rotate(0.0f, 0.0f, 0.0f);
 	m_ppHierarchicalGameObjects[3]->SetPosition(-60.0f, 0.0f, -30.0f);
 
-	PlaySound(TEXT("Sound/Lose.wav"), NULL, SND_LOOP | SND_ASYNC);
+	//PlaySound(TEXT("Sound/Lose.wav"), NULL, SND_LOOP | SND_ASYNC);
+	PlayBGM(L"Sound/Lose.wav");
 
 	if (pPlayerModel) delete pPlayerModel;
 }
