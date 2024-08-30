@@ -95,13 +95,17 @@ public:
 
 	void InitXAudio2();
 	void CleanupXAudio2();
-	void PlaySounds(IXAudio2* pXAudio2, const SoundData& soundData);
+	void PlaySounds(const SoundData& soundData);
 	SoundData LoadWaveFile(const wchar_t* filename);
 
 public:
 	// sound
-	SoundData m_SceneSounds[4];
+	SoundData m_SceneSounds[7];
+	SoundData m_AttackSound;
+
 	IXAudio2SourceVoice* m_pSourceVoice;
+	IXAudio2SourceVoice* m_pAttackVoice;
+
 	IXAudio2* m_pXAudio2 = nullptr;
 	IXAudio2MasteringVoice* m_pMasterVoice = nullptr;
 

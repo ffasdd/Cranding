@@ -680,12 +680,12 @@ SoundData CGameFramework::LoadWaveFile(const wchar_t* filename) {
 	return soundData;
 }
 
-void CGameFramework::PlaySounds(IXAudio2* pXAudio2, const SoundData& soundData) {
-	if (pXAudio2) {
-		HRESULT hr = pXAudio2->CreateSourceVoice(&m_pSourceVoice, &soundData.wfx);
+void CGameFramework::PlaySounds(const SoundData& soundData) {
+	if (m_pXAudio2) {
+		HRESULT hr = m_pXAudio2->CreateSourceVoice(&m_pAttackVoice, &soundData.wfx);
 		if (SUCCEEDED(hr)) {
-			m_pSourceVoice->SubmitSourceBuffer(&soundData.buffer);
-			m_pSourceVoice->Start(0);
+			m_pAttackVoice->SubmitSourceBuffer(&soundData.buffer);
+			m_pAttackVoice->Start(0);
 		}
 		else {
 			std::cerr << "Failed to create source voice: " << std::hex << hr << std::endl;
@@ -737,6 +737,8 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
+			ChangeBGM(0);
+
 			isChangingScene = false;
 			break;
 		}
@@ -758,7 +760,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 
 			//SoundData SpaceshipBgm = LoadWaveFile(L"Sound/Day.wav");
-			//ChangeBGM(0);
+			ChangeBGM(1);
 			isChangingScene = false;
 			break;
 		}
@@ -781,7 +783,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			//ChangeBGM(1);
+			ChangeBGM(2);
 			isChangingScene = false;
 
 			break;
@@ -804,7 +806,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			//ChangeBGM(2);
+			ChangeBGM(3);
 			isChangingScene = false;
 
 			break;
@@ -828,7 +830,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
 
-			//ChangeBGM(3);
+			ChangeBGM(4);
 			isChangingScene = false;
 
 			break;
@@ -852,6 +854,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 			m_pCamera = m_pPlayer->GetCamera();
 
 			isChangingScene = false;
+			ChangeBGM(5);
 
 			break;
 		}
@@ -872,6 +875,7 @@ void CGameFramework::ChangeScene(SCENEKIND nSceneKind)
 
 			m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 			m_pCamera = m_pPlayer->GetCamera();
+			ChangeBGM(6);
 
 			isChangingScene = false;
 
@@ -1278,10 +1282,14 @@ void CGameFramework::BuildObjects(SCENEKIND m_nCurScene)
 	m_pScene->m_pPlayer = m_pPlayer = pPlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
-	m_SceneSounds[0] = LoadWaveFile(L"Sound/Day.wav");
-	m_SceneSounds[1] = LoadWaveFile(L"Sound/Ice.wav");
-	m_SceneSounds[2] = LoadWaveFile(L"Sound/Fire.wav");
-	m_SceneSounds[3] = LoadWaveFile(L"Sound/Grass.wav");
+	m_SceneSounds[0] = LoadWaveFile(L"Sound/Lobby.wav");
+	m_SceneSounds[1] = LoadWaveFile(L"Sound/Day.wav");
+	m_SceneSounds[2] = LoadWaveFile(L"Sound/Ice.wav");
+	m_SceneSounds[3] = LoadWaveFile(L"Sound/Fire.wav");
+	m_SceneSounds[4] = LoadWaveFile(L"Sound/Grass.wav");
+	m_SceneSounds[5] = LoadWaveFile(L"Sound/Win.wav");
+	m_SceneSounds[6] = LoadWaveFile(L"Sound/Lose.wav");
+	m_AttackSound = LoadWaveFile(L"Sound/Attack.wav");
 
 	// bgm
 //SoundData IceBgm = m_pScene->LoadWaveFile(L"Scene2BGM.wav");
@@ -1411,10 +1419,11 @@ void CGameFramework::ProcessInput()
 
 		// 공격키
 		if (pKeysBuffer[VK_LBUTTON] & 0xF0
-			&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false)
+			&& m_pPlayer->m_pSkinnedAnimationController->m_bIsDead == false
+			&& m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == false)
 		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
-			//PlaySound()
+			PlaySounds(m_AttackSound);
 		}
 
 		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
