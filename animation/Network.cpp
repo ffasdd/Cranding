@@ -235,7 +235,7 @@ void Network::ProcessPacket(char* buf)
 		int ob_id = (p->id);
 		g_clients[ob_id].setAnimation(p->a_state);
 		g_clients[ob_id].setprevAnimation(p->prev_a_state);
-		cout << " Recv " << ob_id << " - " << int(p->a_state) << endl;
+		//cout << " Recv " << ob_id << " - " << int(p->a_state) << endl;
 		break;
 	}
 	case SC_ATTACK: {
