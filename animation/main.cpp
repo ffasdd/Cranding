@@ -43,7 +43,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	MyRegisterClass(hInstance);
 
 	if (!gNetwork.ReadytoConnect())
-		gNetwork.ReadytoConnect(); // 실패시 재시도 while문을 도는것보단 이게나아보임
+		gNetwork.ReadytoConnect(); 
 	
 	// 로그인 완료 
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);

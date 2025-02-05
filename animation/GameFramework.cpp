@@ -352,7 +352,6 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 			{
 				UILayer::GetInstance()->ProcessMouseClick(SCENEKIND::LOGIN, m_ptOldCursorPos);
 			}
-			// 플레이어의 m_bIsDead가 true면 공격 패킷 보내면 안됨!!!!!!
 
 			if (g_clients.find(cl_id) == g_clients.end())break;
 			g_clients[cl_id].setAttack(true);

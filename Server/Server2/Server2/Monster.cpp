@@ -8,7 +8,7 @@ FireBossMonster _FireBoss;
 IceBossMonster _IceBoss;
 NatureBossMonster _NatureBoss;
 
-Monster::Monster() : ingamePlayer{ nullptr,nullptr }
+Monster::Monster() 
 {
 	_pos = { 0.f,-150.0f,0.f };
 	_initPos = { 0.f,-150.0f,0.f };
@@ -28,11 +28,12 @@ void Monster::Move()
 {
 	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
 	_prevpos = _pos;
-	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange && ingamePlayer[id]->isDead == false)
+	Session* closetPlayer= FindClosePlayer();
+
+	if (closetPlayer != nullptr && closetPlayer->isDead == false)
 	{
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
-		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&closetPlayer->_pos);
 		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
 		XMFLOAT3 directionToPlayerFloat3;
@@ -48,28 +49,28 @@ void Monster::Move()
 		// right 벡터를 업데이트
 		_right = rightFloat3;
 
-		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
+		if (CollideCheckToPlayer(closetPlayer) == true)
 		{
 			_speed = 0;
 
-			if (_attackState != true)
+			if (_attackState == false)
 			{
 				_attackState = true;
 				for (auto& pl : ingamePlayer)
 				{
-					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					if (pl->_stage != closetPlayer->_stage)continue;
 					pl->send_monster_attack(_id, _m_type, true);
 				}
 			}
 		}
 		else
 		{
-			if (_attackState != false)
+			if (_attackState == true)
 			{
 				_attackState = false;
 				for (auto& pl : ingamePlayer)
 				{
-					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					if (pl->_stage != closetPlayer->_stage)continue;
 					pl->send_monster_attack(_id, _m_type, false);
 				}
 			}
@@ -89,8 +90,7 @@ void Monster::Move()
 			_attackState = false;
 			for (auto& pl : ingamePlayer)
 			{
-				if (id == -1)continue; 
-				if (pl->_stage != ingamePlayer[id]->_stage)continue;
+				if (pl->_stage != _stagenum)continue;
 				pl->send_monster_attack(_id, _m_type, false);
 			}
 		}
@@ -120,7 +120,16 @@ void Monster::Move()
 
 void Monster::Remove()
 {
-	_pos = { 0.f,-200.f,0.f };
+	_pos.y = -1500;
+}
+
+void Monster::MarkAsDead()
+{
+	bool expected = true;
+	if (_is_alive.compare_exchange_strong(expected, false)) {
+		Remove();
+	}
+
 }
 
 void Monster::IceMove()
@@ -128,12 +137,12 @@ void Monster::IceMove()
 	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
 
 	_prevpos = _pos;
-	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
+	Session* closetPlayer = FindClosePlayer();
+	if (closetPlayer != nullptr)
 	{
 
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
-		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&closetPlayer->_pos);
 		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
 		XMFLOAT3 directionToPlayerFloat3;
@@ -147,7 +156,7 @@ void Monster::IceMove()
 		XMStoreFloat3(&rightFloat3, rightVec);
 		_right = rightFloat3;
 
-		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
+		if (CollideCheckToPlayer(closetPlayer) == true)
 		{
 			_speed = 0;
 
@@ -156,7 +165,7 @@ void Monster::IceMove()
 				_attackState = true;
 				for (auto& pl : ingamePlayer)
 				{
-					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					if (pl->_stage != _stagenum)continue;
 					pl->send_monster_attack(_id, _m_type, true);
 				}
 			}
@@ -168,7 +177,7 @@ void Monster::IceMove()
 				_attackState = false;
 				for (auto& pl : ingamePlayer)
 				{
-					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					if (pl->_stage != _stagenum)continue;
 					pl->send_monster_attack(_id, _m_type, false);
 				}
 			}
@@ -190,8 +199,7 @@ void Monster::IceMove()
 			_attackState = false;
 			for (auto& pl : ingamePlayer)
 			{
-				if (id == -1)continue;
-				if (pl->_stage != ingamePlayer[id]->_stage)continue;
+				if (pl->_stage != _stagenum)continue;
 				pl->send_monster_attack(_id, _m_type, false);
 			}
 		}
@@ -228,12 +236,12 @@ void Monster::FireMove()
 	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
 
 	_prevpos = _pos;
-	int id = FindClosePlayer();
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
+	Session* closetPlayer = FindClosePlayer();
+	if (closetPlayer != nullptr)
 	{
 
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
-		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&closetPlayer->_pos);
 		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
 		XMFLOAT3 directionToPlayerFloat3;
@@ -251,7 +259,7 @@ void Monster::FireMove()
 		_right = rightFloat3;
 
 		//else 
-		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
+		if (CollideCheckToPlayer(closetPlayer) == true)
 		{
 			_speed = 0;
 
@@ -260,7 +268,7 @@ void Monster::FireMove()
 				_attackState = true;
 				for (auto& pl : ingamePlayer)
 				{
-					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					if (pl->_stage != -_stagenum)continue;
 					pl->send_monster_attack(_id, _m_type, true);
 				}
 			}
@@ -272,7 +280,7 @@ void Monster::FireMove()
 				_attackState = false;
 				for (auto& pl : ingamePlayer)
 				{
-					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					if (pl->_stage != _stagenum)continue;
 					pl->send_monster_attack(_id, _m_type, false);
 				}
 			}
@@ -293,8 +301,7 @@ void Monster::FireMove()
 			_attackState = false;
 			for (auto& pl : ingamePlayer)
 			{
-				if (id == -1)continue;
-				if (pl->_stage != ingamePlayer[id]->_stage)continue;
+				if (pl->_stage != _stagenum)continue;
 				pl->send_monster_attack(_id, _m_type, false);
 			}
 		}
@@ -332,13 +339,13 @@ void Monster::NatureMove()
 	XMFLOAT3 up(0.0f, 1.0f, 0.0f);
 
 	_prevpos = _pos;
-	int id = FindClosePlayer();
+	Session* closetPlayer = FindClosePlayer();
 
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
+	if (closetPlayer != nullptr)
 	{
 
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
-		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&closetPlayer->_pos);
 		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
 		XMFLOAT3 directionToPlayerFloat3;
@@ -356,7 +363,7 @@ void Monster::NatureMove()
 		_right = rightFloat3;
 
 		//else 
-		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
+		if (CollideCheckToPlayer(closetPlayer) == true)
 		{
 			_speed = 0;
 
@@ -365,7 +372,7 @@ void Monster::NatureMove()
 				_attackState = true;
 				for (auto& pl : ingamePlayer)
 				{
-					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					if (pl->_stage !=_stagenum)continue;
 					pl->send_monster_attack(_id, _m_type, true);
 				}
 			}
@@ -377,7 +384,7 @@ void Monster::NatureMove()
 				_attackState = false;
 				for (auto& pl : ingamePlayer)
 				{
-					if (pl->_stage != ingamePlayer[id]->_stage)continue;
+					if (pl->_stage != _stagenum)continue;
 					pl->send_monster_attack(_id, _m_type, false);
 				}
 			}
@@ -398,8 +405,7 @@ void Monster::NatureMove()
 			_attackState = false;
 			for (auto& pl : ingamePlayer)
 			{
-				if (id == -1)continue;
-				if (pl->_stage != ingamePlayer[id]->_stage)continue;
+				if (pl->_stage != _stagenum)continue;
 				pl->send_monster_attack(_id, _m_type, false);
 			}
 		}
@@ -441,36 +447,28 @@ void Monster::NightAttack(int cl_id)
 bool Monster::CollideCheckToPlayer(Session* _player)
 {
 	if (_player->_stage != _stagenum)return false;
-	//if (_player->isDead == true)return false;
 	if (m_SPBB.Intersects(_player->m_SPBB) == true)return true;
 
 	return false;
 }
 
-int Monster::FindClosePlayer()
+Session* Monster::FindClosePlayer()
 {
-	int closestPlayerId = -1;
-	int farthestPlayerId = -1;
-
+	
 	float minDistance = 50000.0f;
-	float maxDistance = 0.0f;
-	int  idx = 0;
+	Session* closetPlayer = nullptr;
+
 	for (auto& pl : ingamePlayer)
 	{
-		if (_stagenum != pl->_stage ) { idx++; continue; }
-
-		pl->distance = Vector3::Distance(pl->_pos, _pos);
-
+		if (_stagenum != pl->_stage) continue;
+		if (_viewRange < Vector3::Distance(pl->_pos, _pos)) continue;
 		if (pl->distance < minDistance)
 		{
 			minDistance = pl->distance;
-			closestPlayerId = idx;
+			closetPlayer = pl;
 		}
-
-		idx++;
 	}
-
-	return closestPlayerId;
+	return closetPlayer;
 }
 
 bool Monster::CollideCheckToSpaceship()
@@ -493,9 +491,7 @@ bool Monster::CollideCheckToSpaceship()
 			if (pl->_stage != 2)continue;
 			pl->do_send(&p);
 		}
-		//_player->do_send(&p);
 
-		//cout << " 우주선 충돌 " << endl; 
 		return true;
 
 	}
@@ -536,13 +532,13 @@ void IceBossMonster::Move()
 
 	_prevpos = _pos;
 
-	int id = FindClosePlayer();
+	Session* closetPlayer = FindClosePlayer();
 
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
+	if (closetPlayer != nullptr)
 	{
 		_fight = true;
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
-		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&closetPlayer->_pos);
 		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
 		XMFLOAT3 directionToPlayerFloat3;
@@ -560,7 +556,7 @@ void IceBossMonster::Move()
 		_right = rightFloat3;
 
 		//else 
-		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
+		if (CollideCheckToPlayer(closetPlayer) == true)
 		{
 			_speed = 0;
 		}
@@ -591,13 +587,13 @@ void FireBossMonster::Move()
 
 	_prevpos = _pos;
 
-	int id = FindClosePlayer();
+	Session* closetPlayer = FindClosePlayer();
 
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
+	if (closetPlayer != nullptr)
 	{
 		_fight = true;
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
-		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&closetPlayer->_pos);
 		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
 		XMFLOAT3 directionToPlayerFloat3;
@@ -615,7 +611,7 @@ void FireBossMonster::Move()
 		_right = rightFloat3;
 
 		//else 
-		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
+		if (CollideCheckToPlayer(closetPlayer) == true)
 		{
 			_speed = 0;
 
@@ -628,7 +624,6 @@ void FireBossMonster::Move()
 	else
 	{
 		_fight = false;
-
 	}
 }
 
@@ -646,13 +641,13 @@ void NatureBossMonster::Move()
 
 	_prevpos = _pos;
 
-	int id = FindClosePlayer();
+	Session* closetPlayer = FindClosePlayer();
 
-	if (id != -1 && _stagenum == ingamePlayer[id]->_stage && ingamePlayer[id]->distance <= _viewRange)
+	if (closetPlayer != nullptr )
 	{
 		_fight = true;
 		XMVECTOR posVec = XMLoadFloat3(&_pos);
-		XMVECTOR playerVec = XMLoadFloat3(&ingamePlayer[id]->_pos);
+		XMVECTOR playerVec = XMLoadFloat3(&closetPlayer->_pos);
 		XMVECTOR directionToPlayer = XMVector3Normalize(playerVec - posVec);
 
 		XMFLOAT3 directionToPlayerFloat3;
@@ -670,23 +665,18 @@ void NatureBossMonster::Move()
 		_right = rightFloat3;
 
 		//else 
-		if (CollideCheckToPlayer(ingamePlayer[id]) == true)
+		if (CollideCheckToPlayer(closetPlayer) == true)
 		{
 			_speed = 0;
 
 		}
-
-
 		_pos = Vector3::Add(_pos, directionToPlayerFloat3, _speed); // 이동 , 
 		_speed = 1.0f;
 		m_SPBB.Center = _pos;
 		m_SPBB.Center.y = _pos.y;
-
-
 	}
 	else
 	{
 		_fight = false;
-
 	}
 }

@@ -15,7 +15,8 @@ public:
 	Room() = default;
 	
 public:
-	vector<Session*> ingamePlayer;
+	unordered_set<Session*> ingamePlayer;
+	//vector<Session*> ingamePlayer;
 	roomState _state = roomState::Free;
 	mutex r_l;
 	bool fullcheck = false;
@@ -60,12 +61,14 @@ public:
 	void FireBossUpdate();
 	void NatureBossUpdate();
 	
+	void DeleteMonster(Monster& monster);
 
 	void DayTimeSend();
 	void NightSend();
 
 	void BossMonsterInitialziedMonster();
 
+	void NighNpcInitialized();
 	void IceNpcInitialized();
 	void FireNpcInitialized();
 	void NatureNpcInitialized();

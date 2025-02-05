@@ -34,7 +34,8 @@ public:
 	int _stagenum;
 	int _id;
 	bool _is_active = false;
-	bool _is_alive = false;
+
+	atomic<bool> _is_alive = false;
 
 	bool _attackState = false;
 	bool _spaceshipattackState = false;
@@ -51,12 +52,12 @@ public:
 public:
 
 	//vector<Session*> ingamePlayer;
-	array<Session*, INGAME_USER > ingamePlayer;
+	unordered_set<Session*> ingamePlayer;
 	vector<pair<float, XMFLOAT3>> playerdisPos;
 public:
 	virtual void Move();
 	void Remove();
-
+	void MarkAsDead();
 	void IceMove();
 	void FireMove();
 	void NatureMove();
@@ -67,7 +68,7 @@ public:
 	bool CollideCheckToSpaceship();
 
 	// trace
-	int FindClosePlayer();
+	Session* FindClosePlayer();
 
 };
 

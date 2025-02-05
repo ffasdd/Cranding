@@ -412,38 +412,42 @@ void Server::WorkerThread()
 		}
 		case COMP_TYPE::MONTSER_DELETE: {
 			int r_id = static_cast<int>(key);
-			// 여기서 몬스터 isalive를 끄자 
+			Room& room = ingameroom[r_id];
+			Monster* targetMonster = nullptr;
 			switch (ex_over->_monstertype)
 			{
 			case MonsterType::Night: {
-				ingameroom[r_id].NightMonster[ex_over->_ai_target_obj]._is_alive = false;
+				targetMonster = &room.NightMonster[ex_over->_ai_target_obj];
 				break;
 			}
 			case MonsterType::Ice: {
-				ingameroom[r_id].IceMonster[ex_over->_ai_target_obj]._is_alive = false;
+				targetMonster = &room.IceMonster[ex_over->_ai_target_obj];
 				break;
 			}
 			case MonsterType::Fire: {
-				ingameroom[r_id].FireMonster[ex_over->_ai_target_obj]._is_alive = false;
+				targetMonster = &room.FireMonster[ex_over->_ai_target_obj];
 				break;
 			}
 			case MonsterType::Nature: {
-				ingameroom[r_id].NatureMonster[ex_over->_ai_target_obj]._is_alive = false;
+				targetMonster = &room.NatureMonster[ex_over->_ai_target_obj];
 				break;
 			}
 			case MonsterType::Ice_Boss: {
-				ingameroom[r_id].IceBoss._is_alive = false;
+				targetMonster = &room.IceBoss;
 				break;
 			}
 			case MonsterType::Fire_Boss: {
-				ingameroom[r_id].FireBoss._is_alive = false;
+				targetMonster = &room.FireBoss;
 				break;
 			}
 			case MonsterType::Nature_Boss: {
-				ingameroom[r_id].NatureBoss._is_alive = false;
+				targetMonster = &room.NatureBoss;
 				break;
 			}
-
+			}
+			if (targetMonster)
+			{
+				room.DeleteMonster(*targetMonster);
 			}
 		}
 		default:
@@ -496,7 +500,10 @@ void Server::InitialziedMonster(int room_Id)
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Center.y = 20.0f;
 			ingameroom[room_Id].NightMonster[i].m_SPBB.Radius = 8.0f;
 			ingameroom[room_Id].NightMonster[i]._spaceship = &ingameroom[room_Id]._spaceship;
-
+			for (auto& cl : ingameroom[room_Id].ingamePlayer)
+			{
+				ingameroom[room_Id].NightMonster[i].ingamePlayer.insert(cl);
+			}
 
 		}
 	}
@@ -512,23 +519,29 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
 		strcpy_s(clients[id]._name, p->name);
 		clients[id].characterType = p->charactertype;
+
 		{
 			lock_guard<mutex>ll{ clients[id]._s_lock };
 			clients[id]._state = STATE::Ingame;
-			clients[id]._stage = 1;
-			clients[id]._attpow = 20;
-			clients[id]._hp = 100;
-			clients[id]._speed = 70;
 		}
-
+		clients[id]._stage = 1;
+		clients[id]._attpow = 20;
+		clients[id]._hp = 100;
+		clients[id]._speed = 70;
 		matchingqueue.push(&clients[id]);
 
-		while (clients[id].room_id == -1)
+		while (clients[id].room_id == -1) // Room 배정 받을때까지 기다림? Busy wait 유발 
 		{
 			this_thread::yield();
 		}
-
+		int r_id = clients[id].room_id;
 		clients[id].send_login_info_packet();
+		for (auto& cl : ingameroom[r_id].ingamePlayer)
+		{
+			if (cl->_id == id)continue;
+			clients[id].send_add_info_packet(cl);
+			cl->send_add_info_packet(&clients[id]);
+		}
 	}
 				 break;
 	case CS_MOVE: {
@@ -540,14 +553,16 @@ void Server::ProcessPacket(int id, char* packet)
 
 		clients[id].m_SPBB.Center = clients[id]._pos;
 		clients[id].m_SPBB.Center.y = 20.0f;
-
-		for (auto& pl : clients)
+		unordered_set<Session*> roomplayer;
 		{
-			if (pl._state == STATE::Alloc || pl._state == STATE::Free) continue;
-			if (pl._id == id)continue;
-			if (pl.room_id != clients[id].room_id)continue;
-			if (pl._stage != clients[id]._stage)continue;
-			pl.send_move_packet(id); // 다른 클라이언트들 한테 나의 좌표를 보내줌 
+			lock_guard<mutex> ll{ r_l };
+			roomplayer = ingameroom[r_id].ingamePlayer;
+		}
+		for (auto& pl : roomplayer) // clients를 돌지말고 room에 할당되어있는 client를 돌면됨 전체 client를 돌필요가 전혀없음 
+		{
+			if (pl->_id == id)continue;
+			if (pl->_stage != clients[id]._stage)continue;
+			pl->send_move_packet(&clients[id]);
 		}
 	}
 				break;
@@ -556,13 +571,17 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_ROTATE_PACKET* p = reinterpret_cast<CS_ROTATE_PACKET*>(packet);
 		int r_id = p->roomid;
 		clients[id].Rotate(p->yaw);
-		for (auto& pl : clients)
+
+		unordered_set<Session*> roomplayer;
 		{
-			if (pl._state == STATE::Alloc || pl._state == STATE::Free) continue;
-			if (pl._id == id)continue;
-			if (pl.room_id != clients[id].room_id)continue;
-			if (pl._stage != clients[id]._stage)continue;
-			pl.send_rotate_packet(id, p->yaw);
+			lock_guard<mutex> ll{ r_l };
+			roomplayer = ingameroom[r_id].ingamePlayer;
+		}
+		for (auto& pl : roomplayer)
+		{
+			if (pl->_id == id)continue;
+			if (pl->_stage != clients[id]._stage)continue;
+			pl->send_rotate_packet(&clients[id], p->yaw);
 		}
 		break;
 	}
@@ -580,12 +599,10 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == id)continue;
 			if (pl->_stage != clients[id]._stage) continue;
 			pl->send_change_animate_packet(id);
-			cout << " Animation" << endl;
 		}
 	}
 							break;
 	case CS_CHANGE_SCENE: {
-
 		std::random_device rd;
 		std::default_random_engine dre;
 
@@ -596,11 +613,8 @@ void Server::ProcessPacket(int id, char* packet)
 		clients[id]._look = { 0.f,0.f,1.0f };
 		clients[id]._right = { 1.f,0.f,0.f };
 		clients[id]._up = { 0.f,1.f,0.f };
+		clients[id]._stage = scenenum;
 
-		{
-			lock_guard<mutex>ll{ clients[id]._s_lock };
-			clients[id]._stage = scenenum;
-		}
 		switch (scenenum)
 		{
 		case 2: {
@@ -680,8 +694,6 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 			  break;
 		}
-		//clients[id].send_change_scene(id, scenenum); // 나한테 나의 씬넘버를 보냄 
-		// 할필요가없음 
 		for (auto& pl : ingameroom[r_id].ingamePlayer) // 나의 씬번호를 다른 플레이어들한테 보냄 
 		{
 			if (pl->_id == id)continue;
@@ -708,15 +720,16 @@ void Server::ProcessPacket(int id, char* packet)
 		ingameroom[r_id].FireNpcInitialized();
 		ingameroom[r_id].NatureNpcInitialized();
 
+		for (auto& pl : ingameroom[r_id].ingamePlayer)
+		{
+			pl->send_ingame_start();
+		}
+
 		ingameroom[r_id].start_time = chrono::system_clock::now();
 
 		TIMER_EVENT ev2{ ingameroom[r_id].start_time,r_id,EVENT_TYPE::EV_NIGHT };
 		g_Timer.InitTimerQueue(ev2);
 
-		for (auto& pl : ingameroom[r_id].ingamePlayer)
-		{
-			pl->send_ingame_start();
-		}
 	}
 						break;
 	case CS_MONSTER_INITIALIZE: {
@@ -735,13 +748,12 @@ void Server::ProcessPacket(int id, char* packet)
 		break;
 
 	}
+
 	case CS_ATTACK: {
 		CS_ATTACK_PACKET* p = reinterpret_cast<CS_ATTACK_PACKET*>(packet);
 		int r_id = p->roomid;
 
 		clients[id]._isAttack = p->isAttack;
-
-		std::chrono::system_clock::time_point attackTime = std::chrono::system_clock::now();
 
 		for (auto& pl : ingameroom[r_id].ingamePlayer)
 		{
@@ -749,14 +761,11 @@ void Server::ProcessPacket(int id, char* packet)
 			if (pl->_id == id) continue;
 			if (pl->_stage != clients[id]._stage)continue;
 			pl->send_attack_packet(id);
-
-
 		}
 	}
 				  break;
 	case CS_MONSTER_DIE: {
 		CS_MONSTER_DIE_PACKET* p = reinterpret_cast<CS_MONSTER_DIE_PACKET*>(packet);
-		// 다른 플레이어들 한테 NPC 타격 상황을 보냄 
 		switch (p->_montype)
 		{
 		case MonsterType::Night:
@@ -776,24 +785,8 @@ void Server::ProcessPacket(int id, char* packet)
 				clients[p->id]._natureMonstercnt++;
 				cout << id << " - ID kill NatureMonster " << clients[id]._natureMonstercnt << endl;
 			}
+			break;
 		}
-		break;
-		case MonsterType::Fire:
-		{
-
-		}
-		break;
-		case MonsterType::Ice:
-		{
-
-		}
-		break;
-		case MonsterType::Nature:
-		{
-
-		}
-		break;
-
 		}
 
 		for (auto& pl : ingameroom[p->room_id].ingamePlayer)
@@ -807,8 +800,8 @@ void Server::ProcessPacket(int id, char* packet)
 		}
 		TIMER_EVENT ev{ std::chrono::system_clock::now() + std::chrono::milliseconds(800ms),p->room_id,EVENT_TYPE::EV_MONSTER_DEAD,p->npc_id, p->_montype };
 		g_Timer.InitTimerQueue(ev);
-		break;
 	}
+					   break;
 
 	case CS_MONSTER_HIT_SPACESHIP: {
 		CS_MONSTER_ATTACK_SPACESHIP_PACKET* p = reinterpret_cast<CS_MONSTER_ATTACK_SPACESHIP_PACKET*>(packet);
@@ -919,10 +912,7 @@ void Server::ProcessPacket(int id, char* packet)
 		CS_PLAYER_DEAD_PACKET* p = reinterpret_cast<CS_PLAYER_DEAD_PACKET*>(packet);
 		clients[p->id]._hp = 0;
 		clients[p->id].isDead = true;
-
 		break;
-
-
 	}
 	case CS_GET_ITEM: {
 		CS_GET_ITEM_PACKET* p = reinterpret_cast<CS_GET_ITEM_PACKET*>(packet);
@@ -952,6 +942,7 @@ void Server::ProcessPacket(int id, char* packet)
 		break;
 	}
 	}
+
 }
 
 void Server::disconnect(int id)
@@ -964,9 +955,9 @@ void Server::disconnect(int id)
 
 	Session* _session = &clients[id];
 
-	ingameroom[clients[id].room_id].ingamePlayer.erase(std::remove_if(ingameroom[clients[id].room_id].ingamePlayer.begin(),
-		ingameroom[clients[id].room_id].ingamePlayer.end(), [id](Session* _session) {
-			return _session->_id == clients[id]._id; }), ingameroom[clients[id].room_id].ingamePlayer.end());
+	//ingameroom[clients[id].room_id].ingamePlayer.erase(std::remove_if(ingameroom[clients[id].room_id].ingamePlayer.begin(),
+	//	ingameroom[clients[id].room_id].ingamePlayer.end(), [id](Session* _session) {
+	//		return _session->_id == clients[id]._id; }), ingameroom[clients[id].room_id].ingamePlayer.end());
 
 	//auto it = std::find_if(ingameroom[clients[id].room_id].NightMonster)
 
@@ -1031,75 +1022,21 @@ void Server::ReadyToStart()
 			Session* _session = nullptr;
 			bool sessionok = matchingqueue.try_pop(_session);
 
-			if (!sessionok) continue;
+			if (!sessionok) this_thread::yield();
 
-			int room_id = get_new_room_id(ingameroom); // room ID를 부여받음 ;
+			int room_id = get_new_room_id(ingameroom);
 
 			{
 				lock_guard<mutex> rl{ ingameroom[room_id].r_l };
-				ingameroom[room_id]._state = roomState::Ingame; // 상태를 Ingame상태로 바꿔준다 
-				ingameroom[room_id].ingamePlayer.emplace_back(_session);
-				clients[_session->_id].room_id = room_id;
+				ingameroom[room_id]._state = roomState::Ingame;
+				ingameroom[room_id].ingamePlayer.insert(_session);
+				_session->room_id = room_id;
 
 				if (ingameroom[room_id].ingamePlayer.size() != MAX_ROOM_USER)continue;
 				else ingameroom[room_id].fullcheck = true;
 			}
 
-			// 접속하는 클라이언트 순서대로 array에 집어넣어야함, 
-			// id를 맞춰야하나? 
-			if (ingameroom[room_id].ingamePlayer.size() < MAX_ROOM_USER)continue;
-
-			// 무조건 방에 2명이 진행 됐을 때에만 add, 서로에게 보내준다. 
-
-			for (auto& NightMonsters : ingameroom[room_id].NightMonster)
-			{
-				for (int i = 0; i < MAX_ROOM_USER; ++i)
-				{
-					NightMonsters.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
-				}
-			}
-
-			for (auto& IceMontsers : ingameroom[room_id].IceMonster)
-			{
-				for (int i = 0; i < MAX_ROOM_USER; ++i)
-				{
-					IceMontsers.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
-				}
-			}
-
-			for (auto& FireMontsers : ingameroom[room_id].FireMonster)
-			{
-				for (int i = 0; i < MAX_ROOM_USER; ++i)
-				{
-					FireMontsers.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
-				}
-			}
-
-			for (auto& NatureMontsers : ingameroom[room_id].NatureMonster)
-			{
-				for (int i = 0; i < MAX_ROOM_USER; ++i)
-				{
-					NatureMontsers.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
-				}
-			}
-			for (int i = 0; i < MAX_ROOM_USER; ++i)
-			{
-				ingameroom[room_id].IceBoss.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
-				ingameroom[room_id].NatureBoss.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
-				ingameroom[room_id].FireBoss.ingamePlayer[i] = ingameroom[room_id].ingamePlayer[i];
-			}
-
-			for (auto& ingameplayer : ingameroom[room_id].ingamePlayer)
-			{
-				for (auto& player : ingameroom[room_id].ingamePlayer)
-				{
-					if (ingameplayer->_id == player->_id)continue;
-					player->send_add_info_packet(ingameplayer->_id);
-				}
-			}
-
-			if (ingameroom[room_id].ingamePlayer.size() < MAX_ROOM_USER)continue;
-			cout << " Full " << room_id << " - Room " << endl;
+			if (ingameroom[room_id].fullcheck == false)continue; //꽉 차지 않았으면 초기화 X 
 		}
 		else
 			this_thread::sleep_for(500ms);
@@ -1128,7 +1065,7 @@ bool Server::SetReuseAddress(SOCKET socket, bool flag)
 
 bool Server::SetTcpNoDelay(SOCKET _socket)
 {
-	// 서버에서 노딜레이를 해주는게 맞을까 속도보단 안전성
+
 	int DelayZeroOpt = 1;
 	return setsockopt(_socket, SOL_SOCKET, TCP_NODELAY, (const char*)&DelayZeroOpt, sizeof(DelayZeroOpt));
 }

@@ -90,7 +90,6 @@ enum class MonsterType : char {
 	Ice_Boss,
 	Nature_Boss
 };
-
 enum class sceneState :char {
 	LOBBY,
 	STARTSHIP,
@@ -101,7 +100,7 @@ enum class sceneState :char {
 enum class animateState : int {
 	SWORD_IDLE,
 	SWORD_MOVE,
-	TAKE_DAMAGE,
+	TAKE_DAMAGE,	
 	BLACKOUT,
 	STAND_UP,
 	HEAL,
@@ -133,16 +132,14 @@ struct NightMonster
 	float _ry;
 	float _rz;
 
-	int _id; // 4
-	// 40 
+	int _id; 
+
 };
 struct NightMonstersUpdate
 {
-	
-	unsigned char size; // 1
-	char type; // 1 
-	NightMonster _monster; //  400 
-
+	unsigned char size; 
+	char type; 
+	NightMonster _monster[6]; 
 };
 struct IceMonster
 {
@@ -475,6 +472,7 @@ struct SC_LOGIN_INFO_PACKET {
 	int		stage_num;
 	int		att;
 	int		speed;
+
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 right;

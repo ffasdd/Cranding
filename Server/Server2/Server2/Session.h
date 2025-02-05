@@ -66,7 +66,7 @@ public:
 	Session();
 	
 	// 복사 생성자 정의
-	Session(const Session& other)
+	Session( Session& other)
 		: _recv_over(other._recv_over),
 		characterType(other.characterType),
 		isReady(other.isReady),
@@ -91,7 +91,7 @@ public:
 	}
 
 	// 할당 연산자 정의
-	Session& operator=(const Session& other) {
+	Session& operator=( Session& other) {
 		if (this != &other) { // 자기 자신에게 대입되는 경우를 방지하기 위한 조건문
 			std::cout << "session 할당 연산자 " << std::endl;
 			_recv_over = other._recv_over;
@@ -194,7 +194,7 @@ public:
 		return *this;
 	}
 
-	friend bool operator==(const Session& lhs, const Session& rhs) {
+	friend bool operator==( Session& lhs,  Session& rhs) {
 		return lhs.characterType == rhs.characterType &&
 			lhs.isReady == rhs.isReady &&
 			lhs._state == rhs._state &&
@@ -222,7 +222,7 @@ public:
 		DWORD recv_flag = 0;
 		memset(&_recv_over._over, 0, sizeof(_recv_over._over));
 		_recv_over._wsaBuf.len = BUF_SIZE - _prevremain;
-		_recv_over._wsaBuf.buf = _recv_over._sendbuf + +_prevremain;
+		_recv_over._wsaBuf.buf = _recv_over._sendbuf + _prevremain;
 		WSARecv(_socket, &_recv_over._wsaBuf, 1, 0, &recv_flag,
 			&_recv_over._over, 0);
 	}
@@ -237,13 +237,13 @@ public:
 
 	void send_game_start(int r_id);
 
-	void send_add_info_packet(int client_id);
+	void send_add_info_packet(Session* client);
 
-	void send_move_packet(int client_id);
+	void send_move_packet(Session* client);
 
 	void send_remove_packet(int client_id);
 
-	void send_rotate_packet(int client_id, float packetyaw);
+	void send_rotate_packet(Session* client, float packetyaw);
 
 	void send_test_packet(int client_id);
 

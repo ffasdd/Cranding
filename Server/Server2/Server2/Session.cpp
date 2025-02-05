@@ -60,45 +60,43 @@ void Session::send_login_info_packet()
 	do_send(&p);
 }
 
-void Session::send_add_info_packet(int client_id)
+void Session::send_add_info_packet(Session* client)
 {
 	SC_ADD_OBJECT_PACKET p;
-	p.id = client_id;
+	p.id = client->_id;
 	p.size = sizeof(SC_ADD_OBJECT_PACKET);
 	p.type = SC_ADD_OBJECT;
-	p.pos = clients[client_id]._pos;
-	p.hp = clients[client_id]._hp;
-	p.Max_hp = clients[client_id]._maxhp;
-	p.look = clients[client_id]._look;
-	p.right = clients[client_id]._right;
-	p.up = clients[client_id]._up;
-	p.charactertype = clients[client_id].characterType;
-	p.stage_num = clients[client_id]._stage;
-	p.att = clients[client_id]._attpow;
-	p.speed = clients[client_id]._speed;
-
+	p.pos = client->_pos;
+	p.hp = client->_hp;
+	p.Max_hp = client->_maxhp;
+	p.look = client->_look;
+	p.right = client->_right;
+	p.up = client->_up;
+	p.charactertype = client->characterType;
+	p.stage_num = client->_stage;
+	p.att = client->_attpow;
+	p.speed = client->_speed;
+	p.roomid = client->room_id;
 	if (clients[_id].characterType == 0)
 	{
 		p.a_state = animateState::SWORD_IDLE;
 		p.prev_state = animateState::SWORD_IDLE;
 	}
-
-
-	strcpy_s(p.name, clients[client_id]._name);
+	strcpy_s(p.name, client->_name);
 
 	_v_lock.lock();
-	_view_list.insert(client_id);
+	_view_list.insert(client->_id);
 	_v_lock.unlock();
 	do_send(&p);
 }
 
-void Session::send_move_packet(int client_id)
+void Session::send_move_packet(Session* client)
 {
 	SC_MOVE_OBJECT_PACKET p;
-	p.id = client_id;
+	p.id = client->_id;
 	p.size = sizeof(SC_MOVE_OBJECT_PACKET);
 	p.type = SC_MOVE_OBJECT;
-	p.pos = clients[client_id]._pos;
+	p.pos = client->_pos;
 	do_send(&p);
 }
 
@@ -111,16 +109,12 @@ void Session::send_remove_packet(int client_id)
 	do_send(&p);
 }
 
-void Session::send_rotate_packet(int client_id, float packetyaw)
+void Session::send_rotate_packet(Session* client, float packetyaw)
 {
 	SC_ROTATE_OBJECT_PACKET p;
-	p.id = client_id;
+	p.id = client->_id;
 	p.size = sizeof(SC_ROTATE_OBJECT_PACKET);
 	p.type = SC_ROTATE_OBJECT;
-	//p.look = clients[client_id]._look;
-	//p.right = clients[client_id]._right;
-	//p.up = { 0.f,1.0f,0.f };
-	//p.yaw = clients[client_id].m_fYaw;
 	p.yaw = packetyaw;
 	do_send(&p);
 }

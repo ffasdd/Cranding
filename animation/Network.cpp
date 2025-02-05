@@ -44,8 +44,8 @@ bool Network::ReadytoConnect()
 	sockaddrIn.sin_port = htons(PORT_NUM);
 
 	// 사용자로부터 IP 주소 입력 받기
-	string ipAddress = { "118.36.113.52" };
-	//string ipAddress = { "127.0.0.1" };
+	//string ipAddress = { "118.36.113.52" };
+	string ipAddress = { "127.0.0.1" };
 	// 문자열 형태의 IP 주소를 네트워크 바이트 순서로 변환하여 설정
 	if (inet_pton(AF_INET, ipAddress.c_str(), &sockaddrIn.sin_addr) <= 0) {
 		cout << " Invalid Ip Address format " << endl;
@@ -89,36 +89,30 @@ void Network::End()
 bool Network::StartServer()
 {
 	ServerStart = true;
-
 	netThread = std::thread([this]() {NetThreadFunc(); });
 	netThread.detach();
+
+	this_thread::sleep_for(1s);
 	return true;
 }
 
 void Network::NetThreadFunc() {
 	while (ServerStart) {
 		int ioByte = recv(clientsocket, _buf, BUF_SIZE, 0);
-
-		// recv가 에러를 반환하면 데이터가 없거나, 소켓에 문제가 있는 것
 		if (ioByte == SOCKET_ERROR) {
 			int err = WSAGetLastError();
 			if (err == WSAEWOULDBLOCK) {
-				// 데이터가 없는 경우 스레드를 양보
-				//std::this_thread::yield();
 				continue;
 			}
 			else {
-				// 다른 소켓 에러 처리
 				std::cerr << "Socket error: " << err << std::endl;
 				break;
 			}
 		}
 		else if (ioByte > 0) {
-			// 데이터를 정상적으로 수신한 경우
 			ProcessData(ioByte);
 		}
 		else {
-			// 서버 연결이 끊어진 경우 (ioByte == 0)
 			std::cerr << "Connection closed by server." << std::endl;
 			break;
 		}
@@ -160,7 +154,6 @@ void Network::ProcessPacket(char* buf)
 	case SC_LOGIN_INFO: {
 		// 로그인 되자마자 로그인 씬 
 		SC_LOGIN_INFO_PACKET* p = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
-		my_id = getmyid(p->id);
 		my_id = (p->id);
 		my_roomid = p->room_id;
 		g_clients_mutex.lock();
@@ -187,13 +180,10 @@ void Network::ProcessPacket(char* buf)
 
 	case SC_ADD_OBJECT: {
 
-		//this_thread::sleep_for(10ms);
-
 		SC_ADD_OBJECT_PACKET* p = reinterpret_cast<SC_ADD_OBJECT_PACKET*>(buf);
 		//int ob_id = getmyid(p->id);
 		int ob_id = (p->id);
 		std::cout << "Add Player ID - " << ob_id << std::endl;
-		g_clients_mutex.lock();
 		g_clients[ob_id].setState(STATE::Ingame);
 		g_clients[ob_id].setId(ob_id);
 		g_clients[ob_id].setHp(p->hp);
@@ -207,7 +197,6 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setAttackPower(p->att);
 		g_clients[ob_id].setSpeed(p->speed);
 		g_clients[ob_id].scene_num = p->stage_num;
-		g_clients_mutex.unlock();
 		break;
 	}
 
@@ -235,7 +224,6 @@ void Network::ProcessPacket(char* buf)
 		int ob_id = (p->id);
 		g_clients[ob_id].setAnimation(p->a_state);
 		g_clients[ob_id].setprevAnimation(p->prev_a_state);
-		cout << " Recv " << ob_id << " - " << int(p->a_state) << endl;
 		break;
 	}
 	case SC_ATTACK: {
@@ -276,12 +264,14 @@ void Network::ProcessPacket(char* buf)
 	}
 
 	case SC_INGAME_STRAT: { // 게임시작 패킷 
-
-		gGameFramework.isready = true;
-		gGameFramework.isSceneChange = true;
-		gGameFramework.SceneNum = 2;
-		g_clients[my_id].scene_num = 2;
-		stage_num = 2;
+		{
+			lock_guard<mutex> ll{ g_clients_mutex };
+			gGameFramework.isready = true;
+			gGameFramework.isSceneChange = true;
+			gGameFramework.SceneNum = 2;
+			g_clients[my_id].scene_num = 2;
+			stage_num = 2;
+		}
 
 		break;
 	}
@@ -329,18 +319,17 @@ void Network::ProcessPacket(char* buf)
 		break;
 	}
 	case SC_MONSTER_UPDATE_POS: {
-		if (stage_num != 2)break;
-
+		if (stage_num != 2) break;
 		NightMonstersUpdate* p = reinterpret_cast<NightMonstersUpdate*>(buf);
-		int npc_id = p->_monster._id;
-		g_monsters[npc_id].setId(npc_id);
-		g_monsters[npc_id].setPrevPos(g_monsters[npc_id].getPos());
-		g_monsters[npc_id].setPos(p->_monster._x, p->_monster._y, p->_monster._z);
-		g_monsters[npc_id].setLook(p->_monster._lx, p->_monster._ly, p->_monster._lz);
-		g_monsters[npc_id].setRight(p->_monster._rx, p->_monster._ry, p->_monster._rz);
-		g_monsters[npc_id].setUp({ 0.f,1.f,0.f });
-		g_monsters[npc_id].scene_num = 2;
 
+		for (int i = 0; i < 6; i++)
+		{
+			g_monsters[p->_monster[i]._id].setId(p->_monster[i]._id);
+			g_monsters[p->_monster[i]._id].setPos(p->_monster[i]._x, p->_monster[i]._y, p->_monster[i]._z);
+			g_monsters[p->_monster[i]._id].setLook(p->_monster[i]._lx, p->_monster[i]._ly, p->_monster[i]._lz);
+			g_monsters[p->_monster[i]._id].setRight(p->_monster[i]._rx, p->_monster[i]._ry, p->_monster[i]._rz);
+			g_monsters[p->_monster[i]._id].setUp({ 0.f,1.f,0.f });
+		}
 		break;
 	}
 
@@ -585,7 +574,7 @@ void Network::ProcessPacket(char* buf)
 			IceItem = true;
 			break;
 		}
-		case 2:{
+		case 2: {
 			// Fire
 			FireItem = true;
 			break;
@@ -597,8 +586,8 @@ void Network::ProcessPacket(char* buf)
 		}
 		}
 		if (IceItem == true && FireItem == true && NatureItem == true)
-			gGameFramework.isWin = true; 
-		break; 
+			gGameFramework.isWin = true;
+		break;
 	}
 	}
 
@@ -637,6 +626,7 @@ void Network::SendRotatePlayer(float _yaw)
 {
 	CS_ROTATE_PACKET p;
 	p.size = sizeof(CS_ROTATE_PACKET);
+	p.roomid = my_roomid;
 	p.type = CS_ROTATE;
 	p.yaw = _yaw;
 	send(clientsocket, reinterpret_cast<char*>(&p), p.size, 0);

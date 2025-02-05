@@ -150,11 +150,7 @@ public:
 	concurrency::concurrent_queue<Session*> matchingqueue;
 
 	unordered_map<int, Room> ingameroom;
-	// array 전역 clients 가 필요한가? 
-	// 필요하지 않을거같은데
-	// 0 -  [ 0, 1 , 2 ] 
-	// 1 - [ 3 , 4, 5 ]
-	// room 안에 array 두어서 Room 으로 전체를 관리한다? 
+
 
 	mutex r_l;
 

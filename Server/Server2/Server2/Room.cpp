@@ -9,15 +9,13 @@ extern Timer g_Timer;
 void Room::UpdateNpc()
 {
 
-	NightMonstersUpdate sendmonsterupdatePacket[30];
-	int idx = 0;
+	NightMonstersUpdate sendmonsterupdatePacket;
+	int monsterIdx = 0;
 
 	// 전체 NPC UPDATE 
 	for (auto& npc : NightMonster)
 	{
-		//npc.ingamePlayer = ingamePlayer;
-
-		if (npc._is_alive == false)
+		if (!npc._is_alive)
 		{
 			npc.Remove();
 		}
@@ -25,40 +23,52 @@ void Room::UpdateNpc()
 		{
 			npc.Move();
 		}
-		sendmonsterupdatePacket[idx].size = sizeof(NightMonstersUpdate);
-		sendmonsterupdatePacket[idx].type = SC_MONSTER_UPDATE_POS;
-		sendmonsterupdatePacket[idx]._monster._id = idx;
 
-		sendmonsterupdatePacket[idx]._monster._x = npc._pos.x;
-		sendmonsterupdatePacket[idx]._monster._y = npc._pos.y;
-		sendmonsterupdatePacket[idx]._monster._z = npc._pos.z;
+		sendmonsterupdatePacket._monster[monsterIdx]._id = npc._id;
+		sendmonsterupdatePacket._monster[monsterIdx]._x = npc._pos.x;
+		sendmonsterupdatePacket._monster[monsterIdx]._y = npc._pos.y;
+		sendmonsterupdatePacket._monster[monsterIdx]._z = npc._pos.z;
 
-		sendmonsterupdatePacket[idx]._monster._lx = npc._look.x;
-		sendmonsterupdatePacket[idx]._monster._ly = npc._look.y;
-		sendmonsterupdatePacket[idx]._monster._lz = npc._look.z;
+		sendmonsterupdatePacket._monster[monsterIdx]._lx = npc._look.x;
+		sendmonsterupdatePacket._monster[monsterIdx]._ly = npc._look.y;
+		sendmonsterupdatePacket._monster[monsterIdx]._lz = npc._look.z;
 
-		sendmonsterupdatePacket[idx]._monster._rx = npc._right.x;
-		sendmonsterupdatePacket[idx]._monster._ry = npc._right.y;
-		sendmonsterupdatePacket[idx]._monster._rz = npc._right.z;
-
+		sendmonsterupdatePacket._monster[monsterIdx]._rx = npc._right.x;
+		sendmonsterupdatePacket._monster[monsterIdx]._ry = npc._right.y;
+		sendmonsterupdatePacket._monster[monsterIdx]._rz = npc._right.z;
 
 		NightMonsterCollide(npc);
 
-		idx++;
-	}
+		monsterIdx++;
 
-
-	for (auto& pl : ingamePlayer)
-	{
-		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
-		for (auto& packet : sendmonsterupdatePacket)
+		if (monsterIdx == 6)
 		{
-			if (pl->_stage != 2) continue;
-			// 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
-			pl->do_send(&packet);
+			sendmonsterupdatePacket.size = sizeof(NightMonstersUpdate);
+			sendmonsterupdatePacket.type = SC_MONSTER_UPDATE_POS;
 
+			for (auto& pl : ingamePlayer)
+			{
+				if (pl->_stage != 2) continue; 
+				pl->do_send(&sendmonsterupdatePacket);
+			}
+
+			monsterIdx = 0; 
 		}
 	}
+
+	// 남은 몬스터가 있을 경우 추가 전송
+	if (monsterIdx > 0)
+	{
+		sendmonsterupdatePacket.size = sizeof(NightMonstersUpdate);
+		sendmonsterupdatePacket.type = SC_MONSTER_UPDATE_POS;
+
+		for (auto& pl : ingamePlayer)
+		{
+			if (pl->_stage != 2) continue;
+			pl->do_send(&sendmonsterupdatePacket);
+		}
+	}
+
 }
 
 void Room::DeleteNpc()
@@ -109,7 +119,6 @@ void Room::IceUpdateNpc()
 	}
 	for (auto& pl : ingamePlayer)
 	{
-		// 한번 업데이트할때마다 10개의 패킷을 보내야되는건데 
 		for (auto& packet : sendIceMonsterUpdatePacket)
 		{
 			if (pl->_stage == 3) // 클라이언트가 우주선 씬에 있을 때에만 공격하는 NPC들의 패킷을 보냄 
@@ -269,7 +278,7 @@ void Room::FireBossUpdate()
 	sendFireBossUpdatePacket._boss._rx = FireBoss._right.x;
 	sendFireBossUpdatePacket._boss._ry = FireBoss._right.y;
 	sendFireBossUpdatePacket._boss._rz = FireBoss._right.z;
-	
+
 	sendFireBossUpdatePacket._boss._hp = FireBoss._hp;
 
 	for (auto& cl : ingamePlayer)
@@ -315,6 +324,11 @@ void Room::NatureBossUpdate()
 	}
 }
 
+void Room::DeleteMonster(Monster& monster)
+{
+	monster.MarkAsDead();
+}
+
 void Room::DayTimeSend()
 {
 	SC_DAYTIME_PACKET p;
@@ -351,6 +365,7 @@ void Room::BossMonsterInitialziedMonster()
 	FireBoss._initPos = FireBoss._pos;
 	FireBoss._hp = 40;
 
+
 	IceBoss._pos = XMFLOAT3(-12.0f, 10.0f, -220.f);
 	IceBoss._is_alive = true;
 	IceBoss._stagenum = 3;
@@ -366,7 +381,13 @@ void Room::BossMonsterInitialziedMonster()
 	NatureBoss._initPos = NatureBoss._pos;
 	NatureBoss._hp = 40;
 
-	
+	for (auto& cl : ingamePlayer)
+	{
+		FireBoss.ingamePlayer.insert(cl);
+		IceBoss.ingamePlayer.insert(cl);
+		NatureBoss.ingamePlayer.insert(cl);
+	}
+
 }
 
 void Room::IceNpcInitialized()
@@ -389,9 +410,12 @@ void Room::IceNpcInitialized()
 		IceMonster[i]._m_type = MonsterType::Ice;
 		IceMonster[i]._stagenum = 3;
 		IceMonster[i]._initPos = IceMonster[i]._pos;
+		for (auto& cl : ingamePlayer)
+		{
+			IceMonster[i].ingamePlayer.insert(cl);
+		}
 	}
 
-	
 }
 
 void Room::FireNpcInitialized()
@@ -415,9 +439,13 @@ void Room::FireNpcInitialized()
 		FireMonster[i]._m_type = MonsterType::Fire;
 		FireMonster[i]._stagenum = 4;
 		FireMonster[i]._initPos = FireMonster[i]._pos;
+		for (auto& cl : ingamePlayer)
+		{
+			FireMonster[i].ingamePlayer.insert(cl);
+		}
 	}
 
-	
+
 
 
 }
@@ -442,9 +470,13 @@ void Room::NatureNpcInitialized()
 		NatureMonster[i]._m_type = MonsterType::Nature;
 		NatureMonster[i]._stagenum = 5;
 		NatureMonster[i]._initPos = NatureMonster[i]._pos;
+		for (auto& cl : ingamePlayer)
+		{
+			NatureMonster[i].ingamePlayer.insert(cl);
+		}
 	}
 
-	
+
 }
 
 void Room::NightMonsterCollide(Monster& _monster)
@@ -471,7 +503,6 @@ void Room::NightMonsterCollide(Monster& _monster)
 			if (_monster.m_SPBB.Intersects(monster.m_SPBB))
 			{
 				_monster._speed = 0.1f;
-
 			}
 		}
 	}

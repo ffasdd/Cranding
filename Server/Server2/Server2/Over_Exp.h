@@ -14,7 +14,7 @@ public:
 public:
 	WSAOVERLAPPED _over;
 	WSABUF _wsaBuf;
-	char _sendbuf[200];
+	char _sendbuf[5000];
 	COMP_TYPE _comptype;
 	int _ai_target_obj;
 	int room_id;

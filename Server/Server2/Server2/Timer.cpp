@@ -44,7 +44,7 @@ void Timer::TimerThread()
 					ov->_comptype = COMP_TYPE::NPC_UPDATE;
 					PostQueuedCompletionStatus(_IocpHandle, 1, ev.roomId, &ov->_over);
 					break;
-					//att true 
+			
 				}
 				case EVENT_TYPE::EV_NPC_INITIALIZE: {
 					Over_Exp* ov = new Over_Exp;
