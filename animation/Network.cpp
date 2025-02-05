@@ -19,7 +19,7 @@ Network::Network()
 		return;
 	}
 	//int DelayZeroOpt = 1;
-	//setsockopt(clientsocket, SOL_SOCKET, TCP_NODELAY, (const char*)&DelayZeroOpt, sizeof(DelayZeroOpt)); // Nodelay  ³×ÀÌÅ¬ ¾Ë°í¸®Áò Á¾·á 
+	//setsockopt(clientsocket, SOL_SOCKET, TCP_NODELAY, (const char*)&DelayZeroOpt, sizeof(DelayZeroOpt)); // Nodelay  ï¿½ï¿½ï¿½ï¿½Å¬ ï¿½Ë°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 
 	LINGER _linger;
 	_linger.l_linger = 0;
@@ -43,10 +43,10 @@ bool Network::ReadytoConnect()
 	sockaddrIn.sin_family = AF_INET;
 	sockaddrIn.sin_port = htons(PORT_NUM);
 
-	// »ç¿ëÀÚ·ÎºÎÅÍ IP ÁÖ¼Ò ÀÔ·Â ¹Þ±â
+	// ï¿½ï¿½ï¿½ï¿½Ú·Îºï¿½ï¿½ï¿½ IP ï¿½Ö¼ï¿½ ï¿½Ô·ï¿½ ï¿½Þ±ï¿½
 	//string ipAddress = { "118.36.113.52" };
 	string ipAddress = { "127.0.0.1" };
-	// ¹®ÀÚ¿­ ÇüÅÂÀÇ IP ÁÖ¼Ò¸¦ ³×Æ®¿öÅ© ¹ÙÀÌÆ® ¼ø¼­·Î º¯È¯ÇÏ¿© ¼³Á¤
+	// ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ IP ï¿½Ö¼Ò¸ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½Å© ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (inet_pton(AF_INET, ipAddress.c_str(), &sockaddrIn.sin_addr) <= 0) {
 		cout << " Invalid Ip Address format " << endl;
 		return false;
@@ -72,13 +72,13 @@ bool Network::ReadytoConnect()
 
 	return true;
 }
-// ¿¬°á ¿Ï·á 
+// ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ 
 
-// ¿©±â±îÁø ¸ÞÀÎ ¾²·¹µå 
-// ¸®½Ãºê ÇÏ´Â ¾²·¹µé »õ·Î, 
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+// ï¿½ï¿½ï¿½Ãºï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, 
 void Network::End()
 {
-	// recv¾²·¹µå Á¾·á 
+	// recvï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 	if (clientsocket != INVALID_SOCKET) {
 		closesocket(clientsocket);
 		clientsocket = INVALID_SOCKET;
@@ -152,7 +152,7 @@ void Network::ProcessPacket(char* buf)
 	switch (buf[1])
 	{
 	case SC_LOGIN_INFO: {
-		// ·Î±×ÀÎ µÇÀÚ¸¶ÀÚ ·Î±×ÀÎ ¾À 
+		// ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ 
 		SC_LOGIN_INFO_PACKET* p = reinterpret_cast<SC_LOGIN_INFO_PACKET*>(buf);
 		my_id = (p->id);
 		my_roomid = p->room_id;
@@ -224,6 +224,7 @@ void Network::ProcessPacket(char* buf)
 		int ob_id = (p->id);
 		g_clients[ob_id].setAnimation(p->a_state);
 		g_clients[ob_id].setprevAnimation(p->prev_a_state);
+		//cout << " Recv " << ob_id << " - " << int(p->a_state) << endl;
 		break;
 	}
 	case SC_ATTACK: {
@@ -242,12 +243,12 @@ void Network::ProcessPacket(char* buf)
 		g_clients[ob_id].setLook(p->look);
 		g_clients[ob_id].setRight(p->right);
 		g_clients[ob_id].setUp(p->up);
-		if (ob_id == my_id) // ³»°¡ ¾ÀÀüÈ¯À» Çß´Ù¸é
+		if (ob_id == my_id) // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ß´Ù¸ï¿½
 		{
 			switch (stage_num)
 			{
 			case 2:
-				// ¿ìÁÖ¼± ¾À ,
+				// ï¿½ï¿½ï¿½Ö¼ï¿½ ï¿½ï¿½ ,
 				if (IngameScene == false)
 				{
 					IngameScene = true;
@@ -263,7 +264,7 @@ void Network::ProcessPacket(char* buf)
 		break;
 	}
 
-	case SC_INGAME_STRAT: { // °ÔÀÓ½ÃÀÛ ÆÐÅ¶ 
+	case SC_INGAME_STRAT: { // ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¶ 
 		{
 			lock_guard<mutex> ll{ g_clients_mutex };
 			gGameFramework.isready = true;

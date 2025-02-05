@@ -1422,7 +1422,7 @@ void CGameFramework::ProcessInput()
 			&& m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack == false)
 		{
 			m_pPlayer->m_pSkinnedAnimationController->m_bIsAttack = true;
-			PlaySounds(m_AttackSound);
+			//PlaySounds(m_AttackSound);
 		}
 
 		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
