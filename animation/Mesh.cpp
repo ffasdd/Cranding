@@ -6,8 +6,9 @@
 #include "Mesh.h"
 #include "Object.h"
 
-CMesh::CMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
+CMesh::CMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+
 }
 
 CMesh::~CMesh()
@@ -16,16 +17,31 @@ CMesh::~CMesh()
 
 	if (m_nSubMeshes > 0)
 	{
-		for (int i = 0; i < m_nSubMeshes; i++)
-		{
-			if (m_ppd3dSubSetIndexBuffers[i]) m_ppd3dSubSetIndexBuffers[i]->Release();
-			if (m_ppnSubSetIndices[i]) delete[] m_ppnSubSetIndices[i];
-		}
-		if (m_ppd3dSubSetIndexBuffers) delete[] m_ppd3dSubSetIndexBuffers;
-		if (m_pd3dSubSetIndexBufferViews) delete[] m_pd3dSubSetIndexBufferViews;
+		if (m_nSubMeshes <= 1) {
+			
+			
+				if (m_ppd3dSubSetIndexBuffers != nullptr) (*m_ppd3dSubSetIndexBuffers)->Release();
+				if (*m_ppnSubSetIndices != nullptr) delete *m_ppnSubSetIndices;
+			
+			if (m_ppd3dSubSetIndexBuffers != nullptr) delete m_ppd3dSubSetIndexBuffers;
+			if (m_pd3dSubSetIndexBufferViews != nullptr) delete m_pd3dSubSetIndexBufferViews;
 
-		if (m_pnSubSetIndices) delete[] m_pnSubSetIndices;
-		if (m_ppnSubSetIndices) delete[] m_ppnSubSetIndices;
+			if (m_pnSubSetIndices != nullptr) delete m_pnSubSetIndices;
+			if (m_ppnSubSetIndices != nullptr) delete m_ppnSubSetIndices;
+		}
+		else
+		{
+			for (int i = 0; i < m_nSubMeshes; i++)
+			{
+				if (m_ppd3dSubSetIndexBuffers[i] != nullptr) m_ppd3dSubSetIndexBuffers[i]->Release();
+				if (m_ppnSubSetIndices[i] != nullptr) delete[] m_ppnSubSetIndices[i];
+			}
+			if (m_ppd3dSubSetIndexBuffers != nullptr) delete[] m_ppd3dSubSetIndexBuffers;
+			if (m_pd3dSubSetIndexBufferViews != nullptr) delete[] m_pd3dSubSetIndexBufferViews;
+
+			if (m_pnSubSetIndices != nullptr) delete[] m_pnSubSetIndices;
+			if (m_ppnSubSetIndices != nullptr) delete[] m_ppnSubSetIndices;
+		}
 	}
 
 	if (m_pxmf3Positions) delete[] m_pxmf3Positions;
@@ -47,12 +63,13 @@ void CMesh::ReleaseUploadBuffers()
 	}
 }
 
-void CMesh::OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext)
+void CMesh::OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
+	pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
 	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_d3dPositionBufferView);
 }
 
-void CMesh::Render(ID3D12GraphicsCommandList *pd3dCommandList, int nSubSet)
+void CMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet)
 {
 	UpdateShaderVariables(pd3dCommandList);
 
@@ -60,7 +77,7 @@ void CMesh::Render(ID3D12GraphicsCommandList *pd3dCommandList, int nSubSet)
 
 	pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
 
-	if((m_nSubMeshes > 0) && (nSubSet < m_nSubMeshes))
+	if ((m_nSubMeshes > 0) && (nSubSet < m_nSubMeshes))
 	{
 		pd3dCommandList->IASetIndexBuffer(&(m_pd3dSubSetIndexBufferViews[nSubSet]));
 		pd3dCommandList->DrawIndexedInstanced(m_pnSubSetIndices[nSubSet], 1, 0, 0, 0);
@@ -71,7 +88,7 @@ void CMesh::Render(ID3D12GraphicsCommandList *pd3dCommandList, int nSubSet)
 	}
 }
 
-void CMesh::OnPostRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext)
+void CMesh::OnPostRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
 }
 
@@ -83,7 +100,7 @@ CHeightMapImage::CHeightMapImage(LPCTSTR pFileName, int nWidth, int nLength, XMF
 	m_nLength = nLength;
 	m_xmf3Scale = xmf3Scale;
 
-	BYTE *pHeightMapPixels = new BYTE[m_nWidth * m_nLength];
+	BYTE* pHeightMapPixels = new BYTE[m_nWidth * m_nLength];
 
 	HANDLE hFile = ::CreateFile(pFileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_ATTRIBUTE_READONLY, NULL);
 	DWORD dwBytesRead;
@@ -95,7 +112,7 @@ CHeightMapImage::CHeightMapImage(LPCTSTR pFileName, int nWidth, int nLength, XMF
 	{
 		for (int x = 0; x < m_nWidth; x++)
 		{
-			m_pHeightMapPixels[x + ((m_nLength - 1 - y)*m_nWidth)] = pHeightMapPixels[x + (y*m_nWidth)];
+			m_pHeightMapPixels[x + ((m_nLength - 1 - y) * m_nWidth)] = pHeightMapPixels[x + (y * m_nWidth)];
 		}
 	}
 
@@ -138,10 +155,10 @@ float CHeightMapImage::GetHeight(float fx, float fz, bool bReverseQuad)
 	float fxPercent = fx - x;
 	float fzPercent = fz - z;
 
-	float fBottomLeft = (float)m_pHeightMapPixels[x + (z*m_nWidth)];
-	float fBottomRight = (float)m_pHeightMapPixels[(x + 1) + (z*m_nWidth)];
-	float fTopLeft = (float)m_pHeightMapPixels[x + ((z + 1)*m_nWidth)];
-	float fTopRight = (float)m_pHeightMapPixels[(x + 1) + ((z + 1)*m_nWidth)];
+	float fBottomLeft = (float)m_pHeightMapPixels[x + (z * m_nWidth)];
+	float fBottomRight = (float)m_pHeightMapPixels[(x + 1) + (z * m_nWidth)];
+	float fTopLeft = (float)m_pHeightMapPixels[x + ((z + 1) * m_nWidth)];
+	float fTopRight = (float)m_pHeightMapPixels[(x + 1) + ((z + 1) * m_nWidth)];
 #ifdef _WITH_APPROXIMATE_OPPOSITE_CORNER
 	if (bReverseQuad)
 	{
@@ -165,7 +182,7 @@ float CHeightMapImage::GetHeight(float fx, float fz, bool bReverseQuad)
 	return(fHeight);
 }
 
-CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, int xStart, int zStart, int nWidth, int nLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color, void *pContext) : CMesh(pd3dDevice, pd3dCommandList)
+CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int xStart, int zStart, int nWidth, int nLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color, void* pContext) : CMesh(pd3dDevice, pd3dCommandList)
 {
 	m_nVertices = nWidth * nLength;
 	m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
@@ -179,7 +196,7 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsC
 	m_pxmf2TextureCoords0 = new XMFLOAT2[m_nVertices];
 	m_pxmf2TextureCoords1 = new XMFLOAT2[m_nVertices];
 
-	CHeightMapImage *pHeightMapImage = (CHeightMapImage *)pContext;
+	CHeightMapImage* pHeightMapImage = (CHeightMapImage*)pContext;
 	int cxHeightMap = pHeightMapImage->GetHeightMapWidth();
 	int czHeightMap = pHeightMapImage->GetHeightMapLength();
 
@@ -189,10 +206,10 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsC
 		for (int x = xStart; x < (xStart + nWidth); x++, i++)
 		{
 			fHeight = OnGetHeight(x, z, pContext);
-			m_pxmf3Positions[i] = XMFLOAT3((x*m_xmf3Scale.x), fHeight, (z*m_xmf3Scale.z));
+			m_pxmf3Positions[i] = XMFLOAT3((x * m_xmf3Scale.x), fHeight, (z * m_xmf3Scale.z));
 			m_pxmf4Colors[i] = Vector4::Add(OnGetColor(x, z, pContext), xmf4Color);
 			m_pxmf2TextureCoords0[i] = XMFLOAT2(float(x) / float(cxHeightMap - 1), float(czHeightMap - 1 - z) / float(czHeightMap - 1));
-			m_pxmf2TextureCoords1[i] = XMFLOAT2(float(x) / float(m_xmf3Scale.x*0.5f), float(z) / float(m_xmf3Scale.z*0.5f));
+			m_pxmf2TextureCoords1[i] = XMFLOAT2(float(x) / float(m_xmf3Scale.x * 0.5f), float(z) / float(m_xmf3Scale.z * 0.5f));
 			if (fHeight < fMinHeight) fMinHeight = fHeight;
 			if (fHeight > fMaxHeight) fMaxHeight = fHeight;
 		}
@@ -224,13 +241,13 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsC
 
 	m_nSubMeshes = 1;
 	m_pnSubSetIndices = new int[m_nSubMeshes];
-	m_ppnSubSetIndices = new UINT*[m_nSubMeshes];
+	m_ppnSubSetIndices = new UINT * [m_nSubMeshes];
 
-	m_ppd3dSubSetIndexBuffers = new ID3D12Resource*[m_nSubMeshes];
-	m_ppd3dSubSetIndexUploadBuffers = new ID3D12Resource*[m_nSubMeshes];
+	m_ppd3dSubSetIndexBuffers = new ID3D12Resource * [m_nSubMeshes];
+	m_ppd3dSubSetIndexUploadBuffers = new ID3D12Resource * [m_nSubMeshes];
 	m_pd3dSubSetIndexBufferViews = new D3D12_INDEX_BUFFER_VIEW[m_nSubMeshes];
 
-	m_pnSubSetIndices[0] = ((nWidth * 2)*(nLength - 1)) + ((nLength - 1) - 1);
+	m_pnSubSetIndices[0] = ((nWidth * 2) * (nLength - 1)) + ((nLength - 1) - 1);
 	m_ppnSubSetIndices[0] = new UINT[m_pnSubSetIndices[0]];
 
 	for (int j = 0, z = 0; z < nLength - 1; z++)
@@ -288,21 +305,21 @@ void CHeightMapGridMesh::ReleaseUploadBuffers()
 }
 
 
-float CHeightMapGridMesh::OnGetHeight(int x, int z, void *pContext)
+float CHeightMapGridMesh::OnGetHeight(int x, int z, void* pContext)
 {
-	CHeightMapImage *pHeightMapImage = (CHeightMapImage *)pContext;
-	BYTE *pHeightMapPixels = pHeightMapImage->GetHeightMapPixels();
+	CHeightMapImage* pHeightMapImage = (CHeightMapImage*)pContext;
+	BYTE* pHeightMapPixels = pHeightMapImage->GetHeightMapPixels();
 	XMFLOAT3 xmf3Scale = pHeightMapImage->GetScale();
 	int nWidth = pHeightMapImage->GetHeightMapWidth();
-	float fHeight = pHeightMapPixels[x + (z*nWidth)] * xmf3Scale.y;
+	float fHeight = pHeightMapPixels[x + (z * nWidth)] * xmf3Scale.y;
 	return(fHeight);
 }
 
-XMFLOAT4 CHeightMapGridMesh::OnGetColor(int x, int z, void *pContext)
+XMFLOAT4 CHeightMapGridMesh::OnGetColor(int x, int z, void* pContext)
 {
 	XMFLOAT3 xmf3LightDirection = XMFLOAT3(-1.0f, 1.0f, 1.0f);
 	xmf3LightDirection = Vector3::Normalize(xmf3LightDirection);
-	CHeightMapImage *pHeightMapImage = (CHeightMapImage *)pContext;
+	CHeightMapImage* pHeightMapImage = (CHeightMapImage*)pContext;
 	XMFLOAT3 xmf3Scale = pHeightMapImage->GetScale();
 	XMFLOAT4 xmf4IncidentLightColor(0.9f, 0.8f, 0.4f, 1.0f);
 	float fScale = Vector3::DotProduct(pHeightMapImage->GetHeightMapNormal(x, z), xmf3LightDirection);
@@ -316,7 +333,7 @@ XMFLOAT4 CHeightMapGridMesh::OnGetColor(int x, int z, void *pContext)
 	return(xmf4Color);
 }
 
-void CHeightMapGridMesh::OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext)
+void CHeightMapGridMesh::OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[4] = { m_d3dPositionBufferView, m_d3dColorBufferView, m_d3dTextureCoord0BufferView, m_d3dTextureCoord1BufferView };
 	pd3dCommandList->IASetVertexBuffers(m_nSlot, 4, pVertexBufferViews);
@@ -324,7 +341,7 @@ void CHeightMapGridMesh::OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList,
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CSkyBoxMesh::CSkyBoxMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, float fWidth, float fHeight, float fDepth) : CMesh(pd3dDevice, pd3dCommandList)
+CSkyBoxMesh::CSkyBoxMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, float fWidth, float fHeight, float fDepth) : CMesh(pd3dDevice, pd3dCommandList)
 {
 	m_nVertices = 36;
 	m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -388,23 +405,62 @@ CSkyBoxMesh::~CSkyBoxMesh()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CStandardMesh::CStandardMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList) : CMesh(pd3dDevice, pd3dCommandList)
+CStandardMesh::CStandardMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) : CMesh(pd3dDevice, pd3dCommandList)
 {
 }
 
 CStandardMesh::~CStandardMesh()
 {
-	if (m_pd3dTextureCoord0Buffer) m_pd3dTextureCoord0Buffer->Release();
-	if (m_pd3dNormalBuffer) m_pd3dNormalBuffer->Release();
-	if (m_pd3dTangentBuffer) m_pd3dTangentBuffer->Release();
-	if (m_pd3dBiTangentBuffer) m_pd3dBiTangentBuffer->Release();
+	if (m_pd3dTextureCoord0Buffer)
+	{
+		m_pd3dTextureCoord0Buffer->Release();
+		m_pd3dTextureCoord0Buffer = nullptr;
+	}
+	if (m_pd3dTextureCoord1Buffer)
+	{
+		m_pd3dTextureCoord1Buffer->Release();
+		m_pd3dTextureCoord1Buffer = nullptr;
+	}
+	if (m_pd3dNormalBuffer)
+	{
+		m_pd3dNormalBuffer->Release();
+		m_pd3dNormalBuffer = nullptr;
+	}
+	if (m_pd3dTangentBuffer)
+	{
+		m_pd3dTangentBuffer->Release();
+		m_pd3dTangentBuffer = nullptr;
+	}
+	if (m_pd3dBiTangentBuffer)
+	{
+		m_pd3dBiTangentBuffer->Release();
+		m_pd3dBiTangentBuffer = nullptr;
+	}
 
-	if (m_pxmf4Colors) delete[] m_pxmf4Colors;
-	if (m_pxmf3Normals) delete[] m_pxmf3Normals;
-	if (m_pxmf3Tangents) delete[] m_pxmf3Tangents;
-	if (m_pxmf3BiTangents) delete[] m_pxmf3BiTangents;
-	if (m_pxmf2TextureCoords0) delete[] m_pxmf2TextureCoords0;
-	if (m_pxmf2TextureCoords1) delete[] m_pxmf2TextureCoords1;
+	if (m_pxmf4Colors) {
+		delete[] m_pxmf4Colors;
+		m_pxmf4Colors = nullptr;
+	}
+	if (m_pxmf3Normals) {
+		delete[] m_pxmf3Normals;
+		m_pxmf3Normals = nullptr;
+	}
+	if (m_pxmf3Tangents) {
+		delete[] m_pxmf3Tangents;
+		m_pxmf3Tangents = nullptr;
+	}
+	if (m_pxmf3BiTangents) {
+		delete[] m_pxmf3BiTangents;
+		m_pxmf3BiTangents = nullptr;
+	}
+	if (m_pxmf2TextureCoords0) {
+		delete[] m_pxmf2TextureCoords0;
+		m_pxmf2TextureCoords0 = nullptr;
+	}
+	if (m_pxmf2TextureCoords1) {
+		delete[] m_pxmf2TextureCoords1;
+		m_pxmf2TextureCoords1 = nullptr;
+	}
 }
 
 void CStandardMesh::ReleaseUploadBuffers()
@@ -413,6 +469,9 @@ void CStandardMesh::ReleaseUploadBuffers()
 
 	if (m_pd3dTextureCoord0UploadBuffer) m_pd3dTextureCoord0UploadBuffer->Release();
 	m_pd3dTextureCoord0UploadBuffer = NULL;
+
+	if (m_pd3dTextureCoord1UploadBuffer) m_pd3dTextureCoord1UploadBuffer->Release();
+	m_pd3dTextureCoord1UploadBuffer = NULL;
 
 	if (m_pd3dNormalUploadBuffer) m_pd3dNormalUploadBuffer->Release();
 	m_pd3dNormalUploadBuffer = NULL;
@@ -424,7 +483,7 @@ void CStandardMesh::ReleaseUploadBuffers()
 	m_pd3dBiTangentUploadBuffer = NULL;
 }
 
-void CStandardMesh::LoadMeshFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, FILE *pInFile)
+void CStandardMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile)
 {
 	char pstrToken[64] = { '\0' };
 	int nPositions = 0, nColors = 0, nNormals = 0, nTangents = 0, nBiTangents = 0, nTextureCoords = 0, nIndices = 0, nSubMeshes = 0, nSubIndices = 0;
@@ -433,13 +492,15 @@ void CStandardMesh::LoadMeshFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCom
 
 	::ReadStringFromFile(pInFile, m_pstrMeshName);
 
-	for ( ; ; )
+	for (; ; )
 	{
 		::ReadStringFromFile(pInFile, pstrToken);
 		if (!strcmp(pstrToken, "<Bounds>:"))
 		{
-			nReads = (UINT)::fread(&m_xmf3AABBCenter, sizeof(XMFLOAT3), 1, pInFile);
-			nReads = (UINT)::fread(&m_xmf3AABBExtents, sizeof(XMFLOAT3), 1, pInFile);
+			// ** 여기 값은 잘 들어가는 듯 -> 근데 txt 내부 데이터보다 자릿수 더 크게 들어감
+			nReads = (UINT)::fread(&m_xmBoundingBox.Center, sizeof(float), 3, pInFile);
+			nReads = (UINT)::fread(&m_xmBoundingBox.Extents, sizeof(float), 3, pInFile);
+			m_xmBoundingBox.Orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 		else if (!strcmp(pstrToken, "<Positions>:"))
 		{
@@ -552,10 +613,10 @@ void CStandardMesh::LoadMeshFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCom
 			if (m_nSubMeshes > 0)
 			{
 				m_pnSubSetIndices = new int[m_nSubMeshes];
-				m_ppnSubSetIndices = new UINT*[m_nSubMeshes];
+				m_ppnSubSetIndices = new UINT * [m_nSubMeshes];
 
-				m_ppd3dSubSetIndexBuffers = new ID3D12Resource*[m_nSubMeshes];
-				m_ppd3dSubSetIndexUploadBuffers = new ID3D12Resource*[m_nSubMeshes];
+				m_ppd3dSubSetIndexBuffers = new ID3D12Resource * [m_nSubMeshes];
+				m_ppd3dSubSetIndexUploadBuffers = new ID3D12Resource * [m_nSubMeshes];
 				m_pd3dSubSetIndexBufferViews = new D3D12_INDEX_BUFFER_VIEW[m_nSubMeshes];
 
 				for (int i = 0; i < m_nSubMeshes; i++)
@@ -588,7 +649,7 @@ void CStandardMesh::LoadMeshFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCom
 	}
 }
 
-void CStandardMesh::OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext)
+void CStandardMesh::OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[5] = { m_d3dPositionBufferView, m_d3dTextureCoord0BufferView, m_d3dNormalBufferView, m_d3dTangentBufferView, m_d3dBiTangentBufferView };
 	pd3dCommandList->IASetVertexBuffers(m_nSlot, 5, pVertexBufferViews);
@@ -596,17 +657,35 @@ void CStandardMesh::OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CSkinnedMesh::CSkinnedMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList) : CStandardMesh(pd3dDevice, pd3dCommandList)
+CSkinnedMesh::CSkinnedMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) : CStandardMesh(pd3dDevice, pd3dCommandList)
 {
 }
 
 CSkinnedMesh::~CSkinnedMesh()
 {
-	if (m_pxmn4BoneIndices) delete[] m_pxmn4BoneIndices;
-	if (m_pxmf4BoneWeights) delete[] m_pxmf4BoneWeights;
+	if (m_pxmn4BoneIndices)
+	{
+		delete[] m_pxmn4BoneIndices;
+		m_pxmn4BoneIndices = nullptr;
+	}
 
-	if (m_ppSkinningBoneFrameCaches) delete[] m_ppSkinningBoneFrameCaches;
-	if (m_ppstrSkinningBoneNames) delete[] m_ppstrSkinningBoneNames;
+	if (m_pxmf4BoneWeights)
+	{
+		delete[] m_pxmf4BoneWeights;
+		m_pxmf4BoneWeights = nullptr;
+	}
+
+	if (m_ppSkinningBoneFrameCaches)
+	{
+		delete[] m_ppSkinningBoneFrameCaches;
+		m_ppSkinningBoneFrameCaches = nullptr;
+	}
+
+	//if (m_ppstrSkinningBoneNames) 
+	//{
+	//	delete[] m_ppstrSkinningBoneNames;
+	//	m_ppstrSkinningBoneNames = nullptr;
+	//}
 
 	if (m_pxmf4x4BindPoseBoneOffsets) delete[] m_pxmf4x4BindPoseBoneOffsets;
 	if (m_pd3dcbBindPoseBoneOffsets) m_pd3dcbBindPoseBoneOffsets->Release();
@@ -617,22 +696,22 @@ CSkinnedMesh::~CSkinnedMesh()
 	ReleaseShaderVariables();
 }
 
-void CSkinnedMesh::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
+void CSkinnedMesh::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 }
 
-void CSkinnedMesh::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList)
+void CSkinnedMesh::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	if (m_pd3dcbBindPoseBoneOffsets)
 	{
 		D3D12_GPU_VIRTUAL_ADDRESS d3dcbBoneOffsetsGpuVirtualAddress = m_pd3dcbBindPoseBoneOffsets->GetGPUVirtualAddress();
-		pd3dCommandList->SetGraphicsRootConstantBufferView(11, d3dcbBoneOffsetsGpuVirtualAddress); //Skinned Bone Offsets
+		pd3dCommandList->SetGraphicsRootConstantBufferView(9, d3dcbBoneOffsetsGpuVirtualAddress); //Skinned Bone Offsets
 	}
 
 	if (m_pd3dcbSkinningBoneTransforms)
 	{
 		D3D12_GPU_VIRTUAL_ADDRESS d3dcbBoneTransformsGpuVirtualAddress = m_pd3dcbSkinningBoneTransforms->GetGPUVirtualAddress();
-		pd3dCommandList->SetGraphicsRootConstantBufferView(12, d3dcbBoneTransformsGpuVirtualAddress); //Skinned Bone Transforms
+		pd3dCommandList->SetGraphicsRootConstantBufferView(10, d3dcbBoneTransformsGpuVirtualAddress); //Skinned Bone Transforms
 
 		for (int j = 0; j < m_nSkinningBones; j++)
 		{
@@ -656,7 +735,7 @@ void CSkinnedMesh::ReleaseUploadBuffers()
 	m_pd3dBoneWeightUploadBuffer = NULL;
 }
 
-void CSkinnedMesh::PrepareSkinning(CGameObject *pModelRootObject)
+void CSkinnedMesh::PrepareSkinning(CGameObject* pModelRootObject)
 {
 	for (int j = 0; j < m_nSkinningBones; j++)
 	{
@@ -664,14 +743,14 @@ void CSkinnedMesh::PrepareSkinning(CGameObject *pModelRootObject)
 	}
 }
 
-void CSkinnedMesh::LoadSkinInfoFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, FILE *pInFile)
+void CSkinnedMesh::LoadSkinInfoFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile)
 {
 	char pstrToken[64] = { '\0' };
 	UINT nReads = 0;
 
-	::ReadStringFromFile(pInFile, m_pstrMeshName); 
+	::ReadStringFromFile(pInFile, m_pstrMeshName);
 
-	for ( ; ; )
+	for (; ; )
 	{
 		::ReadStringFromFile(pInFile, pstrToken);
 		if (!strcmp(pstrToken, "<BonesPerVertex>:"))
@@ -680,16 +759,17 @@ void CSkinnedMesh::LoadSkinInfoFromFile(ID3D12Device *pd3dDevice, ID3D12Graphics
 		}
 		else if (!strcmp(pstrToken, "<Bounds>:"))
 		{
-			nReads = (UINT)::fread(&m_xmf3AABBCenter, sizeof(XMFLOAT3), 1, pInFile);
-			nReads = (UINT)::fread(&m_xmf3AABBExtents, sizeof(XMFLOAT3), 1, pInFile);
+			nReads = (UINT)::fread(&m_xmBoundingBox.Center, sizeof(XMFLOAT3), 1, pInFile);
+			nReads = (UINT)::fread(&m_xmBoundingBox.Extents, sizeof(XMFLOAT3), 1, pInFile);
+			m_xmBoundingBox.Orientation = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 		else if (!strcmp(pstrToken, "<BoneNames>:"))
 		{
 			m_nSkinningBones = ::ReadIntegerFromFile(pInFile);
-			if (m_nSkinningBones > 0) 
+			if (m_nSkinningBones > 0)
 			{
 				m_ppstrSkinningBoneNames = new char[m_nSkinningBones][64];
-				m_ppSkinningBoneFrameCaches = new CGameObject*[m_nSkinningBones];
+				m_ppSkinningBoneFrameCaches = new CGameObject * [m_nSkinningBones];
 				for (int i = 0; i < m_nSkinningBones; i++)
 				{
 					::ReadStringFromFile(pInFile, m_ppstrSkinningBoneNames[i]);
@@ -707,7 +787,7 @@ void CSkinnedMesh::LoadSkinInfoFromFile(ID3D12Device *pd3dDevice, ID3D12Graphics
 
 				UINT ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES) + 255) & ~255); //256의 배수
 				m_pd3dcbBindPoseBoneOffsets = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
-				m_pd3dcbBindPoseBoneOffsets->Map(0, NULL, (void **)&m_pcbxmf4x4MappedBindPoseBoneOffsets);
+				m_pd3dcbBindPoseBoneOffsets->Map(0, NULL, (void**)&m_pcbxmf4x4MappedBindPoseBoneOffsets);
 
 				for (int i = 0; i < m_nSkinningBones; i++)
 				{
@@ -756,7 +836,7 @@ void CSkinnedMesh::LoadSkinInfoFromFile(ID3D12Device *pd3dDevice, ID3D12Graphics
 	}
 }
 
-void CSkinnedMesh::OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext)
+void CSkinnedMesh::OnPreRender(ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[7] = { m_d3dPositionBufferView, m_d3dTextureCoord0BufferView, m_d3dNormalBufferView, m_d3dTangentBufferView, m_d3dBiTangentBufferView, m_d3dBoneIndexBufferView, m_d3dBoneWeightBufferView };
 	pd3dCommandList->IASetVertexBuffers(m_nSlot, 7, pVertexBufferViews);

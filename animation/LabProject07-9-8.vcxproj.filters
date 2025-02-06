@@ -16,9 +16,6 @@
     <Filter Include="소스 파일\Framework">
       <UniqueIdentifier>{2d85068f-9b47-4df6-a167-47674e6acd9d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Scene">
-      <UniqueIdentifier>{c9f26df9-119c-4708-9c6f-e260ec8bb708}</UniqueIdentifier>
-    </Filter>
     <Filter Include="헤더 파일\Framework">
       <UniqueIdentifier>{d485b405-14ac-4465-9263-546291ea81ab}</UniqueIdentifier>
     </Filter>
@@ -30,6 +27,15 @@
     </Filter>
     <Filter Include="소스 파일\Object">
       <UniqueIdentifier>{434f7937-60b0-4f25-917d-b9004fa1acff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene">
+      <UniqueIdentifier>{c9f26df9-119c-4708-9c6f-e260ec8bb708}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Network">
+      <UniqueIdentifier>{e9f71b6b-a259-4930-8cd1-f5b2d7ef09e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Network">
+      <UniqueIdentifier>{41c0d288-2dc2-4dc4-bb92-d984723f4034}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -82,6 +88,45 @@
     <ClCompile Include="Scene.cpp">
       <Filter>소스 파일\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_dx11.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_dx12.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_win32.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_tables.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenemanager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="shadowMap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DDSTextureLoader12.h">
@@ -122,6 +167,51 @@
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_dx11.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_dx12.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_win32.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_sprintf.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenemanager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="shadowMap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>헤더 파일\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

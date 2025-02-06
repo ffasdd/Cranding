@@ -220,7 +220,7 @@ ID3D12Resource* CreateTextureResourceFromDDSFile(ID3D12Device* pd3dDevice, ID3D1
 	return(pd3dTexture);
 }
 
-ID3D12Resource* CreateTexture2DResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, UINT nWidth, UINT nHeight, UINT nElements, UINT nMipLevels, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS d3dResourceFlags, D3D12_RESOURCE_STATES d3dResourceStates, D3D12_CLEAR_VALUE* pd3dClearValue)
+ID3D12Resource* CreateTexture2DResource(ID3D12Device* pd3dDevice, UINT nWidth, UINT nHeight, UINT nElements, UINT nMipLevels, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS d3dResourceFlags, D3D12_RESOURCE_STATES d3dResourceStates, D3D12_CLEAR_VALUE* pd3dClearValue)
 {
 	ID3D12Resource* pd3dTexture = NULL;
 
@@ -250,7 +250,6 @@ ID3D12Resource* CreateTexture2DResource(ID3D12Device* pd3dDevice, ID3D12Graphics
 
 	return(pd3dTexture);
 }
-
 ID3D12Resource* CreateTextureResourceFromWICFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, ID3D12Resource** ppd3dUploadBuffer, D3D12_RESOURCE_STATES d3dResourceStates)
 {
 	ID3D12Resource* pd3dTexture = NULL;
@@ -298,4 +297,25 @@ ID3D12Resource* CreateTextureResourceFromWICFile(ID3D12Device* pd3dDevice, ID3D1
 	pd3dCommandList->ResourceBarrier(1, &d3dResourceBarrier);
 
 	return(pd3dTexture);
+}
+D3D12_SHADER_BYTECODE CompileShaderFromFile(const WCHAR* pszFileName, LPCSTR pszShaderName, LPCSTR pszShaderProfile, ID3DBlob** ppd3dShaderBlob)
+{
+	UINT nCompileFlags = 0;
+#if defined(_DEBUG)
+	nCompileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+
+	ID3DBlob* pd3dErrorBlob = NULL;
+	HRESULT hResult = ::D3DCompileFromFile(pszFileName, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, pszShaderName, pszShaderProfile, nCompileFlags, 0, ppd3dShaderBlob, &pd3dErrorBlob);
+
+	char* pErrorString = NULL;
+	if (pd3dErrorBlob) {
+		pErrorString = (char*)pd3dErrorBlob->GetBufferPointer();
+	}
+
+	D3D12_SHADER_BYTECODE d3dShaderByteCode;
+	d3dShaderByteCode.BytecodeLength = (*ppd3dShaderBlob)->GetBufferSize();
+	d3dShaderByteCode.pShaderBytecode = (*ppd3dShaderBlob)->GetBufferPointer();
+
+	return(d3dShaderByteCode);
 }

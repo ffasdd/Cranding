@@ -37,12 +37,14 @@ private:
 
 public:
 	void AddRef() { m_nReferences++; }
-	void Release() { if (--m_nReferences <= 0) delete this; }
+	void Release() { if (--m_nReferences == 0) delete this; }
 
 public:
 	char							m_pstrMeshName[64] = { 0 };
+	UINT							m_nStride = 0;
 
 protected:
+
 	UINT							m_nType = 0x00;
 
 	XMFLOAT3						m_xmf3AABBCenter = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -81,6 +83,9 @@ public:
 	virtual void OnPreRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, int nSubSet);
 	virtual void OnPostRender(ID3D12GraphicsCommandList *pd3dCommandList, void *pContext);
+
+	// 바운딩 박스
+	BoundingOrientedBox				m_xmBoundingBox = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

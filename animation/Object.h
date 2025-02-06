@@ -54,7 +54,7 @@ private:
 
 public:
 	void AddRef() { m_nReferences++; }
-	void Release() { if (--m_nReferences <= 0) delete this; }
+	void Release() { if (--m_nReferences <= 0/* && --m_nReferences >= -1*/) delete this; }
 
 	void SetSampler(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSamplerGpuDescriptorHandle);
 
@@ -66,8 +66,8 @@ public:
 	void LoadTextureFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, UINT nResourceType, UINT nIndex);
 	//	void LoadBufferFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, wchar_t *pszFileName, UINT nIndex);
 	void LoadBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pData, UINT nElements, UINT nStride, DXGI_FORMAT ndxgiFormat, UINT nIndex);
-	ID3D12Resource* CreateTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, UINT nIndex, UINT nResourceType, UINT nWidth, UINT nHeight, UINT nElements, UINT nMipLevels, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS d3dResourceFlags, D3D12_RESOURCE_STATES d3dResourceStates, D3D12_CLEAR_VALUE* pd3dClearValue);
-
+	ID3D12Resource* CreateTexture(ID3D12Device* pd3dDevice, UINT nWidth, UINT nHeight, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS d3dResourceFlags, D3D12_RESOURCE_STATES d3dResourceStates, D3D12_CLEAR_VALUE* pd3dClearValue, UINT nResourceType, UINT nIndex, UINT nMipLevels);
+	
 	void SetRootParameterIndex(int nIndex, UINT nRootParameterIndex);
 	void SetGpuDescriptorHandle(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSrvGpuDescriptorHandle);
 
@@ -103,6 +103,8 @@ public:
 	CMaterial(int nTextures);
 	virtual ~CMaterial();
 
+	virtual void ReleaseShaderVariables();
+
 private:
 	int								m_nReferences = 0;
 
@@ -126,6 +128,7 @@ public:
 
 	virtual void ReleaseUploadBuffers();
 
+
 public:
 	UINT							m_nType = 0x00;
 
@@ -146,7 +149,11 @@ public:
 	static CShader					*m_pStandardShader;
 	static CShader					*m_pSkinnedAnimationShader;
 
+	ID3D12Resource* m_pd3dcbMaterial = NULL;
+
 	static void CMaterial::PrepareShaders(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature);
+
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 
 	void SetStandardShader() { CMaterial::SetShader(m_pStandardShader); }
 	void SetSkinnedAnimationShader() { CMaterial::SetShader(m_pSkinnedAnimationShader); }
@@ -189,6 +196,7 @@ public:
 
 	int								m_nKeyFrames = 0;
 	float							*m_pfKeyFrameTimes = NULL;
+	volatile bool isinit = false;
 	XMFLOAT4X4						**m_ppxmf4x4KeyFrameTransforms = NULL;
 
 	// 행렬이 필요없을듯?
@@ -294,16 +302,36 @@ public:
 	~CAnimationController();
 
 public:
+	bool m_bIsAttacked = false;
+	bool m_bIsMonsterAttack = false;
+	int m_nMonsterAttackCnt = 0;
+	bool m_bWasMonsterAttack = false;
+	bool m_bMonsterValidAttack = false;
+	bool m_bisRotate = false;
+
+	// 치료 키 -> spacebar 누르면 치료
+	bool							m_bIsHeal = false;
+
+	bool							m_bIsPlayerAttacked = false;
+	// hp == 0 (기절상태 변수) -> 현재 임시로 f1 누르면 기절, f2 누르면 다시 살아남
+	bool							m_bIsDead = false;
+
 	// 상하체 분리 변수
 	bool							m_bIsAttack = false;
+	bool							m_bIsValidAttack = false;
+	int								m_nCntValidAttack = 0;
+	int								m_nAttackAniNum = 6;
 
 	// 애니메이션 블렌딩 변수
+	// m_nAnimationBefore, after -> 칼 쓰는애 : 1, 총 쓰는 애 : 0
 	int								m_nAnimationBefore = 0;
 	int								m_nAnimationAfter = 0;
 
-	int								m_nBlendingCnt = 0;
-	bool							m_bIsBlending = false;
+	int								m_nMoveCnt = 0;
+	
+	bool							m_bIsMove = false;
 
+	bool							m_bIsBlending = false;
 	bool							m_bIsLastBlending = false;
 
 	float							m_fBlendingTime = 0;
@@ -324,6 +352,7 @@ public:
 	ID3D12Resource					**m_ppd3dcbSkinningBoneTransforms = NULL; //[SkinnedMeshes]
 	XMFLOAT4X4						**m_ppcbxmf4x4MappedSkinningBoneTransforms = NULL; //[SkinnedMeshes]
 
+	
 public:
 	void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
 
@@ -360,22 +389,35 @@ class CGameObject
 private:
 	int								m_nReferences = 0;
 
+	int m_mhealth = 100;
 public:
 	void AddRef();
-	void Release();
+	int Release();
 
 public:
 	CGameObject();
-	CGameObject(int nMaterials);
+	CGameObject(int nMaterials, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
     virtual ~CGameObject();
 
-public:
+
+	D3D12_GPU_DESCRIPTOR_HANDLE		m_d3dCbvGPUDescriptorHandle;
+
+public:	
+	// 바운딩 박스 관련
+	int nChilds = 0;				// 
+	void UpdateBoundingBox();
+	BoundingOrientedBox				m_xmBoundingBox = BoundingOrientedBox(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.1f, 0.1f, 0.1f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+
+
 	// 상하체 분리 변수
 	bool							m_bUpperBody = false;
 
-	char							m_pstrFrameName[64];
+	char							m_pstrFrameName[64] = { '\0' };
 
 	CMesh							*m_pMesh = NULL;
+	CMesh							*m_pNoSkinMesh = NULL;
+	//CMesh							*m_pChildMesh = NULL;
+
 
 	int								m_nMaterials = 0;
 	CMaterial						**m_ppMaterials = NULL;
@@ -390,8 +432,24 @@ public:
 	CGameObject 					*m_pChild = NULL;
 	CGameObject 					*m_pSibling = NULL;
 
-	// 이것만 잘 하면 됩니덩
 	CAnimationController*			m_pSkinnedAnimationController = NULL;
+
+	// 서버에서 그리기 on/off
+	bool isdraw = true;
+
+	// 충돌 관련 변수
+	bool m_bIsColliding = false; // 현재 충돌 상태
+	bool m_bWasColliding = false; // 이전 프레임에서의 충돌 상태
+	bool m_bHasCollided = false;
+
+	// 몬스터 정보 관련
+	MONSTERTYPE m_monstype = MONSTERTYPE::NIGHT;
+	void SetMonsType(MONSTERTYPE monstype);
+	MONSTERTYPE GetMonsType() { return m_monstype; }
+
+	int GetHealth() const { return m_mhealth; }
+	void SetHealth(const int health) { m_mhealth = health; }
+
 
 	void SetMesh(CMesh *pMesh);
 	void SetShader(CShader *pShader);
@@ -405,12 +463,17 @@ public:
 	virtual void OnPrepareAnimate() { }
 	virtual void Animate(float fTimeElapsed);
 
+	void SetRootParameter(ID3D12GraphicsCommandList* pd3dCommandList);
+
+	void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int SharedNum =0, int nPipelineState=0);
+
 	virtual void OnPrepareRender() { }
-	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
+	//virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
 
 	virtual void OnLateUpdate() { }
 
 	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
+	virtual void AllCreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
 	virtual void ReleaseShaderVariables();
 
@@ -418,6 +481,11 @@ public:
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList *pd3dCommandList, CMaterial *pMaterial);
 
 	virtual void ReleaseUploadBuffers();
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetCbvGPUDescriptorHandle() { return(m_d3dCbvGPUDescriptorHandle); }
+
+	void SetCbvGPUDescriptorHandle(D3D12_GPU_DESCRIPTOR_HANDLE d3dCbvGPUDescriptorHandle) { m_d3dCbvGPUDescriptorHandle = d3dCbvGPUDescriptorHandle; }
+	void SetCbvGPUDescriptorHandlePtr(UINT64 nCbvGPUDescriptorHandlePtr) { m_d3dCbvGPUDescriptorHandle.ptr = nCbvGPUDescriptorHandlePtr; }
 
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetLook();
@@ -430,6 +498,9 @@ public:
 	virtual void SetPosition(float x, float y, float z);
 	virtual void SetPosition(XMFLOAT3 xmf3Position);
 	void SetScale(float x, float y, float z);
+	void SetRight(float x, float y, float z);
+	void SetUp(float x, float y, float z);
+	void SetLook(float x, float y, float z);
 
 	void MoveStrafe(float fDistance = 1.0f);
 	void MoveUp(float fDistance = 1.0f);
@@ -482,6 +553,7 @@ private:
 
 	XMFLOAT3					m_xmf3Scale;
 
+
 public:
 	float GetHeight(float x, float z, bool bReverseQuad = false) { return(m_pHeightMapImage->GetHeight(x, z, bReverseQuad) * m_xmf3Scale.y); } //World
 	XMFLOAT3 GetNormal(float x, float z) { return(m_pHeightMapImage->GetHeightMapNormal(int(x / m_xmf3Scale.x), int(z / m_xmf3Scale.z))); }
@@ -517,11 +589,25 @@ public:
 	virtual void OnRootMotion(CGameObject* pRootGameObject);
 };
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class CPlayerObject : public CGameObject
 {
 public:
 	CPlayerObject(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, CLoadedModelInfo *pModel, int nAnimationTracks);
 	virtual ~CPlayerObject();
+
+
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class CFireEnemyObject : public CGameObject
+{
+public:
+	CFireEnemyObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CLoadedModelInfo* pModel, int nAnimationTracks);
+	virtual ~CFireEnemyObject();
+
+	virtual void Animate(float fTimeElapsed);
+
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
